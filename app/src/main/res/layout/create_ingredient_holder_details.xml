@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/edit_txt_grocery_name"
+            android:layout_width="@dimen/edit_text_grocery_width"
+            android:layout_height="@dimen/edit_text_grocery_height"
+            android:backgroundTint="@color/colorAccent" />
+
+    </RelativeLayout>
+</layout>
