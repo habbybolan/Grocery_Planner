@@ -12,4 +12,5 @@ public interface IngredientEditPresenter {
 
     void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
     boolean isNewIngredient(Ingredient ingredient);
+    void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
 }

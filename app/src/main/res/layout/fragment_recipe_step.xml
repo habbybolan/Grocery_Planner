@@ -6,6 +6,7 @@
     tools:context=".details.recipesteps.RecipeStepFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recipe_step_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

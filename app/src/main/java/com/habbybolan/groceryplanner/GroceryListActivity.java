@@ -2,6 +2,7 @@ package com.habbybolan.groceryplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,9 +24,19 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
         setToolBar();
     }
 
+    /**
+     * Sets up the toolbar.
+     */
     private void setToolBar() {
         Toolbar toolbar = (Toolbar) binding.toolbarGroceryList;
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.burger_menu, menu);
+        return true;
     }
 
     @Override
@@ -33,7 +44,6 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
         Intent intent = new Intent(this, GroceryDetailsActivity.class);
         intent.putExtra(Grocery.GROCERY, grocery);
         startActivity(intent);
-        finish();
     }
 
     @Override
@@ -42,6 +52,4 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
         startActivity(intent);
         finish();
     }
-
-
 }

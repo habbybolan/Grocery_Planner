@@ -38,13 +38,18 @@ public class RecipeStepPresenterImpl implements RecipeStepPresenter {
     @Override
     public void addNewStep(Recipe recipe, Step step) {
         recipeStepInteractor.addNewStep(step);
-        try {
+        /*try {
             if (isViewAttached())
                 view.showStepList(recipeStepInteractor.fetchSteps(recipe));
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("failed to retrieve steps");
-        }
+        }*/
+    }
+
+    @Override
+    public void deleteRecipe(Recipe recipe) {
+        recipeStepInteractor.deleteRecipe(recipe);
     }
 
     private boolean isViewAttached() {

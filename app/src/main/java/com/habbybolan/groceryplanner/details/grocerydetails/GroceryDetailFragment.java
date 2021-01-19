@@ -4,8 +4,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,13 +19,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habbybolan.groceryplanner.R;
+import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
+import com.habbybolan.groceryplanner.di.GroceryApp;
+import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
-import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
-import com.habbybolan.groceryplanner.di.GroceryApp;
+import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +42,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
     private List<Ingredient> ingredients = new ArrayList<>();
     private GroceryDetailsListener groceryDetailsListener;
     private Grocery grocery;
+    private List<Ingredient> ingredientsChecked = new ArrayList<>();
 
     @Inject
     GroceryDetailsPresenter groceryDetailsPresenter;
@@ -60,6 +67,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().groceryDetailSubComponent(new GroceryDetailModule(), new IngredientEditModule()).inject(this);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -69,6 +77,50 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grocery_detail, container, false);
         initLayout();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_ingredient_holder_details, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.action_search:
+                return true;
+            case R.id.action_sort:
+                showSortPopup(getActivity().findViewById(R.id.action_sort));
+                return true;
+            case R.id.action_delete:
+                deleteGrocery();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Menu popup for giving different ways to sort the list.
+     * @param v     The view to anchor the popup menu to
+     */
+    private void showSortPopup(View v) {
+        PopupMenu popup = new PopupMenu(getContext(), v);
+        popup.inflate(R.menu.popup_sort_grocery_list);
+        popup.setOnMenuItemClickListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.popup_alphabetically_grocery_list:
+                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.popup_test_grocery_list:
+                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popup.show();
     }
 
     @Override
@@ -95,28 +147,21 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
         rv.setAdapter(adapter);
 
         // button clicker to add a new ingredient to the grocery
-        binding.btnAddIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                groceryDetailsListener.createNewIngredient();
-            }
-        });
-
-        // button clicker to delete this grocery
-        binding.btnDeleteGrocery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteGrocery();
-            }
-        });
+        binding.btnAddIngredient.setOnClickListener(v ->
+                groceryDetailsListener.createNewIngredient());
     }
 
     /**
      * Delete the grocery from database and go back to the Grocery List
      */
     private void deleteGrocery() {
-        groceryDetailsPresenter.deleteGrocery(grocery);
-        groceryDetailsListener.onGroceryDeleted();
+        PopupWindow popupWindow = new PopupWindow();
+        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.groceryDetailsContainer, "grocery", popupWindow);
+        clickableView.setOnClickListener(v -> {
+            groceryDetailsPresenter.deleteGrocery(grocery);
+            groceryDetailsListener.onGroceryDeleted();
+            popupWindow.dismiss();
+        });
     }
 
 
@@ -140,6 +185,16 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
     @Override
     public void loadingFailed(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onItemCheckBoxSelected(Ingredient ingredient) {
+        ingredientsChecked.add(ingredient);
+    }
+
+    @Override
+    public void onItemCheckBoxUnSelected(Ingredient ingredient) {
+        ingredientsChecked.remove(ingredient);
     }
 
     public interface GroceryDetailsListener {

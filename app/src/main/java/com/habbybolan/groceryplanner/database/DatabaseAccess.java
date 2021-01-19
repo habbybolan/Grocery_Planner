@@ -24,6 +24,7 @@ public interface DatabaseAccess {
 
     void addIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
     void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
+    void deleteIngredientHolderRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
     List<Ingredient> fetchIngredientsFromGrocery(Grocery grocery) throws ExecutionException, InterruptedException;
     List<Ingredient> fetchIngredientsFromRecipe(Recipe recipe) throws ExecutionException, InterruptedException;
 }

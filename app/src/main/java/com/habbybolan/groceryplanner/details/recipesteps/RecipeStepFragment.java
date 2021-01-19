@@ -1,15 +1,21 @@
 package com.habbybolan.groceryplanner.details.recipesteps;
 
-import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +29,7 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.Step;
+import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +45,13 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     private FragmentRecipeStepBinding binding;
     private RecipeStepAdapter adapter;
     private Recipe recipe;
+    RecipeStepListener recipeStepListener;
 
     private static final String TAG = "RecipeStepFragment";
 
 
     public RecipeStepFragment() {}
 
-    // TODO: Rename and change types and number of parameters
     public static RecipeStepFragment getInstance(@NonNull Recipe recipe) {
         RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle args = new Bundle();
@@ -54,9 +61,16 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        recipeStepListener = (RecipeStepListener) context;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule(), new IngredientEditModule()).inject(this);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -84,17 +98,69 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_ingredient_holder_details, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.action_search:
+                return true;
+            case R.id.action_sort:
+                showSortPopup(getActivity().findViewById(R.id.action_sort));
+                return true;
+            case R.id.action_delete:
+                deleteRecipe();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Menu popup for giving different ways to sort the list.
+     * @param v     The view to anchor the popup menu to
+     */
+    private void showSortPopup(View v) {
+        PopupMenu popup = new PopupMenu(getContext(), v);
+        popup.inflate(R.menu.popup_sort_grocery_list);
+        popup.setOnMenuItemClickListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.popup_alphabetically_grocery_list:
+                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.popup_test_grocery_list:
+                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popup.show();
+    }
+
     private void initLayout() {
         adapter = new RecipeStepAdapter(steps, this);
         RecyclerView rv = binding.stepsList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        binding.btnAddStep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewStep();
-            }
+        binding.btnAddStep.setOnClickListener(v -> addNewStep());
+    }
+
+    /**
+     * Delete the recipe and end the RecipeDetailActivity.
+     */
+    private void deleteRecipe() {
+        PopupWindow popupWindow = new PopupWindow();
+        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeStepContainer, "recipe", popupWindow);
+        clickableView.setOnClickListener(v -> {
+            recipeStepPresenter.deleteRecipe(recipe);
+            recipeStepListener.onRecipeDeleted();
+            popupWindow.dismiss();
         });
     }
 
@@ -107,7 +173,10 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String description = groceryBinding.editTxtGroceryName.getText().toString();
-                recipeStepPresenter.addNewStep(recipe, new Step(recipe.getId(), description, steps.size()+1));
+                Step step = new Step(recipe.getId(), description, steps.size()+1);
+                recipeStepPresenter.addNewStep(recipe, step);
+                steps.add(step);
+                adapter.notifyItemInserted(steps.size()-1);
             }
         });
         builder.show();
@@ -130,5 +199,19 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     @Override
     public void loadingFailed(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle("Recipe Steps");
+    }
+
+    /**
+     * Listener interface implemented by {@link com.habbybolan.groceryplanner.RecipeDetailActivity}
+     */
+    public interface RecipeStepListener {
+
+        void onRecipeDeleted();
     }
 }

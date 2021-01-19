@@ -4,7 +4,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
 
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 
@@ -20,6 +19,4 @@ public interface IngredientDao {
     @Delete
     void deleteIngredient(IngredientEntity ingredientEntity);
 
-    @Query("SELECT * FROM ingrediententity WHERE ingredientName = :ingredientName")
-    IngredientEntity getIngredient(String ingredientName);
 }

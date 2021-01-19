@@ -33,7 +33,6 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
         Intent intent = new Intent(this, RecipeDetailActivity.class);
         intent.putExtra(Recipe.RECIPE, recipe);
         startActivity(intent);
-        finish();
     }
 
     @Override

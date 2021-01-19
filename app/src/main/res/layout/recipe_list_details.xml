@@ -11,20 +11,16 @@
     <RelativeLayout
         android:id="@+id/recipe_list_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_height">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/list_line_image_height"
-            android:src="@drawable/list_border"
-            android:layout_alignParentBottom="true">
-        </ImageView>
+        android:layout_height="@dimen/list_height"
+        android:layout_marginBottom="@dimen/list_margin_bottom"
+        android:background="@color/colorListBackground"
+        android:elevation="@dimen/list_elevation">
 
         <TextView
             android:id="@+id/txt_recipe_name"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="@dimen/list_txt_margin_start"
             android:layout_centerVertical="true"
             android:text="@{recipeName}" />
 

@@ -6,14 +6,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -28,6 +26,7 @@ import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.IngredientHolder;
+import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import javax.inject.Inject;
 
@@ -36,6 +35,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private FragmentIngredientEditBinding binding;
     private IngredientEditListener ingredientEditListener;
     private boolean isChanged = false;
+    private Ingredient prevIngredient = new Ingredient();
 
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
@@ -90,6 +90,14 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (getArguments() != null) {
             ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
             ingredient = getArguments().getParcelable(Ingredient.INGREDIENT);
+            // create deep copy of the ingredient before changes
+            if (ingredient != null) prevIngredient = new Ingredient.IngredientBuilder(ingredient.getName())
+                    .setPrice(ingredient.getPrice())
+                    .setPricePer(ingredient.getPricePer())
+                    .setPriceType(ingredient.getPriceType())
+                    .setQuantity(ingredient.getQuantity())
+                    .setQuantityType(ingredient.getQuantityType())
+                    .build();
             initLayout();
         }
     }
@@ -100,7 +108,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
             case R.id.action_search:
                 return true;
             case R.id.action_delete:
-                showDeletePopup();
+                deleteCheck();
                 return true;
             default:
                 return false;
@@ -110,11 +118,19 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     /**
      * Shows a popup to ask for confirmation on deleting the grocery list.
      */
-    private void showDeletePopup() {
-        PopupWindow popupWindow = new PopupWindow(getLayoutInflater().inflate(R.layout.popup_delete, null, false));
-        popupWindow.showAtLocation(binding.ingredientEditContainer, Gravity.CENTER, 0, 0);
-        ImageView imageView = getView().findViewById(R.id.popup_btn_delete);
-        imageView.setOnClickListener(v -> deleteIngredient());
+    private void deleteCheck() {
+        if (ingredientEditPresenter.isNewIngredient(ingredient)) {
+            // if there ingredient is new, then leave the fragment and don't save the Ingredient
+            ingredientEditListener.onDoneEditing();
+        } else {
+            // otherwise, the Ingredient exists in the database, so delete and leave fragment
+            final PopupWindow popupWindow = new PopupWindow();
+            View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.ingredientEditContainer, "Ingredient", popupWindow);
+            clickableView.setOnClickListener(v -> {
+                deleteIngredient();
+                popupWindow.dismiss();
+            });
+        }
     }
 
     /**
@@ -133,16 +149,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
 
         setTextListeners();
 
+        // button for saving the changes/new Ingredient to the database
         binding.btnSave.setOnClickListener(v -> saveChangedToLocal());
-
-        // check if the Ingredient being edited is new.
-        if (ingredientEditPresenter.isNewIngredient(ingredient)) {
-            // if new, then disable the delete button.
-            binding.btnDelete.setEnabled(false);
-        } else {
-            // otherwise, it exists in the database, so allow delete functionality.
-            binding.btnDelete.setOnClickListener(v -> deleteIngredient());
-        }
 
         // popup for selecting price type
         binding.txtPriceType.setOnClickListener(v -> createPriceTypeAlertDialogue());
@@ -211,8 +219,12 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (isChanged) {
             // if the Ingredient values were changed, then check if the values were valid
             if (Ingredient.isValidIngredient(name, price, pricePer, quantity)) {
-                setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType);
                 // if the values were valid, then save the new user created Ingredient
+                setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType);
+                // if The ingredient name changed, then removed the previous Ingredient from the bridge
+                if (!prevIngredient.getName().equals(ingredient.getName())) {
+                    ingredientEditPresenter.deleteRelationship(ingredientHolder, prevIngredient);
+                }
                 ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
                 onEditSaved();
             } else {
@@ -255,19 +267,20 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         public void afterTextChanged(Editable s) {}
     };
 
+    // delete the relationship between the IngredientHolder and the Ingredient
     private void deleteIngredient() {
-        ingredientEditPresenter.deleteIngredient(ingredientHolder, ingredient);
+        ingredientEditPresenter.deleteRelationship(ingredientHolder, ingredient);
         ingredientEditPresenter.destroy();
         ingredientEditListener.onDoneEditing();
     }
 
     @Override
     public void editStoreFailure(String message) {
-        // todo:
+        Toast.makeText(getContext(), "Failure to edit Ingredient", Toast.LENGTH_LONG).show();
     }
 
     /**
-     * Once the Ingredient is saved, then display message, destroy this fragment, and go back to GroceryDetailsFragment.
+     * Once the Ingredient is saved, then display message, destroy this fragment, and go back to the DetailsFragment.
      */
     public void onEditSaved() {
         Toast.makeText(getContext(), "Changes saved locally", Toast.LENGTH_SHORT).show();

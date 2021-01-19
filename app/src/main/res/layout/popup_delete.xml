@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="objectToDelete"
+            type="String" />
+    </data>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
 
-    <TextView
-        android:id="@+id/popup_txt_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Delete?"/>
+        <TextView
+            android:id="@+id/popup_txt_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textColor="#FFFFFF"
+            objectToDelete="@{objectToDelete}" />
 
-    <ImageView
-        android:id="@+id/popup_btn_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_delete"
-        android:layout_alignEnd="@+id/txt_delete"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="-21dp"
-        tools:srcCompat="@android:drawable/ic_delete" />
+        <ImageButton
+            android:id="@+id/popup_btn_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/popup_txt_delete"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="22dp"
+            android:layout_toEndOf="@+id/popup_txt_delete"
+            tools:srcCompat="@android:drawable/ic_delete" />
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</layout>

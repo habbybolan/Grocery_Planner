@@ -24,4 +24,9 @@ public class RecipeStepInteractorImpl implements RecipeStepInteractor {
     public void addNewStep(Step step) {
         databaseAccess.addStep(step);
     }
+
+    @Override
+    public void deleteRecipe(Recipe recipe) {
+        databaseAccess.deleteRecipe(recipe);
+    }
 }

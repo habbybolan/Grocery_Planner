@@ -175,17 +175,21 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     @Override
     public List<Step> fetchStepsFromRecipe(long recipeId) throws ExecutionException, InterruptedException {
         // execute database access with Callable
-        Callable<List<Step>> task = () -> {
-            List<Step> steps = new ArrayList<>();
-            List<StepsEntity> stepsEntities = stepsDao.getStepByRecipe(recipeId);
-            for (StepsEntity stepsEntity : stepsEntities) {
-                steps.add(new Step(stepsEntity));
+        Callable<List<StepsEntity>> task = () -> {
+            stepsTableLock.lock();
+            try {
+                return stepsDao.getStepByRecipe(recipeId);
+            } finally {
+                stepsTableLock.unlock();
             }
-            return steps;
         };
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<List<Step>> futureTask = executorService.submit(task);
-        List<Step> steps = futureTask.get();
+        Future<List<StepsEntity>> futureTask = executorService.submit(task);
+        List<Step> steps = new ArrayList<>();
+        List<StepsEntity> stepEntities = futureTask.get();
+        for (StepsEntity stepsEntity : stepEntities) {
+            steps.add(new Step(stepsEntity));
+        }
         Log.i(TAG, "fetchStepsFromRecipe: " + steps);
         return steps;
     }
@@ -193,7 +197,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     @Override
     public void addStep(Step step) {
         Runnable task = () -> {
-            stepsDao.insertStep(new StepsEntity(step));
+            stepsTableLock.lock();
+            try {
+                stepsDao.insertStep(new StepsEntity(step));
+            } finally {
+                stepsTableLock.unlock();
+            }
         };
         Thread thread = new Thread(task);
         thread.start();
@@ -276,6 +285,45 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                     recipeTableLock.lock();
                     ingredientTableLock.lock();
                     ingredientDao.deleteIngredient(new IngredientEntity(ingredient));
+                    RecipeIngredientBridge recipeIngredientBridge = new RecipeIngredientBridge(recipeEntity, ingredient);
+                    recipeDao.deleteFromBridge(recipeIngredientBridge);
+                } finally {
+                    ingredientTableLock.unlock();
+                    recipeTableLock.unlock();
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+        }
+    }
+
+    @Override
+    public void deleteIngredientHolderRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
+        if (ingredientHolder.isGrocery()) {
+            // If the ingredientHolder is a Grocery, then delete the Ingredient relationship from Grocery
+            Grocery grocery = (Grocery) ingredientHolder;
+            GroceryEntity groceryEntity = new GroceryEntity(grocery);
+            Runnable task = () -> {
+                try {
+                    groceryTableLock.lock();
+                    ingredientTableLock.lock();
+                    GroceryIngredientBridge groceryIngredientBridge = new GroceryIngredientBridge(groceryEntity, ingredient);
+                    groceryDao.deleteFromBridge(groceryIngredientBridge);
+                } finally {
+                    ingredientTableLock.unlock();
+                    groceryTableLock.unlock();
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+        } else {
+            // Otherwise, delete the Ingredient relationship with the recipe
+            Recipe recipe = (Recipe) ingredientHolder;
+            RecipeEntity recipeEntity = new RecipeEntity(recipe);
+            Runnable task = () -> {
+                try {
+                    recipeTableLock.lock();
+                    ingredientTableLock.lock();
                     RecipeIngredientBridge recipeIngredientBridge = new RecipeIngredientBridge(recipeEntity, ingredient);
                     recipeDao.deleteFromBridge(recipeIngredientBridge);
                 } finally {

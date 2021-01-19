@@ -10,4 +10,7 @@
     <string name="action_delete">Delete</string>
 
     <string name="title_recipe_list">Recipe Planner</string>
+
+    <string name="search">Search</string>
+    <string name="more">More</string>
 </resources>

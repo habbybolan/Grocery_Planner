@@ -38,7 +38,7 @@ public interface GroceryDao {
     void deleteGroceryFromBridge(long groceryId);
 
     // Bridge table access
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIntoBridge(GroceryIngredientBridge groceryIngredientBridge);
 
     @Delete

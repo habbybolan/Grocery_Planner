@@ -36,4 +36,9 @@ public class IngredientEditPresenterImpl implements IngredientEditPresenter {
     public boolean isNewIngredient(Ingredient ingredient) {
         return ingredientEditInteractor.isNewIngredient(ingredient);
     }
+
+    @Override
+    public void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
+        ingredientEditInteractor.deleteRelationship(ingredientHolder, ingredient);
+    }
 }

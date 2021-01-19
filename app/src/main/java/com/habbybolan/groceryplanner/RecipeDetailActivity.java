@@ -2,10 +2,13 @@ package com.habbybolan.groceryplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -20,7 +23,7 @@ import com.habbybolan.groceryplanner.details.recipesteps.RecipeStepFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
 
-public class RecipeDetailActivity extends AppCompatActivity implements IngredientEditFragment.IngredientEditListener, RecipeDetailFragment.RecipeDetailListener {
+public class RecipeDetailActivity extends AppCompatActivity implements IngredientEditFragment.IngredientEditListener, RecipeDetailFragment.RecipeDetailListener, RecipeStepFragment.RecipeStepListener {
 
 
     private Recipe recipe;
@@ -57,6 +60,23 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
         mPager = binding.recipePager;
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mPager.setAdapter(pagerAdapter);
+        setToolBar();
+    }
+
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) binding.toolbarRecipeDetails;
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default:
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

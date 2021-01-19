@@ -1,16 +1,15 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
+import com.habbybolan.groceryplanner.models.Ingredient;
 
 import java.util.List;
 
@@ -51,16 +50,26 @@ public class GroceryDetailAdapter extends RecyclerView.Adapter<GroceryDetailAdap
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.txtIngredientName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    view.onIngredientSelected(ingredients.get(getAdapterPosition()));
-                }
+            // click listener for clicking on an ingredient
+            binding.ingredientListContainer.setOnClickListener(v ->
+                    view.onIngredientSelected(ingredients.get(getAdapterPosition())));
+
+            // click listener for clicking an ingredient's check box
+            binding.ingredientCheckBox.setOnClickListener(v -> {
+                if (binding.ingredientCheckBox.isChecked())
+                    view.onItemCheckBoxSelected(ingredients.get(getAdapterPosition()));
+                else
+                    view.onItemCheckBoxUnSelected(ingredients.get(getAdapterPosition()));
             });
         }
 
         void bind(Ingredient ingredient) {
             binding.setIngredientName(ingredient.getName());
+            if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
+            if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
+            if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
+            if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
+            if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
         }
     }
 }

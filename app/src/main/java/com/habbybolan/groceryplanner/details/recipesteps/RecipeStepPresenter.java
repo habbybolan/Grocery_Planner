@@ -10,5 +10,6 @@ public interface RecipeStepPresenter {
 
     void createStepList(Recipe recipe);
     void addNewStep(Recipe recipe, Step step);
+    void deleteRecipe(Recipe recipe);
 
 }

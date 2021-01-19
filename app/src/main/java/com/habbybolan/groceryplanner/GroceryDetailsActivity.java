@@ -2,10 +2,15 @@ package com.habbybolan.groceryplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.habbybolan.groceryplanner.databinding.ActivityGroceryDetailBinding;
 import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailFragment;
 import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
@@ -17,13 +22,32 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
 
     private final String DETAILS_TAG = "details_tag";
     private final String EDIT_TAG = "edit_tag";
+    private ActivityGroceryDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_grocery_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_grocery_detail);
+        setToolBar();
         setDetailFragmentInfo();
     }
+
+    private void setToolBar() {
+        Toolbar toolbar = (Toolbar) binding.toolbarGroceryDetail;
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            default:
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     /**
      * Sets up the details fragment with the Ingredient info to display.

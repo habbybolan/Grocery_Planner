@@ -13,16 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".RecipeDetailActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:parentActivityName="com.habbybolan.groceryplanner.RecipeListActivity"/>
         <activity android:name=".RecipeListActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".GroceryDetailsActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:parentActivityName="com.habbybolan.groceryplanner.GroceryListActivity" >
+        </activity>
         <activity android:name=".GroceryListActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

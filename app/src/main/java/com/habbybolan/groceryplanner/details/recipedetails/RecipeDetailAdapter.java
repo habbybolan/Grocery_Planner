@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.recipedetails;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -51,16 +50,17 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapte
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.txtIngredientName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    view.onIngredientSelected(ingredients.get(getAdapterPosition()));
-                }
-            });
+            binding.ingredientListContainer.setOnClickListener(v ->
+                    view.onIngredientSelected(ingredients.get(getAdapterPosition())));
         }
 
         void bind(Ingredient ingredient) {
             binding.setIngredientName(ingredient.getName());
+            if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
+            if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
+            if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
+            if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
+            if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
         }
     }
 }

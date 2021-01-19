@@ -1,8 +1,7 @@
 package com.habbybolan.groceryplanner.details.ingredientedit;
 
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
+import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.IngredientHolder;
 
 public class IngredientEditInteractorImpl implements IngredientEditInteractor {
@@ -25,5 +24,10 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
     @Override
     public boolean isNewIngredient(Ingredient ingredient) {
         return ingredient.getName().equals("");
+    }
+
+    @Override
+    public void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
+        databaseAccess.deleteIngredientHolderRelationship(ingredientHolder, ingredient);
     }
 }

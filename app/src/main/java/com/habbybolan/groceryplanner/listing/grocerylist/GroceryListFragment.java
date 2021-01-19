@@ -63,18 +63,18 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ingredient_holder_list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grocery_list, container, false);
         initLayout();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_ingredient_holder_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -131,8 +131,7 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
         groceryListPresenter.setView(this);
         if (savedInstanceState != null) {
             // pull saved grocery list from bundled save
-            groceries = savedInstanceState.getParcelableArrayList(Grocery.GROCERY);
-            adapter.notifyDataSetChanged();
+            showGroceryList(savedInstanceState.getParcelableArrayList(Grocery.GROCERY));
         } else {
             // otherwise, pull the list from database and display it.
             groceryListPresenter.createGroceryList();

@@ -17,7 +17,7 @@ public class Ingredient implements Parcelable {
     private int quantity;
     private String quantityType;
     @NonNull
-    private String name;
+    private String name = "";
     private Section section;
 
     public final static String INGREDIENT = "ingredient";
@@ -91,9 +91,7 @@ public class Ingredient implements Parcelable {
     /**
      * Create an empty 'dummy' ingredient. Used for adding new Ingredients.
      */
-    public Ingredient() {
-        name = "";
-    }
+    public Ingredient() {}
 
 
     protected Ingredient(Parcel in) {
@@ -186,6 +184,23 @@ public class Ingredient implements Parcelable {
         // all values are numbers, return true
         return true;
     }
+
+    public boolean hasPrice() {
+        return price > 0;
+    }
+    public boolean hasPricePer() {
+        return pricePer > 0;
+    }
+    public boolean hasPriceType() {
+        return priceType != null;
+    }
+    public boolean hasQuantity() {
+        return quantity > 0;
+    }
+    public boolean hasQuantityType() {
+        return quantityType != null;
+    }
+
 
     public String getName() {
         return name;

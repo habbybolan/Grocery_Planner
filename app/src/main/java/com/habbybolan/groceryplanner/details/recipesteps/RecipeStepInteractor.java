@@ -16,4 +16,5 @@ public interface RecipeStepInteractor {
     List<Step> fetchSteps(Recipe recipe) throws ExecutionException, InterruptedException;
 
     void addNewStep(Step step);
+    void deleteRecipe(Recipe recipe);
 }
