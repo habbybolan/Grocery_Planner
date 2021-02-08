@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.listing.recipelist;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Recipe;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.concurrent.ExecutionException;
 
 public class RecipeListPresenterImpl implements RecipeListPresenter {
 
-    private RecipeListView view;
+    private ListViewInterface view;
     private RecipeListInteractor recipeListInteractor;
     private List<Recipe> loadedRecipes = new ArrayList<>();
 
@@ -27,7 +28,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             loadedRecipes = recipeListInteractor.fetchRecipes();
             if (isViewAttached()) {
-                view.showRecipeList(loadedRecipes);
+                view.showList(loadedRecipes);
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -40,7 +41,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     }
 
     @Override
-    public void setView(RecipeListView view) {
+    public void setView(ListViewInterface view) {
         this.view = view;
     }
 
@@ -50,7 +51,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
             view.loadingStarted();
             loadedRecipes = recipeListInteractor.fetchRecipes();
             if (isViewAttached())
-                view.showRecipeList(loadedRecipes);
+                view.showList(loadedRecipes);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");

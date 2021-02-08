@@ -1,27 +1,24 @@
 package com.habbybolan.groceryplanner.listing.recipelist;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habbybolan.groceryplanner.ListAdapter;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeListDetailsBinding;
 import com.habbybolan.groceryplanner.models.Recipe;
 
 import java.util.List;
 
-public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.ViewHolder> {
+public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder, Recipe> {
 
-    private List<Recipe> recipes;
-    private RecipeListView view;
-
-    RecipeListAdapter(List<Recipe> recipes, RecipeListView view) {
-        this.recipes = recipes;
-        this.view = view;
+    RecipeListAdapter(List<Recipe> recipes, ListViewInterface view) {
+        super(view, recipes);
     }
 
     @NonNull
@@ -34,14 +31,10 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull RecipeListAdapter.ViewHolder holder, int position) {
-        Recipe recipe = recipes.get(position);
+        Recipe recipe = items.get(position);
         holder.bind(recipe);
     }
 
-    @Override
-    public int getItemCount() {
-        return recipes.size();
-    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -51,16 +44,23 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.recipeListContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    view.onRecipeSelected(recipes.get(getAdapterPosition()));
-                }
+            // click listener for clicking on an ingredient
+            binding.recipeListContainer.setOnClickListener(v -> {
+                setOnCLickItem(binding.recipeCheckBox, getAdapterPosition());
             });
+
+            // click listener for clicking an ingredient's check box
+            binding.recipeCheckBox.setOnClickListener(v -> {
+                setOnCLickItemCheckBox(binding.recipeCheckBox, getAdapterPosition());
+            });
+
+            // on long click, go into select mode
+            binding.recipeListContainer.setOnLongClickListener(v -> setOnLongCLickItem(getAdapterPosition()));
         }
 
         void bind(Recipe recipe) {
             binding.setRecipeName(recipe.getName());
+            displayCheckBox(binding.recipeCheckBox);
         }
     }
 }

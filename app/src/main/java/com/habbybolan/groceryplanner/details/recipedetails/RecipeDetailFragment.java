@@ -14,10 +14,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habbybolan.groceryplanner.ListFragment;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
@@ -27,17 +28,12 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
-public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
+public class RecipeDetailFragment extends ListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private RecipeDetailListener recipeDetailListener;
-    private List<Ingredient> ingredients = new ArrayList<>();
     private FragmentRecipeDetailBinding binding;
-    private RecipeDetailAdapter adapter;
     private Recipe recipe;
 
     @Inject
@@ -57,6 +53,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         recipeDetailListener = (RecipeDetailListener) context;
+        attachListener(getContext());
     }
 
     @Override
@@ -82,7 +79,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
         if (getArguments() != null) {
             recipe = getArguments().getParcelable(Recipe.RECIPE);
             if (getArguments().containsKey(Ingredient.INGREDIENT)) {
-                ingredients = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
+                listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
             } else
                 // only the grocery saved, must retrieve its associated Ingredients
                 recipeDetailPresenter.createIngredientList((Recipe) getArguments().getParcelable(Recipe.RECIPE));
@@ -137,7 +134,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
     private void initLayout() {
-        adapter = new RecipeDetailAdapter(ingredients, this);
+        adapter = new RecipeDetailAdapter(listItems, this);
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -146,7 +143,7 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
         binding.btnAddIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recipeDetailListener.createNewIngredient();
+                recipeDetailListener.createNewItem();
             }
         });
     }
@@ -164,30 +161,8 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
         });
     }
 
-    @Override
-    public void onIngredientSelected(Ingredient ingredient) {
-        recipeDetailListener.onIngredientClicked(ingredient);
-    }
-
-    @Override
-    public void showIngredientList(List<Ingredient> ingredients) {
-        this.ingredients.clear();
-        this.ingredients.addAll(ingredients);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
-    }
-
     public void reloadList() {
         recipeDetailPresenter.createIngredientList(recipe);
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -199,10 +174,9 @@ public class RecipeDetailFragment extends Fragment implements RecipeDetailView {
     /**
      * Listener interface implemented by {@link com.habbybolan.groceryplanner.RecipeDetailActivity}
      */
-    public interface RecipeDetailListener {
+    public interface RecipeDetailListener extends ItemListener<Ingredient> {
 
-        void onIngredientClicked(Ingredient ingredient);
-        void createNewIngredient();
+        void createNewItem();
         void onRecipeDeleted();
     }
 }

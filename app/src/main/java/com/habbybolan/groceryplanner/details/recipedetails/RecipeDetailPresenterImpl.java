@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.details.recipedetails;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Recipe;
 
 import java.util.concurrent.ExecutionException;
@@ -7,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
 
     private RecipeDetailInteractor recipeDetailInteractor;
-    private RecipeDetailView view;
+    private ListViewInterface view;
     // private List<Ingredient> loadedIngredients = new ArrayList<>();
 
     public RecipeDetailPresenterImpl(RecipeDetailInteractor recipeDetailInteractor) {
@@ -15,7 +16,7 @@ public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
     }
 
     @Override
-    public void setView(RecipeDetailView view) {
+    public void setView(ListViewInterface view) {
         this.view = view;
     }
 
@@ -42,7 +43,7 @@ public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
     public void createIngredientList(Recipe recipe) {
         try {
             if (isViewAttached()) {
-                view.showIngredientList(recipeDetailInteractor.fetchIngredients(recipe));
+                view.showList(recipeDetailInteractor.fetchIngredients(recipe));
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

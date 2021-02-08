@@ -17,11 +17,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.habbybolan.groceryplanner.ListFragment;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
@@ -31,20 +32,16 @@ import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Recipe;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipeListFragment extends Fragment implements RecipeListView{
+public class RecipeListFragment extends ListFragment<Recipe> implements ListViewInterface<Recipe> {
 
     @Inject
     RecipeListPresenter recipeListPresenter;
 
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
-    private RecipeListAdapter adapter;
-
-    private List<Recipe> recipes = new ArrayList<>();
 
     public RecipeListFragment() {}
 
@@ -52,6 +49,7 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         recipeListListener = (RecipeListListener) context;
+        attachListener(getContext());
     }
 
     @Override
@@ -120,7 +118,7 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
         recipeListPresenter.setView(this);
         if (savedInstanceState != null) {
             // pull saved recipe list from bundled save
-            recipes = savedInstanceState.getParcelableArrayList(Recipe.RECIPE);
+            listItems = savedInstanceState.getParcelableArrayList(Recipe.RECIPE);
             adapter.notifyDataSetChanged();
         } else {
             // otherwise, pull the list from database and display it.
@@ -132,7 +130,7 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
      * Initiate the Recycler View to display list of recipes and button clickers.
      */
     private void initLayout() {
-        adapter = new RecipeListAdapter(recipes, this);
+        adapter = new RecipeListAdapter(listItems, this);
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -176,19 +174,6 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
     }
 
     @Override
-    public void showRecipeList(List<Recipe> recipes) {
-        this.recipes.clear();
-        this.recipes.addAll(recipes);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onRecipeSelected(Recipe recipe) {
-        recipeListListener.onRecipeClicked(recipe);
-        recipeListPresenter.destroy();
-    }
-
-    @Override
     public void loadingStarted() {
         Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
     }
@@ -201,12 +186,11 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(Recipe.RECIPE, (ArrayList<? extends Parcelable>) recipes);
+        outState.putParcelableArrayList(Recipe.RECIPE, (ArrayList<? extends Parcelable>) listItems);
     }
 
-    public interface RecipeListListener {
+    public interface RecipeListListener extends ItemListener<Recipe> {
 
         void gotoGroceryList();
-        void onRecipeClicked(Recipe recipe);
     }
 }

@@ -2,6 +2,7 @@ package com.habbybolan.groceryplanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +15,7 @@ import com.habbybolan.groceryplanner.models.Recipe;
 public class RecipeListActivity extends AppCompatActivity implements RecipeListFragment.RecipeListListener {
 
     private ActivityRecipeListBinding binding;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
     }
 
     private void setToolBar() {
-        androidx.appcompat.widget.Toolbar toolbar = (Toolbar) binding.toolbarRecipeList;
+        toolbar = (Toolbar) binding.toolbarRecipeList;
         toolbar.setTitle(R.string.title_recipe_list);
         setSupportActionBar(toolbar);
     }
@@ -37,7 +39,7 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
     }
 
     @Override
-    public void onRecipeClicked(Recipe recipe) {
+    public void onItemClicked(Recipe recipe) {
         Intent intent = new Intent(this, RecipeDetailActivity.class);
         intent.putExtra(Recipe.RECIPE, recipe);
         startActivity(intent);
@@ -48,5 +50,15 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
         /*Intent intent = new Intent(this, GroceryListActivity.class);
         startActivity(intent);
         finish();*/
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 }

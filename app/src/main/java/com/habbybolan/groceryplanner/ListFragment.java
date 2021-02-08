@@ -24,12 +24,8 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     protected List<T> listItems = new ArrayList<>();
     private ItemListener<T> itemListener;
 
-    private String adapterErrorMessage = "Must attach adapter to ListFragment with attachAdapter(ListAdapter listAdapter)";
+    private String adapterErrorMessage = "Must attach adapter to ListFragment from child class)";
     private String listenerErrorMessage = "Must attach listener to ListFragment with attachListener(Context context)";
-
-    protected void attachAdapter(ListAdapter listAdapter) {
-        adapter = listAdapter;
-    }
 
     public void attachListener(Context context) {
         itemListener = (ItemListener<T>) context;
@@ -152,7 +148,6 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     public interface ItemListener<T> {
 
         void onItemClicked(T t);
-        void createNewItem();
         void hideToolbar();
         void showToolbar();
     }

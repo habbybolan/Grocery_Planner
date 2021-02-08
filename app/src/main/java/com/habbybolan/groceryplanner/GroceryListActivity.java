@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,6 +16,7 @@ import com.habbybolan.groceryplanner.models.Grocery;
 public class GroceryListActivity extends AppCompatActivity implements GroceryListFragment.GroceryListListener {
 
     private ActivityGroceryListBinding binding;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,7 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
      * Sets up the toolbar.
      */
     private void setToolBar() {
-        Toolbar toolbar = (Toolbar) binding.toolbarGroceryList;
+        toolbar = (Toolbar) binding.toolbarGroceryList;
         setSupportActionBar(toolbar);
     }
 
@@ -47,10 +49,20 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
     }
 
     @Override
-    public void onGroceryClicked(Grocery grocery) {
+    public void onItemClicked(Grocery grocery) {
         Intent intent = new Intent(this, GroceryDetailsActivity.class);
         intent.putExtra(Grocery.GROCERY, grocery);
         startActivity(intent);
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

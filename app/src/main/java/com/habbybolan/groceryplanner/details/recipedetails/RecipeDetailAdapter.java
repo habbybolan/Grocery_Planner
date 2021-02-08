@@ -7,20 +7,18 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habbybolan.groceryplanner.ListAdapter;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
 import com.habbybolan.groceryplanner.models.Ingredient;
 
 import java.util.List;
 
-public class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.ViewHolder> {
+public class RecipeDetailAdapter extends ListAdapter<RecipeDetailAdapter.ViewHolder, Ingredient> {
 
-    private List<Ingredient> ingredients;
-    private RecipeDetailView view;
-
-    RecipeDetailAdapter(List<Ingredient> ingredients, RecipeDetailView view) {
-        this.ingredients = ingredients;
-        this.view = view;
+    RecipeDetailAdapter(List<Ingredient> ingredients, ListViewInterface view) {
+        super(view, ingredients);
     }
 
     @NonNull
@@ -33,13 +31,8 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapte
 
     @Override
     public void onBindViewHolder(@NonNull RecipeDetailAdapter.ViewHolder holder, int position) {
-        Ingredient ingredient = ingredients.get(position);
+        Ingredient ingredient = items.get(position);
         holder.bind(ingredient);
-    }
-
-    @Override
-    public int getItemCount() {
-        return ingredients.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,8 +43,18 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapte
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.ingredientListContainer.setOnClickListener(v ->
-                    view.onIngredientSelected(ingredients.get(getAdapterPosition())));
+            // click listener for clicking on an ingredient
+            binding.ingredientListContainer.setOnClickListener(v -> {
+                setOnCLickItem(binding.ingredientCheckBox, getAdapterPosition());
+            });
+
+            // click listener for clicking an ingredient's check box
+            binding.ingredientCheckBox.setOnClickListener(v -> {
+                setOnCLickItemCheckBox(binding.ingredientCheckBox, getAdapterPosition());
+            });
+
+            // on long click, go into select mode
+            binding.ingredientListContainer.setOnLongClickListener(v -> setOnLongCLickItem(getAdapterPosition()));
         }
 
         void bind(Ingredient ingredient) {
@@ -61,6 +64,7 @@ public class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapte
             if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
             if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
+            displayCheckBox(binding.ingredientCheckBox);
         }
     }
 }

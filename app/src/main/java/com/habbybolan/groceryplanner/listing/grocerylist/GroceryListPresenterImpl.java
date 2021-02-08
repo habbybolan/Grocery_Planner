@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.listing.grocerylist;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import javax.inject.Inject;
 public class GroceryListPresenterImpl implements GroceryListPresenter {
 
     // allows talking to GroceryListFragment
-    private GroceryListView view;
+    private ListViewInterface view;
     private GroceryListInteractor groceryListInteractor;
     private List<Grocery> loadedGroceries = new ArrayList<>();
 
@@ -30,7 +31,7 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
             view.loadingStarted();
             loadedGroceries = groceryListInteractor.fetchGroceries();
             if (isViewAttached())
-                view.showGroceryList(loadedGroceries);
+                view.showList(loadedGroceries);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -46,7 +47,7 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
     }
 
     @Override
-    public void setView(GroceryListView view) {
+    public void setView(ListViewInterface view) {
         this.view = view;
     }
 
@@ -66,10 +67,10 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
         try {
             loadedGroceries = groceryListInteractor.fetchGroceries();
             if (isViewAttached())
-                view.showGroceryList(loadedGroceries);
+                view.showList(loadedGroceries);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            view.loadingFailed("Failed to retrieve datra");
+            view.loadingFailed("Failed to retrieve data");
         }
     }
 }

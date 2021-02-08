@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -46,30 +45,16 @@ public class GroceryDetailAdapter extends ListAdapter<GroceryDetailAdapter.ViewH
 
             // click listener for clicking on an ingredient
             binding.ingredientListContainer.setOnClickListener(v -> {
-                // if in the selectMode, disable being able to go into the ingredient
-                if (selectMode)
-                    checkBoxClick(binding.ingredientCheckBox, getAdapterPosition(), items);
-                else {
-                    // otherwise, allow normal Ingredient editing
-                    view.onItemSelected(items.get(getAdapterPosition()));
-                }
+                setOnCLickItem(binding.ingredientCheckBox, getAdapterPosition());
             });
 
             // click listener for clicking an ingredient's check box
             binding.ingredientCheckBox.setOnClickListener(v -> {
-                checkBoxClick(binding.ingredientCheckBox, getAdapterPosition(), items);
+                setOnCLickItemCheckBox(binding.ingredientCheckBox, getAdapterPosition());
             });
 
             // on long click, go into select mode
-            binding.ingredientListContainer.setOnLongClickListener(v -> {
-                if (!selectMode) {
-                    selectMode = true;
-                    view.enterSelectMode();
-                    notifyDataSetChanged();
-                    return true;
-                }
-                return false;
-            });
+            binding.ingredientListContainer.setOnLongClickListener(v -> setOnLongCLickItem(getAdapterPosition()));
         }
 
         public void bind(Ingredient ingredient) {
@@ -79,13 +64,7 @@ public class GroceryDetailAdapter extends ListAdapter<GroceryDetailAdapter.ViewH
             if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
             if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
-            // if the select mode is activated, then display checkboxes to select multiple items
-            if (selectMode) {
-                binding.ingredientCheckBox.setVisibility(View.VISIBLE);
-            } else {
-                binding.ingredientCheckBox.setVisibility(View.GONE);
-                binding.ingredientCheckBox.setChecked(false);
-            }
+            displayCheckBox(binding.ingredientCheckBox);
         }
     }
 

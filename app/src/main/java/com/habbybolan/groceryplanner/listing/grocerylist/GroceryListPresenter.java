@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.listing.grocerylist;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 public interface GroceryListPresenter {
@@ -9,7 +10,7 @@ public interface GroceryListPresenter {
      * Calls method to set up the beginning of the grocery list.
      * @param view  Implementation holding methods implemented in GroceryListFragment.
      */
-    void setView(GroceryListView view);
+    void setView(ListViewInterface view);
 
     /**
      * Create a list by accessing local/online database.

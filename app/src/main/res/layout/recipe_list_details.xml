@@ -11,17 +11,24 @@
     <RelativeLayout
         android:id="@+id/recipe_list_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/list_height"
+        android:layout_height="45dp"
         android:layout_marginBottom="@dimen/list_margin_bottom"
         android:background="@color/colorListBackground"
         android:elevation="@dimen/list_elevation">
+        <CheckBox
+            android:id="@+id/recipe_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/txt_recipe_name"
+            android:id="@+id/txt_list_name"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/list_txt_margin_start"
             android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/list_txt_margin_start"
+            android:layout_toEndOf="@+id/recipe_check_box"
             android:text="@{recipeName}" />
 
     </RelativeLayout>

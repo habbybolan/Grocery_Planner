@@ -28,6 +28,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
 
     private Recipe recipe;
     ActivityRecipeDetailBinding binding;
+    private Toolbar toolbar;
 
     private RecipeDetailFragment recipeDetailFragment;
     private RecipeStepFragment recipeStepFragment;
@@ -64,7 +65,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
     }
 
     private void setToolBar() {
-        Toolbar toolbar = (Toolbar) binding.toolbarRecipeDetails;
+        toolbar = (Toolbar) binding.toolbarRecipeDetails;
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -101,13 +102,13 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
     }
 
     @Override
-    public void onIngredientClicked(Ingredient ingredient) {
+    public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
         showIngredientEditContainer();
     }
 
     @Override
-    public void createNewIngredient() {
+    public void createNewItem() {
         startEditFragment(new Ingredient());
         showIngredientEditContainer();
     }
@@ -116,6 +117,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
      * Shows the Ingredient edit Fragment container, hiding the 2 pager fragments.
      */
     private void showIngredientEditContainer() {
+        toolbar.getMenu().clear();
         binding.recipePager.setVisibility(View.GONE);
         binding.ingredientEditContainer.setVisibility(View.VISIBLE);
     }
@@ -155,6 +157,16 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
                 // otherwise, go from the steps list to Ingredients list
                 mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     /**

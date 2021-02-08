@@ -17,11 +17,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.habbybolan.groceryplanner.ListFragment;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
@@ -30,7 +31,6 @@ import com.habbybolan.groceryplanner.di.module.GroceryListModule;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,16 +38,13 @@ import javax.inject.Inject;
  * Fragment for displaying the list of Grocery object names. Can edit the names of the lists, or enter
  * the list to see the Grocery contents.
  */
-public class GroceryListFragment extends Fragment implements GroceryListView {
+public class GroceryListFragment extends ListFragment<Grocery> implements ListViewInterface<Grocery> {
 
     @Inject
     GroceryListPresenter groceryListPresenter;
 
     private GroceryListListener groceryListListener;
     private FragmentGroceryListBinding binding;
-    private GroceryListAdapter adapter;
-
-    private List<Grocery> groceries = new ArrayList<>();
 
     public GroceryListFragment() {}
 
@@ -55,6 +52,7 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         groceryListListener = (GroceryListListener) context;
+        attachListener(getContext());
     }
 
     @Override
@@ -121,7 +119,7 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
      * Initiate the Recycler View to display list of groceries and bottom action bar.
      */
     private void initLayout() {
-        adapter = new GroceryListAdapter(groceries, this);
+        adapter = new GroceryListAdapter(listItems, this);
         RecyclerView rv = binding.groceryList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -140,34 +138,11 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
         groceryListPresenter.setView(this);
         if (savedInstanceState != null) {
             // pull saved grocery list from bundled save
-            showGroceryList(savedInstanceState.getParcelableArrayList(Grocery.GROCERY));
+            showList(savedInstanceState.getParcelableArrayList(Grocery.GROCERY));
         } else {
             // otherwise, pull the list from database and display it.
             groceryListPresenter.createGroceryList();
         }
-    }
-
-    @Override
-    public void showGroceryList(List<Grocery> groceries) {
-        this.groceries.clear();
-        this.groceries.addAll(groceries);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onGrocerySelected(Grocery grocery) {
-        groceryListListener.onGroceryClicked(grocery);
-        groceryListPresenter.destroy();
-    }
-
-    @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -203,13 +178,12 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(Grocery.GROCERY, (ArrayList<? extends Parcelable>) groceries);
+        outState.putParcelableArrayList(Grocery.GROCERY, (ArrayList<? extends Parcelable>) listItems);
     }
 
     // Allows communication between GroceryListActivity and GroceryListFragment
-    public interface GroceryListListener {
+    public interface GroceryListListener extends ItemListener<Grocery> {
 
         void gotoRecipeList();
-        void onGroceryClicked(Grocery grocery);
     }
 }

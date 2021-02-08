@@ -38,7 +38,6 @@ import javax.inject.Inject;
 public class GroceryDetailFragment extends ListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private FragmentGroceryDetailBinding binding;
-    private GroceryDetailAdapter adapter;
     private GroceryDetailsListener groceryDetailsListener;
     private Grocery grocery;
 
@@ -48,9 +47,9 @@ public class GroceryDetailFragment extends ListFragment<Ingredient> implements L
     private GroceryDetailFragment() {}
 
     public static GroceryDetailFragment getInstance(@NonNull Grocery grocery) {
+        GroceryDetailFragment fragment = new GroceryDetailFragment();
         Bundle args = new Bundle();
         args.putParcelable(Grocery.GROCERY, grocery);
-        GroceryDetailFragment fragment = new GroceryDetailFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -142,7 +141,6 @@ public class GroceryDetailFragment extends ListFragment<Ingredient> implements L
      */
     private void initLayout() {
         adapter = new GroceryDetailAdapter(listItems, this);
-        attachAdapter(adapter);
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -165,95 +163,9 @@ public class GroceryDetailFragment extends ListFragment<Ingredient> implements L
         });
     }
 
-    /*@Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
-    }
+    public interface GroceryDetailsListener extends ItemListener<Ingredient> {
 
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onItemCheckBoxSelected(Ingredient ingredient) {
-        ingredientsChecked.add(ingredient);
-    }
-
-    @Override
-    public void onItemCheckBoxUnSelected(Ingredient ingredient) {
-        ingredientsChecked.remove(ingredient);
-        if (ingredientsChecked.size() == 0) exitSelectedMode();
-    }
-
-    @Override
-    public void enterSelectMode() {
-        groceryDetailsListener.hideToolbar();
-        createActionMode();
-    }
-
-    @Override
-    public void exitSelectedMode() {
-        destroyActionMode();
-        groceryDetailsListener.showToolbar();
-        adapter.exitSelectedMode();
-        listItemsChecked.clear();
-    }
-
-    @Override
-    public void createActionMode() {
-        actionMode = getActivity().startActionMode(actionModeCallback);
-    }
-
-    @Override
-    public void destroyActionMode() {
-        if (actionMode != null) actionMode.finish();
-    }
-
-    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_ingredient_context, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_ingredient_context_delete:
-                    Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-                    exitSelectedMode();
-                    return true;
-                case R.id.action_ingredient_context_cancel:
-                    exitSelectedMode();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            actionMode = null;
-            exitSelectedMode();
-        }
-    };*/
-
-    public interface GroceryDetailsListener extends ItemListener<Ingredient>{
+        void createNewItem();
         void onGroceryDeleted();
     }
 
