@@ -10,6 +10,4 @@ public interface GroceryDetailsView {
     void showIngredientList(List<Ingredient> ingredients);
     void loadingStarted();
     void loadingFailed(String message);
-    void onItemCheckBoxSelected(Ingredient ingredient);
-    void onItemCheckBoxUnSelected(Ingredient ingredient);
 }

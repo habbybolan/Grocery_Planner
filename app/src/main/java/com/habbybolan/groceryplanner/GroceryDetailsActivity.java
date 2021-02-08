@@ -3,12 +3,12 @@ package com.habbybolan.groceryplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryDetailBinding;
 import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailFragment;
@@ -23,6 +23,7 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     private final String DETAILS_TAG = "details_tag";
     private final String EDIT_TAG = "edit_tag";
     private ActivityGroceryDetailBinding binding;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     }
 
     private void setToolBar() {
-        Toolbar toolbar = (Toolbar) binding.toolbarGroceryDetail;
+        toolbar = (Toolbar) binding.toolbarGroceryDetail;
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -73,18 +74,28 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     }
 
     @Override
-    public void onIngredientClicked(Ingredient ingredient) {
+    public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
     }
 
     @Override
-    public void createNewIngredient() {
+    public void createNewItem() {
         startEditFragment(new Ingredient());
     }
 
     @Override
     public void onGroceryDeleted() {
         goBackToGroceryList();
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -117,10 +128,9 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
+        GroceryDetailFragment fragment = (GroceryDetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
         if (fragment != null) {
-            // kill the activity and recover the GroceryListActivity
-            goBackToGroceryList();
+            // do nothing?
         } else {
             // on editing fragment, go back to the details fragment
             onDoneEditing();

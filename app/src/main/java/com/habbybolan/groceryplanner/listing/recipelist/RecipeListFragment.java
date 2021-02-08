@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
@@ -134,6 +136,13 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
+
+        View view = binding.recipeListBottomAction;
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
+        floatingActionButton.setOnClickListener(v -> onAddRecipeClicked());
+
+        ImageButton gotoGroceryButton = view.findViewById(R.id.btn_goto_other_list);
+        gotoGroceryButton.setOnClickListener(v -> recipeListListener.gotoGroceryList());
     }
 
     /**
@@ -197,6 +206,7 @@ public class RecipeListFragment extends Fragment implements RecipeListView{
 
     public interface RecipeListListener {
 
+        void gotoGroceryList();
         void onRecipeClicked(Recipe recipe);
     }
 }

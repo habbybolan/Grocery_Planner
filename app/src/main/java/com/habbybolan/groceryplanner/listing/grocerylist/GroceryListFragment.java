@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
@@ -116,13 +118,20 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
     }
 
     /**
-     * Initiate the Recycler View to display list of groceries and button clickers.
+     * Initiate the Recycler View to display list of groceries and bottom action bar.
      */
     private void initLayout() {
         adapter = new GroceryListAdapter(groceries, this);
         RecyclerView rv = binding.groceryList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
+
+        View view = binding.groceryListBottomAction;
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
+        floatingActionButton.setOnClickListener(v -> onAddGroceryClicked());
+
+        ImageButton gotoRecipeButton = view.findViewById(R.id.btn_goto_other_list);
+        gotoRecipeButton.setOnClickListener(v -> groceryListListener.gotoRecipeList());
     }
 
     @Override
@@ -200,6 +209,7 @@ public class GroceryListFragment extends Fragment implements GroceryListView {
     // Allows communication between GroceryListActivity and GroceryListFragment
     public interface GroceryListListener {
 
+        void gotoRecipeList();
         void onGroceryClicked(Grocery grocery);
     }
 }

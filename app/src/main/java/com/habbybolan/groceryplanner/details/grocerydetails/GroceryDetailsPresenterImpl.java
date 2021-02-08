@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
 
@@ -12,7 +13,7 @@ import javax.inject.Inject;
 public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
 
     private GroceryDetailsInteractor groceryDetailsInteractor;
-    private GroceryDetailsView view;
+    private ListViewInterface view;
     private List<Ingredient> loadedIngredients = new ArrayList<>();
 
     @Inject
@@ -21,7 +22,7 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
     }
 
     @Override
-    public void setView(GroceryDetailsView view) {
+    public void setView(ListViewInterface view) {
         this.view = view;
     }
 
@@ -53,7 +54,7 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
         try {
             loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
             if (isViewAttached()) {
-                view.showIngredientList(loadedIngredients);
+                view.showList(loadedIngredients);
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

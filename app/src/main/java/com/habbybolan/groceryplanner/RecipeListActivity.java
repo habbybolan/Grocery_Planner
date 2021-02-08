@@ -29,6 +29,14 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
     }
 
     @Override
+    public void gotoGroceryList() {
+        Intent intent = new Intent(this, GroceryListActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.anim_slide_enter_from_right, R.anim.anim_slide_exit_to_left);
+    }
+
+    @Override
     public void onRecipeClicked(Recipe recipe) {
         Intent intent = new Intent(this, RecipeDetailActivity.class);
         intent.putExtra(Recipe.RECIPE, recipe);
@@ -37,8 +45,8 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, GroceryListActivity.class);
+        /*Intent intent = new Intent(this, GroceryListActivity.class);
         startActivity(intent);
-        finish();
+        finish();*/
     }
 }

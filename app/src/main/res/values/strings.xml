@@ -12,5 +12,9 @@
     <string name="title_recipe_list">Recipe Planner</string>
 
     <string name="search">Search</string>
-    <string name="more">More</string>
+    <string name="settings">Settings</string>
+    <string name="burger">Burger</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

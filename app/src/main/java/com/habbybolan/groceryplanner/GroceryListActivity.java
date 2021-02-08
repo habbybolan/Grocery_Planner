@@ -14,7 +14,6 @@ import com.habbybolan.groceryplanner.models.Grocery;
 
 public class GroceryListActivity extends AppCompatActivity implements GroceryListFragment.GroceryListListener {
 
-
     private ActivityGroceryListBinding binding;
 
     @Override
@@ -37,6 +36,14 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.burger_menu, menu);
         return true;
+    }
+
+    @Override
+    public void gotoRecipeList() {
+        Intent intent = new Intent(this, RecipeListActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.anim_slide_enter_from_left, R.anim.anim_slide_exit_to_right);
     }
 
     @Override

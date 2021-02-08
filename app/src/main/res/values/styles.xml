@@ -8,12 +8,18 @@
         <item name="buttonStyle">@style/DefaultButton</item>
     </style>
 
+    <style name="MyMaterialTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Add attributes here -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
     <style name="DefaultButton" parent="Base.Widget.AppCompat.Button">
         <item name="android:layout_height">@dimen/default_button_height</item>
         <item name="android:layout_width">@dimen/default_button_width</item>
         <item name="android:background">?attr/colorAccent</item>
-        <item name="android:textColor">@android:color/primary_text_light_nodisable</item>
+        <item name="android:textColor">@android:color/primary_text_dark_nodisable</item>
     </style>
 
     <style name="fragmentDividerSwipeStyle">

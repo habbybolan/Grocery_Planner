@@ -15,10 +15,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.habbybolan.groceryplanner.ListFragment;
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
@@ -29,20 +30,17 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 /**
  */
-public class GroceryDetailFragment extends Fragment implements GroceryDetailsView {
+public class GroceryDetailFragment extends ListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private FragmentGroceryDetailBinding binding;
     private GroceryDetailAdapter adapter;
-    private List<Ingredient> ingredients = new ArrayList<>();
     private GroceryDetailsListener groceryDetailsListener;
     private Grocery grocery;
-    private List<Ingredient> ingredientsChecked = new ArrayList<>();
 
     @Inject
     GroceryDetailsPresenter groceryDetailsPresenter;
@@ -61,6 +59,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         groceryDetailsListener = (GroceryDetailsListener) context;
+        attachListener(getContext());
     }
 
     @Override
@@ -91,7 +90,8 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
             case R.id.action_search:
                 return true;
             case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
+                // todo: what to anchor to? - not search
+                showSortPopup(getActivity().findViewById(R.id.action_search));
                 return true;
             case R.id.action_delete:
                 deleteGrocery();
@@ -130,7 +130,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
         if (getArguments() != null) {
             grocery = getArguments().getParcelable(Grocery.GROCERY);
             if (getArguments().containsKey(Ingredient.INGREDIENT)) {
-                ingredients = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
+                listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
             } else
                 // only the grocery saved, must retrieve its associated Ingredients
                 groceryDetailsPresenter.createIngredientList((Grocery) getArguments().getParcelable(Grocery.GROCERY));
@@ -141,14 +141,15 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
     private void initLayout() {
-        adapter = new GroceryDetailAdapter(ingredients, this);
+        adapter = new GroceryDetailAdapter(listItems, this);
+        attachAdapter(adapter);
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
         // button clicker to add a new ingredient to the grocery
         binding.btnAddIngredient.setOnClickListener(v ->
-                groceryDetailsListener.createNewIngredient());
+                groceryDetailsListener.createNewItem());
     }
 
     /**
@@ -164,20 +165,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
         });
     }
 
-
-    @Override
-    public void onIngredientSelected(Ingredient ingredient) {
-        groceryDetailsListener.onIngredientClicked(ingredient);
-    }
-
-    @Override
-    public void showIngredientList(List<Ingredient> ingredients) {
-        this.ingredients.clear();
-        this.ingredients.addAll(ingredients);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
+    /*@Override
     public void loadingStarted() {
         Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
     }
@@ -187,6 +175,7 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+
     @Override
     public void onItemCheckBoxSelected(Ingredient ingredient) {
         ingredientsChecked.add(ingredient);
@@ -195,19 +184,83 @@ public class GroceryDetailFragment extends Fragment implements GroceryDetailsVie
     @Override
     public void onItemCheckBoxUnSelected(Ingredient ingredient) {
         ingredientsChecked.remove(ingredient);
+        if (ingredientsChecked.size() == 0) exitSelectedMode();
     }
 
-    public interface GroceryDetailsListener {
+    @Override
+    public void enterSelectMode() {
+        groceryDetailsListener.hideToolbar();
+        createActionMode();
+    }
 
-        void onIngredientClicked(Ingredient ingredientId);
-        void createNewIngredient();
+    @Override
+    public void exitSelectedMode() {
+        destroyActionMode();
+        groceryDetailsListener.showToolbar();
+        adapter.exitSelectedMode();
+        listItemsChecked.clear();
+    }
+
+    @Override
+    public void createActionMode() {
+        actionMode = getActivity().startActionMode(actionModeCallback);
+    }
+
+    @Override
+    public void destroyActionMode() {
+        if (actionMode != null) actionMode.finish();
+    }
+
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_ingredient_context, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_ingredient_context_delete:
+                    Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
+                    exitSelectedMode();
+                    return true;
+                case R.id.action_ingredient_context_cancel:
+                    exitSelectedMode();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            exitSelectedMode();
+        }
+    };*/
+
+    public interface GroceryDetailsListener extends ItemListener<Ingredient>{
         void onGroceryDeleted();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(Ingredient.INGREDIENT, (ArrayList<? extends Parcelable>) ingredients);
+        outState.putParcelableArrayList(Ingredient.INGREDIENT, (ArrayList<? extends Parcelable>) listItems);
         outState.putParcelable(Grocery.GROCERY, grocery);
     }
 }

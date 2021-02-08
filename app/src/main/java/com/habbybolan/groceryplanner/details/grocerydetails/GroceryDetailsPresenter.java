@@ -1,10 +1,11 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
+import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 public interface GroceryDetailsPresenter {
 
-    void setView(GroceryDetailsView view);
+    void setView(ListViewInterface view);
     void destroy();
 
     /**
