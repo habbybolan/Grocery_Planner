@@ -17,7 +17,7 @@
 
         <include
             android:id="@+id/grocery_list_bottom_action"
-            layout="@layout/bottom_action_bar"/>
+            layout="@layout/bottom_action_bar_ingredient_holder"/>
 
     </LinearLayout>
 </layout>

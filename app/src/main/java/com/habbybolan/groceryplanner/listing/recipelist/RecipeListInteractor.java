@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 public interface RecipeListInteractor {
 
     List<Recipe> fetchRecipes() throws ExecutionException, InterruptedException;
+    void deleteRecipe(Recipe recipe);
+    void deleteRecipes(List<Recipe> recipes);
     List<Recipe> searchRecipes(String search);
     void addRecipe(Recipe recipe);
 }

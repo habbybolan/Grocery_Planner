@@ -4,35 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".details.grocerydetails.GroceryDetailFragment">
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:id="@+id/grocery_details_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredient_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ingredient_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        <include
+            android:id="@+id/grocery_detail_bottom_action"
+            layout="@layout/bottom_action_bar_list_details"/>
 
-        </FrameLayout>
-
-        <Button
-            android:id="@+id/btn_add_ingredient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Add Ingredient"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

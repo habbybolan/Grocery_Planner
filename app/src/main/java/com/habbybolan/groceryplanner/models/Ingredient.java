@@ -32,6 +32,7 @@ public class Ingredient implements Parcelable {
         this.quantityType = quantityType;
     }
 
+
     /**
      * Builder for Ingredient.
      */
@@ -201,7 +202,6 @@ public class Ingredient implements Parcelable {
         return quantityType != null;
     }
 
-
     public String getName() {
         return name;
     }
@@ -242,4 +242,5 @@ public class Ingredient implements Parcelable {
     public void setQuantityType(String quantityType) {
         this.quantityType = quantityType;
     }
+
 }

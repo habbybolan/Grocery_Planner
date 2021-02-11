@@ -3,6 +3,8 @@ package com.habbybolan.groceryplanner.listing.grocerylist;
 import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 
+import java.util.List;
+
 public interface GroceryListPresenter {
 
     /**
@@ -22,6 +24,18 @@ public interface GroceryListPresenter {
      * Destroy the Presenter.
      */
     void destroy();
+
+    /**
+     * Delete a grocery
+     * @param grocery   grocery to delete
+     */
+    void deleteGrocery(Grocery grocery);
+
+    /**
+     * Delete a list of groceries
+     * @param groceries Groceries to delete
+     */
+    void deleteGroceries(List<Grocery>groceries);
 
     /**
      * Find Grocery objects based on the groceryName typed.

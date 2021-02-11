@@ -14,6 +14,7 @@ public class GroceryWithIngredients {
 
     @Embedded public GroceryEntity grocery;
     @Relation(
+
             parentColumn = "groceryId",
             entityColumn = "ingredientName",
             associateBy = @Junction(

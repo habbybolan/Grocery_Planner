@@ -12,22 +12,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RecipeDetailActivity"
+        <activity android:name=".MainPage.MainActivity"
             android:theme="@style/MyMaterialTheme"
-            android:parentActivityName="com.habbybolan.groceryplanner.RecipeListActivity"/>
-        <activity android:name=".RecipeListActivity"
-            android:theme="@style/MyMaterialTheme">
-        </activity>
-        <activity android:name=".GroceryDetailsActivity"
-            android:theme="@style/MyMaterialTheme"
-            android:parentActivityName="com.habbybolan.groceryplanner.GroceryListActivity" >
-        </activity>
-        <activity android:name=".GroceryListActivity"
-            android:theme="@style/MyMaterialTheme">
+            android:parentActivityName=".GroceryListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".RecipeDetailActivity"
+            android:parentActivityName=".MainPage.MainActivity"
+            android:theme="@style/MyMaterialTheme" />
+        <activity
+            android:name=".RecipeListActivity"
+            android:theme="@style/MyMaterialTheme"
+            android:parentActivityName=".MainPage.MainActivity">
+        </activity>
+        <activity
+            android:name=".GroceryDetailsActivity"
+            android:parentActivityName=".MainPage.MainActivity"
+            android:theme="@style/MyMaterialTheme">
+        </activity>
+        <activity
+            android:name=".GroceryListActivity"
+            android:theme="@style/MyMaterialTheme"
+            android:parentActivityName=".MainPage.MainActivity">
         </activity>
     </application>
 

@@ -16,4 +16,18 @@ public interface GroceryDetailsInteractor {
      * @return          All Ingredients associated with grocery
      */
     List<Ingredient> fetchIngredients(Grocery grocery) throws ExecutionException, InterruptedException;
+
+    /**
+     * Delete an ingredient from the grocery
+     * @param grocery       The grocery to delete the ingredient from
+     * @param ingredient    The ingredient to delete
+     */
+    void deleteIngredient(Grocery grocery, Ingredient ingredient);
+
+    /**
+     * Delete ingredients from the grocery
+     * @param grocery       The grocery to delete the ingredients from
+     * @param ingredients   The ingredients to delete
+     */
+    void deleteIngredients(Grocery grocery, List<Ingredient> ingredients);
 }

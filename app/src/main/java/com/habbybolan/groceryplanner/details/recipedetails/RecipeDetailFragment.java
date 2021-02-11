@@ -17,6 +17,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.ListFragment;
 import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
@@ -139,13 +140,10 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        // button clicker to add a new ingredient to the grocery
-        binding.btnAddIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recipeDetailListener.createNewItem();
-            }
-        });
+        // on click for adding an Ingredient from floating action button
+        View view = binding.recipeDetailBottomAction;
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
+        floatingActionButton.setOnClickListener(v -> recipeDetailListener.createNewItem());
     }
 
     /**
@@ -169,6 +167,11 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
     public void onResume() {
         super.onResume();
         getActivity().setTitle("Recipe Ingredients");
+    }
+
+    @Override
+    public void deleteSelectedItems() {
+        recipeDetailPresenter.deleteIngredients(recipe, listItemsChecked);
     }
 
     /**

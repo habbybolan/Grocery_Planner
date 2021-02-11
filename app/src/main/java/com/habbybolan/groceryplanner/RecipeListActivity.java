@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -24,10 +25,15 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
         setToolBar();
     }
 
+    /**
+     * Sets up the toolbar with Up button.
+     */
     private void setToolBar() {
         toolbar = (Toolbar) binding.toolbarRecipeList;
         toolbar.setTitle(R.string.title_recipe_list);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -43,13 +49,6 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListF
         Intent intent = new Intent(this, RecipeDetailActivity.class);
         intent.putExtra(Recipe.RECIPE, recipe);
         startActivity(intent);
-    }
-
-    @Override
-    public void onBackPressed() {
-        /*Intent intent = new Intent(this, GroceryListActivity.class);
-        startActivity(intent);
-        finish();*/
     }
 
     @Override

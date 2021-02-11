@@ -121,6 +121,7 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
             switch (item.getItemId()) {
                 case R.id.action_ingredient_context_delete:
                     Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
+                    deleteSelectedItems();
                     exitSelectedMode();
                     return true;
                 case R.id.action_ingredient_context_cancel:
@@ -138,6 +139,8 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
             exitSelectedMode();
         }
     };
+
+    public abstract void deleteSelectedItems();
 
     @Override
     public boolean isSelectMode() {

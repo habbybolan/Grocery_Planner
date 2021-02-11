@@ -32,4 +32,14 @@ public class GroceryDetailsInteractorImpl implements GroceryDetailsInteractor {
     public List<Ingredient> fetchIngredients(Grocery grocery) throws ExecutionException, InterruptedException {
         return databaseAccess.fetchIngredientsFromGrocery(grocery);
     }
+
+    @Override
+    public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
+        databaseAccess.deleteIngredient(grocery, ingredient);
+    }
+
+    @Override
+    public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
+        databaseAccess.deleteIngredients(grocery, ingredients);
+    }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -26,11 +27,13 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
     }
 
     /**
-     * Sets up the toolbar.
+     * Sets up the toolbar with Up button.
      */
     private void setToolBar() {
         toolbar = (Toolbar) binding.toolbarGroceryList;
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -63,12 +66,5 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
     @Override
     public void showToolbar() {
         toolbar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, RecipeListActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

@@ -73,9 +73,6 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
             case R.id.action_sort:
                 showSortPopup(getActivity().findViewById(R.id.action_sort));
                 return true;
-            case R.id.action_add_recipe:
-                onAddRecipeClicked();
-                return true;
             default:
                 return false;
         }
@@ -128,17 +125,19 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
 
     /**
      * Initiate the Recycler View to display list of recipes and button clickers.
-     */
+     */// todo: delete item
     private void initLayout() {
         adapter = new RecipeListAdapter(listItems, this);
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
+        // on click for adding an item from floating action button
         View view = binding.recipeListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddRecipeClicked());
 
+        // on click for swapping to Grocery List
         ImageButton gotoGroceryButton = view.findViewById(R.id.btn_goto_other_list);
         gotoGroceryButton.setOnClickListener(v -> recipeListListener.gotoGroceryList());
     }
@@ -181,6 +180,11 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
     @Override
     public void loadingFailed(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deleteSelectedItems() {
+        recipeListPresenter.deleteRecipes(listItemsChecked);
     }
 
     @Override

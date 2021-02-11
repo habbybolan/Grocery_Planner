@@ -57,6 +57,30 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
     }
 
     @Override
+    public void deleteGrocery(Grocery grocery) {
+        groceryListInteractor.deleteGrocery(grocery);
+        try {
+            loadedGroceries = groceryListInteractor.fetchGroceries();
+            if (isViewAttached()) view.showList(loadedGroceries);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to delete grocery");
+        }
+    }
+
+    @Override
+    public void deleteGroceries(List<Grocery> groceries) {
+        groceryListInteractor.deleteGroceries(groceries);
+        try {
+            loadedGroceries = groceryListInteractor.fetchGroceries();
+            if (isViewAttached()) view.showList(loadedGroceries);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to delete groceries");
+        }
+    }
+
+    @Override
     public void searchGroceryList(String groceryName) {
         // todo:
     }

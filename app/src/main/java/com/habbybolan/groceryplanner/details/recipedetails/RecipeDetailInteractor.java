@@ -17,4 +17,18 @@ public interface RecipeDetailInteractor {
      * @return          All Ingredients associated with recipe
      */
     List<Ingredient> fetchIngredients(Recipe recipe) throws ExecutionException, InterruptedException;
+
+    /**
+     * Delete an ingredient from the recipe
+     * @param recipe        The recipe to delete the ingredient from
+     * @param ingredient    The ingredient to delete
+     */
+    void deleteIngredient(Recipe recipe, Ingredient ingredient);
+
+    /**
+     * Delete ingredients from the recipe
+     * @param recipe        The recipe to delete the ingredients from
+     * @param ingredients   The ingredients to delete
+     */
+    void deleteIngredients(Recipe recipe, List<Ingredient> ingredients);
 }

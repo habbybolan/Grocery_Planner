@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottom_app_bar"
+        android:id="@+id/bottom_app_bar_ingredient_holder"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        app:layout_anchor="@id/bottom_app_bar" />
+        app:layout_anchor="@id/bottom_app_bar_ingredient_holder" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

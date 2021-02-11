@@ -20,6 +20,16 @@ public class GroceryListInteractorImpl implements GroceryListInteractor {
     }
 
     @Override
+    public void deleteGrocery(Grocery grocery) {
+        databaseAccess.deleteGrocery(grocery);
+    }
+
+    @Override
+    public void deleteGroceries(List<Grocery> groceries) {
+        databaseAccess.deleteGroceries(groceries);
+    }
+
+    @Override
     public List<Grocery> fetchGroceries() throws ExecutionException, InterruptedException {
         return databaseAccess.fetchGroceries();
     }

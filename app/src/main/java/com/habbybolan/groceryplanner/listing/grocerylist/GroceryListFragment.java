@@ -85,9 +85,6 @@ public class GroceryListFragment extends ListFragment<Grocery> implements ListVi
             case R.id.action_sort:
                 showSortPopup(getActivity().findViewById(R.id.action_sort));
                 return true;
-            case R.id.action_add_recipe:
-                onAddGroceryClicked();
-                return true;
             default:
                 return false;
         }
@@ -124,10 +121,12 @@ public class GroceryListFragment extends ListFragment<Grocery> implements ListVi
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
+        // on click for adding an item from floating action button
         View view = binding.groceryListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddGroceryClicked());
 
+        // on click for swapping to Recipe List
         ImageButton gotoRecipeButton = view.findViewById(R.id.btn_goto_other_list);
         gotoRecipeButton.setOnClickListener(v -> groceryListListener.gotoRecipeList());
     }
@@ -166,7 +165,6 @@ public class GroceryListFragment extends ListFragment<Grocery> implements ListVi
         builder.show();
     }
 
-
     /**
      * Creates an empty Grocery with the given name.
      * @param groceryName  The name of the new Grocery to create
@@ -179,6 +177,11 @@ public class GroceryListFragment extends ListFragment<Grocery> implements ListVi
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Grocery.GROCERY, (ArrayList<? extends Parcelable>) listItems);
+    }
+
+    @Override
+    public void deleteSelectedItems() {
+        groceryListPresenter.deleteGroceries(listItemsChecked);
     }
 
     // Allows communication between GroceryListActivity and GroceryListFragment

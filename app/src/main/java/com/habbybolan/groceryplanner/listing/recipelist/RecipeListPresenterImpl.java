@@ -23,13 +23,36 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     }
 
     @Override
+    public void deleteRecipe(Recipe recipe) {
+        recipeListInteractor.deleteRecipe(recipe);
+        try {
+            loadedRecipes = recipeListInteractor.fetchRecipes();
+            if (isViewAttached()) view.showList(loadedRecipes);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to retrieve Recipe");
+        }
+    }
+
+    @Override
+    public void deleteRecipes(List<Recipe> recipes) {
+        recipeListInteractor.deleteRecipes(recipes);
+        try {
+            loadedRecipes = recipeListInteractor.fetchRecipes();
+            if (isViewAttached()) view.showList(loadedRecipes);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to retrieve Recipes");
+        }
+    }
+
+    @Override
     public void addRecipe(Recipe recipe) {
         recipeListInteractor.addRecipe(recipe);
         try {
             loadedRecipes = recipeListInteractor.fetchRecipes();
-            if (isViewAttached()) {
+            if (isViewAttached())
                 view.showList(loadedRecipes);
-            }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("failed to retrieve data");

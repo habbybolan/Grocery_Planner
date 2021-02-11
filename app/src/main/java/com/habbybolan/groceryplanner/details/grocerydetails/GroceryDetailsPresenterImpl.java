@@ -50,6 +50,30 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
     }
 
     @Override
+    public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
+        groceryDetailsInteractor.deleteIngredient(grocery, ingredient);
+        try {
+            loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
+            if (isViewAttached()) view.showList(loadedIngredients);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("failed to delete Ingredient");
+        }
+    }
+
+    @Override
+    public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
+        groceryDetailsInteractor.deleteIngredients(grocery, ingredients);
+        try {
+            loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
+            if (isViewAttached()) view.showList(loadedIngredients);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("failed to delete Ingredients");
+        }
+    }
+
+    @Override
     public void createIngredientList(Grocery grocery) {
         try {
             loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);

@@ -45,7 +45,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     private FragmentRecipeStepBinding binding;
     private RecipeStepAdapter adapter;
     private Recipe recipe;
-    RecipeStepListener recipeStepListener;
+    private RecipeStepListener recipeStepListener;
 
     private static final String TAG = "RecipeStepFragment";
 

@@ -1,6 +1,5 @@
 package com.habbybolan.groceryplanner;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +32,9 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
         setDetailFragmentInfo();
     }
 
+    /**
+     * Sets up the toolbar with Up button.
+     */
     private void setToolBar() {
         toolbar = (Toolbar) binding.toolbarGroceryDetail;
         setSupportActionBar(toolbar);
@@ -68,8 +70,6 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
      * Go back to the Grocery list activity.
      */
     public void goBackToGroceryList() {
-        Intent intent = new Intent(this, GroceryListActivity.class);
-        startActivity(intent);
         finish();
     }
 
@@ -130,7 +130,7 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     public void onBackPressed() {
         GroceryDetailFragment fragment = (GroceryDetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILS_TAG);
         if (fragment != null) {
-            // do nothing?
+            goBackToGroceryList();
         } else {
             // on editing fragment, go back to the details fragment
             onDoneEditing();

@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.ListFragment;
 import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
@@ -145,9 +146,10 @@ public class GroceryDetailFragment extends ListFragment<Ingredient> implements L
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        // button clicker to add a new ingredient to the grocery
-        binding.btnAddIngredient.setOnClickListener(v ->
-                groceryDetailsListener.createNewItem());
+        // on click for adding an Ingredient from floating action button
+        View view = binding.groceryDetailBottomAction;
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
+        floatingActionButton.setOnClickListener(v -> groceryDetailsListener.createNewItem());
     }
 
     /**
@@ -161,6 +163,11 @@ public class GroceryDetailFragment extends ListFragment<Ingredient> implements L
             groceryDetailsListener.onGroceryDeleted();
             popupWindow.dismiss();
         });
+    }
+
+    @Override
+    public void deleteSelectedItems() {
+        groceryDetailsPresenter.deleteIngredients(grocery, listItemsChecked);
     }
 
     public interface GroceryDetailsListener extends ItemListener<Ingredient> {

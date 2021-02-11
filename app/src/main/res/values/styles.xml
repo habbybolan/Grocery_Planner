@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">#515151</item>
+        <item name="colorAccent">#4CAF50</item>
         <item name="android:textSize">15sp</item>
         <item name="buttonStyle">@style/DefaultButton</item>
     </style>
@@ -12,7 +12,7 @@
         <!-- Add attributes here -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">#4CAF50</item>
     </style>
 
     <style name="DefaultButton" parent="Base.Widget.AppCompat.Button">

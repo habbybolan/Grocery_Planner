@@ -18,7 +18,6 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.IngredientHolder;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.Step;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,6 +35,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     private IngredientDao ingredientDao;
     private SectionDao sectionDao;
     private StepsDao stepsDao;
+
 
     private static final String TAG = "DatabaseAccess";
 
@@ -57,15 +57,22 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
     @Override
     public void deleteGrocery(Grocery grocery) {
-        GroceryEntity groceryEntity = new GroceryEntity(grocery);
+        deleteGroceries(new ArrayList<Grocery>(){{add(grocery);}});
+    }
+
+    @Override
+    public void deleteGroceries(List<Grocery> groceries) {
         Runnable task = () -> {
             try {
                 groceryTableLock.lock();
                 ingredientTableLock.lock();
-                // delete the rows including the grocery from the bridge table
-                groceryDao.deleteGroceryFromBridge(groceryEntity.getGroceryId());
-                // delete the grocery from the grocery table
-                groceryDao.deleteGrocery(groceryEntity);
+                for (Grocery grocery : groceries) {
+                    GroceryEntity groceryEntity = new GroceryEntity(grocery);
+                    // delete the rows including the grocery from the bridge table
+                    groceryDao.deleteGroceryFromBridge(groceryEntity.getGroceryId());
+                    // delete the grocery from the grocery table
+                    groceryDao.deleteGrocery(groceryEntity);
+                }
             } finally {
                 ingredientTableLock.unlock();
                 groceryTableLock.unlock();
@@ -74,6 +81,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         Thread thread = new Thread(task);
         thread.start();
     }
+
 
     @Override
     public void addGrocery(Grocery grocery) {
@@ -112,20 +120,29 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
 
+
+
     // RECIPES
 
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        RecipeEntity recipeEntity = new RecipeEntity(recipe);
+        deleteRecipes(new ArrayList<Recipe>(){{add(recipe);}});
+    }
+
+    @Override
+    public void deleteRecipes(List<Recipe> recipes) {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
                 ingredientTableLock.lock();
-                // delete the rows including the grocery from the bridge table
-                recipeDao.deleteRecipeFromBridge(recipeEntity.getRecipeId());
-                // delete the grocery from the grocery table
-                recipeDao.deleteRecipe(recipeEntity);
+                for (Recipe recipe : recipes) {
+                    RecipeEntity recipeEntity = new RecipeEntity(recipe);
+                    // delete the rows including the grocery from the bridge table
+                    recipeDao.deleteRecipeFromBridge(recipeEntity.getRecipeId());
+                    // delete the grocery from the grocery table
+                    recipeDao.deleteRecipe(recipeEntity);
+                }
             } finally {
                 ingredientTableLock.unlock();
                 recipeTableLock.unlock();
@@ -214,45 +231,86 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
     // INGREDIENTS
 
+    @Override
+    public void addIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients) {
+        if (ingredientHolder.isGrocery()) {
+            // If the ingredientHolder is a Grocery, then associate the Ingredient to the grocery
+            insertIngredientsIntoGrocery((Grocery) ingredientHolder, ingredients);
+        } else {
+            // Otherwise, associated the Ingredient with the recipe
+            insertIngredientsIntoRecipe((Recipe) ingredientHolder, ingredients);
+        }
+    }
 
     @Override
     public void addIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
         if (ingredientHolder.isGrocery()) {
             // If the ingredientHolder is a Grocery, then associate the Ingredient to the grocery
-            Grocery grocery = (Grocery) ingredientHolder;
-            GroceryEntity groceryEntity = new GroceryEntity(grocery);
-            Runnable task = () -> {
-                try {
-                    groceryTableLock.lock();
-                    ingredientTableLock.lock();
+            insertIngredientsIntoGrocery((Grocery) ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
+        } else {
+            // Otherwise, associated the Ingredient with the recipe
+            insertIngredientsIntoRecipe((Recipe) ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
+        }
+    }
+
+    /**
+     * Insert an ingredient into a grocery list
+     * @param grocery        Grocery list to insert the ingredient into
+     * @param ingredients    Ingredients to insert
+     */
+    private void insertIngredientsIntoGrocery(Grocery grocery, List<Ingredient> ingredients) {
+        GroceryEntity groceryEntity = new GroceryEntity(grocery);
+        Runnable task = () -> {
+            try {
+                groceryTableLock.lock();
+                ingredientTableLock.lock();
+                for (Ingredient ingredient : ingredients) {
                     ingredientDao.insertIngredient(new IngredientEntity(ingredient));
                     GroceryIngredientBridge groceryIngredientBridge = new GroceryIngredientBridge(groceryEntity, ingredient);
                     groceryDao.insertIntoBridge(groceryIngredientBridge);
-                } finally {
-                    ingredientTableLock.unlock();
-                    groceryTableLock.unlock();
                 }
-            };
-            Thread thread = new Thread(task);
-            thread.start();
-        } else {
-            // Otherwise, associated the Ingredient with the recipe
-            Recipe recipe = (Recipe) ingredientHolder;
-            RecipeEntity recipeEntity = new RecipeEntity(recipe);
-            Runnable task = () -> {
-                try {
-                    recipeTableLock.lock();
-                    ingredientTableLock.lock();
+            } finally {
+                ingredientTableLock.unlock();
+                groceryTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    /**
+     * Insert an ingredient into a recipe list
+     * @param recipe         Recipe list to insert the ingredient into
+     * @param ingredients    Ingredients to insert
+     */
+    private void insertIngredientsIntoRecipe(Recipe recipe, List<Ingredient> ingredients) {
+        RecipeEntity recipeEntity = new RecipeEntity(recipe);
+        Runnable task = () -> {
+            try {
+                recipeTableLock.lock();
+                ingredientTableLock.lock();
+                for (Ingredient ingredient : ingredients) {
                     ingredientDao.insertIngredient(new IngredientEntity(ingredient));
                     RecipeIngredientBridge recipeIngredientBridge = new RecipeIngredientBridge(recipeEntity, ingredient);
                     recipeDao.insertIntoBridge(recipeIngredientBridge);
-                } finally {
-                    ingredientTableLock.unlock();
-                    recipeTableLock.unlock();
                 }
-            };
-            Thread thread = new Thread(task);
-            thread.start();
+            } finally {
+                ingredientTableLock.unlock();
+                recipeTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    @Override
+    public void deleteIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients) {
+        if (ingredientHolder.isGrocery()) {
+            // If the ingredientHolder is a Grocery, then delete the Ingredient relationship from Grocery
+            deleteIngredientsFromGrocery((Grocery) ingredientHolder, ingredients);
+        } else {
+            // Otherwise, delete the Ingredient relationship with the recipe
+            deleteIngredientsFromRecipe((Recipe)ingredientHolder, ingredients);
         }
     }
 
@@ -260,41 +318,61 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
         if (ingredientHolder.isGrocery()) {
             // If the ingredientHolder is a Grocery, then delete the Ingredient relationship from Grocery
-            Grocery grocery = (Grocery) ingredientHolder;
-            GroceryEntity groceryEntity = new GroceryEntity(grocery);
-            Runnable task = () -> {
-                try {
-                    groceryTableLock.lock();
-                    ingredientTableLock.lock();
+            deleteIngredientsFromGrocery((Grocery) ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
+        } else {
+            // Otherwise, delete the Ingredient relationship with the recipe
+            deleteIngredientsFromRecipe((Recipe)ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
+        }
+    }
+
+    /**
+     * Delete a list of ingredients from the grocery list
+     * @param grocery       The Grocery list to delete ingredients from
+     * @param ingredients   The list of ingredients to delete
+     */
+    private void deleteIngredientsFromGrocery(Grocery grocery, List<Ingredient> ingredients) {
+        GroceryEntity groceryEntity = new GroceryEntity(grocery);
+        Runnable task = () -> {
+            try {
+                groceryTableLock.lock();
+                ingredientTableLock.lock();
+                for (Ingredient ingredient : ingredients) {
                     ingredientDao.deleteIngredient(new IngredientEntity(ingredient));
                     GroceryIngredientBridge groceryIngredientBridge = new GroceryIngredientBridge(groceryEntity, ingredient);
                     groceryDao.deleteFromBridge(groceryIngredientBridge);
-                } finally {
-                    ingredientTableLock.unlock();
-                    groceryTableLock.unlock();
                 }
-            };
-            Thread thread = new Thread(task);
-            thread.start();
-        } else {
-            // Otherwise, delete the Ingredient relationship with the recipe
-            Recipe recipe = (Recipe) ingredientHolder;
-            RecipeEntity recipeEntity = new RecipeEntity(recipe);
-            Runnable task = () -> {
-                try {
-                    recipeTableLock.lock();
-                    ingredientTableLock.lock();
+            } finally {
+                ingredientTableLock.unlock();
+                groceryTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    /**
+     * Delete a list of ingredients from the recipe list
+     * @param recipe        The recipe list to delete ingredients from
+     * @param ingredients   The list of ingredients to delete
+     */
+    private void deleteIngredientsFromRecipe(Recipe recipe, List<Ingredient> ingredients) {
+        RecipeEntity recipeEntity = new RecipeEntity(recipe);
+        Runnable task = () -> {
+            try {
+                recipeTableLock.lock();
+                ingredientTableLock.lock();
+                for (Ingredient ingredient : ingredients) {
                     ingredientDao.deleteIngredient(new IngredientEntity(ingredient));
                     RecipeIngredientBridge recipeIngredientBridge = new RecipeIngredientBridge(recipeEntity, ingredient);
                     recipeDao.deleteFromBridge(recipeIngredientBridge);
-                } finally {
-                    ingredientTableLock.unlock();
-                    recipeTableLock.unlock();
                 }
-            };
-            Thread thread = new Thread(task);
-            thread.start();
-        }
+            } finally {
+                ingredientTableLock.unlock();
+                recipeTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
     @Override

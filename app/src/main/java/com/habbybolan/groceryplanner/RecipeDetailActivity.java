@@ -1,6 +1,5 @@
 package com.habbybolan.groceryplanner;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,18 +79,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
         }
     }
 
-    /**
-     * Creates and starts the EditFragment to add/edit an Ingredient in the list
-     * @param ingredient    The Ingredient to edit
-     */
-    private void startEditFragment(Ingredient ingredient) {
-        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.ingredient_edit_container, ingredientEditFragment)
-                .commit();
-    }
-
     @Override
     public void onDoneEditing() {
         if (recipeDetailFragment != null) {
@@ -105,6 +92,18 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
     public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
         showIngredientEditContainer();
+    }
+
+    /**
+     * Creates and starts the EditFragment to add/edit an Ingredient in the list
+     * @param ingredient    The Ingredient to edit
+     */
+    private void startEditFragment(Ingredient ingredient) {
+        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.ingredient_edit_container, ingredientEditFragment)
+                .commit();
     }
 
     @Override
@@ -139,24 +138,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
      * Go back to the Recipe List Activity
      */
     private void goBackToRecipeList() {
-        Intent intent = new Intent(this, RecipeListActivity.class);
-        startActivity(intent);
         finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (binding.ingredientEditContainer.getVisibility() == View.VISIBLE) {
-            // if in Ingredient edit fragment, then go back to viewPagers
-            onDoneEditing();
-        } else {
-            if (mPager.getCurrentItem() == 0)
-                // if on Ingredient List, then leave this activity to go back to recipe list
-                goBackToRecipeList();
-            else
-                // otherwise, go from the steps list to Ingredients list
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-        }
     }
 
     @Override
@@ -195,6 +177,21 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
         @Override
         public int getCount() {
             return NUM_FRAGMENTS;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (binding.ingredientEditContainer.getVisibility() == View.VISIBLE) {
+            // if in Ingredient edit fragment, then go back to viewPagers
+            onDoneEditing();
+        } else {
+            if (mPager.getCurrentItem() == 0)
+                // if on Ingredient List, then leave this activity to go back to recipe list
+                goBackToRecipeList();
+            else
+                // otherwise, go from the steps list to Ingredients list
+                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
         }
     }
 }

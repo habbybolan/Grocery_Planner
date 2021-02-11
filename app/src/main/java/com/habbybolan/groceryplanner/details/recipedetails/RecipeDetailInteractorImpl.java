@@ -29,4 +29,14 @@ public class RecipeDetailInteractorImpl implements RecipeDetailInteractor {
     public List<Ingredient> fetchIngredients(Recipe recipe) throws ExecutionException, InterruptedException {
         return databaseAccess.fetchIngredientsFromRecipe(recipe);
     }
+
+    @Override
+    public void deleteIngredient(Recipe recipe, Ingredient ingredient) {
+        databaseAccess.deleteIngredient(recipe, ingredient);
+    }
+
+    @Override
+    public void deleteIngredients(Recipe recipe, List<Ingredient> ingredients) {
+        databaseAccess.deleteIngredients(recipe, ingredients);
+    }
 }

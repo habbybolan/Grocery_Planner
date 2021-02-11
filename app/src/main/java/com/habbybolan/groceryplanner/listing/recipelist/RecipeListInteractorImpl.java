@@ -20,6 +20,16 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
+    public void deleteRecipe(Recipe recipe) {
+        databaseAccess.deleteRecipe(recipe);
+    }
+
+    @Override
+    public void deleteRecipes(List<Recipe> recipes) {
+        databaseAccess.deleteRecipes(recipes);
+    }
+
+    @Override
     public List<Recipe> searchRecipes(String search) {
         // todo:
         return null;
