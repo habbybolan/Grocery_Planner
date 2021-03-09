@@ -1,4 +1,6 @@
-package com.habbybolan.groceryplanner.details.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+
+import androidx.databinding.ObservableArrayList;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.Ingredient;
@@ -26,8 +28,8 @@ public class RecipeDetailInteractorImpl implements RecipeDetailInteractor {
     }
 
     @Override
-    public List<Ingredient> fetchIngredients(Recipe recipe) throws ExecutionException, InterruptedException {
-        return databaseAccess.fetchIngredientsFromRecipe(recipe);
+    public void fetchIngredients(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchIngredientsFromRecipe(recipe, ingredientsObserver);
     }
 
     @Override

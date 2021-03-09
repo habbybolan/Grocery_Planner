@@ -1,10 +1,7 @@
-package com.habbybolan.groceryplanner;
+package com.habbybolan.groceryplanner.listfragments;
 
 import android.content.Context;
 import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -12,17 +9,21 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Deals with some list functionality of the generic object T
+ * @param <T>   The list of the object type
+ */
 public abstract class ListFragment<T> extends Fragment implements ListViewInterface<T> {
 
     // RecyclerView adapter for the ListItems
     protected ListAdapter adapter;
     // actionMode to set up the contextual app bar when a ListItem is selected
-    private ActionMode actionMode = null;
+    protected ActionMode actionMode = null;
     // the currently selected items inside the ListItems
     protected ArrayList<T> listItemsChecked = new ArrayList<>();
     // The items the list is made up of
     protected List<T> listItems = new ArrayList<>();
-    private ItemListener<T> itemListener;
+    protected ItemListener<T> itemListener;
 
     private String adapterErrorMessage = "Must attach adapter to ListFragment from child class)";
     private String listenerErrorMessage = "Must attach listener to ListFragment with attachListener(Context context)";
@@ -31,6 +32,10 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
         itemListener = (ItemListener<T>) context;
     }
 
+    /**
+     * Called when a list item is selected
+     * @param t The list item object selected
+     */
     public void onItemSelected(T t) {
         if (actionMode != null) actionMode.finish();
         actionMode = null;
@@ -71,7 +76,7 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
 
     @Override
     public void createActionMode() {
-        actionMode = getActivity().startActionMode(actionModeCallback);
+        actionMode = getActivity().startActionMode(getActionModeCallback());
     }
 
     @Override
@@ -97,50 +102,8 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
         listItemsChecked.clear();
     }
 
-    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_ingredient_context, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.action_ingredient_context_delete:
-                    Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
-                    deleteSelectedItems();
-                    exitSelectedMode();
-                    return true;
-                case R.id.action_ingredient_context_cancel:
-                    exitSelectedMode();
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            actionMode = null;
-            exitSelectedMode();
-        }
-    };
-
     public abstract void deleteSelectedItems();
+    public abstract ActionMode.Callback getActionModeCallback();
 
     @Override
     public boolean isSelectMode() {
@@ -150,8 +113,20 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
 
     public interface ItemListener<T> {
 
+        /**
+         * Called when a list item is selected.
+         * @param t The list object selected
+         */
         void onItemClicked(T t);
+
+        /**
+         * Hides the toolbar when the context mode is entered after long-clicking list item.
+         */
         void hideToolbar();
+
+        /**
+         * SHows the toolbar when the context mode is exited.
+         */
         void showToolbar();
     }
 }

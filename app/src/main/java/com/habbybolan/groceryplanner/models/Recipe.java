@@ -18,6 +18,7 @@ public class Recipe extends IngredientHolder {
     private Nutrition fiber;
     private Nutrition sugar;
     private Nutrition protein;
+    private Long categoryId;
 
     public final static String RECIPE = "recipe";
 
@@ -37,6 +38,7 @@ public class Recipe extends IngredientHolder {
         fiber = new Nutrition(recipeEntity.getFiber(), recipeEntity.getFiberType());
         sugar = new Nutrition(recipeEntity.getSugar(), recipeEntity.getSugarType());
         protein = new Nutrition(recipeEntity.getProtein(), recipeEntity.getProteinType());
+        categoryId = recipeEntity.getRecipeCategoryId();
     }
 
     public Recipe(Parcel in) {
@@ -54,6 +56,8 @@ public class Recipe extends IngredientHolder {
         fiber = in.readParcelable(Nutrition.class.getClassLoader());
         sugar = in.readParcelable(Nutrition.class.getClassLoader());
         protein = in.readParcelable(Nutrition.class.getClassLoader());
+        long idTemp = in.readLong();
+        categoryId = idTemp != 0 ? idTemp : null;
     }
 
     @Override
@@ -72,6 +76,8 @@ public class Recipe extends IngredientHolder {
         dest.writeParcelable(fiber, flags);
         dest.writeParcelable(sugar, flags);
         dest.writeParcelable(protein, flags);
+        if (categoryId != null) dest.writeLong(categoryId);
+        else dest.writeLong(0);
     }
 
     /**
@@ -90,10 +96,11 @@ public class Recipe extends IngredientHolder {
         private Nutrition fat;
         private Nutrition saturatedFat;
         private Nutrition carbohydrates;
-
         private Nutrition fiber;
         private Nutrition sugar;
         private Nutrition protein;
+
+        private Long categoryId;
 
         public RecipeBuilder(@NonNull String name) {
             this.name = name;
@@ -139,6 +146,10 @@ public class Recipe extends IngredientHolder {
             this.protein = protein;
             return this;
         }
+        public RecipeBuilder setCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
+            return this;
+        }
 
 
         public Recipe build() {
@@ -157,6 +168,7 @@ public class Recipe extends IngredientHolder {
             recipe.fiber = fiber;
             recipe.sugar = sugar;
             recipe.protein = protein;
+            recipe.categoryId = categoryId;
 
             return recipe;
         }
@@ -214,6 +226,9 @@ public class Recipe extends IngredientHolder {
     public Nutrition getProtein() {
         return protein;
     }
+    public Long getCategoryId() {
+        return categoryId;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -244,5 +259,8 @@ public class Recipe extends IngredientHolder {
     }
     public void setProtein(Nutrition protein) {
         this.protein = protein;
+    }
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

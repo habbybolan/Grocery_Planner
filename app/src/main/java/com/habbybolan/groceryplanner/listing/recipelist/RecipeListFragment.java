@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.listing.recipelist;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -21,35 +20,48 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.ListFragment;
-import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
+import com.habbybolan.groceryplanner.RecipeListActivity;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
+import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
+import com.habbybolan.groceryplanner.models.Category;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.RecipeCategory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipeListFragment extends ListFragment<Recipe> implements ListViewInterface<Recipe> {
+public class RecipeListFragment extends CategoryListFragment<Recipe> implements RecipeListView {
 
     @Inject
     RecipeListPresenter recipeListPresenter;
+    private ArrayList<RecipeCategory> recipeCategories;
 
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
 
     public RecipeListFragment() {}
 
-    @Override
+    /*@Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         recipeListListener = (RecipeListListener) context;
         attachListener(getContext());
+    }*/
+
+    /**
+     * Listeners implemented explicitly inside RecipeListActivity. Manually attach listener.
+     * @param recipeListListener     Implemented listener from RecipeListActivity
+     */
+    public void attachListener(RecipeListListener recipeListListener) {
+        this.recipeListListener = recipeListListener;
+        itemListener = recipeListListener;
     }
 
     @Override
@@ -88,7 +100,7 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
         popup.setOnMenuItemClickListener(item -> {
             switch(item.getItemId()) {
                 case R.id.popup_alphabetically_recipe_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "list alphabetically", Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.popup_test_recipe_list:
                     Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
@@ -113,6 +125,8 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
         recipeListPresenter.setView(this);
+        recipeListPresenter.fetchCategories();
+        attachCategoryToPresenter();
         if (savedInstanceState != null) {
             // pull saved recipe list from bundled save
             listItems = savedInstanceState.getParcelableArrayList(Recipe.RECIPE);
@@ -125,8 +139,9 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
 
     /**
      * Initiate the Recycler View to display list of recipes and button clickers.
-     */// todo: delete item
+     */
     private void initLayout() {
+        attachCategoryToPresenter();
         adapter = new RecipeListAdapter(listItems, this);
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -140,6 +155,14 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
         // on click for swapping to Grocery List
         ImageButton gotoGroceryButton = view.findViewById(R.id.btn_goto_other_list);
         gotoGroceryButton.setOnClickListener(v -> recipeListListener.gotoGroceryList());
+    }
+
+    /**
+     * Called when category has changed. Stores the category and loads the recipes inside that category.
+     */
+    public void resetList() {
+        attachCategoryToPresenter();
+        recipeListPresenter.createRecipeList();
     }
 
     /**
@@ -168,8 +191,10 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
      * @param recipeName  The name of the new Recipe to create
      */
     private void createRecipe(String recipeName) {
-        recipeListPresenter.addRecipe(new Recipe.RecipeBuilder(recipeName)
-                .build());
+        Recipe.RecipeBuilder recipeBuilder = new Recipe.RecipeBuilder(recipeName);
+        RecipeCategory recipeCategory = ((RecipeListActivity) getActivity()).getRecipeCategory();
+        if (recipeCategory != null) recipeBuilder.setCategoryId(recipeCategory.getId());
+        recipeListPresenter.addRecipe(recipeBuilder.build());
     }
 
     @Override
@@ -191,6 +216,31 @@ public class RecipeListFragment extends ListFragment<Recipe> implements ListView
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Recipe.RECIPE, (ArrayList<? extends Parcelable>) listItems);
+    }
+
+    @Override
+    protected void addSelectedItemsToCategory(Category category) {
+        RecipeCategory recipeCategory = (RecipeCategory) category;
+        recipeListPresenter.addRecipesToCategory(listItemsChecked, recipeCategory);
+    }
+
+    @Override
+    protected void removeSelectedItemsFromCategory() {
+        recipeListPresenter.removeRecipesFromCategory(listItemsChecked);
+    }
+
+    @Override
+    protected ArrayList<RecipeCategory> getCategories() {
+        return recipeListPresenter.getLoadedRecipeCategories();
+    }
+
+    @Override
+    public void storeAllRecipeCategories(List<RecipeCategory> recipeCategories) {
+        // todo: probably will remove and keep data inside presenter
+    }
+
+    private void attachCategoryToPresenter() {
+        recipeListPresenter.attachCategory(((RecipeListActivity) getActivity()).getRecipeCategory());
     }
 
     public interface RecipeListListener extends ItemListener<Recipe> {

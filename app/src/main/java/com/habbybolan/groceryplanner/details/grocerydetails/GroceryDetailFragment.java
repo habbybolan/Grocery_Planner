@@ -19,13 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.ListFragment;
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
+import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 /**
  */
-public class GroceryDetailFragment extends ListFragment<Ingredient> implements ListViewInterface<Ingredient> {
+public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private FragmentGroceryDetailBinding binding;
     private GroceryDetailsListener groceryDetailsListener;

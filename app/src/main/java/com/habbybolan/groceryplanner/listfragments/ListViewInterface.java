@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner;
+package com.habbybolan.groceryplanner.listfragments;
 
 import java.util.List;
 

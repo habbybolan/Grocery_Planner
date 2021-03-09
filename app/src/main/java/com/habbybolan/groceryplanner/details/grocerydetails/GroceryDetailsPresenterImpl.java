@@ -1,10 +1,12 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
-import com.habbybolan.groceryplanner.ListViewInterface;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableList;
+
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -14,11 +16,36 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
 
     private GroceryDetailsInteractor groceryDetailsInteractor;
     private ListViewInterface view;
-    private List<Ingredient> loadedIngredients = new ArrayList<>();
+
+    // true if the ingredients are being loaded
+    private boolean loadingIngredients = false;
+    private ObservableArrayList<Ingredient> loadedIngredients = new ObservableArrayList<>();
 
     @Inject
     public GroceryDetailsPresenterImpl(GroceryDetailsInteractor groceryDetailsInteractor) {
         this.groceryDetailsInteractor = groceryDetailsInteractor;
+        setGroceryCallback();
+    }
+
+    // set up callback for loading ingredients
+    private void setGroceryCallback() {
+        loadedIngredients.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Ingredient>>() {
+            @Override
+            public void onChanged(ObservableList<Ingredient> sender) {}
+
+            @Override
+            public void onItemRangeChanged(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
+            @Override
+            public void onItemRangeInserted(ObservableList<Ingredient> sender, int positionStart, int itemCount) {
+                // set the loaded ingredients as loaded in
+                loadingIngredients = false;
+                displayIngredients();
+            }
+            @Override
+            public void onItemRangeMoved(ObservableList<Ingredient> sender, int fromPosition, int toPosition, int itemCount) {}
+            @Override
+            public void onItemRangeRemoved(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
+        });
     }
 
     @Override
@@ -52,36 +79,40 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
     @Override
     public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
         groceryDetailsInteractor.deleteIngredient(grocery, ingredient);
-        try {
-            loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
-            if (isViewAttached()) view.showList(loadedIngredients);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            view.loadingFailed("failed to delete Ingredient");
-        }
+        createIngredientList(grocery);
     }
 
     @Override
     public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
         groceryDetailsInteractor.deleteIngredients(grocery, ingredients);
-        try {
-            loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
-            if (isViewAttached()) view.showList(loadedIngredients);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            view.loadingFailed("failed to delete Ingredients");
-        }
+        createIngredientList(grocery);
+    }
+
+    /**
+     * Check if the ingredients are being loaded.
+     * @return  true if the ingredients have already loaded
+     */
+    private boolean isIngredientsReady() {
+        return !loadingIngredients;
+    }
+
+    /**
+     * Display the grocery ingredients.
+     */
+    private void displayIngredients() {
+        if (isViewAttached() && isIngredientsReady())
+            view.showList(loadedIngredients);
     }
 
     @Override
     public void createIngredientList(Grocery grocery) {
         try {
-            loadedIngredients = groceryDetailsInteractor.fetchIngredients(grocery);
-            if (isViewAttached()) {
-                view.showList(loadedIngredients);
-            }
+            loadingIngredients = true;
+            view.loadingStarted();
+            groceryDetailsInteractor.fetchIngredients(grocery, loadedIngredients);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            loadingIngredients = false;
         }
     }
 }

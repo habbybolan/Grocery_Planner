@@ -1,13 +1,16 @@
 package com.habbybolan.groceryplanner.listing.recipelist;
 
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.RecipeCategory;
 
 import java.util.List;
 
-public interface RecipeListView {
+public interface RecipeListView extends ListViewInterface<Recipe> {
 
-    void showRecipeList(List<Recipe> recipes);
-    void onRecipeSelected(Recipe recipe);
-    void loadingStarted();
-    void loadingFailed(String message);
+    /**
+     * Stores the recipe categories inside the presenter to readily display
+     * @param recipeCategories  All RecipeCategories stored
+     */
+    void storeAllRecipeCategories(List<RecipeCategory> recipeCategories);
 }

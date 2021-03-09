@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.details.grocerydetails;
 
+import androidx.databinding.ObservableArrayList;
+
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
 
@@ -12,10 +14,10 @@ public interface GroceryDetailsInteractor {
     void deleteGrocery(Grocery grocery);
     /**
      * Get all Ingredient objects associated with grocery from the database.
-     * @param grocery   The grocery associated with the Ingredients to return
-     * @return          All Ingredients associated with grocery
+     * @param grocery               The grocery associated with the Ingredients to return
+     * @param ingredientsObserver   Ingredient list to observe
      */
-    List<Ingredient> fetchIngredients(Grocery grocery) throws ExecutionException, InterruptedException;
+    void fetchIngredients(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 
     /**
      * Delete an ingredient from the grocery

@@ -6,7 +6,9 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
+import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
 import com.habbybolan.groceryplanner.database.relations.RecipeWithIngredients;
@@ -24,6 +26,12 @@ public interface RecipeDao {
     @Query("SELECT * FROM RecipeEntity")
     List<RecipeEntity> getAllRecipes();
 
+    @Query("SELECT * FROM RecipeEntity WHERE recipe_category_id = :categoryId")
+    List<RecipeEntity> getAllRecipes(long categoryId);
+
+    @Query("SELECT * FROM RecipeEntity WHERE recipe_category_id = NULL")
+    List<RecipeEntity> getAllUnCategorizedRecipes();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecipe(RecipeEntity recipeEntity);
 
@@ -35,7 +43,7 @@ public interface RecipeDao {
 
     // Bridge table with Ingredients
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIntoBridge(RecipeIngredientBridge recipeIngredientBridge);
 
     @Delete
@@ -50,4 +58,21 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM RecipeIngredientBridge WHERE recipeId = :recipeId AND ingredientName = :ingredientName")
     List<RecipeIngredientBridge> getRecipeIngredient(long recipeId, long ingredientName);
+
+    // Recipe Category
+
+    @Query("SELECT * FROM RecipeEntity WHERE recipe_category_id = :id")
+    List<RecipeEntity> getRecipesInCategory(int id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
+
+    @Delete
+    void deleteRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
+
+    @Update
+    void updateRecipes(RecipeEntity recipeEntity);
+
+    @Query("SELECT * FROM RecipeCategoryEntity")
+    List<RecipeCategoryEntity> getAllRecipeCategories();
 }

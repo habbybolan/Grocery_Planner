@@ -10,12 +10,13 @@ import com.habbybolan.groceryplanner.database.dao.StepsDao;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryIngredientBridge;
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
 import com.habbybolan.groceryplanner.database.entities.StepsEntity;
 
 @androidx.room.Database(entities = {GroceryEntity.class, IngredientEntity.class, GroceryIngredientBridge.class, RecipeEntity.class, RecipeIngredientBridge.class,
-        StepsEntity.class},
+        StepsEntity.class, RecipeCategoryEntity.class},
         exportSchema = false, version = 1)
 public abstract class LocalDatabase extends RoomDatabase {
 

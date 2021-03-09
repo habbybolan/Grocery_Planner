@@ -26,4 +26,7 @@
 
     <dimen name="txt_size_small">10sp</dimen>
 
+    <dimen name="edit_txt_margin_start">10dp</dimen>
+    <dimen name="edit_txt_width">350dp</dimen>
+
 </resources>

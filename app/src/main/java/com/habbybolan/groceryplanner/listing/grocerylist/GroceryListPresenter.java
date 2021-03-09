@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.listing.grocerylist;
 
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 import java.util.List;

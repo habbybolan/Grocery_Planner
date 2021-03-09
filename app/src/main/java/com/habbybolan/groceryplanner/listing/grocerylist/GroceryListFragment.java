@@ -21,13 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.ListFragment;
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
+import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import javax.inject.Inject;
  * Fragment for displaying the list of Grocery object names. Can edit the names of the lists, or enter
  * the list to see the Grocery contents.
  */
-public class GroceryListFragment extends ListFragment<Grocery> implements ListViewInterface<Grocery> {
+public class GroceryListFragment extends NonCategoryListFragment<Grocery> implements ListViewInterface<Grocery> {
 
     @Inject
     GroceryListPresenter groceryListPresenter;

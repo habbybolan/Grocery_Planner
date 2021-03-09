@@ -1,6 +1,6 @@
-package com.habbybolan.groceryplanner.details.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipedetails;
 
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
 

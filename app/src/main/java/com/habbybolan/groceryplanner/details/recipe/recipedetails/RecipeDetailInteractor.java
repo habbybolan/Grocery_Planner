@@ -1,4 +1,6 @@
-package com.habbybolan.groceryplanner.details.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+
+import androidx.databinding.ObservableArrayList;
 
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -13,10 +15,10 @@ public interface RecipeDetailInteractor {
 
     /**
      * Get all Ingredient objects associated with Recipe from the database.
-     * @param recipe    The ingredient to display
-     * @return          All Ingredients associated with recipe
+     * @param recipe                The ingredient to display
+     * @param ingredientsObserver   Ingredients observer that holds the fetched ingredients
      */
-    List<Ingredient> fetchIngredients(Recipe recipe) throws ExecutionException, InterruptedException;
+    void fetchIngredients(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 
     /**
      * Delete an ingredient from the recipe

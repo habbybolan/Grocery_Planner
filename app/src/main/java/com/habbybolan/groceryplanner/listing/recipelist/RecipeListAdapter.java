@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habbybolan.groceryplanner.ListAdapter;
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListAdapter;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeListDetailsBinding;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -46,21 +46,23 @@ public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder,
 
             // click listener for clicking on an ingredient
             binding.recipeListContainer.setOnClickListener(v -> {
-                setOnCLickItem(binding.recipeCheckBox, getAdapterPosition());
+                setOnClickItem(binding.recipeCheckBox, getAdapterPosition());
             });
 
             // click listener for clicking an ingredient's check box
             binding.recipeCheckBox.setOnClickListener(v -> {
-                setOnCLickItemCheckBox(binding.recipeCheckBox, getAdapterPosition());
+                setOnClickItemCheckBox(binding.recipeCheckBox, getAdapterPosition());
             });
 
             // on long click, go into select mode
-            binding.recipeListContainer.setOnLongClickListener(v -> setOnLongCLickItem(getAdapterPosition()));
+            binding.recipeListContainer.setOnLongClickListener(v -> setOnLongClickItem(getAdapterPosition()));
         }
 
         void bind(Recipe recipe) {
             binding.setRecipeName(recipe.getName());
             displayCheckBox(binding.recipeCheckBox);
+            if (recipe.getCategoryId() != null)
+                binding.setRecipeCategory(String.valueOf(recipe.getCategoryId()));
         }
     }
 }

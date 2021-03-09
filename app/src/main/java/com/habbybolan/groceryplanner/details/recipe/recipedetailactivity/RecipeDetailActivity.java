@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner;
+package com.habbybolan.groceryplanner.details.recipe.recipedetailactivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,27 +15,41 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
 import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditFragment;
-import com.habbybolan.groceryplanner.details.recipedetails.RecipeDetailFragment;
-import com.habbybolan.groceryplanner.details.recipesteps.RecipeStepFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.RecipeCategory;
 
-public class RecipeDetailActivity extends AppCompatActivity implements IngredientEditFragment.IngredientEditListener, RecipeDetailFragment.RecipeDetailListener, RecipeStepFragment.RecipeStepListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class RecipeDetailActivity extends AppCompatActivity
+                                implements IngredientEditFragment.IngredientEditListener,
+                                            RecipeDetailFragment.RecipeDetailListener,
+                                            RecipeStepFragment.RecipeStepListener,
+                                            RecipeOverviewFragment.RecipeOverviewListener {
 
 
     private Recipe recipe;
+    private RecipeCategory recipeCategory;
+    private List<RecipeCategory> recipeCategories = new ArrayList<>();
     ActivityRecipeDetailBinding binding;
     private Toolbar toolbar;
 
     private RecipeDetailFragment recipeDetailFragment;
     private RecipeStepFragment recipeStepFragment;
+    private RecipeOverviewFragment recipeOverviewFragment;
+
 
     /**
      * 2 fragments that can be swiped through.
      */
-    private final int NUM_FRAGMENTS = 2;
+    private final int NUM_FRAGMENTS = 3;
 
     /**
      * Pager widget that handles the animations and allows swiping horizontally
@@ -54,8 +68,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
 
         Bundle extras = getIntent().getExtras();
         // get the bundled Ingredients to display in the fragment if any exist.
-        if (extras != null && extras.containsKey(Recipe.RECIPE))
-            recipe = extras.getParcelable(Recipe.RECIPE);
+        if (extras != null) {
+            if (extras.containsKey(Recipe.RECIPE))
+                recipe = extras.getParcelable(Recipe.RECIPE);
+            if (extras.containsKey(RecipeCategory.RECIPE_CATEGORY))
+                recipeCategory = extras.getParcelable(RecipeCategory.RECIPE_CATEGORY);
+        }
 
         mPager = binding.recipePager;
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -63,10 +81,18 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
         setToolBar();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+       //recipeOverviewFragment.attachListener(recipeOverviewListener);
+        // todo: create attachListener methods in other fragments
+    }
+
     private void setToolBar() {
-        toolbar = (Toolbar) binding.toolbarRecipeDetails;
+        toolbar = binding.toolbarRecipeDetails.toolbar;
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -116,7 +142,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
      * Shows the Ingredient edit Fragment container, hiding the 2 pager fragments.
      */
     private void showIngredientEditContainer() {
-        toolbar.getMenu().clear();
         binding.recipePager.setVisibility(View.GONE);
         binding.ingredientEditContainer.setVisibility(View.VISIBLE);
     }
@@ -151,6 +176,19 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
         toolbar.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public Recipe getRecipe() {
+        return recipe;
+    }
+    @Override
+    public RecipeCategory getRecipeCategory() {
+        return recipeCategory;
+    }
+    @Override
+    public List<RecipeCategory> getRecipeCategories() {
+        return recipeCategories;
+    }
+
     /**
      * Pager adapter to allow swiping between the Recipe Ingredient list and step list
      */
@@ -160,17 +198,36 @@ public class RecipeDetailActivity extends AppCompatActivity implements Ingredien
             super(fm, behavior);
         }
 
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Ingredients";
+                case 1:
+                    return "Steps";
+                case 2:
+                    return "Overview";
+                default:
+                    return null;
+            }
+        }
+
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
-                // position 0 corresponding to the Ingredient List for the Recipe
-                recipeDetailFragment = RecipeDetailFragment.getInstance(recipe);
-                return recipeDetailFragment;
-            } else {
-                // position 1 corresponds to the step List for the recipe
-                recipeStepFragment = RecipeStepFragment.getInstance(recipe);
-                return recipeStepFragment;
+            switch (position) {
+                case 0:
+                    // position 0 corresponding to the Ingredient List for the Recipe
+                    recipeDetailFragment = RecipeDetailFragment.getInstance(recipe);
+                    return recipeDetailFragment;
+                case 1:
+                    // position 1 corresponds to the step List for the recipe
+                    recipeStepFragment = RecipeStepFragment.getInstance(recipe);
+                    return recipeStepFragment;
+                default:
+                    // position 2 corresponding to the Recipe overview
+                    recipeOverviewFragment = RecipeOverviewFragment.getInstance(recipe, recipeCategory);
+                    return recipeOverviewFragment;
             }
         }
 

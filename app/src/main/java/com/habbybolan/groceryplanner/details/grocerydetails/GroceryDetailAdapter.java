@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habbybolan.groceryplanner.ListAdapter;
-import com.habbybolan.groceryplanner.ListViewInterface;
+import com.habbybolan.groceryplanner.listfragments.ListAdapter;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
 import com.habbybolan.groceryplanner.models.Ingredient;
@@ -45,16 +45,16 @@ public class GroceryDetailAdapter extends ListAdapter<GroceryDetailAdapter.ViewH
 
             // click listener for clicking on an ingredient
             binding.ingredientListContainer.setOnClickListener(v -> {
-                setOnCLickItem(binding.ingredientCheckBox, getAdapterPosition());
+                setOnClickItem(binding.ingredientCheckBox, getAdapterPosition());
             });
 
             // click listener for clicking an ingredient's check box
             binding.ingredientCheckBox.setOnClickListener(v -> {
-                setOnCLickItemCheckBox(binding.ingredientCheckBox, getAdapterPosition());
+                setOnClickItemCheckBox(binding.ingredientCheckBox, getAdapterPosition());
             });
 
             // on long click, go into select mode
-            binding.ingredientListContainer.setOnLongClickListener(v -> setOnLongCLickItem(getAdapterPosition()));
+            binding.ingredientListContainer.setOnLongClickListener(v -> setOnLongClickItem(getAdapterPosition()));
         }
 
         public void bind(Ingredient ingredient) {

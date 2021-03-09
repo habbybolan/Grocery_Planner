@@ -36,9 +36,10 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
      * Sets up the toolbar with Up button.
      */
     private void setToolBar() {
-        toolbar = (Toolbar) binding.toolbarGroceryDetail;
+        toolbar = binding.toolbarGroceryDetail.toolbar;
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 

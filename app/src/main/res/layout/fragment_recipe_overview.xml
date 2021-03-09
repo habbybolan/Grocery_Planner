@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="name"
+            type="String" />
+        <variable
+            name="label"
+            type="String" />
+        <variable
+            name="categoryName"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".details.recipe.recipeoverview.RecipeOverviewFragment">
+
+        <TextView
+            android:id="@+id/recipe_overview_name_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Name"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/recipe_overview_name"
+            android:layout_width="@dimen/edit_txt_width"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name_tag" />
+
+        <TextView
+            android:id="@+id/recipe_overview_label_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            android:text="Label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name" />
+
+        <EditText
+            android:id="@+id/recipe_overview_label"
+            android:layout_width="@dimen/edit_txt_width"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_label_tag" />
+
+        <TextView
+            android:id="@+id/recipe_overview_category_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            android:text="Category"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_label" />
+
+        <ImageButton
+            android:id="@+id/recipe_overview_category"
+            android:layout_width="@dimen/edit_txt_width"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/edit_txt_margin_start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category_tag" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="88dp"
+            android:text="@string/btn_save_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

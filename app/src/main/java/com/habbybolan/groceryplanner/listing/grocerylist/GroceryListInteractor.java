@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.listing.grocerylist;
 
+import androidx.databinding.ObservableArrayList;
+
 import com.habbybolan.groceryplanner.models.Grocery;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public interface GroceryListInteractor {
      * @param groceries Groceries to delete
      */
     void deleteGroceries(List<Grocery> groceries);
-    List<Grocery> fetchGroceries() throws ExecutionException, InterruptedException;
+    void fetchGroceries(ObservableArrayList<Grocery> groceriesObserver) throws ExecutionException, InterruptedException;
     List<Grocery> searchGroceries(String search);
     void addGrocery(Grocery grocery);
 }

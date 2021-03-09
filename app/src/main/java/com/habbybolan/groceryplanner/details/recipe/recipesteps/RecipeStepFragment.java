@@ -1,7 +1,9 @@
-package com.habbybolan.groceryplanner.details.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipesteps;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,37 +15,46 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.ListFragment;
-import com.habbybolan.groceryplanner.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
+import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
+import com.habbybolan.groceryplanner.databinding.FragmentRecipeStepBinding;
+import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.Step;
 import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipeDetailFragment extends ListFragment<Ingredient> implements ListViewInterface<Ingredient> {
-
-    private RecipeDetailListener recipeDetailListener;
-    private FragmentRecipeDetailBinding binding;
-    private Recipe recipe;
+public class RecipeStepFragment extends Fragment implements RecipeStepView {
 
     @Inject
-    RecipeDetailPresenter recipeDetailPresenter;
+    RecipeStepPresenter recipeStepPresenter;
 
-    public RecipeDetailFragment() {}
+    private List<Step> steps = new ArrayList<>();
+    private FragmentRecipeStepBinding binding;
+    private RecipeStepAdapter adapter;
+    private Recipe recipe;
+    private RecipeStepListener recipeStepListener;
 
-    public static RecipeDetailFragment getInstance(@NonNull Recipe recipe) {
-        RecipeDetailFragment fragment = new RecipeDetailFragment();
+    private static final String TAG = "RecipeStepFragment";
+
+
+    public RecipeStepFragment() {}
+
+    public static RecipeStepFragment getInstance(@NonNull Recipe recipe) {
+        RecipeStepFragment fragment = new RecipeStepFragment();
         Bundle args = new Bundle();
         args.putParcelable(Recipe.RECIPE, recipe);
         fragment.setArguments(args);
@@ -53,8 +64,7 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        recipeDetailListener = (RecipeDetailListener) context;
-        attachListener(getContext());
+        recipeStepListener = (RecipeStepListener) context;
     }
 
     @Override
@@ -68,22 +78,24 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step, container, false);
         initLayout();
         return binding.getRoot();
     }
 
+
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeDetailPresenter.setView(this);
+        recipeStepPresenter.setView(this);
         if (getArguments() != null) {
             recipe = getArguments().getParcelable(Recipe.RECIPE);
-            if (getArguments().containsKey(Ingredient.INGREDIENT)) {
-                listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
+            if (getArguments().containsKey(Step.STEP)) {
+                steps = getArguments().getParcelableArrayList(Step.STEP);
             } else
                 // only the grocery saved, must retrieve its associated Ingredients
-                recipeDetailPresenter.createIngredientList((Recipe) getArguments().getParcelable(Recipe.RECIPE));
+                recipeStepPresenter.createStepList((Recipe) getArguments().getParcelable(Recipe.RECIPE));
         }
     }
 
@@ -131,19 +143,13 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
         popup.show();
     }
 
-    /**
-     * Initiates the Recycler View to display list of Ingredients and button clickers.
-     */
     private void initLayout() {
-        adapter = new RecipeDetailAdapter(listItems, this);
-        RecyclerView rv = binding.ingredientList;
+        adapter = new RecipeStepAdapter(steps, this);
+        RecyclerView rv = binding.stepsList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        // on click for adding an Ingredient from floating action button
-        View view = binding.recipeDetailBottomAction;
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
-        floatingActionButton.setOnClickListener(v -> recipeDetailListener.createNewItem());
+        binding.btnAddStep.setOnClickListener(v -> addNewStep());
     }
 
     /**
@@ -151,35 +157,62 @@ public class RecipeDetailFragment extends ListFragment<Ingredient> implements Li
      */
     private void deleteRecipe() {
         PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeDetailsContainer, "recipe", popupWindow);
+        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeStepContainer, "recipe", popupWindow);
         clickableView.setOnClickListener(v -> {
-            recipeDetailPresenter.deleteRecipe(recipe);
-            recipeDetailListener.onRecipeDeleted();
+            recipeStepPresenter.deleteRecipe(recipe);
+            recipeStepListener.onRecipeDeleted();
             popupWindow.dismiss();
         });
     }
 
-    public void reloadList() {
-        recipeDetailPresenter.createIngredientList(recipe);
+    private void addNewStep() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Write a Recipe list name");
+        final CreateIngredientHolderDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_ingredient_holder_details, null, false);
+        builder.setView(groceryBinding.getRoot());
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String description = groceryBinding.editTxtGroceryName.getText().toString();
+                Step step = new Step(recipe.getId(), description, steps.size()+1);
+                recipeStepPresenter.addNewStep(recipe, step);
+                steps.add(step);
+                adapter.notifyItemInserted(steps.size()-1);
+            }
+        });
+        builder.show();
+    }
+
+    @Override
+    public void showStepList(List<Step> steps) {
+        Log.i(TAG, "showStepList: " + this.steps);
+        this.steps.clear();
+        this.steps.addAll(steps);
+        Log.i(TAG, "showStepList: " + this.steps);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void loadingStarted() {
+        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loadingFailed(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().setTitle("Recipe Ingredients");
-    }
-
-    @Override
-    public void deleteSelectedItems() {
-        recipeDetailPresenter.deleteIngredients(recipe, listItemsChecked);
+        getActivity().setTitle("Recipe Steps");
     }
 
     /**
-     * Listener interface implemented by {@link com.habbybolan.groceryplanner.RecipeDetailActivity}
+     * Listener interface implemented by {@link RecipeDetailActivity}
      */
-    public interface RecipeDetailListener extends ItemListener<Ingredient> {
+    public interface RecipeStepListener {
 
-        void createNewItem();
         void onRecipeDeleted();
     }
 }

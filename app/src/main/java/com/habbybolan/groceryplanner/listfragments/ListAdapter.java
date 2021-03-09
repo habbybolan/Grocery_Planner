@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner;
+package com.habbybolan.groceryplanner.listfragments;
 
 import android.view.View;
 import android.widget.CheckBox;
@@ -51,11 +51,12 @@ public abstract class ListAdapter<T extends RecyclerView.ViewHolder, E> extends 
      * @param checkBox  The CheckBox view of the list item selected
      * @param position  The position of the List Item selected
      */
-    protected void setOnCLickItem(CheckBox checkBox, int position) {
-        // if in the selectMode, only select its the item's CheckBox
-        if (selectMode)
+    protected void setOnClickItem(CheckBox checkBox, int position) {
+        // if in the selectMode, select the checkbox if any part of the list item is clicked
+        if (selectMode) {
+            checkBox.setChecked(!checkBox.isChecked());
             checkBoxClick(checkBox, position);
-        else {
+        } else {
             // otherwise, allow normal clicking of item
             view.onItemSelected(items.get(position));
         }
@@ -66,7 +67,7 @@ public abstract class ListAdapter<T extends RecyclerView.ViewHolder, E> extends 
      * @param checkBox  The CheckBox view that was selected
      * @param position  The position on the item with the selected CheckBox
      */
-    protected void setOnCLickItemCheckBox(CheckBox checkBox, int position) {
+    protected void setOnClickItemCheckBox(CheckBox checkBox, int position) {
         checkBoxClick(checkBox, position);
     }
 
@@ -75,18 +76,20 @@ public abstract class ListAdapter<T extends RecyclerView.ViewHolder, E> extends 
      * @param position  Position of the list item long clicked
      * @return          True if not already in select mode, otherwise false
      */
-    protected boolean setOnLongCLickItem(int position) {
+    protected boolean setOnLongClickItem(int position) {
         // todo: make the long-clicked item selected
         if (!selectMode) {
             selectMode = true;
             view.enterSelectMode();
             notifyDataSetChanged();
-            return true;
         }
-        return false;
+        return true;
     }
 
-
+    /**
+     * Shows the CheckBoxes for the list items if selectMode is true
+     * @param checkBox  The checkbox to either show or hide
+     */
     protected void displayCheckBox(CheckBox checkBox) {
         // if the select mode is activated, then display checkboxes to select multiple items
         if (selectMode) {

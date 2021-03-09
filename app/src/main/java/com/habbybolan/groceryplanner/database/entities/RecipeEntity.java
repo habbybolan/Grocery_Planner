@@ -2,11 +2,15 @@ package com.habbybolan.groceryplanner.database.entities;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
 import com.habbybolan.groceryplanner.models.Recipe;
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = RecipeCategoryEntity.class,
+                                parentColumns = "recipeCategoryId",
+                                childColumns = "recipe_category_id",
+                                onDelete = ForeignKey.CASCADE))
 public class RecipeEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -42,10 +46,12 @@ public class RecipeEntity {
     private int protein;
     @ColumnInfo(name = "protein_type")
     private String proteinType;
+    @ColumnInfo(name = "recipe_category_id")
+    private Long recipeCategoryId;
 
     public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int calories, String caloriesType,
                         int fat, String fatType, int saturatedFat, String saturatedFatType, int carbohydrates, String carbohydratesType, int fiber,
-                        String fiberType, int sugar, String sugarType, int protein, String proteinType) {
+                        String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId) {
         this.recipeId = recipeId;
         this.name = name;
         this.isFavorite = isFavorite;
@@ -66,6 +72,7 @@ public class RecipeEntity {
         this.sugarType = sugarType;
         this.protein = protein;
         this.proteinType = proteinType;
+        this.recipeCategoryId = recipeCategoryId;
     }
 
     public RecipeEntity(Recipe recipe) {
@@ -104,6 +111,7 @@ public class RecipeEntity {
             protein = recipe.getProtein().getAmount();
             proteinType = recipe.getProtein().getMeasurement();
         }
+        recipeCategoryId = recipe.getCategoryId();
     }
 
     public long getRecipeId() {
@@ -167,5 +175,8 @@ public class RecipeEntity {
     }
     public String getProteinType() {
         return proteinType;
+    }
+    public Long getRecipeCategoryId() {
+        return recipeCategoryId;
     }
 }

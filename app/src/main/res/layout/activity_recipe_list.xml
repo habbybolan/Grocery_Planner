@@ -14,12 +14,42 @@
         <include layout="@layout/toolbar"
             android:id="@+id/toolbar_recipe_list"/>
 
-        <fragment
-            android:id="@+id/fragment_recipe_list"
-            android:name="com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/fragment_recipe_list" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/recipe_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <fragment
+                    android:id="@+id/fragment_recipe_list"
+                    android:name="com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:layout="@layout/fragment_recipe_list"
+                    android:tag="@string/RECIPE_LIST_TAG"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/recipe_category_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <fragment
+                    android:id="@+id/fragment_recipe_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:name="com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment"
+                    tools:layout="@layout/fragment_recipe_category"
+                    android:tag="@string/RECIPE_CATEGORY_TAG" />
+
+            </FrameLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
