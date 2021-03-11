@@ -10,6 +10,7 @@
     <string name="action_delete">Delete</string>
 
     <string name="title_recipe_list">Recipe Planner</string>
+    <string name="title_grocery_list">Grocery Planner</string>
     <string name="title_main_page">Account</string>
 
     <string name="search">Search</string>
@@ -22,5 +23,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="teaspoon">Teaspoon</string>
+    <string name="dessertspoon">Dessertspoon</string>
+    <string name="tablespoon">Tablespoon</string>
+    <string name="ounce">Ounce</string>
+    <string name="cup">Cup</string>
+    <string name="pint">Pint</string>
+    <string name="quart">Quart</string>
+    <string name="gallon">Gallon</string>
 
 </resources>

@@ -2,9 +2,14 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar_recipe_steps"/>
 
         <EditText
             android:id="@+id/edit_txt_grocery_name"
@@ -12,6 +17,6 @@
             android:layout_height="@dimen/edit_text_grocery_height"
             android:backgroundTint="@color/colorAccent" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </layout>

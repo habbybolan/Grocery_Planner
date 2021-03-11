@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,10 +42,10 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
 
     @Inject
     RecipeListPresenter recipeListPresenter;
-    private ArrayList<RecipeCategory> recipeCategories;
 
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
+    private Toolbar toolbar;
 
     public RecipeListFragment() {}
 
@@ -118,7 +119,32 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_list, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
+    }
+
+    private void setToolbar() {
+        toolbar = binding.toolbarRecipeList.toolbar;
+        binding.toolbarRecipeList.setTitle(getString(R.string.title_recipe_list));
+
+        // onClick event on toolbar title to swap between Recipe List and Category List
+        binding.toolbarRecipeList.toolbarTitle.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(getContext(), v);
+            popup.inflate(R.menu.menu_recipe_list_displayed);
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.popup_recipe_list:
+                        recipeListListener.gotoRecipeListUnCategorized();
+                        return true;
+                    case R.id.popup_recipe_category:
+                        recipeListListener.gotoRecipeCategories();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            popup.show();
+        });
     }
 
     @Override
@@ -240,11 +266,26 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
     }
 
     private void attachCategoryToPresenter() {
-        recipeListPresenter.attachCategory(((RecipeListActivity) getActivity()).getRecipeCategory());
+        // todo: listener badly implemented
+        if (recipeListListener != null)
+            recipeListPresenter.attachCategory(recipeListListener.getRecipeCategory());
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     public interface RecipeListListener extends ItemListener<Recipe> {
 
         void gotoGroceryList();
+        void gotoRecipeListUnCategorized();
+        void gotoRecipeCategories();
+        RecipeCategory getRecipeCategory();
     }
 }

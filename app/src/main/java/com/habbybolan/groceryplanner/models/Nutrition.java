@@ -8,17 +8,28 @@ import android.os.Parcelable;
  */
 public class Nutrition implements Parcelable {
 
+    public static final String CALORIES = "Calories";
+    public static final String FAT = "fat";
+    public static final String SATURATED_FAT = "Saturated Fat";
+    public static final String CARBOHYDRATES = "Carbohydrates";
+    public static final String FIBRE = "fibre";
+    public static final String SUGARS = "Sugars";
+    public static final String PROTEIN = "Protein";
+
+    private String name;
     // Amount of the nutrition value
     private int amount;
     // The type of measurement the amount is in (eg. g, mg, etc...)
     private String measurement;
 
-    public Nutrition(int amount, String measurement) {
+    public Nutrition(String name, int amount, String measurement) {
+        this.name = name;
         this.amount = amount;
         this.measurement = measurement;
     }
 
     protected Nutrition(Parcel in) {
+        name = in.readString();
         amount = in.readInt();
         measurement = in.readString();
     }
@@ -36,9 +47,19 @@ public class Nutrition implements Parcelable {
     };
 
     @Override
+    public Nutrition clone() {
+        return new Nutrition(name, amount, measurement);
+    }
+
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
         dest.writeInt(amount);
         dest.writeString(measurement);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getAmount() {
@@ -47,6 +68,13 @@ public class Nutrition implements Parcelable {
 
     public String getMeasurement() {
         return measurement;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+    public void setMeasurement(String measurement) {
+        this.measurement = measurement;
     }
 
     @Override

@@ -41,6 +41,9 @@ public interface RecipeDao {
     @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId = :recipeId")
     void deleteRecipeFromBridge(long recipeId);
 
+    @Query("SELECT * FROM RecipeEntity WHERE recipeId = :recipeId")
+    RecipeEntity getRecipe(long recipeId);
+
     // Bridge table with Ingredients
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -75,4 +78,7 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM RecipeCategoryEntity")
     List<RecipeCategoryEntity> getAllRecipeCategories();
+
+    @Query("SELECT * FROM RecipeCategoryEntity WHERE recipeCategoryId = :recipeCategoryId")
+    RecipeCategoryEntity getRecipeCategory(long recipeCategoryId);
 }

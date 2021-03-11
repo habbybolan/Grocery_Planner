@@ -1,13 +1,10 @@
 package com.habbybolan.groceryplanner.details.recipe.recipedetailactivity;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,38 +15,34 @@ import androidx.viewpager.widget.ViewPager;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
 import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditFragment;
-import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.RecipeCategory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class RecipeDetailActivity extends AppCompatActivity
                                 implements IngredientEditFragment.IngredientEditListener,
-                                            RecipeDetailFragment.RecipeDetailListener,
+                                            RecipeIngredientsFragment.RecipeDetailListener,
                                             RecipeStepFragment.RecipeStepListener,
-                                            RecipeOverviewFragment.RecipeOverviewListener {
-
+                                            RecipeOverviewFragment.RecipeOverviewListener,
+                                            RecipeNutritionFragment.RecipeNutritionListener {
 
     private Recipe recipe;
     private RecipeCategory recipeCategory;
-    private List<RecipeCategory> recipeCategories = new ArrayList<>();
-    ActivityRecipeDetailBinding binding;
-    private Toolbar toolbar;
+    private ActivityRecipeDetailBinding binding;
 
-    private RecipeDetailFragment recipeDetailFragment;
+    private RecipeIngredientsFragment recipeIngredientsFragment;
     private RecipeStepFragment recipeStepFragment;
     private RecipeOverviewFragment recipeOverviewFragment;
-
+    private RecipeNutritionFragment recipeNutritionFragment;
 
     /**
      * 2 fragments that can be swiped through.
      */
-    private final int NUM_FRAGMENTS = 3;
+    private final int NUM_FRAGMENTS = 4;
 
     /**
      * Pager widget that handles the animations and allows swiping horizontally
@@ -71,44 +64,17 @@ public class RecipeDetailActivity extends AppCompatActivity
         if (extras != null) {
             if (extras.containsKey(Recipe.RECIPE))
                 recipe = extras.getParcelable(Recipe.RECIPE);
-            if (extras.containsKey(RecipeCategory.RECIPE_CATEGORY))
-                recipeCategory = extras.getParcelable(RecipeCategory.RECIPE_CATEGORY);
         }
 
         mPager = binding.recipePager;
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mPager.setAdapter(pagerAdapter);
-        setToolBar();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-       //recipeOverviewFragment.attachListener(recipeOverviewListener);
-        // todo: create attachListener methods in other fragments
-    }
-
-    private void setToolBar() {
-        toolbar = binding.toolbarRecipeDetails.toolbar;
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            default:
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
     public void onDoneEditing() {
-        if (recipeDetailFragment != null) {
-            recipeDetailFragment.reloadList();
+        if (recipeIngredientsFragment != null) {
+            recipeIngredientsFragment.reloadList();
         }
         mPager.setCurrentItem(0);
         showPagerContainer();
@@ -167,26 +133,12 @@ public class RecipeDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public Recipe getRecipe() {
         return recipe;
     }
     @Override
     public RecipeCategory getRecipeCategory() {
         return recipeCategory;
-    }
-    @Override
-    public List<RecipeCategory> getRecipeCategories() {
-        return recipeCategories;
     }
 
     /**
@@ -208,7 +160,7 @@ public class RecipeDetailActivity extends AppCompatActivity
                 case 2:
                     return "Overview";
                 default:
-                    return null;
+                    return "Nutrition";
             }
         }
 
@@ -218,16 +170,20 @@ public class RecipeDetailActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     // position 0 corresponding to the Ingredient List for the Recipe
-                    recipeDetailFragment = RecipeDetailFragment.getInstance(recipe);
-                    return recipeDetailFragment;
+                    recipeIngredientsFragment = RecipeIngredientsFragment.getInstance();
+                    return recipeIngredientsFragment;
                 case 1:
                     // position 1 corresponds to the step List for the recipe
                     recipeStepFragment = RecipeStepFragment.getInstance(recipe);
                     return recipeStepFragment;
-                default:
+                case 2:
                     // position 2 corresponding to the Recipe overview
-                    recipeOverviewFragment = RecipeOverviewFragment.getInstance(recipe, recipeCategory);
+                    recipeOverviewFragment = RecipeOverviewFragment.getInstance();
                     return recipeOverviewFragment;
+                default:
+                    // position 3 corresponding to the Recipe Nutrition
+                    recipeNutritionFragment = RecipeNutritionFragment.newInstance();
+                    return recipeNutritionFragment;
             }
         }
 
@@ -235,6 +191,19 @@ public class RecipeDetailActivity extends AppCompatActivity
         public int getCount() {
             return NUM_FRAGMENTS;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelable(Recipe.RECIPE, recipe);
+        savedInstanceState.putParcelable(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
+    }
+
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        recipe = savedInstanceState.getParcelable(Recipe.RECIPE);
+        recipeCategory = savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY);
     }
 
     @Override

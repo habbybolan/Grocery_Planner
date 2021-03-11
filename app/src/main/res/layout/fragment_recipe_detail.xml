@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".details.recipe.recipedetails.RecipeDetailFragment">
+    tools:context=".details.recipe.recipeingredients.RecipeIngredientsFragment">
 
     <LinearLayout
         android:id="@+id/recipe_details_container"
@@ -10,6 +10,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar_recipe_details"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ingredient_list"

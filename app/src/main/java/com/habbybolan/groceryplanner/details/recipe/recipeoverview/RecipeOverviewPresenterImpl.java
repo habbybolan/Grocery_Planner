@@ -1,6 +1,8 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
+import androidx.databinding.Observable;
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableList;
 
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -16,6 +18,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
     private ObservableArrayList<RecipeCategory> loadedRecipeCategories = new ObservableArrayList<>();
+    private ObservableField<RecipeCategory> currRecipeCategory = new ObservableField<>();
 
     public RecipeOverviewPresenterImpl(RecipeOverviewInteractor recipeOverviewInteractor) {
         this.recipeOverviewInteractor = recipeOverviewInteractor;
@@ -40,6 +43,14 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             @Override
             public void onItemRangeRemoved(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
         });
+
+        currRecipeCategory.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                // once the current RecipeCategory is loaded, display it
+                displayCurrRecipeCategory();
+            }
+        });
     }
 
     @Override
@@ -55,6 +66,11 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     @Override
     public void deleteRecipe(Recipe recipe) {
         // todo:
+    }
+
+    @Override
+    public void updateRecipe(Recipe recipe) {
+        recipeOverviewInteractor.updateRecipe(recipe);
     }
 
     @Override
@@ -98,5 +114,39 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             // otherwise, recipe categories not loaded in yet
             view.loadingFailed("recipe categories are being loaded");
         }
+    }
+
+    /**
+     * Displays the current recipe category.
+     */
+    private void displayCurrRecipeCategory() {
+        view.displayRecipeCategory(currRecipeCategory.get());
+    }
+
+
+    @Override
+    public RecipeCategory getRecipeCategory(int position) {
+        if (loadedRecipeCategories != null) {
+            return loadedRecipeCategories.get(position);
+        }
+        return null;
+    }
+
+    @Override
+    public void fetchRecipeCategory(Long categoryId) {
+        if (categoryId != null) {
+            try {
+                recipeOverviewInteractor.fetchRecipeCategory(currRecipeCategory, categoryId);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public String getCurrCategoryName() {
+        if (currRecipeCategory != null)
+            return currRecipeCategory.get().getName();
+        else return "";
     }
 }

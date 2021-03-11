@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +12,18 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
@@ -41,6 +40,7 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
     private FragmentGroceryDetailBinding binding;
     private GroceryDetailsListener groceryDetailsListener;
     private Grocery grocery;
+    private Toolbar toolbar;
 
     @Inject
     GroceryDetailsPresenter groceryDetailsPresenter;
@@ -75,30 +75,33 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grocery_detail, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ingredient_holder_details, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+    private void setToolbar() {
+        toolbar = binding.toolbarGroceryDetail.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
+        toolbar.setTitle(getString(R.string.title_grocery_list));
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                // todo: what to anchor to? - not search
-                showSortPopup(getActivity().findViewById(R.id.action_search));
-                return true;
-            case R.id.action_delete:
-                deleteGrocery();
-                return true;
-            default:
-                return false;
-        }
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        return true;
+                    case R.id.action_sort:
+                        // todo: what to anchor to? - not search
+                        showSortPopup(getActivity().findViewById(R.id.action_search));
+                        return true;
+                    case R.id.action_delete:
+                        deleteGrocery();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     /**
@@ -168,6 +171,16 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
     @Override
     public void deleteSelectedItems() {
         groceryDetailsPresenter.deleteIngredients(grocery, listItemsChecked);
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     public interface GroceryDetailsListener extends ItemListener<Ingredient> {

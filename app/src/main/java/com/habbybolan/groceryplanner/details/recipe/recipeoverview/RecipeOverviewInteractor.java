@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.RecipeCategory;
@@ -23,4 +24,6 @@ public interface RecipeOverviewInteractor {
      * @return                  Array of the loaded RecipeCategory names to display
      */
     String[] getNamedOfRecipeCategories(ArrayList<RecipeCategory> recipeCategories);
+
+    void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long categoryId) throws ExecutionException, InterruptedException;
 }

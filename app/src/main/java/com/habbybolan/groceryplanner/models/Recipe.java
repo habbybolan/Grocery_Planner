@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Recipe extends IngredientHolder {
 
     private String description;
@@ -31,13 +34,13 @@ public class Recipe extends IngredientHolder {
 
         prepTime = recipeEntity.getPrepTime();
         cookTime = recipeEntity.getCookTime();
-        calories = new Nutrition(recipeEntity.getCalories(), recipeEntity.getCaloriesType());
-        fat = new Nutrition(recipeEntity.getFat(), recipeEntity.getFatType());
-        saturatedFat = new Nutrition(recipeEntity.getSaturatedFat(), recipeEntity.getSaturatedFatType());
-        carbohydrates = new Nutrition(recipeEntity.getCarbohydrates(), recipeEntity.getCarbohydratesType());
-        fiber = new Nutrition(recipeEntity.getFiber(), recipeEntity.getFiberType());
-        sugar = new Nutrition(recipeEntity.getSugar(), recipeEntity.getSugarType());
-        protein = new Nutrition(recipeEntity.getProtein(), recipeEntity.getProteinType());
+        calories = new Nutrition(Nutrition.CALORIES, recipeEntity.getCalories(), recipeEntity.getCaloriesType());
+        fat = new Nutrition(Nutrition.FAT, recipeEntity.getFat(), recipeEntity.getFatType());
+        saturatedFat = new Nutrition(Nutrition.SATURATED_FAT, recipeEntity.getSaturatedFat(), recipeEntity.getSaturatedFatType());
+        carbohydrates = new Nutrition(Nutrition.CARBOHYDRATES, recipeEntity.getCarbohydrates(), recipeEntity.getCarbohydratesType());
+        fiber = new Nutrition(Nutrition.FIBRE, recipeEntity.getFiber(), recipeEntity.getFiberType());
+        sugar = new Nutrition(Nutrition.SUGARS, recipeEntity.getSugar(), recipeEntity.getSugarType());
+        protein = new Nutrition(Nutrition.PROTEIN, recipeEntity.getProtein(), recipeEntity.getProteinType());
         categoryId = recipeEntity.getRecipeCategoryId();
     }
 
@@ -78,6 +81,50 @@ public class Recipe extends IngredientHolder {
         dest.writeParcelable(protein, flags);
         if (categoryId != null) dest.writeLong(categoryId);
         else dest.writeLong(0);
+    }
+
+    public List<Nutrition> getNutritionList() {
+        List<Nutrition> nutritionList = new ArrayList<>();
+        nutritionList.add(calories);
+        nutritionList.add(fat);
+        nutritionList.add(saturatedFat);
+        nutritionList.add(carbohydrates);
+        nutritionList.add(fiber);
+        nutritionList.add(sugar);
+        nutritionList.add(protein);
+        return nutritionList;
+    }
+
+    /**
+     * Given a list of nutritional facts, update the recipe with those facts
+     * @param nutritionList The list of nutritional facts
+     */
+    public void updateNutrition(List<Nutrition> nutritionList) {
+        for (Nutrition nutrition : nutritionList) {
+            switch(nutrition.getName()) {
+                case Nutrition.CALORIES:
+                    calories = nutrition;
+                    break;
+                case Nutrition.FAT:
+                    fat = nutrition;
+                    break;
+                case Nutrition.SATURATED_FAT:
+                    saturatedFat = nutrition;
+                    break;
+                case Nutrition.CARBOHYDRATES:
+                    carbohydrates = nutrition;
+                    break;
+                case Nutrition.FIBRE:
+                    fiber = nutrition;
+                    break;
+                case Nutrition.SUGARS:
+                    sugar = nutrition;
+                    break;
+                case Nutrition.PROTEIN:
+                    protein = nutrition;
+                    break;
+            }
+        }
     }
 
     /**

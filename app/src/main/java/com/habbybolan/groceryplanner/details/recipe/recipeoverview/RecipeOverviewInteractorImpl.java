@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -18,7 +19,7 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
     }
     @Override
     public void updateRecipe(Recipe recipe) {
-        // todo:
+        databaseAccess.addRecipe(recipe);
     }
 
     @Override
@@ -43,5 +44,10 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
             categoryNames[i] = recipeCategories.get(i).getName();
         }
         return categoryNames;
+    }
+
+    @Override
+    public void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long categoryId) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchRecipeCategory(recipeCategoryObserver, categoryId);
     }
 }

@@ -1,10 +1,8 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,18 +11,19 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
+import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -32,22 +31,19 @@ import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import javax.inject.Inject;
 
-public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
+public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private RecipeDetailListener recipeDetailListener;
     private FragmentRecipeDetailBinding binding;
-    private Recipe recipe;
+    private Toolbar toolbar;
 
     @Inject
-    RecipeDetailPresenter recipeDetailPresenter;
+    RecipeIngredientsPresenter recipeIngredientsPresenter;
 
-    public RecipeDetailFragment() {}
+    public RecipeIngredientsFragment() {}
 
-    public static RecipeDetailFragment getInstance(@NonNull Recipe recipe) {
-        RecipeDetailFragment fragment = new RecipeDetailFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(Recipe.RECIPE, recipe);
-        fragment.setArguments(args);
+    public static RecipeIngredientsFragment getInstance() {
+        RecipeIngredientsFragment fragment = new RecipeIngredientsFragment();
         return fragment;
     }
 
@@ -71,42 +67,43 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
+    }
+
+    private void setToolbar() {
+        toolbar = binding.toolbarRecipeDetails.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
+        toolbar.setTitle(getString(R.string.title_recipe_list));
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        return true;
+                    case R.id.action_sort:
+                        showSortPopup(getActivity().findViewById(R.id.action_sort));
+                        return true;
+                    case R.id.action_delete:
+                        deleteRecipe();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeDetailPresenter.setView(this);
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable(Recipe.RECIPE);
-            if (getArguments().containsKey(Ingredient.INGREDIENT)) {
-                listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
-            } else
-                // retrieve ingredients associated with recipe
-                recipeDetailPresenter.createIngredientList(recipe);
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ingredient_holder_details, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
-                return true;
-            case R.id.action_delete:
-                deleteRecipe();
-                return true;
-            default:
-                return false;
+        recipeIngredientsPresenter.setView(this);
+        if (getArguments() != null && getArguments().containsKey(Ingredient.INGREDIENT)) {
+             listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
+        } else {
+            // retrieve ingredients associated with recipe
+            recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
         }
     }
 
@@ -136,7 +133,7 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
     private void initLayout() {
-        adapter = new RecipeDetailAdapter(listItems, this);
+        adapter = new RecipeIngredientsAdapter(listItems, this);
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -147,6 +144,8 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
         floatingActionButton.setOnClickListener(v -> recipeDetailListener.createNewItem());
     }
 
+
+
     /**
      * Delete the recipe and end the RecipeDetailActivity.
      */
@@ -154,14 +153,14 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
         PopupWindow popupWindow = new PopupWindow();
         View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeDetailsContainer, "recipe", popupWindow);
         clickableView.setOnClickListener(v -> {
-            recipeDetailPresenter.deleteRecipe(recipe);
+            recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getRecipe());
             recipeDetailListener.onRecipeDeleted();
             popupWindow.dismiss();
         });
     }
 
     public void reloadList() {
-        recipeDetailPresenter.createIngredientList(recipe);
+        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
     }
 
     @Override
@@ -172,7 +171,17 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
 
     @Override
     public void deleteSelectedItems() {
-        recipeDetailPresenter.deleteIngredients(recipe, listItemsChecked);
+        recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getRecipe(), listItemsChecked);
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -182,5 +191,6 @@ public class RecipeDetailFragment extends NonCategoryListFragment<Ingredient> im
 
         void createNewItem();
         void onRecipeDeleted();
+        Recipe getRecipe();
     }
 }

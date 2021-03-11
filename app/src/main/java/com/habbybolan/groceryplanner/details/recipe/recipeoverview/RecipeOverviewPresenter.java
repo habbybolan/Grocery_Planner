@@ -12,6 +12,7 @@ public interface RecipeOverviewPresenter {
 
     void deleteRecipe(Recipe recipe);
 
+    void updateRecipe(Recipe recipe);
     /**
      * Loads all recipe categories
      */
@@ -24,7 +25,22 @@ public interface RecipeOverviewPresenter {
     List<RecipeCategory> getAllCategories();
 
     /**
-     * Call fragments method to display recipe categories if possible
+     * Call fragment to display recipe categories if possible
      */
     void displayRecipeCategories();
+
+    /**
+     * Get the RecipeCategory at index position of the loaded RecipeCategories.
+     * @param position  The position in the array of the RecipeCategory
+     * @return          The RecipeCategory at position, null if RecipeCategories not loaded in fully
+     */
+    RecipeCategory getRecipeCategory(int position);
+
+    void fetchRecipeCategory(Long categoryId);
+
+    /**
+     * Get the current RecipeCategory name
+     * @return  Name of the current recipe's category name if the category exists, empty string otherwise
+     */
+    String getCurrCategoryName();
 }

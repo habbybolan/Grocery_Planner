@@ -3,15 +3,11 @@ package com.habbybolan.groceryplanner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.PopupMenu;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeListBinding;
-import com.habbybolan.groceryplanner.databinding.ToolbarBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment;
@@ -21,13 +17,13 @@ import com.habbybolan.groceryplanner.models.RecipeCategory;
 public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.RecipeListListener, RecipeCategoryFragment.RecipeCategoryListener {
 
     private ActivityRecipeListBinding binding;
-    private Toolbar toolbar;
     private String RECIPE_LIST_TAG;
     private String RECIPE_CATEGORY_TAG;
     protected RecipeListListener recipeListListener;
     private RecipeCategoryListener recipeCategoryListener;
     private RecipeCategory recipeCategory;
 
+    private final static int RETURNED_FROM_RECIPE_DETAILS = 1234;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +37,6 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         RECIPE_LIST_TAG = getString(R.string.RECIPE_LIST_TAG);
         RECIPE_CATEGORY_TAG = getString(R.string.RECIPE_CATEGORY_TAG);
 
-        setToolBar();
         initListeners();
     }
 
@@ -67,40 +62,6 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
     }
 
     /**
-     * Sets up the toolbar with Up button, title, and onClick for title
-     */
-    private void setToolBar() {
-        ToolbarBinding toolbarBinding = binding.toolbarRecipeList;
-        toolbar = binding.toolbarRecipeList.toolbar;
-        toolbarBinding.setTitle(getString(R.string.title_recipe_list));
-
-        // onClick event on toolbar title to swap between Recipe List and Category List
-        toolbarBinding.toolbarTitle.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(getApplicationContext(), v);
-            popup.inflate(R.menu.menu_recipe_list_displayed);
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.popup_recipe_list:
-                        gotoRecipeListUnCategorized();
-                        return true;
-                    case R.id.popup_recipe_category:
-                        gotoRecipeCategories();
-                        return true;
-                    default:
-                        return false;
-                }
-            });
-            popup.show();
-        });
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        // display a back button to go to main page
-        actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    /**
      * Sends the app to the GroceryListActivity
      */
     public void gotoGroceryListFunc() {
@@ -117,15 +78,20 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
     public void onRecipeItemClicked(Recipe recipe) {
         Intent intent = new Intent(this, RecipeDetailActivity.class);
         intent.putExtra(Recipe.RECIPE, recipe);
-        startActivity(intent);
+        if (recipeCategory != null) intent.putExtra(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
+        startActivityForResult(intent, RETURNED_FROM_RECIPE_DETAILS);
     }
 
-    public void hideToolbarFunc() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    public void showToolbarFunc() {
-        toolbar.setVisibility(View.VISIBLE);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // if returning from RecipeDetailActivity, reload the recipe and category list to represent any changes that may have occurred
+        if (requestCode == RETURNED_FROM_RECIPE_DETAILS) {
+            RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.RECIPE_LIST_TAG));
+            if (recipeListFragment != null) recipeListFragment.resetList();
+            RecipeCategoryFragment recipeCategoryFragment = (RecipeCategoryFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.RECIPE_CATEGORY_TAG));
+            if (recipeCategoryFragment != null) recipeCategoryFragment.resetList();
+        }
     }
 
     /**
@@ -180,18 +146,23 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         }
 
         @Override
-        public void hideToolbar() {
-            hideToolbarFunc();
-        }
-
-        @Override
-        public void showToolbar() {
-            showToolbarFunc();
-        }
-
-        @Override
         public void gotoGroceryList() {
             gotoGroceryListFunc();
+        }
+
+        @Override
+        public void gotoRecipeListUnCategorized() {
+            RecipeListActivity.this.gotoRecipeListUnCategorized();
+        }
+
+        @Override
+        public void gotoRecipeCategories() {
+            RecipeListActivity.this.gotoRecipeCategories();
+        }
+
+        @Override
+        public RecipeCategory getRecipeCategory() {
+            return recipeCategory;
         }
     }
 
@@ -206,18 +177,18 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         }
 
         @Override
-        public void hideToolbar() {
-            hideToolbarFunc();
-        }
-
-        @Override
-        public void showToolbar() {
-            showToolbarFunc();
-        }
-
-        @Override
         public void gotoGroceryList() {
             gotoGroceryListFunc();
+        }
+
+        @Override
+        public void gotoRecipeListUnCategorized() {
+            RecipeListActivity.this.gotoRecipeListUnCategorized();
+        }
+
+        @Override
+        public void gotoRecipeCategories() {
+            RecipeListActivity.this.gotoRecipeCategories();
         }
     }
 }

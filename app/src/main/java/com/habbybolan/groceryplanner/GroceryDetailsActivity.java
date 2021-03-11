@@ -1,10 +1,7 @@
 package com.habbybolan.groceryplanner;
 
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
@@ -28,30 +25,8 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_grocery_detail);
-        setToolBar();
         setDetailFragmentInfo();
     }
-
-    /**
-     * Sets up the toolbar with Up button.
-     */
-    private void setToolBar() {
-        toolbar = binding.toolbarGroceryDetail.toolbar;
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            default:
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
 
     /**
      * Sets up the details fragment with the Ingredient info to display.
@@ -87,16 +62,6 @@ public class GroceryDetailsActivity extends AppCompatActivity implements Grocery
     @Override
     public void onGroceryDeleted() {
         goBackToGroceryList();
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

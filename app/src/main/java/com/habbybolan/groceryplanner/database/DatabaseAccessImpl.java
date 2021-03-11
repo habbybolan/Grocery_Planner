@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner.database;
 import android.util.Log;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
@@ -198,6 +199,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         }
         recipesObserver.clear();
         recipesObserver.addAll(recipes);
+
     }
 
     @Override
@@ -235,6 +237,23 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         };
         Thread thread = new Thread(task);
         thread.start();
+    }
+
+    @Override
+    public void fetchRecipe(ObservableField<Recipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException {
+        Callable<RecipeEntity> task = () -> {
+            try {
+                recipeTableLock.lock();
+                return recipeDao.getRecipe(recipeId);
+            } finally {
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<RecipeEntity> futureTask = executorService.submit(task);
+        Recipe recipe = new Recipe(futureTask.get());
+        recipeObserver.set(recipe);
     }
 
     // Recipe Category
@@ -286,6 +305,23 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         }
         recipeCategoriesObserved.clear();
         recipeCategoriesObserved.addAll(recipeCategories);
+    }
+
+    @Override
+    public void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException {
+        Callable<RecipeCategoryEntity> task = () -> {
+            try {
+                recipeCategoryLock.lock();
+                return recipeDao.getRecipeCategory(recipeCategoryId);
+            } finally {
+                recipeCategoryLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<RecipeCategoryEntity> futureTask = executorService.submit(task);
+        RecipeCategory recipeCategory = new RecipeCategory(futureTask.get());
+        recipeCategoryObserver.set(recipeCategory);
     }
 
     @Override

@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +14,18 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 
@@ -45,6 +44,7 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
 
     private GroceryListListener groceryListListener;
     private FragmentGroceryListBinding binding;
+    private Toolbar toolbar;
 
     public GroceryListFragment() {}
 
@@ -68,26 +68,29 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grocery_list, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ingredient_holder_list, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+    private void setToolbar() {
+        toolbar = binding.toolbarGroceryList.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
+        toolbar.setTitle(getString(R.string.title_grocery_list));
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
-                return true;
-            default:
-                return false;
-        }
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        return true;
+                    case R.id.action_sort:
+                        showSortPopup(getActivity().findViewById(R.id.action_sort));
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     /**
@@ -177,6 +180,16 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Grocery.GROCERY, (ArrayList<? extends Parcelable>) listItems);
+    }
+
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

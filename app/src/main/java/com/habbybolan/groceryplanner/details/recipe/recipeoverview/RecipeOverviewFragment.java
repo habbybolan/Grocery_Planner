@@ -7,11 +7,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -22,8 +26,7 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.RecipeCategory;
-
-import java.util.List;
+import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import javax.inject.Inject;
 
@@ -33,21 +36,13 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     RecipeOverviewPresenter recipeOverviewPresenter;
     private FragmentRecipeOverviewBinding binding;
     private RecipeOverviewListener recipeOverviewListener;
-    private Recipe recipe;
-    private RecipeCategory recipeCategory;
-
-    private boolean recipeNameChanged = false;
-    private boolean recipeCategoryChanged = false;
-    private boolean recipeTagsChanged = false;
+    private Toolbar toolbar;
+    private RecipeCategory selectedRecipeCategory;
 
     public RecipeOverviewFragment() {}
 
-    public static RecipeOverviewFragment getInstance(Recipe recipe, RecipeCategory recipeCategory) {
+    public static RecipeOverviewFragment getInstance() {
         RecipeOverviewFragment fragment = new RecipeOverviewFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(Recipe.RECIPE, recipe);
-        args.putParcelable(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -69,6 +64,8 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_overview, container, false);
+        setToolbar();
+        setSaveCancelClickers();
         return binding.getRoot();
     }
 
@@ -76,30 +73,111 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
         recipeOverviewPresenter.setView(this);
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable(Recipe.RECIPE);
-            recipeCategory = getArguments().getParcelable(RecipeCategory.RECIPE_CATEGORY);
-        }
-        showRecipeOverview();
         recipeOverviewPresenter.loadAllRecipeCategories();
+        recipeOverviewPresenter.fetchRecipeCategory(recipeOverviewListener.getRecipe().getCategoryId());
         initLayout();
     }
 
-    private void showRecipeOverview() {
-        // todo: use local variables
-        Recipe recipe = recipeOverviewListener.getRecipe();
-        RecipeCategory recipeCategory = recipeOverviewListener.getRecipeCategory();
-        binding.setName(recipe.getName());
-        // todo: label
-        if (recipeCategory != null) binding.setCategoryName(recipeCategory.getName());
+    /**
+     * Click functionality of Save and Cancel button
+     */
+    private void setSaveCancelClickers() {
+
+        binding.saveButton.setOnClickListener(l -> {
+            // update name
+            recipeOverviewListener.getRecipe().setName(binding.recipeOverviewName.getText().toString());
+            // update RecipeCategory if selected one
+            if (selectedRecipeCategory != null) {
+                recipeOverviewListener.getRecipe().setCategoryId(selectedRecipeCategory.getId());
+            }
+            selectedRecipeCategory = null;
+            recipeOverviewPresenter.updateRecipe(recipeOverviewListener.getRecipe());
+            // todo: tag
+            setVisibilitySaveCancelButton(View.GONE);
+        });
+
+        binding.cancelButton.setOnClickListener(l -> {
+            binding.recipeOverviewName.setText(recipeOverviewListener.getRecipe().getName());
+            // todo: should I store the previous category name, or pull from database?
+            recipeOverviewPresenter.fetchRecipeCategory(recipeOverviewListener.getRecipe().getCategoryId());
+            // todo: tag
+            selectedRecipeCategory = null;
+            setVisibilitySaveCancelButton(View.GONE);
+        });
+    }
+
+    private void setToolbar() {
+        toolbar = binding.toolbarRecipeOverview.toolbar;
+        toolbar.inflateMenu(R.menu.menu_recipe_overview_nutrition);
+        toolbar.setTitle(getString(R.string.title_recipe_list));
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_sort:
+                        showSortPopup(getActivity().findViewById(R.id.action_sort));
+                        return true;
+                    case R.id.action_delete:
+                        deleteRecipe();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+    }
+
+    /**
+     * Sets the visibility of the save and cancel button
+     * @param visibility    Visibility to set buttons to
+     */
+    private void setVisibilitySaveCancelButton(int visibility) {
+        binding.saveButton.setVisibility(visibility);
+        binding.cancelButton.setVisibility(visibility);
+    }
+
+    /**
+     * Menu popup for giving different ways to sort the list.
+     * @param v     The view to anchor the popup menu to
+     */
+    private void showSortPopup(View v) {
+        PopupMenu popup = new PopupMenu(getContext(), v);
+        popup.inflate(R.menu.popup_sort_grocery_list);
+        popup.setOnMenuItemClickListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.popup_alphabetically_grocery_list:
+                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
+                    return true;
+                case R.id.popup_test_grocery_list:
+                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        popup.show();
+    }
+
+    /**
+     * Delete the recipe and end the RecipeDetailActivity.
+     */
+    private void deleteRecipe() {
+        PopupWindow popupWindow = new PopupWindow();
+        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeOverviewContainer, "recipe", popupWindow);
+        clickableView.setOnClickListener(v -> {
+            recipeOverviewPresenter.deleteRecipe(recipeOverviewListener.getRecipe());
+            recipeOverviewListener.onRecipeDeleted();
+            popupWindow.dismiss();
+        });
     }
 
     /**
      * Initiate necessary onClicks and general data.
      */
     private void initLayout() {
-        binding.setName(recipe.getName());
-        if (recipeCategory != null) binding.setCategoryName(recipeCategory.getName());
+        binding.setName(recipeOverviewListener.getRecipe().getName());
+        if (recipeOverviewListener.getRecipeCategory() != null) binding.setCategoryName(recipeOverviewListener.getRecipeCategory().getName());
 
         binding.recipeOverviewCategory.setOnClickListener(v -> {
             // display the recipe categories if they are loaded in
@@ -117,12 +195,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
             }
             @Override
             public void afterTextChanged(Editable s) {
-                // if the text for the recipe name is changed from recipe's name, set as changed
-                if (!recipe.getName().equals(binding.recipeOverviewName.getText()))
-                    recipeNameChanged = true;
-                else
-                    recipeNameChanged = false;
-                saveButtonVisibility();
+                setVisibilitySaveCancelButton(View.VISIBLE);
             }
         });
     }
@@ -133,20 +206,18 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         builder.setItems(categoryNames, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getContext(), categoryNames[which], Toast.LENGTH_SHORT).show();
+                selectedRecipeCategory = recipeOverviewPresenter.getRecipeCategory(which);
+                binding.setCategoryName(categoryNames[which]);
+                setVisibilitySaveCancelButton(View.VISIBLE);
+                //Toast.makeText(getContext(), categoryNames[which], Toast.LENGTH_SHORT).show();
             }
         });
         builder.show();
     }
 
-    /**
-     * Displays the save button if any recipe value has changed, otherwise hide button
-     */
-    private void saveButtonVisibility() {
-        if (recipeCategoryChanged || recipeNameChanged || recipeTagsChanged)
-            binding.saveButton.setVisibility(View.VISIBLE);
-        else
-            binding.saveButton.setVisibility(View.GONE);
+    @Override
+    public void displayRecipeCategory(RecipeCategory recipeCategory) {
+        binding.setCategoryName(recipeCategory.getName());
     }
 
     @Override
@@ -161,8 +232,8 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
 
     public interface RecipeOverviewListener {
 
+        void onRecipeDeleted();
         Recipe getRecipe();
         RecipeCategory getRecipeCategory();
-        List<RecipeCategory> getRecipeCategories();
     }
 }

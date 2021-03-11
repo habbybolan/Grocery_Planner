@@ -14,6 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,7 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
 
     private FragmentRecipeCategoryBinding binding;
     private RecipeCategoryListener recipeCategoryListener;
+    private Toolbar toolbar;
 
     @Inject
     RecipeCategoryPresenter recipeCategoryPresenter;
@@ -118,7 +120,32 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_category, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
+    }
+
+    private void setToolbar() {
+        toolbar = binding.toolbarRecipeCategoryList.toolbar;
+        binding.toolbarRecipeCategoryList.setTitle(getString(R.string.title_recipe_list));
+
+        // onClick event on toolbar title to swap between Recipe List and Category List
+        binding.toolbarRecipeCategoryList.toolbarTitle.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(getContext(), v);
+            popup.inflate(R.menu.menu_recipe_list_displayed);
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.popup_recipe_list:
+                        recipeCategoryListener.gotoRecipeListUnCategorized();
+                        return true;
+                    case R.id.popup_recipe_category:
+                        recipeCategoryListener.gotoRecipeCategories();
+                        return true;
+                    default:
+                        return false;
+                }
+            });
+            popup.show();
+        });
     }
 
     @Override
@@ -174,6 +201,13 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
     }
 
     /**
+     * Reload the list from the database
+     */
+    public void resetList() {
+        recipeCategoryPresenter.fetchRecipeCategories();
+    }
+
+    /**
      * Creates an empty Recipe Category with the given name.
      * @param recipeCategoryName  The name of the new Recipe Category to create
      */
@@ -186,8 +220,20 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         recipeCategoryPresenter.deleteRecipeCategories(listItemsChecked);
     }
 
+    @Override
+    public void hideToolbar() {
+        toolbar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showToolbar() {
+        toolbar.setVisibility(View.VISIBLE);
+    }
+
     public interface RecipeCategoryListener extends ItemListener<RecipeCategory> {
 
         void gotoGroceryList();
+        void gotoRecipeListUnCategorized();
+        void gotoRecipeCategories();
     }
 }

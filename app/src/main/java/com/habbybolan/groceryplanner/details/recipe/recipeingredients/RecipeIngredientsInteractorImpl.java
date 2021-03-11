@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import androidx.databinding.ObservableArrayList;
 
@@ -9,11 +9,11 @@ import com.habbybolan.groceryplanner.models.Recipe;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeDetailInteractorImpl implements RecipeDetailInteractor {
+public class RecipeIngredientsInteractorImpl implements RecipeIngredientsInteractor {
 
     private DatabaseAccess databaseAccess;
 
-    public RecipeDetailInteractorImpl(DatabaseAccess databaseAccess) {
+    public RecipeIngredientsInteractorImpl(DatabaseAccess databaseAccess) {
         this.databaseAccess = databaseAccess;
     }
 

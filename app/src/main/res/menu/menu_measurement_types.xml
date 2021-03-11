@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/measurement_type_ts"
+        android:title="@string/teaspoon" />
+    <item android:id="@+id/measurement_type_ds"
+        android:title="@string/dessertspoon" />
+    <item android:id="@+id/measurement_type_tbs"
+        android:title="@string/tablespoon" />
+    <item android:id="@+id/measurement_type_ounce"
+        android:title="@string/ounce" />
+    <item android:id="@+id/measurement_type_cup"
+        android:title="@string/cup" />
+    <item android:id="@+id/measurement_type_pint"
+        android:title="@string/pint" />
+    <item android:id="@+id/measurement_type_quart"
+        android:title="@string/quart" />
+    <item android:id="@+id/measurement_type_gallon"
+        android:title="@string/gallon" />
+</menu>

@@ -1,28 +1,24 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
+import androidx.databinding.ObservableArrayList;
+
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public interface RecipeDetailPresenter {
+public interface RecipeIngredientsInteractor {
 
-    void setView(ListViewInterface view);
-    void destroy();
-
-    /**
-     * Edits the Recipe name.
-     * @param recipe    Recipe to edit
-     * @param name      New name to set
-     */
     void editRecipeName(Recipe recipe, String name);
+    void deleteRecipe(Recipe recipe);
 
     /**
-     * Recipe to delete.
-     * @param recipe   The recipe to delete.
+     * Get all Ingredient objects associated with Recipe from the database.
+     * @param recipe                The ingredient to display
+     * @param ingredientsObserver   Ingredients observer that holds the fetched ingredients
      */
-    void deleteRecipe(Recipe recipe);
+    void fetchIngredients(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 
     /**
      * Delete an ingredient from the recipe
@@ -37,10 +33,4 @@ public interface RecipeDetailPresenter {
      * @param ingredients   The ingredients to delete
      */
     void deleteIngredients(Recipe recipe, List<Ingredient> ingredients);
-
-    /**
-     * Get all Ingredient objects associated with recipe from the database.
-     * @param recipe   The recipe associated with the Ingredients to display
-     */
-    void createIngredientList(Recipe recipe);
 }

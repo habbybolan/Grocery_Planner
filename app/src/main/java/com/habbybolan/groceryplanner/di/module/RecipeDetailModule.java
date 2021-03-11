@@ -1,10 +1,14 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailInteractor;
-import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailInteractorImpl;
-import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailPresenter;
-import com.habbybolan.groceryplanner.details.recipe.recipedetails.RecipeDetailPresenterImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsInteractor;
+import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsInteractorImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsPresenter;
+import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsPresenterImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionInteractor;
+import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionInteractorImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionPresenter;
+import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionPresenterImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewInteractor;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewInteractorImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewPresenter;
@@ -21,6 +25,16 @@ import dagger.Provides;
 public class RecipeDetailModule {
 
     @Provides
+    RecipeNutritionInteractor provideRecipeNutritionInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeNutritionInteractorImpl(databaseAccess);
+    }
+
+    @Provides
+    RecipeNutritionPresenter provideRecipeNutritionPresenter(RecipeNutritionInteractor recipeNutritionInteractor) {
+        return new RecipeNutritionPresenterImpl(recipeNutritionInteractor);
+    }
+
+    @Provides
     RecipeOverviewInteractor provideRecipeOverviewInteractor(DatabaseAccess databaseAccess) {
         return new RecipeOverviewInteractorImpl(databaseAccess);
     }
@@ -31,13 +45,13 @@ public class RecipeDetailModule {
     }
 
     @Provides
-    RecipeDetailInteractor provideRecipeDetailInteractor(DatabaseAccess DatabaseAccess) {
-        return new RecipeDetailInteractorImpl(DatabaseAccess);
+    RecipeIngredientsInteractor provideRecipeIngredientsInteractor(DatabaseAccess DatabaseAccess) {
+        return new RecipeIngredientsInteractorImpl(DatabaseAccess);
     }
 
     @Provides
-    RecipeDetailPresenter provideRecipeDetailPresenter(RecipeDetailInteractor recipeDetailInteractor) {
-        return new RecipeDetailPresenterImpl(recipeDetailInteractor);
+    RecipeIngredientsPresenter provideRecipeIngredientsPresenter(RecipeIngredientsInteractor recipeIngredientsInteractor) {
+        return new RecipeIngredientsPresenterImpl(recipeIngredientsInteractor);
     }
 
     @Provides

@@ -1,8 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientedit;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,7 +10,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -176,6 +176,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * from a list of quantity types.
      */
     private void createQuantityTypeAlertDialogue() {
+        setMeasurementType(binding.txtQuantityType);
+
+        /*
         // todo: create and set custom AlertDialogue view
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Pick a type");
@@ -185,7 +188,23 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
                 binding.setQuantityType(amountTypes[which]);
             }
         });
-        builder.show();
+        builder.show();*/
+    }
+
+    /**
+     * Popup for setting the measurement type of the quantity or price.
+     * @param v TextView displaying the measurement type
+     */
+    private void setMeasurementType(TextView v) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.menu_measurement_types, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(item -> {
+            String type = item.getTitle().toString();
+            v.setText(type);
+            return true;
+        });
+        popupMenu.show();
     }
 
     /**
@@ -193,6 +212,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * from a list of price types.
      */
     private void createPriceTypeAlertDialogue() {
+        setMeasurementType(binding.txtPriceType);
+        /*
         // todo: create and set custom AlertDialogue view
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Pick a type");
@@ -202,7 +223,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
                 binding.setPriceType(amountTypes[which]);
             }
         });
-        builder.show();
+        builder.show();*/
     }
 
 

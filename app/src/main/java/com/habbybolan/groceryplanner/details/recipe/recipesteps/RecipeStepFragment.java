@@ -5,8 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,6 +46,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     private RecipeStepAdapter adapter;
     private Recipe recipe;
     private RecipeStepListener recipeStepListener;
+    private Toolbar toolbar;
 
     private static final String TAG = "RecipeStepFragment";
 
@@ -80,10 +80,33 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step, container, false);
         initLayout();
+        setToolbar();
         return binding.getRoot();
     }
 
+    private void setToolbar() {
+        toolbar = binding.toolbarRecipeSteps.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
+        toolbar.setTitle(getString(R.string.title_recipe_list));
 
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        return true;
+                    case R.id.action_sort:
+                        showSortPopup(getActivity().findViewById(R.id.action_sort));
+                        return true;
+                    case R.id.action_delete:
+                        deleteRecipe();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -96,28 +119,6 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
             } else
                 // only the grocery saved, must retrieve its associated Ingredients
                 recipeStepPresenter.createStepList((Recipe) getArguments().getParcelable(Recipe.RECIPE));
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_ingredient_holder_details, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
-                return true;
-            case R.id.action_delete:
-                deleteRecipe();
-                return true;
-            default:
-                return false;
         }
     }
 

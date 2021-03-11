@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.database;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
@@ -26,10 +27,12 @@ public interface DatabaseAccess {
     void fetchRecipes(Long recipeCategoryId, ObservableArrayList<Recipe> recipesObserver) throws ExecutionException, InterruptedException;
     List<Recipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<Recipe> recipes);
+    void fetchRecipe(ObservableField<Recipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
 
     void deleteRecipeCategory(RecipeCategory recipeCategory);
     void deleteRecipeCategories(List<RecipeCategory> recipeCategories);
     void fetchRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException;
+    void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
 
     List<Step> fetchStepsFromRecipe(long recipeId) throws ExecutionException, InterruptedException;

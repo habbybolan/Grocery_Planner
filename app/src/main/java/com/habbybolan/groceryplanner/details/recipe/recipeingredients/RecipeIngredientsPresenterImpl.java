@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
@@ -10,17 +10,17 @@ import com.habbybolan.groceryplanner.models.Recipe;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
+public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresenter {
 
-    private RecipeDetailInteractor recipeDetailInteractor;
+    private RecipeIngredientsInteractor recipeIngredientsInteractor;
     private ListViewInterface view;
 
     // true if the ingredients are being loaded
     private boolean loadingIngredients = false;
     private ObservableArrayList<Ingredient> loadedIngredients = new ObservableArrayList<>();
 
-    public RecipeDetailPresenterImpl(RecipeDetailInteractor recipeDetailInteractor) {
-        this.recipeDetailInteractor = recipeDetailInteractor;
+    public RecipeIngredientsPresenterImpl(RecipeIngredientsInteractor recipeIngredientsInteractor) {
+        this.recipeIngredientsInteractor = recipeIngredientsInteractor;
         setIngredientsCallback();
     }
 
@@ -61,18 +61,18 @@ public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        recipeDetailInteractor.deleteRecipe(recipe);
+        recipeIngredientsInteractor.deleteRecipe(recipe);
     }
 
     @Override
     public void deleteIngredient(Recipe recipe, Ingredient ingredient) {
-        recipeDetailInteractor.deleteIngredient(recipe, ingredient);
+        recipeIngredientsInteractor.deleteIngredient(recipe, ingredient);
         createIngredientList(recipe);
     }
 
     @Override
     public void deleteIngredients(Recipe recipe, List<Ingredient> ingredients) {
-        recipeDetailInteractor.deleteIngredients(recipe, ingredients);
+        recipeIngredientsInteractor.deleteIngredients(recipe, ingredients);
         createIngredientList(recipe);
     }
 
@@ -98,7 +98,7 @@ public class RecipeDetailPresenterImpl implements RecipeDetailPresenter {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            recipeDetailInteractor.fetchIngredients(recipe, loadedIngredients);
+            recipeIngredientsInteractor.fetchIngredients(recipe, loadedIngredients);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("failed to delete Ingredients");

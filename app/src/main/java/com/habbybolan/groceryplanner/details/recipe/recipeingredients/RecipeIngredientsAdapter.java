@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetails;
+package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,22 +15,22 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 
 import java.util.List;
 
-public class RecipeDetailAdapter extends ListAdapter<RecipeDetailAdapter.ViewHolder, Ingredient> {
+public class RecipeIngredientsAdapter extends ListAdapter<RecipeIngredientsAdapter.ViewHolder, Ingredient> {
 
-    RecipeDetailAdapter(List<Ingredient> ingredients, ListViewInterface view) {
+    RecipeIngredientsAdapter(List<Ingredient> ingredients, ListViewInterface view) {
         super(view, ingredients);
     }
 
     @NonNull
     @Override
-    public RecipeDetailAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecipeIngredientsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         IngredientListDetailsBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.ingredient_list_details, parent, false);
-        return new RecipeDetailAdapter.ViewHolder(binding);
+        return new RecipeIngredientsAdapter.ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeDetailAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecipeIngredientsAdapter.ViewHolder holder, int position) {
         Ingredient ingredient = items.get(position);
         holder.bind(ingredient);
     }

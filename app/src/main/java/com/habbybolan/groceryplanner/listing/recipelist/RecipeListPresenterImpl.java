@@ -66,7 +66,11 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
             @Override
             public void onItemRangeMoved(ObservableList<Recipe> sender, int fromPosition, int toPosition, int itemCount) {}
             @Override
-            public void onItemRangeRemoved(ObservableList<Recipe> sender, int positionStart, int itemCount) {}
+            public void onItemRangeRemoved(ObservableList<Recipe> sender, int positionStart, int itemCount) {
+                // todo: change this - currently there to make going to an empty list possible, but doubled up displayRecipe when changing to a new, non-empty list
+                loadingRecipes = false;
+                displayRecipes();
+            }
         });
     }
 

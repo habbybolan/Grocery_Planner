@@ -10,10 +10,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar"
-            android:id="@+id/toolbar_recipe_details"/>
-
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/recipe_pager"
             android:layout_width="match_parent"

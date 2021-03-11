@@ -14,10 +14,6 @@
             android:orientation="vertical"
             tools:context=".GroceryDetailsActivity">
 
-            <include
-                layout="@layout/toolbar"
-                android:id="@+id/toolbar_grocery_detail"/>
-
             <FrameLayout
                 android:id="@+id/fragment_details"
                 android:layout_width="match_parent"
