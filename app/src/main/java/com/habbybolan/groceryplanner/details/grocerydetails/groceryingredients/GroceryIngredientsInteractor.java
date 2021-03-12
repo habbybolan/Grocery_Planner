@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import androidx.databinding.ObservableArrayList;
 
@@ -8,7 +8,7 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface GroceryDetailsInteractor {
+public interface GroceryIngredientsInteractor {
 
     void editGroceryName(Grocery grocery, String name);
     void deleteGrocery(Grocery grocery);

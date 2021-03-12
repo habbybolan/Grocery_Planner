@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.Toast;
@@ -30,12 +31,13 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 /**
  */
-public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
+public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
 
     private FragmentGroceryDetailBinding binding;
     private GroceryDetailsListener groceryDetailsListener;
@@ -43,12 +45,12 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
     private Toolbar toolbar;
 
     @Inject
-    GroceryDetailsPresenter groceryDetailsPresenter;
+    GroceryIngredientsPresenter groceryIngredientsPresenter;
 
-    private GroceryDetailFragment() {}
+    private GroceryIngredientsFragment() {}
 
-    public static GroceryDetailFragment getInstance(@NonNull Grocery grocery) {
-        GroceryDetailFragment fragment = new GroceryDetailFragment();
+    public static GroceryIngredientsFragment getInstance(@NonNull Grocery grocery) {
+        GroceryIngredientsFragment fragment = new GroceryIngredientsFragment();
         Bundle args = new Bundle();
         args.putParcelable(Grocery.GROCERY, grocery);
         fragment.setArguments(args);
@@ -82,7 +84,7 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
     private void setToolbar() {
         toolbar = binding.toolbarGroceryDetail.toolbar;
         toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
-        toolbar.setTitle(getString(R.string.title_grocery_list));
+        toolbar.setTitle(getString(R.string.title_grocery_ingredients));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -129,14 +131,14 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        groceryDetailsPresenter.setView(this);
+        groceryIngredientsPresenter.setView(this);
         if (getArguments() != null) {
             grocery = getArguments().getParcelable(Grocery.GROCERY);
             if (getArguments().containsKey(Ingredient.INGREDIENT)) {
                 listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
             } else
                 // only the grocery saved, must retrieve its associated Ingredients
-                groceryDetailsPresenter.createIngredientList((Grocery) getArguments().getParcelable(Grocery.GROCERY));
+                groceryIngredientsPresenter.createIngredientList((Grocery) getArguments().getParcelable(Grocery.GROCERY));
         }
     }
 
@@ -144,7 +146,7 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
     private void initLayout() {
-        adapter = new GroceryDetailAdapter(listItems, this);
+        adapter = new GroceryIngredientsAdapter(listItems, this);
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -153,6 +155,10 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
         View view = binding.groceryDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> groceryDetailsListener.createNewItem());
+
+        // on Click for entering check list mode
+        ImageButton imageButton = view.findViewById(R.id.btn_checklist);
+        imageButton.setOnClickListener(l -> groceryDetailsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
     }
 
     /**
@@ -162,7 +168,7 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
         PopupWindow popupWindow = new PopupWindow();
         View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.groceryDetailsContainer, "grocery", popupWindow);
         clickableView.setOnClickListener(v -> {
-            groceryDetailsPresenter.deleteGrocery(grocery);
+            groceryIngredientsPresenter.deleteGrocery(grocery);
             groceryDetailsListener.onGroceryDeleted();
             popupWindow.dismiss();
         });
@@ -170,7 +176,7 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
 
     @Override
     public void deleteSelectedItems() {
-        groceryDetailsPresenter.deleteIngredients(grocery, listItemsChecked);
+        groceryIngredientsPresenter.deleteIngredients(grocery, listItemsChecked);
     }
 
     @Override
@@ -183,16 +189,19 @@ public class GroceryDetailFragment extends NonCategoryListFragment<Ingredient> i
         toolbar.setVisibility(View.VISIBLE);
     }
 
-    public interface GroceryDetailsListener extends ItemListener<Ingredient> {
 
-        void createNewItem();
-        void onGroceryDeleted();
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Ingredient.INGREDIENT, (ArrayList<? extends Parcelable>) listItems);
         outState.putParcelable(Grocery.GROCERY, grocery);
+    }
+
+    public interface GroceryDetailsListener extends ItemListener<Ingredient> {
+
+        void createNewItem();
+        void onGroceryDeleted();
+        void gotoChecklist(List<Ingredient> ingredients);
     }
 }

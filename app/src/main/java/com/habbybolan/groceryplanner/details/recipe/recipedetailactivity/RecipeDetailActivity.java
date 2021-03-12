@@ -136,10 +136,6 @@ public class RecipeDetailActivity extends AppCompatActivity
     public Recipe getRecipe() {
         return recipe;
     }
-    @Override
-    public RecipeCategory getRecipeCategory() {
-        return recipeCategory;
-    }
 
     /**
      * Pager adapter to allow swiping between the Recipe Ingredient list and step list

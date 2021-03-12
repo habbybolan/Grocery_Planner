@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.grocerylist;
+package com.habbybolan.groceryplanner.listing.grocerylist.grocerylist;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;

@@ -39,10 +39,11 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
 
     @Override
     public String[] getNamedOfRecipeCategories(ArrayList<RecipeCategory> recipeCategories) {
-        String[] categoryNames = new String[recipeCategories.size()];
-        for (int i = 0; i < categoryNames.length; i++) {
+        String[] categoryNames = new String[recipeCategories.size()+1];
+        for (int i = 0; i < recipeCategories.size(); i++) {
             categoryNames[i] = recipeCategories.get(i).getName();
         }
+        categoryNames[recipeCategories.size()] = "No Category";
         return categoryNames;
     }
 

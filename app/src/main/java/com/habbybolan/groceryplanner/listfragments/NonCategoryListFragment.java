@@ -9,7 +9,7 @@ import com.habbybolan.groceryplanner.R;
 
 /**
  * For list items that are not inside a category
- * Basic functionality of selecting, adding and deleting list items.
+ * Basic functionality of adding and deleting list items with context menu.
  * @param <T>   The list item with no category functionality
  */
 public abstract class NonCategoryListFragment<T> extends ListFragment<T> {

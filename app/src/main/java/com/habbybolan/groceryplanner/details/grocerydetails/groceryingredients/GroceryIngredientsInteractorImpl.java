@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import androidx.databinding.ObservableArrayList;
 
@@ -11,12 +11,12 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class GroceryDetailsInteractorImpl implements GroceryDetailsInteractor {
+public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInteractor {
 
     private DatabaseAccess databaseAccess;
 
     @Inject
-    public GroceryDetailsInteractorImpl(DatabaseAccess databaseAccess) {
+    public GroceryIngredientsInteractorImpl(DatabaseAccess databaseAccess) {
         this.databaseAccess = databaseAccess;
     }
 

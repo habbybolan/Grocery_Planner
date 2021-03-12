@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.RecipeListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;

@@ -118,7 +118,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     private void setToolbar() {
         toolbar = binding.toolbarRecipeNutrition.toolbar;
         toolbar.inflateMenu(R.menu.menu_recipe_overview_nutrition);
-        toolbar.setTitle(getString(R.string.title_recipe_list));
+        toolbar.setTitle(getString(R.string.title_recipe_nutrition));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

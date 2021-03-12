@@ -1,10 +1,10 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsInteractor;
-import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsInteractorImpl;
-import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsPresenter;
-import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsPresenterImpl;
+import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.GroceryIngredientsInteractor;
+import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.GroceryIngredientsInteractorImpl;
+import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.GroceryIngredientsPresenter;
+import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.GroceryIngredientsPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -13,12 +13,12 @@ import dagger.Provides;
 public class GroceryDetailModule {
 
     @Provides
-    GroceryDetailsInteractor provideGroceryDetailInteractor(DatabaseAccess DatabaseAccess) {
-        return new GroceryDetailsInteractorImpl(DatabaseAccess);
+    GroceryIngredientsInteractor provideGroceryIngredientsInteractor(DatabaseAccess DatabaseAccess) {
+        return new GroceryIngredientsInteractorImpl(DatabaseAccess);
     }
 
     @Provides
-    GroceryDetailsPresenter provideGroceryDetailsPresenter(GroceryDetailsInteractor groceryDetailsInteractor) {
-        return new GroceryDetailsPresenterImpl(groceryDetailsInteractor);
+    GroceryIngredientsPresenter provideGroceryIngredientsPresenter(GroceryIngredientsInteractor groceryIngredientsInteractor) {
+        return new GroceryIngredientsPresenterImpl(groceryIngredientsInteractor);
     }
 }

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,9 +15,9 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 
 import java.util.List;
 
-public class GroceryDetailAdapter extends ListAdapter<GroceryDetailAdapter.ViewHolder, Ingredient> {
+public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAdapter.ViewHolder, Ingredient> {
 
-    GroceryDetailAdapter(List<Ingredient> ingredients, ListViewInterface<Ingredient> view) {
+    GroceryIngredientsAdapter(List<Ingredient> ingredients, ListViewInterface<Ingredient> view) {
         super(view, ingredients);
     }
 

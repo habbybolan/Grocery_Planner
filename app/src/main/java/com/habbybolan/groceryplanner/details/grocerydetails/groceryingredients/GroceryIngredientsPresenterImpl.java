@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
@@ -12,9 +12,9 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
+public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresenter {
 
-    private GroceryDetailsInteractor groceryDetailsInteractor;
+    private GroceryIngredientsInteractor groceryIngredientsInteractor;
     private ListViewInterface view;
 
     // true if the ingredients are being loaded
@@ -22,8 +22,8 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
     private ObservableArrayList<Ingredient> loadedIngredients = new ObservableArrayList<>();
 
     @Inject
-    public GroceryDetailsPresenterImpl(GroceryDetailsInteractor groceryDetailsInteractor) {
-        this.groceryDetailsInteractor = groceryDetailsInteractor;
+    public GroceryIngredientsPresenterImpl(GroceryIngredientsInteractor groceryIngredientsInteractor) {
+        this.groceryIngredientsInteractor = groceryIngredientsInteractor;
         setGroceryCallback();
     }
 
@@ -73,18 +73,18 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
 
     @Override
     public void deleteGrocery(Grocery grocery) {
-        groceryDetailsInteractor.deleteGrocery(grocery);
+        groceryIngredientsInteractor.deleteGrocery(grocery);
     }
 
     @Override
     public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
-        groceryDetailsInteractor.deleteIngredient(grocery, ingredient);
+        groceryIngredientsInteractor.deleteIngredient(grocery, ingredient);
         createIngredientList(grocery);
     }
 
     @Override
     public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
-        groceryDetailsInteractor.deleteIngredients(grocery, ingredients);
+        groceryIngredientsInteractor.deleteIngredients(grocery, ingredients);
         createIngredientList(grocery);
     }
 
@@ -109,10 +109,15 @@ public class GroceryDetailsPresenterImpl implements GroceryDetailsPresenter {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            groceryDetailsInteractor.fetchIngredients(grocery, loadedIngredients);
+            groceryIngredientsInteractor.fetchIngredients(grocery, loadedIngredients);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;
         }
+    }
+
+    @Override
+    public List<Ingredient> getIngredients() {
+        return loadedIngredients;
     }
 }

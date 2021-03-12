@@ -21,6 +21,8 @@ public class Ingredient implements Parcelable {
     private Section section;
 
     public final static String INGREDIENT = "ingredient";
+    public final static String INGREDIENT_CHECKED = "ingredient_checked";
+    public final static String INGREDIENT_UNCHECKED = "ingredient_unchecked";
 
 
     public Ingredient(IngredientEntity ingredientEntity, int quantity, String quantityType) {

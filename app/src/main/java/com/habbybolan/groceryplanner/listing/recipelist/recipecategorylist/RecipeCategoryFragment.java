@@ -126,7 +126,7 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
 
     private void setToolbar() {
         toolbar = binding.toolbarRecipeCategoryList.toolbar;
-        binding.toolbarRecipeCategoryList.setTitle(getString(R.string.title_recipe_list));
+        binding.toolbarRecipeCategoryList.setTitle(getString(R.string.title_category_list));
 
         // onClick event on toolbar title to swap between Recipe List and Category List
         binding.toolbarRecipeCategoryList.toolbarTitle.setOnClickListener(v -> {

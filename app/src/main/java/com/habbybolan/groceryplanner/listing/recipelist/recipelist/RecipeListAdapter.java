@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

@@ -40,7 +40,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
 
-    private final String[] amountTypes = {"lb", "g", "ml"};
 
     @Inject
     IngredientEditPresenter ingredientEditPresenter;
@@ -177,18 +176,14 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void createQuantityTypeAlertDialogue() {
         setMeasurementType(binding.txtQuantityType);
+    }
 
-        /*
-        // todo: create and set custom AlertDialogue view
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Pick a type");
-        builder.setItems(amountTypes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                binding.setQuantityType(amountTypes[which]);
-            }
-        });
-        builder.show();*/
+    /**
+     * Clicker functionality for selecting a price type. Creates an AlertDialogue popup to select
+     * from a list of price types.
+     */
+    private void createPriceTypeAlertDialogue() {
+        setMeasurementType(binding.txtPriceType);
     }
 
     /**
@@ -207,24 +202,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         popupMenu.show();
     }
 
-    /**
-     * Clicker functionality for selecting a price type. Creates an AlertDialogue popup to select
-     * from a list of price types.
-     */
-    private void createPriceTypeAlertDialogue() {
-        setMeasurementType(binding.txtPriceType);
-        /*
-        // todo: create and set custom AlertDialogue view
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Pick a type");
-        builder.setItems(amountTypes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                binding.setPriceType(amountTypes[which]);
-            }
-        });
-        builder.show();*/
-    }
+
 
 
     /**

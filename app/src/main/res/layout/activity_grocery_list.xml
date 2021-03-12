@@ -7,14 +7,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".GroceryListActivity"
+        tools:context=".listing.grocerylist.GroceryListActivity"
         android:orientation="vertical">
 
         <fragment
                 android:id="@+id/fragment_recipe_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:name="com.habbybolan.groceryplanner.listing.grocerylist.GroceryListFragment"
+                android:name="com.habbybolan.groceryplanner.listing.grocerylist.grocerylist.GroceryListFragment"
                 tools:layout="@layout/fragment_grocery_list"/>
 
     </LinearLayout>

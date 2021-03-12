@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.grocerydetails;
+package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.Grocery;
@@ -6,7 +6,7 @@ import com.habbybolan.groceryplanner.models.Ingredient;
 
 import java.util.List;
 
-public interface GroceryDetailsPresenter {
+public interface GroceryIngredientsPresenter {
 
     void setView(ListViewInterface view);
     void destroy();
@@ -43,4 +43,10 @@ public interface GroceryDetailsPresenter {
      * @param grocery   The grocery associated with the Ingredients to display
      */
     void createIngredientList(Grocery grocery);
+
+    /**
+     * Get all loaded ingredients
+     * @return  Loaded ingredients
+     */
+    List<Ingredient> getIngredients();
 }

@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
-import com.habbybolan.groceryplanner.GroceryListActivity;
+import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.RecipeListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.databinding.ActivityMainBinding;
 import com.habbybolan.groceryplanner.databinding.ToolbarBinding;
 

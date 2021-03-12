@@ -126,10 +126,9 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
 
     @Override
     public RecipeCategory getRecipeCategory(int position) {
-        if (loadedRecipeCategories != null) {
-            return loadedRecipeCategories.get(position);
-        }
-        return null;
+        if (position == loadedRecipeCategories.size())
+            return null;
+        return loadedRecipeCategories.get(position);
     }
 
     @Override

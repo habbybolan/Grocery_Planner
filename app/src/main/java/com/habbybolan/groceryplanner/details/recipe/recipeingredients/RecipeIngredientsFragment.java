@@ -74,7 +74,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     private void setToolbar() {
         toolbar = binding.toolbarRecipeDetails.toolbar;
         toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
-        toolbar.setTitle(getString(R.string.title_recipe_list));
+        toolbar.setTitle(getString(R.string.title_recipe_ingredients));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

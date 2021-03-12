@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.grocerylist;
+package com.habbybolan.groceryplanner.listing.grocerylist.grocerylist;
 
 import android.app.AlertDialog;
 import android.content.Context;

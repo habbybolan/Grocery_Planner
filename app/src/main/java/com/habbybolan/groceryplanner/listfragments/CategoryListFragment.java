@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 /**
  * For list items that are put inside a category.
- * Includes basic functionality of nonCategoryLists for selecting, adding and deleting list items.
+ * Includes basic functionality for adding and deleting list items with context menu.
  * Adds functionality for putting the list item inside a category
  * @param <T>   List item that can be put in a category
  */
@@ -55,7 +55,7 @@ public abstract class CategoryListFragment<T> extends ListFragment<T> {
                     exitSelectedMode();
                     return true;
                 case R.id.action_category_context_add_category:
-                    categoryPopup(getActivity().findViewById(R.id.action_search));
+                    categoryPopup(getActivity().findViewById(R.id.action_category_context_add_category));
                     return true;
                 default:
                     return false;
@@ -75,7 +75,7 @@ public abstract class CategoryListFragment<T> extends ListFragment<T> {
     protected abstract ArrayList<? extends Category> getCategories();
 
     /**
-     * Creates Popup menu window to add selected items to that category
+     * Creates Popup menu window to add selected items to selected category.
      */
     private void categoryPopup(View v) {
         PopupMenu popup = new PopupMenu(getContext(), v);

@@ -2,6 +2,7 @@ package com.habbybolan.groceryplanner.models;
 
 public class Category {
 
+    public static final String NO_CATEGORY = "No Category";
     long id;
     String name;
 

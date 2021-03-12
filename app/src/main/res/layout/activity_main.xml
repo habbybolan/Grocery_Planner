@@ -18,10 +18,10 @@
             android:id="@+id/button"
             android:layout_width="@dimen/default_button_width"
             android:layout_height="@dimen/default_button_height"
-            android:layout_marginStart="64dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="80dp"
-            android:text="Recipe"
             android:onClick="onRecipeClick"
+            android:text="Recipe"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,22 +29,22 @@
             android:id="@+id/button2"
             android:layout_width="@dimen/default_button_width"
             android:layout_height="@dimen/default_button_height"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="80dp"
-            android:layout_marginEnd="100dp"
-            android:text="Grocery"
             android:onClick="onGroceryClick"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Grocery"
+            app:layout_constraintStart_toEndOf="@+id/button"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btn_http_request"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="416dp"
+            android:layout_marginBottom="16dp"
             android:text="Button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.922"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

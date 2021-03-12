@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainPage.MainActivity"
             android:theme="@style/MyMaterialTheme"
-            android:parentActivityName=".GroceryListActivity">
+            android:parentActivityName=".listing.grocerylist.GroceryListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -26,17 +26,17 @@
             android:parentActivityName=".MainPage.MainActivity"
             android:theme="@style/MyMaterialTheme" />
         <activity
-            android:name=".RecipeListActivity"
+            android:name=".listing.recipelist.RecipeListActivity"
             android:theme="@style/MyMaterialTheme"
             android:parentActivityName=".MainPage.MainActivity">
         </activity>
         <activity
-            android:name=".GroceryDetailsActivity"
+            android:name=".details.grocerydetails.GroceryDetailsActivity"
             android:parentActivityName=".MainPage.MainActivity"
             android:theme="@style/MyMaterialTheme">
         </activity>
         <activity
-            android:name=".GroceryListActivity"
+            android:name=".listing.grocerylist.GroceryListActivity"
             android:theme="@style/MyMaterialTheme"
             android:parentActivityName=".MainPage.MainActivity">
         </activity>

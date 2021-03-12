@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner;
+package com.habbybolan.groceryplanner.listing.grocerylist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +7,11 @@ import android.view.Menu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsActivity;
+import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryListBinding;
-import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListFragment;
+import com.habbybolan.groceryplanner.listing.grocerylist.grocerylist.GroceryListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.Grocery;
 
 public class GroceryListActivity extends AppCompatActivity implements GroceryListFragment.GroceryListListener {

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".details.grocerydetails.GroceryDetailFragment">
+    tools:context=".details.grocerydetails.groceryingredients.GroceryIngredientsFragment">
 
     <LinearLayout
         android:id="@+id/grocery_details_container"
@@ -23,7 +23,7 @@
 
         <include
             android:id="@+id/grocery_detail_bottom_action"
-            layout="@layout/bottom_action_bar_list_details"/>
+            layout="@layout/bottom_action_bar_grocery_ingredient_list"/>
 
     </LinearLayout>
 </layout>

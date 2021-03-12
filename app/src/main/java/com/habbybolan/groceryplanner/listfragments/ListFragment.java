@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Deals with some list functionality of the generic object T
+ * Deals with some list functionality of the generic list item T.
+ * Deals with the selectMode, Toolbar visibility, and selecting list items.
  * @param <T>   The list of the object type
  */
 public abstract class ListFragment<T> extends Fragment implements ListViewInterface<T> {
@@ -25,7 +26,7 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     protected List<T> listItems = new ArrayList<>();
     protected ItemListener<T> itemListener;
 
-    private String adapterErrorMessage = "Must attach adapter to ListFragment from child class)";
+    private String adapterErrorMessage = "Must attach adapter to ListFragment from child class";
     private String listenerErrorMessage = "Must attach listener to ListFragment with attachListener(Context context)";
 
     /**
@@ -45,7 +46,6 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
         actionMode = null;
         showToolbar();
         if (itemListener != null) {
-
             itemListener.onItemClicked(t);
         } else throw new IllegalArgumentException(listenerErrorMessage);
     }
@@ -113,7 +113,7 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     public abstract void hideToolbar();
 
     /**
-     * SHows the toolbar when the context mode is exited.
+     * Shows the toolbar when the context mode is exited.
      */
     public abstract void showToolbar();
 

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import androidx.databinding.ObservableArrayList;
 

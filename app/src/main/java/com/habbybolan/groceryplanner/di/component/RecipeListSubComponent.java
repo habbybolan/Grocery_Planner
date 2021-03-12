@@ -3,7 +3,7 @@ package com.habbybolan.groceryplanner.di.component;
 
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.di.scope.ListScope;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment;
 
 import dagger.Subcomponent;
 

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.RecipeCategory;

@@ -32,10 +32,14 @@ public interface RecipeOverviewPresenter {
     /**
      * Get the RecipeCategory at index position of the loaded RecipeCategories.
      * @param position  The position in the array of the RecipeCategory
-     * @return          The RecipeCategory at position, null if RecipeCategories not loaded in fully
+     * @return          The RecipeCategory at position, null if the last position was selected (No Category)
      */
     RecipeCategory getRecipeCategory(int position);
 
+    /**
+     * Fetch the category from the database to display.
+     * @param categoryId    The Id of the category to display
+     */
     void fetchRecipeCategory(Long categoryId);
 
     /**

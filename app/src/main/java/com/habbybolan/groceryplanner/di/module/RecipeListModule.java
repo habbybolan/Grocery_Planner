@@ -1,10 +1,10 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListInteractor;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListInteractorImpl;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListPresenter;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListPresenterImpl;
+import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListInteractor;
+import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListInteractorImpl;
+import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListPresenter;
+import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
