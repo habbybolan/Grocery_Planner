@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +25,7 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Nutrition;
 import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;
 
@@ -128,7 +127,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
                         showSortPopup(getActivity().findViewById(R.id.action_sort));
                         return true;
                     case R.id.action_delete:
-                        deleteRecipe();
+                        deleteRecipeCheck();
                         return true;
                     default:
                         return false;
@@ -161,16 +160,23 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
 
 
     /**
-     * Delete the recipe and end the RecipeDetailActivity.
+     * Ask the user to confirm deleting the Recipe
+     */
+    private void deleteRecipeCheck() {
+        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeNutritionContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+            @Override
+            public void deleteItem() {
+                deleteRecipe();
+            }
+        });
+    }
+
+    /**
+     * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeNutritionContainer, "recipe", popupWindow);
-        clickableView.setOnClickListener(v -> {
-            recipeNutritionPresenter.deleteRecipe(recipeNutritionListener.getRecipe());
-            recipeNutritionListener.onRecipeDeleted();
-            popupWindow.dismiss();
-        });
+        recipeNutritionPresenter.deleteRecipe(recipeNutritionListener.getRecipe());
+        recipeNutritionListener.onRecipeDeleted();
     }
 
     @Override

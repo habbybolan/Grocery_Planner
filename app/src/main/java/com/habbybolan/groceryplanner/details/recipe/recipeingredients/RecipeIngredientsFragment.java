@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,7 @@ import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;
 
@@ -86,7 +85,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
                         showSortPopup(getActivity().findViewById(R.id.action_sort));
                         return true;
                     case R.id.action_delete:
-                        deleteRecipe();
+                        deleteRecipeCheck();
                         return true;
                     default:
                         return false;
@@ -147,16 +146,20 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
 
 
     /**
-     * Delete the recipe and end the RecipeDetailActivity.
+     * Ask user to confirm deleting the Recipe
      */
-    private void deleteRecipe() {
-        PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeDetailsContainer, "recipe", popupWindow);
-        clickableView.setOnClickListener(v -> {
-            recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getRecipe());
-            recipeDetailListener.onRecipeDeleted();
-            popupWindow.dismiss();
+    private void deleteRecipeCheck() {
+        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeDetailsContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+            @Override
+            public void deleteItem() {
+                deleteRecipe();
+            }
         });
+    }
+
+    private void deleteRecipe() {
+        recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getRecipe());
+        recipeDetailListener.onRecipeDeleted();
     }
 
     public void reloadList() {

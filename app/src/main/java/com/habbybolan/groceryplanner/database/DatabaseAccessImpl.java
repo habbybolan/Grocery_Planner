@@ -590,6 +590,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                             .setPriceType(ingredientEntity.getPriceType())
                             .setQuantity(groceryIngredientBridge.quantity)
                             .setQuantityType(groceryIngredientBridge.quantityType)
+                            .setFoodType(ingredientEntity.getFoodType())
                             .build());
                 }
                 return ingredients;
@@ -630,6 +631,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                             .setQuantity(recipeIngredientBridge.quantity)
                             .setQuantityType(recipeIngredientBridge.quantityType)
                             //.setSection(section)
+                            .setFoodType(ingredientEntity.getFoodType())
                             .build());
                 }
                 return ingredients;

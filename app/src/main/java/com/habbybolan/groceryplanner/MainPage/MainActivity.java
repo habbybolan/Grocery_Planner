@@ -11,16 +11,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 
-import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.databinding.ActivityMainBinding;
 import com.habbybolan.groceryplanner.databinding.ToolbarBinding;
+import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,16 +36,8 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setToolBar();
         httpRequest();
-
-        /*
-        // todo: What does this do
-            // For HttpUrlConnection in supporting basic authentication
-        Authenticator.setDefault(new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("user1", "abcd".toCharArray());
-            }
-        });*/
     }
+
 
     private void httpRequest() {
         binding.btnHttpRequest.setOnClickListener(l -> {
@@ -85,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class HttpGetRequest extends AsyncTask<Void, Void, String> {
 
-        private static final String SERVER = "http://10.0.2.2:8080/";
+        private static final String SERVER = "http://192.168.0.16:8080/api/groceries";
         private static final String REQUEST_METHOD = "GET";
         private static final int READ_TIMEOUT  = 1500;
         private static final int CONNECTION_TIMEOUT = 1500;
@@ -94,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             String result;
             String inputLine;
+
+            Authenticator.setDefault(new Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication("user1", "abcd".toCharArray());
+                }
+            });
 
             try {
                 URL myUrl = new URL(SERVER);

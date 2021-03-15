@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,7 @@ import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +96,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
                         showSortPopup(getActivity().findViewById(R.id.action_search));
                         return true;
                     case R.id.action_delete:
-                        deleteGrocery();
+                        deleteGroceryCheck();
                         return true;
                     default:
                         return false;
@@ -164,15 +163,23 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
     /**
      * Delete the grocery from database and go back to the Grocery List
      */
-    private void deleteGrocery() {
-        PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.groceryDetailsContainer, "grocery", popupWindow);
-        clickableView.setOnClickListener(v -> {
-            groceryIngredientsPresenter.deleteGrocery(grocery);
-            groceryDetailsListener.onGroceryDeleted();
-            popupWindow.dismiss();
+    private void deleteGroceryCheck() {
+        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Grocery", binding.groceryDetailsContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+            @Override
+            public void deleteItem() {
+                deleteGrocery();
+            }
         });
     }
+
+    /**
+     * Delete the Grocery and leave the Fragment
+     */
+    private void deleteGrocery() {
+        groceryIngredientsPresenter.deleteGrocery(grocery);
+        groceryDetailsListener.onGroceryDeleted();
+    }
+
 
     @Override
     public void deleteSelectedItems() {

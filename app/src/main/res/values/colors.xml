@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#323232</color>
     <color name="colorAccent">#919191</color>
     <color name="colorListBackground">#8C8C8C</color>
+
+    <color name="colorFoodTypeSelected">#8F8F8F</color>
+    <color name="colorFoodTypeNotSelected">#00000000</color>
 </resources>

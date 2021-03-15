@@ -7,26 +7,26 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientEditBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
+import com.habbybolan.groceryplanner.models.FoodType;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.IngredientHolder;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;
 
@@ -34,12 +34,10 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
 
     private FragmentIngredientEditBinding binding;
     private IngredientEditListener ingredientEditListener;
-    private boolean isChanged = false;
-    private Ingredient prevIngredient = new Ingredient();
 
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
-
+    private FoodTypeAdapter adapter;
 
     @Inject
     IngredientEditPresenter ingredientEditPresenter;
@@ -89,77 +87,87 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (getArguments() != null) {
             ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
             ingredient = getArguments().getParcelable(Ingredient.INGREDIENT);
-            // create deep copy of the ingredient before changes
-            if (ingredient != null) prevIngredient = new Ingredient.IngredientBuilder(ingredient.getName())
-                    .setPrice(ingredient.getPrice())
-                    .setPricePer(ingredient.getPricePer())
-                    .setPriceType(ingredient.getPriceType())
-                    .setQuantity(ingredient.getQuantity())
-                    .setQuantityType(ingredient.getQuantityType())
-                    .build();
-            initLayout();
+            setViews();
+            setTextListeners();
+            setClickers();
+            setFoodTypeGrid();
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_delete:
-                deleteCheck();
-                return true;
-            default:
-                return false;
-        }
+    private void setFoodTypeGrid() {
+        FoodType foodType = ingredient == null ? null : ingredient.getFoodType();
+        adapter = new FoodTypeAdapter(FoodType.getAllFoodTypes(), foodType != null ? foodType.getType() : FoodType.OTHER, new FoodTypeListener() {
+            @Override
+            public void onChange() {
+                isViewChanged(true);
+            }
+        });
+        adapter.setHasStableIds(true);
+        binding.gridFoodTypes.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        binding.gridFoodTypes.setAdapter(adapter);
     }
 
     /**
-     * Shows a popup to ask for confirmation on deleting the grocery list.
+     * Ask the user to confirm deleting the Ingredient
      */
-    private void deleteCheck() {
+    private void deleteIngredientCheck() {
+        // todo: add Toolbar
         if (ingredientEditPresenter.isNewIngredient(ingredient)) {
             // if there ingredient is new, then leave the fragment and don't save the Ingredient
             ingredientEditListener.onDoneEditing();
         } else {
-            // otherwise, the Ingredient exists in the database, so delete and leave fragment
-            final PopupWindow popupWindow = new PopupWindow();
-            View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.ingredientEditContainer, "Ingredient", popupWindow);
-            clickableView.setOnClickListener(v -> {
-                deleteIngredient();
-                popupWindow.dismiss();
+            // otherwise, the Ingredient exists in the database, ask to delete and leave fragment
+            PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Ingredient", binding.ingredientEditContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+                @Override
+                public void deleteItem() {
+                    deleteIngredient();
+                }
             });
         }
     }
 
     /**
      * Initiate the EditTexts with the correct starting values of the ingredient object.
-     * Set the text listeners to store if a change in text happened.
+     */
+    private void setViews() {
+        binding.setName(ingredient.getName());
+        if (ingredient.getPrice() != 0) binding.setPrice(String.valueOf(ingredient.getPrice()));
+        if (ingredient.getPricePer() != 0)binding.setPricePer(String.valueOf(ingredient.getPricePer()));
+        binding.setPriceType(ingredient.getPriceType());
+        if (ingredient.getQuantity() != 0)binding.setQuantity(String.valueOf(ingredient.getQuantity()));
+        binding.setQuantityType(ingredient.getQuantityType());
+        isViewChanged(false);
+    }
+
+    /**
      * Set up clicker functionality for the save button, saving any changes to the database.
      * Set up clicker functionality for price type and quantity type.
      */
-    private void initLayout() {
-        binding.setName(ingredient.getName());
-        binding.setPrice(String.valueOf(ingredient.getPrice()));
-        binding.setPricePer(String.valueOf(ingredient.getPricePer()));
-        binding.setPriceType(ingredient.getPriceType());
-        binding.setQuantity(String.valueOf(ingredient.getQuantity()));
-        binding.setQuantityType(ingredient.getQuantityType());
-
-        setTextListeners();
+    private void setClickers() {
 
         // button for saving the changes/new Ingredient to the database
         binding.btnSave.setOnClickListener(v -> saveChangedToLocal());
 
+        // button for un-doing any changes made, but not saved, to the Ingredient
+        binding.btnCancel.setOnClickListener(l -> {
+            isViewChanged(false);
+            setViews();
+            adapter.resetSelected(ingredient.getFoodType());
+        });
+
         // popup for selecting price type
-        binding.txtPriceType.setOnClickListener(v -> createPriceTypeAlertDialogue());
+        binding.txtPriceType.setOnClickListener(v -> {
+            createPriceTypePopup();
+        });
 
         // popup for selecting quantity type
-        binding.txtQuantityType.setOnClickListener(v -> createQuantityTypeAlertDialogue());
+        binding.txtQuantityType.setOnClickListener(v -> {
+            createQuantityTypePopup();
+        });
     }
 
     /**
-     * Sets up the
+     * Set the text listeners to store if a change in text happened.
      */
     private void setTextListeners() {
         binding.editTxtName.addTextChangedListener(textWatcher);
@@ -174,7 +182,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Clicker functionality for selecting a quantity type. Creates an AlertDialogue popup to select
      * from a list of quantity types.
      */
-    private void createQuantityTypeAlertDialogue() {
+    private void createQuantityTypePopup() {
         setMeasurementType(binding.txtQuantityType);
     }
 
@@ -182,7 +190,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Clicker functionality for selecting a price type. Creates an AlertDialogue popup to select
      * from a list of price types.
      */
-    private void createPriceTypeAlertDialogue() {
+    private void createPriceTypePopup() {
         setMeasurementType(binding.txtPriceType);
     }
 
@@ -197,13 +205,11 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         popupMenu.setOnMenuItemClickListener(item -> {
             String type = item.getTitle().toString();
             v.setText(type);
+            isViewChanged(true);
             return true;
         });
         popupMenu.show();
     }
-
-
-
 
     /**
      * If any changed were made, save the changes to the local database by updating/adding the Ingredient.
@@ -215,20 +221,15 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         String priceType = binding.txtPriceType.getText().toString();
         String quantity = binding.editTxtQuantity.getText().toString();
         String quantityType = binding.txtQuantityType.getText().toString();
-        if (isChanged) {
-            // if the Ingredient values were changed, then check if the values were valid
-            if (Ingredient.isValidIngredient(name, price, pricePer, quantity)) {
-                // if the values were valid, then save the new user created Ingredient
-                setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType);
-                // if The ingredient name changed, then removed the previous Ingredient from the bridge
-                if (!prevIngredient.getName().equals(ingredient.getName())) {
-                    ingredientEditPresenter.deleteRelationship(ingredientHolder, prevIngredient);
-                }
-                ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
-                onEditSaved();
-            } else {
-                onSavingFailed("Not a valid Ingredient");
-            }
+
+        // if the Ingredient values were changed, then check if the values were valid
+        if (Ingredient.isValidName(name)) {
+            // if the values were valid, then save the new user created Ingredient
+            setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType, adapter.getSelectedFoodType());
+            ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
+            onEditSaved();
+        } else {
+            onSavingFailed("Not a valid Ingredient");
         }
     }
 
@@ -241,13 +242,17 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * @param quantity      quantity for the Ingredient
      * @param quantityType  quantityType for the Ingredient
      */
-    private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String quantity, String quantityType) {
+    private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String quantity, String quantityType, String foodType) {
         ingredient.setName(name);
-        ingredient.setPrice(Integer.parseInt(price));
-        ingredient.setPricePer(Integer.parseInt(pricePer));
+        if (!price.equals("")) ingredient.setPrice(Integer.parseInt(price));
+        else ingredient.setPrice(0);
+        if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
+        else ingredient.setPricePer(0);
         ingredient.setPriceType(priceType);
-        ingredient.setQuantity(Integer.parseInt(quantity));
+        if (!quantity.equals("")) ingredient.setQuantity(Integer.parseInt(quantity));
+        else ingredient.setQuantity(0);
         ingredient.setQuantityType(quantityType);
+        ingredient.setFoodType(foodType);
     }
 
     /**
@@ -259,7 +264,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            isChanged = true;
+            // view changed if not the first time loading views
+            isViewChanged(true);
         }
 
         @Override
@@ -298,11 +304,23 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         outState.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
     }
 
+    private void isViewChanged(boolean isChanged) {
+        binding.setIsChanged(isChanged);
+    }
+
     public interface IngredientEditListener {
 
         /**
          * Sends screen back to details screen once editing is complete.
          */
         void onDoneEditing();
+    }
+
+    public interface FoodTypeListener {
+
+        /**
+         * When any value has changed inside the adapter, onChange is called.
+         */
+        void onChange();
     }
 }

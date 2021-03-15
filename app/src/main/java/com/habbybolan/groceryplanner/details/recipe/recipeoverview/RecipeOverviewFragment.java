@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,7 @@ import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Category;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.RecipeCategory;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;
 
@@ -120,7 +119,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                         showSortPopup(getActivity().findViewById(R.id.action_sort));
                         return true;
                     case R.id.action_delete:
-                        deleteRecipe();
+                        deleteRecipeCheck();
                         return true;
                     default:
                         return false;
@@ -161,17 +160,25 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     }
 
     /**
-     * Delete the recipe and end the RecipeDetailActivity.
+     * Ask the user to confirm deleting the Recipe
      */
-    private void deleteRecipe() {
-        PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeOverviewContainer, "recipe", popupWindow);
-        clickableView.setOnClickListener(v -> {
-            recipeOverviewPresenter.deleteRecipe(recipeOverviewListener.getRecipe());
-            recipeOverviewListener.onRecipeDeleted();
-            popupWindow.dismiss();
+    private void deleteRecipeCheck() {
+        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeOverviewContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+            @Override
+            public void deleteItem() {
+                deleteRecipe();
+            }
         });
     }
+
+    /**
+     * Delete the Recipe and leave the fragment
+     */
+    private void deleteRecipe() {
+        recipeOverviewPresenter.deleteRecipe(recipeOverviewListener.getRecipe());
+        recipeOverviewListener.onRecipeDeleted();
+    }
+
 
     /**
      * Initiate necessary onClicks and general data.

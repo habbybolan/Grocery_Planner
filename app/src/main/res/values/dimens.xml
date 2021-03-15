@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="edit_text_ingredient_height">40dp</dimen>
-    <dimen name="edit_text_ingredient_width">125dp</dimen>
 
     <dimen name="edit_text_grocery_height">40dp</dimen>
     <dimen name="edit_text_grocery_width">125dp</dimen>
@@ -16,7 +15,7 @@
     <dimen name="edit_txt_margin_start_from_tag">16dp</dimen>
     <dimen name="edit_text_tag_margin_start">28dp</dimen>
     <dimen name="edit_text_sub_tag_margin_start">70dp</dimen>
-    <dimen name="edit_text_tag_margin_top">52dp</dimen>
+    <dimen name="edit_text_tag_margin_top">10dp</dimen>
     <dimen name="edit_text_sub_tag_margin_top">28dp</dimen>
 
     <dimen name="list_elevation">4dp</dimen>

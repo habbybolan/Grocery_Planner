@@ -19,6 +19,7 @@ public class Ingredient implements Parcelable {
     @NonNull
     private String name = "";
     private Section section;
+    private FoodType foodType;
 
     public final static String INGREDIENT = "ingredient";
     public final static String INGREDIENT_CHECKED = "ingredient_checked";
@@ -32,6 +33,20 @@ public class Ingredient implements Parcelable {
         priceType = ingredientEntity.getPriceType();
         this.quantity = quantity;
         this.quantityType = quantityType;
+    }
+
+    public Ingredient(@NonNull String name, int price, int pricePer, String priceType, int quantity, String quantityType, FoodType foodType) {
+        this.name = name;
+        this.price = price;
+        this.pricePer = pricePer;
+        this.priceType = priceType;
+        this.quantity = quantity;
+        this.quantityType = quantityType;
+        this.foodType = foodType;
+    }
+
+    public Ingredient(Ingredient ingredient) {
+        this(ingredient.getName(), ingredient.getPrice(), ingredient.getPricePer(), ingredient.getPriceType(), ingredient.getQuantity(), ingredient.getQuantityType(), ingredient.getFoodType());
     }
 
 
@@ -48,6 +63,7 @@ public class Ingredient implements Parcelable {
         @NonNull
         private String name;
         private Section section;
+        private FoodType foodType;
 
         public IngredientBuilder(@NonNull String name) {
             this.name = name;
@@ -77,6 +93,10 @@ public class Ingredient implements Parcelable {
             this.section = section;
             return this;
         }
+        public IngredientBuilder setFoodType(String foodType) {
+            this.foodType = new FoodType(foodType);
+            return this;
+        }
 
         public Ingredient build() {
             Ingredient ingredient = new Ingredient();
@@ -87,6 +107,7 @@ public class Ingredient implements Parcelable {
             ingredient.quantity = quantity;
             ingredient.quantityType = quantityType;
             ingredient.section = section;
+            ingredient.foodType = foodType;
             return ingredient;
         }
     }
@@ -142,21 +163,6 @@ public class Ingredient implements Parcelable {
     };
 
     /**
-     * Check if the Manual values set by user creates a valid Ingredient
-     * @param name      name of the Ingredient.
-     * @param price     price of the Ingredient.
-     * @param pricePer  PricePer of the Ingredient.
-     * @param quantity  quantity of the Ingredient.
-     * @return          True if the user created Ingredient is valid.
-     */
-    public static boolean isValidIngredient(String name, String price, String pricePer, String quantity) {
-        return isValidName(name)
-                && isValidIntegerText(price)
-                && isValidIntegerText(pricePer)
-                && isValidIntegerText(quantity);
-    }
-
-    /**
      * Check if the name of the Ingredient is valid. Valid if it contains at least one non-empty character.
      * @param name    The name of the Ingredient to check
      * @return              True if Ingredient name is valid.
@@ -169,23 +175,6 @@ public class Ingredient implements Parcelable {
             if (nameText.charAt(i) == ' ') numEmptySpaces++;
         }
         return numEmptySpaces < nameText.length();
-    }
-
-    /**
-     * Check if the Integer values of the Ingredient is valid. Valid if it only contains integers.
-     * @param integer   The String version of the Integer value to check if it's a valid Integer.
-     * @return          True if Ingredient has valid Integer value.
-     */
-    public static boolean isValidIntegerText(String integer) {
-        StringBuilder integerText = new StringBuilder();
-        integerText.append(integer);
-        for (int i = 0; i < integerText.length(); i++) {
-            // check if the character contains a non-digit value, returning false if it does
-            if (!Character.isDigit(integerText.charAt(i)))
-                return false;
-        }
-        // all values are numbers, return true
-        return true;
     }
 
     public boolean hasPrice() {
@@ -225,6 +214,9 @@ public class Ingredient implements Parcelable {
     public Section getSection() {
         return section;
     }
+    public FoodType getFoodType() {
+        return foodType;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -244,5 +236,7 @@ public class Ingredient implements Parcelable {
     public void setQuantityType(String quantityType) {
         this.quantityType = quantityType;
     }
-
+    public void setFoodType(String foodType) {
+        this.foodType = new FoodType(foodType);
+    }
 }

@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +28,7 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.Step;
-import com.habbybolan.groceryplanner.ui.CreatePopupWindow;
+import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +98,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
                         showSortPopup(getActivity().findViewById(R.id.action_sort));
                         return true;
                     case R.id.action_delete:
-                        deleteRecipe();
+                        deleteRecipeCheck();
                         return true;
                     default:
                         return false;
@@ -154,16 +153,23 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     }
 
     /**
-     * Delete the recipe and end the RecipeDetailActivity.
+     * Ask the user to confirm deleting the Recipe.
+     */
+    private void deleteRecipeCheck() {
+        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "recipe", binding.recipeStepContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
+            @Override
+            public void deleteItem() {
+                deleteRecipe();
+            }
+        });
+    }
+
+    /**
+     * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        PopupWindow popupWindow = new PopupWindow();
-        View clickableView = CreatePopupWindow.createPopupDeleteCheck(binding.recipeStepContainer, "recipe", popupWindow);
-        clickableView.setOnClickListener(v -> {
-            recipeStepPresenter.deleteRecipe(recipe);
-            recipeStepListener.onRecipeDeleted();
-            popupWindow.dismiss();
-        });
+        recipeStepPresenter.deleteRecipe(recipe);
+        recipeStepListener.onRecipeDeleted();
     }
 
     private void addNewStep() {

@@ -3,6 +3,7 @@
 
     <string name="btn_save_text">Save</string>
     <string name="btn_delete_text">Delete</string>
+    <string name="btn_cancel_text">Cancel</string>
 
     <string name="action_search">Search</string>
     <string name="action_sort">Sort</string>
