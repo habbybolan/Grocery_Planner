@@ -4,6 +4,7 @@ package com.habbybolan.groceryplanner.di.component;
 import com.habbybolan.groceryplanner.di.module.AppModule;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
+import com.habbybolan.groceryplanner.di.module.IngredientAddModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeCategoryModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
@@ -19,9 +20,12 @@ import dagger.Component;
 public interface AppComponent {
 
     GroceryListSubComponent groceryListSubComponent(GroceryListModule groceryListModule);
-    GroceryDetailSubComponent groceryDetailSubComponent(GroceryDetailModule groceryDetailModule, IngredientEditModule ingredientEditModule);
+    GroceryDetailSubComponent groceryDetailSubComponent(GroceryDetailModule groceryDetailModule);
 
     RecipeCategorySubComponent recipeCategorySubComponent(RecipeCategoryModule recipeCategoryModule);
     RecipeListSubComponent recipeListSubComponent(RecipeListModule recipeListModule);
-    RecipeDetailSubComponent recipeDetailSubComponent(RecipeDetailModule recipeDetailModule, IngredientEditModule ingredientEditModule);
+    RecipeDetailSubComponent recipeDetailSubComponent(RecipeDetailModule recipeDetailModule);
+
+    IngredientEditSubComponent ingredientEditSubComponent(IngredientEditModule ingredientEditModule);
+    IngredientAddSubComponent ingredientAddSubComponent(IngredientAddModule ingredientAddModule);
 }

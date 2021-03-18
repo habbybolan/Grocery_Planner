@@ -20,6 +20,13 @@
             android:layout_gravity="start"
             android:src="@android:drawable/btn_star_big_on" />
 
+        <ImageButton
+            android:id="@+id/btn_add_multiple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:src="@android:drawable/ic_input_add" />
+
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -1,10 +1,10 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditInteractor;
-import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditInteractorImpl;
-import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditPresenter;
-import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditPresenterImpl;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditInteractor;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditInteractorImpl;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditPresenter;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;

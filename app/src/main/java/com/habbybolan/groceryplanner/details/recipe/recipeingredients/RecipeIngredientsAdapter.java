@@ -65,6 +65,7 @@ public class RecipeIngredientsAdapter extends ListAdapter<RecipeIngredientsAdapt
             if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
             if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
+            binding.setImageResource(ingredient.getFoodType().getImageResource());
             displayCheckBox(binding.ingredientCheckBox);
         }
     }

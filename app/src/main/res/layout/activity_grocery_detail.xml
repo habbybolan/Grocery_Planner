@@ -24,6 +24,16 @@
                     android:layout_height="match_parent" />
 
                 <FrameLayout
+                    android:id="@+id/fragment_ingredient_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:id="@+id/fragment_ingredient_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
                     android:id="@+id/fragment_checklist"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

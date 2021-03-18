@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.ingredientedit;
+package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,15 +22,19 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientEditBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
-import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.FoodType;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.IngredientHolder;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
+import java.util.HashSet;
+
 import javax.inject.Inject;
 
+/**
+ * Deals with editing an existing Ingredient inside an IngredientHolder, or adding a new Ingredient.
+ */
 public class IngredientEditFragment extends Fragment implements IngredientEditView{
 
     private FragmentIngredientEditBinding binding;
@@ -38,6 +43,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
     private FoodTypeAdapter adapter;
+    private Toolbar toolbar;
 
     @Inject
     IngredientEditPresenter ingredientEditPresenter;
@@ -62,7 +68,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((GroceryApp) getActivity().getApplication()).getAppComponent().groceryDetailSubComponent(new GroceryDetailModule(), new IngredientEditModule()).inject(this);
+        ((GroceryApp) getActivity().getApplication()).getAppComponent().ingredientEditSubComponent(new IngredientEditModule()).inject(this);
         setHasOptionsMenu(true);
     }
 
@@ -77,6 +83,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_ingredient_edit, container, false);
+        setToolbar();
         return binding.getRoot();
     }
 
@@ -92,6 +99,25 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
             setClickers();
             setFoodTypeGrid();
         }
+    }
+
+    /**
+     * Sets up the toolbar.
+     */
+    private void setToolbar() {
+        toolbar = binding.toolbarIngredientEdit.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_edit);
+        toolbar.setTitle(getString(R.string.title_ingredient_edit));
+    }
+
+    @Override
+    public void showListOfIngredients(String[] ingredientNames) {
+        PopupBuilder.createListDialogue(getLayoutInflater(), "Select Ingredients to add", binding.ingredientEditContainer, getContext(), ingredientNames, new PopupBuilder.listDialogInterface() {
+            @Override
+            public void onAddItemsSelected(HashSet<Integer> set) {
+                // todo: adding multiple Ingredients
+            }
+        });
     }
 
     private void setFoodTypeGrid() {
@@ -111,10 +137,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Ask the user to confirm deleting the Ingredient
      */
     private void deleteIngredientCheck() {
-        // todo: add Toolbar
         if (ingredientEditPresenter.isNewIngredient(ingredient)) {
             // if there ingredient is new, then leave the fragment and don't save the Ingredient
-            ingredientEditListener.onDoneEditing();
+            ingredientEditListener.leaveIngredientEdit();
         } else {
             // otherwise, the Ingredient exists in the database, ask to delete and leave fragment
             PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Ingredient", binding.ingredientEditContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
@@ -276,30 +301,36 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private void deleteIngredient() {
         ingredientEditPresenter.deleteRelationship(ingredientHolder, ingredient);
         ingredientEditPresenter.destroy();
-        ingredientEditListener.onDoneEditing();
+        ingredientEditListener.leaveIngredientEdit();
     }
 
     @Override
-    public void editStoreFailure(String message) {
-        Toast.makeText(getContext(), "Failure to edit Ingredient", Toast.LENGTH_LONG).show();
+    public void loadingStarted() {
+        Toast.makeText(getContext(), "loading started", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loadingFailed(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Once the Ingredient is saved, then display message, destroy this fragment, and go back to the DetailsFragment.
      */
-    public void onEditSaved() {
+    private void onEditSaved() {
         Toast.makeText(getContext(), "Changes saved locally", Toast.LENGTH_SHORT).show();
         ingredientEditPresenter.destroy();
-        ingredientEditListener.onDoneEditing();
+        ingredientEditListener.leaveIngredientEdit();
     }
 
-    public void onSavingFailed(String message) {
+    private void onSavingFailed(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        // todo: onRestoreInstanceState()
         outState.putParcelable(Ingredient.INGREDIENT, ingredient);
         outState.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
     }
@@ -313,7 +344,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         /**
          * Sends screen back to details screen once editing is complete.
          */
-        void onDoneEditing();
+        void leaveIngredientEdit();
     }
 
     public interface FoodTypeListener {

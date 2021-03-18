@@ -139,7 +139,6 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             view.loadingStarted();
             loadingRecipes = true;
-            view.loadingStarted();
             recipeListInteractor.fetchRecipes(recipeCategory, loadedRecipes);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();

@@ -14,7 +14,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
-import com.habbybolan.groceryplanner.details.ingredientedit.IngredientEditFragment;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
+import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
@@ -28,7 +29,8 @@ public class RecipeDetailActivity extends AppCompatActivity
                                             RecipeIngredientsFragment.RecipeDetailListener,
                                             RecipeStepFragment.RecipeStepListener,
                                             RecipeOverviewFragment.RecipeOverviewListener,
-                                            RecipeNutritionFragment.RecipeNutritionListener {
+                                            RecipeNutritionFragment.RecipeNutritionListener,
+                                            IngredientAddFragment.IngredientAddListener {
 
     private Recipe recipe;
     private RecipeCategory recipeCategory;
@@ -38,6 +40,9 @@ public class RecipeDetailActivity extends AppCompatActivity
     private RecipeStepFragment recipeStepFragment;
     private RecipeOverviewFragment recipeOverviewFragment;
     private RecipeNutritionFragment recipeNutritionFragment;
+
+    private final String EDIT_TAG = "edit_tag";
+    private final String ADD_TAG = "add_tag";
 
     /**
      * 2 fragments that can be swiped through.
@@ -71,53 +76,25 @@ public class RecipeDetailActivity extends AppCompatActivity
         mPager.setAdapter(pagerAdapter);
     }
 
-    @Override
-    public void onDoneEditing() {
-        if (recipeIngredientsFragment != null) {
-            recipeIngredientsFragment.reloadList();
-        }
-        mPager.setCurrentItem(0);
-        showPagerContainer();
-    }
+
 
     @Override
     public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
-        showIngredientEditContainer();
     }
 
-    /**
-     * Creates and starts the EditFragment to add/edit an Ingredient in the list
-     * @param ingredient    The Ingredient to edit
-     */
-    private void startEditFragment(Ingredient ingredient) {
-        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.ingredient_edit_container, ingredientEditFragment)
-                .commit();
-    }
+
 
     @Override
     public void createNewItem() {
         startEditFragment(new Ingredient());
-        showIngredientEditContainer();
-    }
-
-    /**
-     * Shows the Ingredient edit Fragment container, hiding the 2 pager fragments.
-     */
-    private void showIngredientEditContainer() {
-        binding.recipePager.setVisibility(View.GONE);
-        binding.ingredientEditContainer.setVisibility(View.VISIBLE);
     }
 
     /**
      * Shows the Ingredient and Step fragment lists in the pager, hiding the Ingredient edit Fragment container.
      */
-    private void showPagerContainer() {
-        binding.recipePager.setVisibility(View.VISIBLE);
-        binding.ingredientEditContainer.setVisibility(View.GONE);
+    private void pagerContainerVisibility(int visibility) {
+        binding.recipePager.setVisibility(visibility);
     }
 
     @Override
@@ -135,6 +112,53 @@ public class RecipeDetailActivity extends AppCompatActivity
     @Override
     public Recipe getRecipe() {
         return recipe;
+    }
+
+    /**
+     * Creates and starts the EditFragment to add/edit an Ingredient in the list
+     * @param ingredient    The Ingredient to edit
+     */
+    private void startEditFragment(Ingredient ingredient) {
+        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.ingredient_edit_container, ingredientEditFragment, EDIT_TAG)
+                .commit();
+        pagerContainerVisibility(View.GONE);
+    }
+
+    @Override
+    public void gotoAddIngredients() {
+        IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(recipe);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.ingredient_add_container, ingredientAddFragment, ADD_TAG)
+                .commit();
+        pagerContainerVisibility(View.GONE);
+    }
+
+    @Override
+    public void leaveIngredientEdit() {
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
+        // destroy the ingredient edit Fragment
+        if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
+        reloadRecipeIngredientList();
+    }
+
+    @Override
+    public void leaveIngredientAdd() {
+        IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
+        // destroy the ingredient add Fragment
+        if (ingredientAddFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientAddFragment).commitAllowingStateLoss();
+        reloadRecipeIngredientList();
+    }
+
+    private void reloadRecipeIngredientList() {
+        if (recipeIngredientsFragment != null) {
+            recipeIngredientsFragment.reloadList();
+        }
+        mPager.setCurrentItem(0);
+        pagerContainerVisibility(View.VISIBLE);
     }
 
     /**
@@ -204,9 +228,16 @@ public class RecipeDetailActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (binding.ingredientEditContainer.getVisibility() == View.VISIBLE) {
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
+        IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
+        // if one of the IngredientEdit or AddIngredient fragments are open, close them and reload the Ingredient list
+        // otherwise, destroy and leave this activity.
+        if (ingredientEditFragment != null) {
             // if in Ingredient edit fragment, then go back to viewPagers
-            onDoneEditing();
+            leaveIngredientEdit();
+        } else if (ingredientAddFragment != null) {
+            // if in Ingredient Add Fragment, then go back to viewPager
+            leaveIngredientAdd();
         } else {
             if (mPager.getCurrentItem() == 0)
                 // if on Ingredient List, then leave this activity to go back to recipe list

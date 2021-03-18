@@ -15,7 +15,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:name="com.habbybolan.groceryplanner.listing.grocerylist.grocerylist.GroceryListFragment"
-                tools:layout="@layout/fragment_grocery_list"/>
+                tools:layout="@layout/fragment_grocery_list"
+                android:tag="@string/GROCERY_list_TAG"/>
 
     </LinearLayout>
 

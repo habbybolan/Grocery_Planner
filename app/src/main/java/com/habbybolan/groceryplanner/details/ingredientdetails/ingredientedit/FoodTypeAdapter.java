@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.ingredientedit;
+package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

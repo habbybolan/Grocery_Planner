@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -20,7 +21,6 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
-import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
@@ -56,7 +56,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule(), new IngredientEditModule()).inject(this);
+        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule()).inject(this);
         setHasOptionsMenu(true);
     }
 
@@ -141,6 +141,11 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         View view = binding.recipeDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> recipeDetailListener.createNewItem());
+
+        ImageButton btnAddIngredients = view.findViewById(R.id.btn_add_multiple);
+        btnAddIngredients.setOnClickListener(l -> {
+            recipeDetailListener.gotoAddIngredients();
+        });
     }
 
 
@@ -195,5 +200,6 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         void createNewItem();
         void onRecipeDeleted();
         Recipe getRecipe();
+        void gotoAddIngredients();
     }
 }

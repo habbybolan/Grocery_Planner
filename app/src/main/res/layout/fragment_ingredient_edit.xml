@@ -29,187 +29,198 @@
         <import type="android.view.View"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/ingredient_edit_container"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".details.ingredientedit.IngredientEditFragment">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/edit_txt_name"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="@dimen/edit_text_ingredient_height"
-            android:text="@{name}"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name_tag" />
+        <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar_ingredient_edit"/>
 
-        <EditText
-            android:id="@+id/edit_txt_price"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="@dimen/edit_text_ingredient_height"
-            android:text="@{price}"
-            android:inputType="number"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/price_tag" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ingredient_edit_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".details.ingredientdetails.ingredientedit.IngredientEditFragment">
 
-        <EditText
-            android:id="@+id/edit_txt_price_per"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="@dimen/edit_text_ingredient_height"
-            android:text="@{pricePer}"
-            android:inputType="number"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/price_per_tag" />
+            <EditText
+                android:id="@+id/edit_txt_name"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="@dimen/edit_text_ingredient_height"
+                android:text="@{name}"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name_tag" />
 
-        <TextView
-            android:id="@+id/txt_price_type"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="40dp"
-            android:text="@{priceType}"
-            android:background="?attr/editTextBackground"
-            android:textColor="?attr/editTextColor"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/price_type_tag" />
+            <EditText
+                android:id="@+id/edit_txt_price"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="@dimen/edit_text_ingredient_height"
+                android:text="@{price}"
+                android:inputType="number"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/price_tag" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/txt_price_type"
-            app:layout_constraintTop_toBottomOf="@+id/txt_price_type"
-            tools:srcCompat="@android:drawable/arrow_down_float" />
+            <EditText
+                android:id="@+id/edit_txt_price_per"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="@dimen/edit_text_ingredient_height"
+                android:text="@{pricePer}"
+                android:inputType="number"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/price_per_tag" />
 
-        <EditText
-            android:id="@+id/edit_txt_quantity"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="@dimen/edit_text_ingredient_height"
-            android:text="@{quantity}"
-            android:inputType="number"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/quantity_tag" />
+            <TextView
+                android:id="@+id/txt_price_type"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="40dp"
+                android:text="@{priceType}"
+                android:background="?attr/editTextBackground"
+                android:textColor="?attr/editTextColor"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/price_type_tag" />
 
-        <TextView
-            android:id="@+id/txt_quantity_type"
-            android:layout_width="@dimen/edit_txt_width"
-            android:layout_height="@dimen/edit_text_ingredient_height"
-            android:text="@{quantityType}"
-            android:background="?attr/editTextBackground"
-            android:textColor="?attr/editTextColor"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/quantity_type_tag" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/txt_price_type"
+                app:layout_constraintTop_toBottomOf="@+id/txt_price_type"
+                tools:srcCompat="@android:drawable/arrow_down_float" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@+id/txt_quantity_type"
-            app:layout_constraintTop_toBottomOf="@+id/txt_quantity_type"
-            tools:srcCompat="@android:drawable/arrow_down_float" />
+            <EditText
+                android:id="@+id/edit_txt_quantity"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="@dimen/edit_text_ingredient_height"
+                android:text="@{quantity}"
+                android:inputType="number"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quantity_tag" />
 
-        <TextView
-            android:id="@+id/name_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            android:text="Name:"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/txt_quantity_type"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="@dimen/edit_text_ingredient_height"
+                android:text="@{quantityType}"
+                android:background="?attr/editTextBackground"
+                android:textColor="?attr/editTextColor"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quantity_type_tag" />
 
-        <TextView
-            android:id="@+id/price_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:text="Price:"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_txt_name" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/txt_quantity_type"
+                app:layout_constraintTop_toBottomOf="@+id/txt_quantity_type"
+                tools:srcCompat="@android:drawable/arrow_down_float" />
 
-        <TextView
-            android:id="@+id/price_per_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:text="Price Per:"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_txt_price" />
+            <TextView
+                android:id="@+id/name_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                android:text="Name:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/price_type_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:text="Price Type:"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_txt_price_per" />
+            <TextView
+                android:id="@+id/price_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:text="Price:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_txt_name" />
 
-        <TextView
-            android:id="@+id/quantity_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:text="Quantity:"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txt_price_type" />
+            <TextView
+                android:id="@+id/price_per_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:text="Price Per:"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_txt_price" />
 
-        <TextView
-            android:id="@+id/quantity_type_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            android:text="Quantity Type:"
-            android:layout_marginTop="@dimen/edit_text_tag_margin_top"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_txt_quantity" />
+            <TextView
+                android:id="@+id/price_type_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:text="Price Type:"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_txt_price_per" />
 
-        <TextView
-            android:id="@+id/food_type_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Food Type:"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="@dimen/edit_txt_margin_start"
-            app:layout_constraintTop_toBottomOf="@+id/txt_quantity_type" />
+            <TextView
+                android:id="@+id/quantity_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:text="Quantity:"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_price_type" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/grid_food_types"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/food_type_tag" />
+            <TextView
+                android:id="@+id/quantity_type_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                android:text="Quantity Type:"
+                android:layout_marginTop="@dimen/edit_text_tag_margin_top"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_txt_quantity" />
 
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/default_button_height"
-            android:layout_marginStart="36dp"
-            android:layout_marginBottom="36dp"
-            android:text="@string/btn_save_text"
-            android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/food_type_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Food Type:"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="@dimen/edit_txt_margin_start"
+                app:layout_constraintTop_toBottomOf="@+id/txt_quantity_type" />
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/default_button_height"
-            android:layout_marginStart="36dp"
-            android:layout_marginBottom="36dp"
-            android:text="@string/btn_cancel_text"
-            android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btn_save" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/grid_food_types"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/food_type_tag" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/default_button_height"
+                android:layout_marginStart="36dp"
+                android:layout_marginBottom="36dp"
+                android:text="@string/btn_save_text"
+                android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/default_button_height"
+                android:layout_marginStart="36dp"
+                android:layout_marginBottom="36dp"
+                android:text="@string/btn_cancel_text"
+                android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_save" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
 </layout>

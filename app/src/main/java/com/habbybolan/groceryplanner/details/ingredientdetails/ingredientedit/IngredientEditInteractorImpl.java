@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.ingredientedit;
+package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.Ingredient;

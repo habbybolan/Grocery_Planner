@@ -57,11 +57,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         if (recipeCategoryFragment != null) recipeCategoryFragment.attachListener(recipeCategoryListener);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (isRecipeListVisible()) gotoRecipeCategories();
-        else super.onBackPressed();
-    }
+
 
     /**
      * Sends the app to the GroceryListActivity
@@ -69,7 +65,6 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
     public void gotoGroceryListFunc() {
         Intent intent = new Intent(this, GroceryListActivity.class);
         startActivity(intent);
-        finish();
         overridePendingTransition(R.anim.anim_slide_enter_from_right, R.anim.anim_slide_exit_to_left);
     }
 
@@ -135,6 +130,12 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
      */
     private boolean isRecipeCategoryVisible() {
         return binding.recipeCategoryContainer.getVisibility() == View.VISIBLE;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isRecipeListVisible()) gotoRecipeCategories();
+        else super.onBackPressed();
     }
 
     /**

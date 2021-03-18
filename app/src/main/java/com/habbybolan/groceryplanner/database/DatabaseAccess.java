@@ -45,4 +45,6 @@ public interface DatabaseAccess {
     void deleteIngredientHolderRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
     void fetchIngredientsFromGrocery(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
     void fetchIngredientsFromRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInGrocery(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 }

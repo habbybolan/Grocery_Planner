@@ -102,11 +102,10 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
             loadingGroceries = true;
             view.loadingStarted();
             groceryListInteractor.fetchGroceries(loadedGroceries);
-            if (isViewAttached())
-                view.showList(loadedGroceries);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
+            loadingGroceries = false;
         }
     }
 

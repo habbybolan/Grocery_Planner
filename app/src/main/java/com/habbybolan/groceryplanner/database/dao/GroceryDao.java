@@ -7,9 +7,10 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 
-import com.habbybolan.groceryplanner.database.relations.GroceryWithIngredients;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryIngredientBridge;
+import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.relations.GroceryWithIngredients;
 
 import java.util.List;
 
@@ -56,4 +57,11 @@ public interface GroceryDao {
 
     @Query("SELECT * FROM GroceryIngredientBridge WHERE groceryId = :groceryId")
     List<GroceryIngredientBridge> getGroceryIngredient(long groceryId);
+
+    @Query("SELECT * FROM IngredientEntity " +
+            "WHERE ingredientName NOT IN " +
+                "(SELECT IE.ingredientName FROM IngredientEntity IE " +
+                    "JOIN GroceryIngredientBridge GIB ON IE.ingredientName = GIB.ingredientName " +
+                    "WHERE GIB.groceryId == :groceryId)")
+    List<IngredientEntity> getIngredientsNotInGrocery(long groceryId);
 }

@@ -8,6 +8,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
@@ -81,4 +82,11 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM RecipeCategoryEntity WHERE recipeCategoryId = :recipeCategoryId")
     RecipeCategoryEntity getRecipeCategory(long recipeCategoryId);
+
+    @Query("SELECT * FROM IngredientEntity " +
+            "WHERE ingredientName NOT IN " +
+            "(SELECT IE.ingredientName FROM IngredientEntity IE " +
+            "JOIN RecipeIngredientBridge RIB ON IE.ingredientName = RIB.ingredientName " +
+            "WHERE RIB.recipeId == :recipeId)")
+    List<IngredientEntity> getIngredientsNotInRecipe(long recipeId);
 }

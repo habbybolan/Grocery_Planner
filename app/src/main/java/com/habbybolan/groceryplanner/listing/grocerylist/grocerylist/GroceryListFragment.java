@@ -169,6 +169,14 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
     }
 
     /**
+     * Called when category has changed. Stores the category and loads the recipes inside that category.
+     */
+    public void resetList() {
+        groceryListPresenter.createGroceryList();
+    }
+
+
+    /**
      * Creates an empty Grocery with the given name.
      * @param groceryName  The name of the new Grocery to create
      */

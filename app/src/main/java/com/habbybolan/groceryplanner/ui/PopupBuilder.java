@@ -12,6 +12,9 @@ import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.DialogueDeleteBinding;
+import com.habbybolan.groceryplanner.databinding.DialogueListBinding;
+
+import java.util.HashSet;
 
 public class PopupBuilder {
 
@@ -45,5 +48,55 @@ public class PopupBuilder {
 
     public interface DeleteDialogueInterface {
         void deleteItem();
+    }
+
+    public static void createListDialogue(LayoutInflater inflater, String title, ViewGroup viewGroup, Context context, String[] itemsArray, listDialogInterface listDialogInterface) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        DialogueListBinding binding = DataBindingUtil.inflate(inflater, R.layout.dialogue_list, viewGroup, false);
+        HashSet<Integer> set = new HashSet<>();
+        boolean[] itemsChecked = new boolean[itemsArray.length];
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(binding.getRoot())
+                // Add action buttons
+                .setMultiChoiceItems(itemsArray, itemsChecked, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        if (isChecked)
+                            set.add(which);
+                        else
+                            set.remove(which);
+                        itemsChecked[which] = isChecked;
+                    }
+                })
+                // Add action buttons
+                .setPositiveButton(R.string.btn_delete_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        listDialogInterface.onAddItemsSelected(set);
+                    }
+                })
+                .setNegativeButton(R.string.btn_cancel_text, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // do nothing
+                    }
+                });
+        binding.setHeaderText(title);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
+        layoutParams.weight = 10;
+        btnPositive.setLayoutParams(layoutParams);
+        btnNegative.setLayoutParams(layoutParams);
+    }
+
+    public interface listDialogInterface {
+        /**
+         * Sends a HashSet of the indexes of the items selected.
+         * @param set   HashSet of items selected
+         */
+        void onAddItemsSelected(HashSet<Integer> set);
     }
 }

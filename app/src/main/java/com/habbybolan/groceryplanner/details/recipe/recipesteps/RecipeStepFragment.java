@@ -24,7 +24,6 @@ import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBi
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeStepBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
-import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Recipe;
 import com.habbybolan.groceryplanner.models.Step;
@@ -69,7 +68,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule(), new IngredientEditModule()).inject(this);
+        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule()).inject(this);
         setHasOptionsMenu(true);
     }
 

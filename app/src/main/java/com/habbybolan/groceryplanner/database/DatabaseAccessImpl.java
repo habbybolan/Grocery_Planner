@@ -646,4 +646,66 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         ingredientsObserver.clear();
         ingredientsObserver.addAll(futureTask.get());
     }
+
+    @Override
+    public void fetchIngredientsNotInRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
+        Callable<List<Ingredient>> task = () -> {
+            try {
+                recipeTableLock.lock();
+                ingredientTableLock.lock();
+                List<Ingredient> ingredients = new ArrayList<>();
+                List<IngredientEntity> ingredientEntities = recipeDao.getIngredientsNotInRecipe(recipe.getId());
+                for (int i = 0; i < ingredientEntities.size(); i++) {
+                    IngredientEntity ingredientEntity = ingredientEntities.get(i);
+                    //Section section = new Section(recipeIngredientBridge.sectionEntity);
+                    ingredients.add(new Ingredient.IngredientBuilder(ingredientEntity.getIngredientName())
+                            .setPrice(ingredientEntity.getPrice())
+                            .setPriceType(ingredientEntity.getPriceType())
+                            .setPricePer(ingredientEntity.getPricePer())
+                            //.setSection(section)
+                            .setFoodType(ingredientEntity.getFoodType())
+                            .build());
+                }
+                return ingredients;
+            } finally {
+                ingredientTableLock.unlock();
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<Ingredient>> futureTask = executorService.submit(task);
+        ingredientsObserver.clear();
+        ingredientsObserver.addAll(futureTask.get());
+    }
+
+    @Override
+    public void fetchIngredientsNotInGrocery(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
+        Callable<List<Ingredient>> task = () -> {
+            try {
+                groceryTableLock.lock();
+                ingredientTableLock.lock();
+                List<Ingredient> ingredients = new ArrayList<>();
+                List<IngredientEntity> ingredientEntities = groceryDao.getIngredientsNotInGrocery(grocery.getId());
+                for (int i = 0; i < ingredientEntities.size(); i++) {
+                    IngredientEntity ingredientEntity = ingredientEntities.get(i);
+                    ingredients.add(new Ingredient.IngredientBuilder(ingredientEntity.getIngredientName())
+                            .setPrice(ingredientEntity.getPrice())
+                            .setPriceType(ingredientEntity.getPriceType())
+                            .setPricePer(ingredientEntity.getPricePer())
+                            .setFoodType(ingredientEntity.getFoodType())
+                            .build());
+                }
+                return ingredients;
+            } finally {
+                ingredientTableLock.unlock();
+                groceryTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<Ingredient>> futureTask = executorService.submit(task);
+        ingredientsObserver.clear();
+        ingredientsObserver.addAll(futureTask.get());
+    }
 }

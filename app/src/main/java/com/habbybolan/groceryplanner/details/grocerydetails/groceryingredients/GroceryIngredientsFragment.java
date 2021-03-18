@@ -22,7 +22,6 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
-import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
@@ -66,7 +65,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((GroceryApp) getActivity().getApplication()).getAppComponent().groceryDetailSubComponent(new GroceryDetailModule(), new IngredientEditModule()).inject(this);
+        ((GroceryApp) getActivity().getApplication()).getAppComponent().groceryDetailSubComponent(new GroceryDetailModule()).inject(this);
         setHasOptionsMenu(true);
     }
 
@@ -156,8 +155,11 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
         floatingActionButton.setOnClickListener(v -> groceryDetailsListener.createNewItem());
 
         // on Click for entering check list mode
-        ImageButton imageButton = view.findViewById(R.id.btn_checklist);
-        imageButton.setOnClickListener(l -> groceryDetailsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
+        ImageButton imgBtnChecklist = view.findViewById(R.id.btn_checklist);
+        imgBtnChecklist.setOnClickListener(l -> groceryDetailsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
+
+        ImageButton imgBtnAddIngredients = view.findViewById(R.id.btn_add_multiple);
+        imgBtnAddIngredients.setOnClickListener(l -> groceryDetailsListener.gotoAddIngredients());
     }
 
     /**
@@ -180,10 +182,13 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
         groceryDetailsListener.onGroceryDeleted();
     }
 
-
     @Override
     public void deleteSelectedItems() {
         groceryIngredientsPresenter.deleteIngredients(grocery, listItemsChecked);
+    }
+
+    public void reloadList() {
+        groceryIngredientsPresenter.createIngredientList(grocery);
     }
 
     @Override
@@ -195,8 +200,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
     public void showToolbar() {
         toolbar.setVisibility(View.VISIBLE);
     }
-
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -210,5 +213,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
         void createNewItem();
         void onGroceryDeleted();
         void gotoChecklist(List<Ingredient> ingredients);
+        void gotoAddIngredients();
     }
 }

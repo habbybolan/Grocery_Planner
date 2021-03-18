@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
-import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.Category;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -49,7 +48,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule(), new IngredientEditModule()).inject(this);
+        ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule()).inject(this);
         setHasOptionsMenu(true);
     }
 

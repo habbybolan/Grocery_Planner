@@ -18,8 +18,7 @@
             <FrameLayout
                 android:id="@+id/recipe_list_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+                android:layout_height="match_parent">
 
                 <fragment
                     android:id="@+id/fragment_recipe_list"
@@ -29,12 +28,14 @@
                     tools:layout="@layout/fragment_recipe_list"
                     android:tag="@string/RECIPE_LIST_TAG"/>
 
+
             </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/recipe_category_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:visibility="gone">
 
                 <fragment
                     android:id="@+id/fragment_recipe_category"

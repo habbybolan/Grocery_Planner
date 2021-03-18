@@ -107,6 +107,7 @@ public class Ingredient implements Parcelable {
             ingredient.quantity = quantity;
             ingredient.quantityType = quantityType;
             ingredient.section = section;
+            if (foodType == null) foodType = new FoodType(FoodType.OTHER);
             ingredient.foodType = foodType;
             return ingredient;
         }
