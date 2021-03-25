@@ -107,7 +107,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
 
     private void setToolbar() {
         toolbar = binding.toolbarRecipeOverview.toolbar;
-        toolbar.inflateMenu(R.menu.menu_recipe_overview_nutrition);
+        toolbar.inflateMenu(R.menu.menu_recipe_non_list);
         toolbar.setTitle(getString(R.string.title_recipe_overview));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

@@ -1,10 +1,10 @@
 package com.habbybolan.groceryplanner.MainPage;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,35 +14,30 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityMainBinding;
 import com.habbybolan.groceryplanner.databinding.ToolbarBinding;
+import com.habbybolan.groceryplanner.http.requests.HttpGrocery;
+import com.habbybolan.groceryplanner.http.requests.HttpGroceryImpl;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
-import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ActivityMainBinding binding;
 
+    private HttpGrocery httpRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setToolBar();
-        httpRequest();
-    }
+        httpRequest = new HttpGroceryImpl(getApplication());
 
-
-    private void httpRequest() {
+         // for testing
         binding.btnHttpRequest.setOnClickListener(l -> {
-            HttpGetRequest httpGetRequest = new HttpGetRequest();
-            httpGetRequest.execute();
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.sharedPref_name), Context.MODE_PRIVATE);
+            String token = sharedPref.getString(getString(R.string.saved_token), "");
+            httpRequest.getGroceries(token);
         });
     }
 
@@ -52,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private void setToolBar() {
         ToolbarBinding toolbarBinding = binding.toolbarMainPage;
         toolbar = toolbarBinding.toolbar;
-        toolbar.setTitle(R.string.title_main_page);
+        toolbarBinding.setTitle(getString(R.string.title_main_page));
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -75,56 +70,6 @@ public class MainActivity extends AppCompatActivity {
     public void onGroceryClick(View v) {
         Intent intent = new Intent(this, GroceryListActivity.class);
         startActivity(intent);
-    }
-
-    private class HttpGetRequest extends AsyncTask<Void, Void, String> {
-
-        private static final String SERVER = "http://192.168.0.16:8080/api/groceries";
-        private static final String REQUEST_METHOD = "GET";
-        private static final int READ_TIMEOUT  = 1500;
-        private static final int CONNECTION_TIMEOUT = 1500;
-
-        @Override
-        protected String doInBackground(Void... params) {
-            String result;
-            String inputLine;
-
-            Authenticator.setDefault(new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("user1", "abcd".toCharArray());
-                }
-            });
-
-            try {
-                URL myUrl = new URL(SERVER);
-                HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-                connection.setRequestMethod(REQUEST_METHOD);
-                connection.setReadTimeout(READ_TIMEOUT);
-                connection.setConnectTimeout(CONNECTION_TIMEOUT);
-                connection.connect();
-
-
-                InputStreamReader streamReader = new InputStreamReader(connection.getInputStream());
-                BufferedReader reader = new BufferedReader(streamReader);
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((inputLine = reader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
-                }
-                reader.close();
-                streamReader.close();
-                result = stringBuilder.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-                result = "error";
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-        }
     }
 
 }

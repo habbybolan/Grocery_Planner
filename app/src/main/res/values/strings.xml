@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Grocery Planner</string>
+    <string name="sharedPref_name">sharedPref</string>
+    <string name="saved_token">savedToken</string>
 
     <string name="btn_save_text">Save</string>
     <string name="btn_delete_text">Delete</string>
@@ -30,10 +32,12 @@
     <string name="settings">Settings</string>
     <string name="burger">Burger</string>
 
-    <!-- tags -->
+    <!-- fragment tags -->
     <string name="RECIPE_LIST_TAG">recipe_list_tag</string>
     <string name="RECIPE_CATEGORY_TAG">recipe_category_tag</string>
-    <string name="GROCERY_list_TAG">grocery_list_tag</string>
+    <string name="GROCERY_LIST_TAG">grocery_list_tag</string>
+    <string name="LOGIN_TAG">login_tag</string>
+    <string name="SIGN_UP_TAG">sign_up_tag</string>
 
     <string name="teaspoon">Teaspoon</string>
     <string name="dessertspoon">Dessertspoon</string>

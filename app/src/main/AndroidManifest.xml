@@ -9,37 +9,34 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/server_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/server_config"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainPage.MainActivity"
-            android:theme="@style/MyMaterialTheme"
-            android:parentActivityName=".listing.grocerylist.GroceryListActivity">
+        android:theme="@style/MyMaterialTheme" >
+        <activity
+            android:name=".loginpage.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainPage.MainActivity"
+            android:parentActivityName=".listing.grocerylist.GroceryListActivity">
+        </activity>
+        <activity
             android:name=".details.recipe.recipedetailactivity.RecipeDetailActivity"
-            android:parentActivityName=".MainPage.MainActivity"
-            android:theme="@style/MyMaterialTheme" />
+            android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.recipelist.RecipeListActivity"
-            android:theme="@style/MyMaterialTheme"
-            android:parentActivityName=".MainPage.MainActivity">
-        </activity>
+            android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".details.grocerydetails.GroceryDetailsActivity"
-            android:parentActivityName=".MainPage.MainActivity"
-            android:theme="@style/MyMaterialTheme">
-        </activity>
+            android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.grocerylist.GroceryListActivity"
-            android:theme="@style/MyMaterialTheme"
-            android:parentActivityName=".MainPage.MainActivity">
-        </activity>
+            android:parentActivityName=".MainPage.MainActivity" />
     </application>
 
 </manifest>

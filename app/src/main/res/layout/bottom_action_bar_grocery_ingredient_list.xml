@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar">
+        style="@style/ActionBarTheme">
 
         <ImageButton
             android:id="@+id/btn_checklist"
@@ -34,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        app:layout_anchor="@id/bottom_app_bar_list_details" />
+        app:layout_anchor="@id/bottom_app_bar_list_details"
+        style="@style/FloatingActionButton"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

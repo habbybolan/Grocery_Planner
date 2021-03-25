@@ -73,6 +73,7 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         mPager = binding.recipePager;
         pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        binding.tabLayout.setupWithViewPager(mPager);
         mPager.setAdapter(pagerAdapter);
     }
 

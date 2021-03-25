@@ -22,7 +22,6 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Ingredient;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -30,7 +29,7 @@ import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;
 
-public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
+public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredient> {
 
     private RecipeDetailListener recipeDetailListener;
     private FragmentRecipeDetailBinding binding;
@@ -180,16 +179,6 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     @Override
     public void deleteSelectedItems() {
         recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getRecipe(), listItemsChecked);
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     /**

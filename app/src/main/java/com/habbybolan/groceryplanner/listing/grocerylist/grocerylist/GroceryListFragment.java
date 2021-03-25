@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBi
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 
@@ -37,7 +35,7 @@ import javax.inject.Inject;
  * Fragment for displaying the list of Grocery object names. Can edit the names of the lists, or enter
  * the list to see the Grocery contents.
  */
-public class GroceryListFragment extends NonCategoryListFragment<Grocery> implements ListViewInterface<Grocery> {
+public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
 
     @Inject
     GroceryListPresenter groceryListPresenter;
@@ -128,10 +126,6 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
         View view = binding.groceryListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddGroceryClicked());
-
-        // on click for swapping to Recipe List
-        ImageButton gotoRecipeButton = view.findViewById(R.id.btn_goto_other_list);
-        gotoRecipeButton.setOnClickListener(v -> groceryListListener.gotoRecipeList());
     }
 
     @Override
@@ -188,16 +182,6 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> implem
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Grocery.GROCERY, (ArrayList<? extends Parcelable>) listItems);
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

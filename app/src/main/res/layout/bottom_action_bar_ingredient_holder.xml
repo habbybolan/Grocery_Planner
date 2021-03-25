@@ -12,14 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomAppBar">
-
-        <ImageButton
-            android:id="@+id/btn_goto_other_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:src="@android:drawable/btn_star_big_on" />
+        style="@style/ActionBarTheme">
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -28,7 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        app:layout_anchor="@id/bottom_app_bar_ingredient_holder" />
+        app:layout_anchor="@id/bottom_app_bar_ingredient_holder"
+        style="@style/FloatingActionButton"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

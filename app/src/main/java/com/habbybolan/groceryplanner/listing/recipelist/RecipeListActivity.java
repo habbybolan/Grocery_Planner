@@ -26,6 +26,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
     private RecipeCategory recipeCategory;
 
     private final static int RETURNED_FROM_RECIPE_DETAILS = 1234;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

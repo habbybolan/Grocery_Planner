@@ -6,7 +6,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainPage.MainActivity">
+        tools:context=".MainPage.MainActivity"
+        android:background="?attr/colorOnBackground">
 
         <include
             layout="@layout/toolbar"
@@ -14,24 +15,26 @@
 
         </include>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button"
             android:layout_width="@dimen/default_button_width"
             android:layout_height="@dimen/default_button_height"
             android:layout_marginStart="24dp"
             android:layout_marginTop="80dp"
             android:onClick="onRecipeClick"
+            style="@style/DefaultButton"
             android:text="Recipe"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button2"
             android:layout_width="@dimen/default_button_width"
             android:layout_height="@dimen/default_button_height"
             android:layout_marginStart="24dp"
             android:layout_marginTop="80dp"
             android:onClick="onGroceryClick"
+            style="@style/DefaultButton"
             android:text="Grocery"
             app:layout_constraintStart_toEndOf="@+id/button"
             app:layout_constraintTop_toTopOf="parent" />

@@ -44,7 +44,7 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
         super.onActivityResult(requestCode, resultCode, data);
         // if returning from RecipeDetailActivity, reload the recipe and category list to represent any changes that may have occurred
         if (requestCode == RETURNED_FROM_GROCERY_DETAILS) {
-            GroceryListFragment groceryListFragment = (GroceryListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.GROCERY_list_TAG));
+            GroceryListFragment groceryListFragment = (GroceryListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.GROCERY_LIST_TAG));
             if (groceryListFragment != null) groceryListFragment.resetList();
         }
     }

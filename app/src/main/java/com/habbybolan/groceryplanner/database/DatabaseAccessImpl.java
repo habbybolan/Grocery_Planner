@@ -490,7 +490,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 groceryTableLock.lock();
                 ingredientTableLock.lock();
                 for (Ingredient ingredient : ingredients) {
-                    ingredientDao.deleteIngredient(new IngredientEntity(ingredient));
                     GroceryIngredientBridge groceryIngredientBridge = new GroceryIngredientBridge(groceryEntity, ingredient);
                     groceryDao.deleteFromBridge(groceryIngredientBridge);
                 }
@@ -515,7 +514,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 recipeTableLock.lock();
                 ingredientTableLock.lock();
                 for (Ingredient ingredient : ingredients) {
-                    ingredientDao.deleteIngredient(new IngredientEntity(ingredient));
                     RecipeIngredientBridge recipeIngredientBridge = new RecipeIngredientBridge(recipeEntity, ingredient);
                     recipeDao.deleteFromBridge(recipeIngredientBridge);
                 }

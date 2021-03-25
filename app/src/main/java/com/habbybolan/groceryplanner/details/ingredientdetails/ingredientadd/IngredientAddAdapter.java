@@ -56,6 +56,8 @@ public class IngredientAddAdapter extends RecyclerView.Adapter<IngredientAddAdap
             binding.ingredientCheckBox.setOnClickListener(l -> {
                 if (binding.ingredientCheckBox.isChecked())
                     listener.onIngredientSelected(ingredients.get(getAdapterPosition()));
+                else
+                    listener.onIngredientUnSelected(ingredients.get(getAdapterPosition()));
             });
         }
 

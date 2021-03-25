@@ -60,8 +60,7 @@ public interface GroceryDao {
 
     @Query("SELECT * FROM IngredientEntity " +
             "WHERE ingredientName NOT IN " +
-                "(SELECT IE.ingredientName FROM IngredientEntity IE " +
-                    "JOIN GroceryIngredientBridge GIB ON IE.ingredientName = GIB.ingredientName " +
-                    "WHERE GIB.groceryId == :groceryId)")
+            "(SELECT GIB.ingredientName FROM GroceryIngredientBridge GIB " +
+            "WHERE GIB.groceryId == :groceryId)")
     List<IngredientEntity> getIngredientsNotInGrocery(long groceryId);
 }

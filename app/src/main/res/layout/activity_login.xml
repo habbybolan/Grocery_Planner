@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".loginpage.LoginActivity">
+
+    <data>
+        <variable
+            name="var"
+            type="String" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fragment_login_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <fragment
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="com.habbybolan.groceryplanner.loginpage.login.LoginFragment"
+                tools:layout="@layout/fragment_login"
+                android:tag="@string/LOGIN_TAG"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment_sign_up_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <fragment
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="com.habbybolan.groceryplanner.loginpage.signup.SignUpFragment"
+                tools:layout="@layout/fragment_sign_up"
+                android:tag="@string/SIGN_UP_TAG"/>
+
+        </FrameLayout>
+
+    </FrameLayout>
+</layout>

@@ -51,9 +51,6 @@ public abstract class CategoryListFragment<T> extends ListFragment<T> {
                     deleteSelectedItems();
                     exitSelectedMode();
                     return true;
-                case R.id.action_category_context_cancel:
-                    exitSelectedMode();
-                    return true;
                 case R.id.action_category_context_add_category:
                     categoryPopup(getActivity().findViewById(R.id.action_category_context_add_category));
                     return true;

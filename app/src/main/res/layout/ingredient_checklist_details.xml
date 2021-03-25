@@ -25,7 +25,7 @@
         android:id="@+id/ingredient_checklist_container"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginBottom="@dimen/list_margin_bottom"
+        android:layout_marginBottom="@dimen/list_margin_top_bottom"
         android:background="@color/colorListBackground"
         android:elevation="@dimen/list_elevation">
 

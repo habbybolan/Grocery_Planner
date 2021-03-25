@@ -85,8 +85,7 @@ public interface RecipeDao {
 
     @Query("SELECT * FROM IngredientEntity " +
             "WHERE ingredientName NOT IN " +
-            "(SELECT IE.ingredientName FROM IngredientEntity IE " +
-            "JOIN RecipeIngredientBridge RIB ON IE.ingredientName = RIB.ingredientName " +
+            "(SELECT RIB.ingredientName FROM RecipeIngredientBridge RIB " +
             "WHERE RIB.recipeId == :recipeId)")
     List<IngredientEntity> getIngredientsNotInRecipe(long recipeId);
 }

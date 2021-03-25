@@ -31,9 +31,8 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
 
     /**
      * Attaches the listener of methods implemented inside Activity
-     * @param context
      */
-    public void attachListener(Context context) {
+    protected void attachListener(Context context) {
         itemListener = (ItemListener<T>) context;
     }
 
@@ -44,7 +43,6 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     public void onItemSelected(T t) {
         if (actionMode != null) actionMode.finish();
         actionMode = null;
-        showToolbar();
         if (itemListener != null) {
             itemListener.onItemClicked(t);
         } else throw new IllegalArgumentException(listenerErrorMessage);
@@ -80,6 +78,11 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     }
 
     @Override
+    public void enterSelectMode() {
+        createActionMode();
+    }
+
+    @Override
     public void createActionMode() {
         actionMode = getActivity().startActionMode(getActionModeCallback());
     }
@@ -90,15 +93,8 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     }
 
     @Override
-    public void enterSelectMode() {
-        hideToolbar();
-        createActionMode();
-    }
-
-    @Override
     public void exitSelectedMode() {
         destroyActionMode();
-        showToolbar();
 
         if (adapter != null) adapter.exitSelectedMode();
         else throw new IllegalArgumentException(adapterErrorMessage);
@@ -107,15 +103,6 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
 
     public abstract void deleteSelectedItems();
     public abstract ActionMode.Callback getActionModeCallback();
-    /**
-     * Hides the toolbar when the context mode is entered after long-clicking list item.
-     */
-    public abstract void hideToolbar();
-
-    /**
-     * Shows the toolbar when the context mode is exited.
-     */
-    public abstract void showToolbar();
 
     @Override
     public boolean isSelectMode() {

@@ -45,9 +45,6 @@ public abstract class NonCategoryListFragment<T> extends ListFragment<T> {
                     deleteSelectedItems();
                     exitSelectedMode();
                     return true;
-                case R.id.action_ingredient_context_cancel:
-                    exitSelectedMode();
-                    return true;
                 default:
                     return false;
             }

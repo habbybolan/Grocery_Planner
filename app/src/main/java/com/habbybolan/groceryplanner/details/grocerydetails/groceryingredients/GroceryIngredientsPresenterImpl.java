@@ -32,7 +32,6 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
         loadedIngredients.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Ingredient>>() {
             @Override
             public void onChanged(ObservableList<Ingredient> sender) {}
-
             @Override
             public void onItemRangeChanged(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
             @Override

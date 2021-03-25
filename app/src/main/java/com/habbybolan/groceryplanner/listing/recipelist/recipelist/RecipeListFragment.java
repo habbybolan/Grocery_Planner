@@ -7,10 +7,8 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -22,12 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.Category;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Recipe;
@@ -79,16 +77,13 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
-                return true;
-            default:
-                return false;
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_list, container, false);
+        initLayout();
+        setToolbar();
+        return binding.getRoot();
     }
 
     /**
@@ -113,19 +108,23 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         popup.show();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_list, container, false);
-        initLayout();
-        setToolbar();
-        return binding.getRoot();
-    }
 
     private void setToolbar() {
         toolbar = binding.toolbarRecipeList.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
         binding.toolbarRecipeList.setTitle(getString(R.string.title_recipe_list));
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_search:
+                    return true;
+                case R.id.action_sort:
+                    showSortPopup(getActivity().findViewById(R.id.action_sort));
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
         // onClick event on toolbar title to swap between Recipe List and Category List
         binding.toolbarRecipeList.toolbarTitle.setOnClickListener(v -> {
@@ -177,10 +176,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         View view = binding.recipeListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddRecipeClicked());
-
-        // on click for swapping to Grocery List
-        ImageButton gotoGroceryButton = view.findViewById(R.id.btn_goto_other_list);
-        gotoGroceryButton.setOnClickListener(v -> recipeListListener.gotoGroceryList());
     }
 
     /**
@@ -269,16 +264,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         // todo: listener badly implemented
         if (recipeListListener != null)
             recipeListPresenter.attachCategory(recipeListListener.getRecipeCategory());
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     public interface RecipeListListener extends ItemListener<Recipe> {

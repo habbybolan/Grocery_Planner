@@ -22,7 +22,6 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.Grocery;
 import com.habbybolan.groceryplanner.models.Ingredient;
@@ -35,7 +34,7 @@ import javax.inject.Inject;
 
 /**
  */
-public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredient> implements ListViewInterface<Ingredient> {
+public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredient>  {
 
     private FragmentGroceryDetailBinding binding;
     private GroceryDetailsListener groceryDetailsListener;
@@ -189,16 +188,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
 
     public void reloadList() {
         groceryIngredientsPresenter.createIngredientList(grocery);
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

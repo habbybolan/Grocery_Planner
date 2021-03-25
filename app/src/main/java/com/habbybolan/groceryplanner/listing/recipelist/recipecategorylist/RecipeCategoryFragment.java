@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -79,19 +77,6 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_sort:
-                showSortPopup(getActivity().findViewById(R.id.action_sort));
-                return true;
-            default:
-                return false;
-        }
-    }
-
     /**
      * Menu popup for giving different ways to sort the list.
      * @param v     The view to anchor the popup menu to
@@ -126,7 +111,20 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
 
     private void setToolbar() {
         toolbar = binding.toolbarRecipeCategoryList.toolbar;
+        toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
         binding.toolbarRecipeCategoryList.setTitle(getString(R.string.title_category_list));
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_search:
+                    return true;
+                case R.id.action_sort:
+                    showSortPopup(getActivity().findViewById(R.id.action_sort));
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
         // onClick event on toolbar title to swap between Recipe List and Category List
         binding.toolbarRecipeCategoryList.toolbarTitle.setOnClickListener(v -> {
@@ -176,10 +174,6 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         View view = binding.recipeListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddRecipeCategoryClicked());
-
-        // on click for swapping to Grocery List
-        ImageButton gotoGroceryButton = view.findViewById(R.id.btn_goto_other_list);
-        gotoGroceryButton.setOnClickListener(v -> recipeCategoryListener.gotoGroceryList());
     }
 
     private void onAddRecipeCategoryClicked() {
@@ -218,16 +212,6 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
     @Override
     public void deleteSelectedItems() {
         recipeCategoryPresenter.deleteRecipeCategories(listItemsChecked);
-    }
-
-    @Override
-    public void hideToolbar() {
-        toolbar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showToolbar() {
-        toolbar.setVisibility(View.VISIBLE);
     }
 
     public interface RecipeCategoryListener extends ItemListener<RecipeCategory> {

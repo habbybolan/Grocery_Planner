@@ -84,15 +84,13 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
 
     private void setToolbar() {
         toolbar = binding.toolbarRecipeSteps.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
+        toolbar.inflateMenu(R.menu.menu_recipe_non_list);
         toolbar.setTitle(getString(R.string.title_recipe_steps));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_search:
-                        return true;
                     case R.id.action_sort:
                         showSortPopup(getActivity().findViewById(R.id.action_sort));
                         return true;
