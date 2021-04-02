@@ -13,8 +13,8 @@ import com.habbybolan.groceryplanner.databinding.ActivityRecipeListBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment;
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.RecipeListListener, RecipeCategoryFragment.RecipeCategoryListener {
 

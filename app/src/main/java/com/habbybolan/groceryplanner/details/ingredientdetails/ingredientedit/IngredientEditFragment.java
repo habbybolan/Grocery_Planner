@@ -23,9 +23,9 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientEditBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
-import com.habbybolan.groceryplanner.models.FoodType;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.IngredientHolder;
+import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.HashSet;

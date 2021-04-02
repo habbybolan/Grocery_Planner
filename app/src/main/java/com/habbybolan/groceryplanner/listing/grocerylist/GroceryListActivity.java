@@ -9,10 +9,10 @@ import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryListBinding;
-import com.habbybolan.groceryplanner.details.grocerydetails.GroceryDetailsActivity;
+import com.habbybolan.groceryplanner.details.grocerydetails.GroceryIngredientsActivity;
 import com.habbybolan.groceryplanner.listing.grocerylist.grocerylist.GroceryListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
-import com.habbybolan.groceryplanner.models.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 public class GroceryListActivity extends AppCompatActivity implements GroceryListFragment.GroceryListListener {
 
@@ -51,7 +51,7 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
 
     @Override
     public void onItemClicked(Grocery grocery) {
-        Intent intent = new Intent(this, GroceryDetailsActivity.class);
+        Intent intent = new Intent(this, GroceryIngredientsActivity.class);
         intent.putExtra(Grocery.GROCERY, grocery);
         startActivityForResult(intent, RETURNED_FROM_GROCERY_DETAILS);
     }

@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 @Entity
 public class RecipeCategoryEntity {

@@ -24,8 +24,8 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeCategoryBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeCategoryModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import javax.inject.Inject;
 

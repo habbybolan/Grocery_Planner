@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 

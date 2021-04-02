@@ -32,7 +32,7 @@
             android:name=".listing.recipelist.RecipeListActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
-            android:name=".details.grocerydetails.GroceryDetailsActivity"
+            android:name=".details.grocerydetails.GroceryIngredientsActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.grocerylist.GroceryListActivity"

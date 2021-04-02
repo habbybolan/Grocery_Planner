@@ -1,36 +1,35 @@
 package com.habbybolan.groceryplanner.database.entities;
 
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
-@Entity(primaryKeys = {"recipeId", "ingredientName"})
+@Entity(primaryKeys = {"recipeId", "ingredientId"})
 public class RecipeIngredientBridge {
 
-    public long recipeId;
-    @NonNull
     @ColumnInfo(index = true)
-    public String ingredientName;
+    public long recipeId;
+    @ColumnInfo(index = true)
+    public long ingredientId;
     public int quantity;
     @ColumnInfo(name="quantity_type")
     public String quantityType;
     @Embedded
     public SectionEntity sectionEntity;
 
-    public RecipeIngredientBridge(long recipeId, @NonNull String ingredientName, int quantity, String quantityType) {
+    public RecipeIngredientBridge(long recipeId, long ingredientId, int quantity, String quantityType) {
         this.recipeId = recipeId;
-        this.ingredientName = ingredientName;
+        this.ingredientId = ingredientId;
         this.quantity = quantity;
         this.quantityType = quantityType;
     }
 
     public RecipeIngredientBridge(RecipeEntity recipeEntity, Ingredient ingredient) {
         recipeId = recipeEntity.getRecipeId();
-        ingredientName = ingredient.getName();
+        ingredientId = ingredient.getId();
         quantity = ingredient.getQuantity();
         quantityType = ingredient.getQuantityType();
     }

@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.habbybolan.groceryplanner.models.Step;
+import com.habbybolan.groceryplanner.models.primarymodels.Step;
 
 @Entity
 public class StepsEntity {

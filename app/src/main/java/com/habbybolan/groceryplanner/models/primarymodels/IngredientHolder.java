@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.models;
+package com.habbybolan.groceryplanner.models.primarymodels;
 
 import android.os.Parcelable;
 

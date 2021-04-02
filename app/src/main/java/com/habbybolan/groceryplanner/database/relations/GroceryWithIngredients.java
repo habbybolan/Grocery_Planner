@@ -15,11 +15,11 @@ public class GroceryWithIngredients {
     @Embedded public GroceryEntity grocery;
     @Relation(
             parentColumn = "groceryId",
-            entityColumn = "ingredientName",
+            entityColumn = "ingredientId",
             associateBy = @Junction(
                     value = GroceryIngredientBridge.class,
                     parentColumn = "groceryId",
-                    entityColumn = "ingredientName")
+                    entityColumn = "ingredientId")
     )
     public List<IngredientEntity> ingredients;
 }

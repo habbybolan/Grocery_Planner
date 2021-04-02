@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 

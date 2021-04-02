@@ -2,10 +2,12 @@ package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import androidx.databinding.ObservableArrayList;
 
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -31,8 +33,8 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
     }
 
     @Override
-    public void fetchIngredients(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchIngredientsFromGrocery(grocery, ingredientsObserver);
+    public void fetchIngredients(Grocery grocery, ObservableArrayList<GroceryIngredient> ingredientsObserver) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceryIngredients(grocery, ingredientsObserver);
     }
 
     @Override
@@ -41,7 +43,16 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
     }
 
     @Override
-    public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
+    public void deleteIngredients(Grocery grocery, List<GroceryIngredient> groceryIngredients) {
+        List<Ingredient> ingredients = new ArrayList<>();
+        for (GroceryIngredient groceryIngredient : groceryIngredients) {
+            ingredients.add(groceryIngredient.getIngredient());
+        }
         databaseAccess.deleteIngredients(grocery, ingredients);
+    }
+
+    @Override
+    public void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient) {
+        databaseAccess.updateGroceryIngredientChecked(grocery, groceryIngredient);
     }
 }

@@ -17,8 +17,8 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientAddBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientAddModule;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 
 import java.util.ArrayList;
 import java.util.List;

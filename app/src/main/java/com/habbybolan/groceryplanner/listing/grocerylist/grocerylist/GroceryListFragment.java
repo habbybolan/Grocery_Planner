@@ -25,7 +25,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
-import com.habbybolan.groceryplanner.models.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 import java.util.ArrayList;
 

@@ -3,8 +3,8 @@ package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
 import java.util.List;

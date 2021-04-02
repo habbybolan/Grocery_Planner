@@ -3,10 +3,10 @@ package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 import androidx.databinding.ObservableArrayList;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.IngredientHolder;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 import java.util.ArrayList;
 import java.util.HashSet;

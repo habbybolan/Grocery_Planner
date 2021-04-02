@@ -4,8 +4,9 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,7 +20,8 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
 
     // true if the ingredients are being loaded
     private boolean loadingIngredients = false;
-    private ObservableArrayList<Ingredient> loadedIngredients = new ObservableArrayList<>();
+
+    private ObservableArrayList<GroceryIngredient> loadedIngredients = new ObservableArrayList<>();
 
     @Inject
     public GroceryIngredientsPresenterImpl(GroceryIngredientsInteractor groceryIngredientsInteractor) {
@@ -82,7 +84,7 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     }
 
     @Override
-    public void deleteIngredients(Grocery grocery, List<Ingredient> ingredients) {
+    public void deleteIngredients(Grocery grocery, List<GroceryIngredient> ingredients) {
         groceryIngredientsInteractor.deleteIngredients(grocery, ingredients);
         createIngredientList(grocery);
     }
@@ -116,7 +118,12 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     }
 
     @Override
-    public List<Ingredient> getIngredients() {
+    public List<GroceryIngredient> getIngredients() {
         return loadedIngredients;
+    }
+
+    @Override
+    public void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient) {
+        groceryIngredientsInteractor.updateGroceryIngredient(grocery, groceryIngredient);
     }
 }

@@ -22,8 +22,8 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeNutritionBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.Nutrition;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;

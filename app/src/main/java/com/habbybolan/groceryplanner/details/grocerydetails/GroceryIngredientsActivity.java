@@ -12,13 +12,14 @@ import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.G
 import com.habbybolan.groceryplanner.details.grocerydetails.ingredientChecklist.IngredientChecklistFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 
-public class GroceryDetailsActivity extends AppCompatActivity
-                                        implements GroceryIngredientsFragment.GroceryDetailsListener,
+public class GroceryIngredientsActivity extends AppCompatActivity
+                                        implements GroceryIngredientsFragment.GroceryIngredientsListener,
                                                     IngredientEditFragment.IngredientEditListener,
                                                     IngredientChecklistFragment.IngredientChecklistListener,
                                                     IngredientAddFragment.IngredientAddListener {
@@ -76,13 +77,14 @@ public class GroceryDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void gotoChecklist(List<Ingredient> ingredients) {
-        IngredientChecklistFragment ingredientChecklistFragment = IngredientChecklistFragment.newInstance(ingredients);
+    public void gotoChecklist(List<GroceryIngredient> ingredients) {
+        // todo: make checklist be able to use GroceryIngredient instead of Ingredient
+        /*IngredientChecklistFragment ingredientChecklistFragment = IngredientChecklistFragment.newInstance(ingredients);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_checklist, ingredientChecklistFragment, CHECKLIST_TAG)
                 .commit();
-        GroceryIngredientVisibility(View.GONE);
+        GroceryIngredientVisibility(View.GONE);*/
     }
 
     /**

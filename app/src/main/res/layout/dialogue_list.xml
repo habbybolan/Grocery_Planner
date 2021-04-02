@@ -6,20 +6,21 @@
             type="String" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:orientation="vertical"
+        android:background="@color/colorRedAccentMedium">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:textSize="20sp"
+            android:layout_centerInParent="true"
             android:gravity="center"
             android:text="@{headerText}"
-            android:background="#A5463F"
             android:contentDescription="@string/app_name" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </layout>

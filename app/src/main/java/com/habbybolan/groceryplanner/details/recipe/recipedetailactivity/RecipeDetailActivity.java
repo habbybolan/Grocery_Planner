@@ -20,9 +20,8 @@ import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngr
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepFragment;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 public class RecipeDetailActivity extends AppCompatActivity
                                 implements IngredientEditFragment.IngredientEditListener,
@@ -33,7 +32,6 @@ public class RecipeDetailActivity extends AppCompatActivity
                                             IngredientAddFragment.IngredientAddListener {
 
     private Recipe recipe;
-    private RecipeCategory recipeCategory;
     private ActivityRecipeDetailBinding binding;
 
     private RecipeIngredientsFragment recipeIngredientsFragment;
@@ -218,13 +216,11 @@ public class RecipeDetailActivity extends AppCompatActivity
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putParcelable(Recipe.RECIPE, recipe);
-        savedInstanceState.putParcelable(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
     }
 
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         recipe = savedInstanceState.getParcelable(Recipe.RECIPE);
-        recipeCategory = savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY);
     }
 
     @Override

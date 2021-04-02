@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.models;
+package com.habbybolan.groceryplanner.models.primarymodels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,11 +6,14 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
+import com.habbybolan.groceryplanner.models.secondarymodels.Section;
 
 import java.util.Objects;
 
 public class Ingredient implements Parcelable {
 
+    private long id;
     private int price;
     private int pricePer;
     private String priceType;
@@ -25,8 +28,8 @@ public class Ingredient implements Parcelable {
     public final static String INGREDIENT_CHECKED = "ingredient_checked";
     public final static String INGREDIENT_UNCHECKED = "ingredient_unchecked";
 
-
     public Ingredient(IngredientEntity ingredientEntity, int quantity, String quantityType) {
+        id = ingredientEntity.getIngredientId();
         name = ingredientEntity.getIngredientName();
         price = ingredientEntity.getPrice();
         pricePer = ingredientEntity.getPricePer();
@@ -35,7 +38,9 @@ public class Ingredient implements Parcelable {
         this.quantityType = quantityType;
     }
 
-    public Ingredient(@NonNull String name, int price, int pricePer, String priceType, int quantity, String quantityType, FoodType foodType) {
+    public Ingredient(@NonNull long id, @NonNull String name, int price, int pricePer, String priceType,
+                      int quantity, String quantityType, FoodType foodType) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.pricePer = pricePer;
@@ -46,15 +51,16 @@ public class Ingredient implements Parcelable {
     }
 
     public Ingredient(Ingredient ingredient) {
-        this(ingredient.getName(), ingredient.getPrice(), ingredient.getPricePer(), ingredient.getPriceType(), ingredient.getQuantity(), ingredient.getQuantityType(), ingredient.getFoodType());
+        this(ingredient.getId(), ingredient.getName(), ingredient.getPrice(), ingredient.getPricePer(),
+                ingredient.getPriceType(), ingredient.getQuantity(), ingredient.getQuantityType(), ingredient.getFoodType());
     }
-
 
     /**
      * Builder for Ingredient.
      */
     public static class IngredientBuilder {
 
+        private long id;
         private int price;
         private int pricePer;
         private String priceType;
@@ -65,8 +71,9 @@ public class Ingredient implements Parcelable {
         private Section section;
         private FoodType foodType;
 
-        public IngredientBuilder(@NonNull String name) {
+        public IngredientBuilder(long id, String name) {
             this.name = name;
+            this.id = id;
         }
 
         public IngredientBuilder setPrice(int price) {
@@ -100,6 +107,7 @@ public class Ingredient implements Parcelable {
 
         public Ingredient build() {
             Ingredient ingredient = new Ingredient();
+            ingredient.id = id;
             ingredient.name = name;
             ingredient.price = price;
             ingredient.priceType = priceType;
@@ -218,7 +226,13 @@ public class Ingredient implements Parcelable {
     public FoodType getFoodType() {
         return foodType;
     }
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public void setName(String name) {
         this.name = name;
     }

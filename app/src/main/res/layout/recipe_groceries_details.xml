@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="groceryName"
+            type="String" />
+        <variable
+            name="recipeAmount"
+            type="Integer" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/groceries_holding_recipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="35dp">
+
+        <TextView
+            android:id="@+id/txt_grocery_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            groceryName="@{groceryName}"
+            recipeAmount="@{recipeAmount}"/>
+
+    </RelativeLayout>
+
+</layout>

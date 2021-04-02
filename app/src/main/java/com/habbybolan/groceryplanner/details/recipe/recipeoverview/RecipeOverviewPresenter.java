@@ -1,7 +1,8 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface RecipeOverviewPresenter {
     List<RecipeCategory> getAllCategories();
 
     /**
-     * Call fragment to display recipe categories if possible
+     * Called display recipe categories if possible
      */
     void displayRecipeCategories();
 
@@ -47,4 +48,52 @@ public interface RecipeOverviewPresenter {
      * @return  Name of the current recipe's category name if the category exists, empty string otherwise
      */
     String getCurrCategoryName();
+
+    /**
+     * Fetch the Groceries that are holding the recipe.
+     * @param recipe    The recipe begin contained by the Grocery object
+     */
+    void fetchGroceriesHoldingRecipe(Recipe recipe);
+
+    /**
+     * Fetch the Groceries that are not holding the recipe.
+     * @param recipe    The recipe not contained by the Grocery object
+     */
+    void fetchGroceriesNotHoldingRecipe(Recipe recipe);
+
+    /**
+     * Called to display the Groceries not holding the Recipe
+     */
+    void displayGroceriesNotHoldingRecipe();
+
+    /**
+     * Adds the recipe to the grocery list.
+     * @param recipe        Recipe to add to grocery
+     * @param grocery       grocery to hold the recipe
+     * @param amount        The number of times to add the Recipe to the grocery
+     * @param ingredients   recipe ingredients to add or remove from the grocery list
+     */
+    void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
+
+    /**
+     * Fetches the recipe ingredients where the recipe is not part of the selected grocery list.
+     * @param recipe            The recipe to add/change inside the grocery list
+     * @param grocery           The grocery list to hold/is holding the recipe ingredients
+     * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
+     */
+    void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery);
+
+    /**
+     * Returns an Array of all the Grocery names in groceries
+     * @param groceries The list to extract the String names from
+     * @return          Array of names of the groceries
+     */
+    String[] getArrayOfGroceryNames(List<Grocery> groceries);
+
+    /**
+     * Delete All the recipe ingredients from the grocery
+     * @param recipe    Recipe to delete from grocery
+     * @param grocery   Grocery holding recipe and its ingredients to delete
+     */
+    void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery);
 }

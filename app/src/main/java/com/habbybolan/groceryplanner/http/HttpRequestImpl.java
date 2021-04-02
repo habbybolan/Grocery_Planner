@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.http;
 
 import android.content.Context;
-import android.util.Base64;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +36,7 @@ public class HttpRequestImpl implements HttpRequest {
         URL myUrl = new URL(SERVER);
         HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
         connection.setRequestMethod(httpMethod);
-        connection.setRequestProperty("Authorization", "Bearer " + Base64.encodeToString(token.getBytes(), Base64.NO_WRAP));
+        connection.setRequestProperty("Authorization", "Bearer " + token);
         connection.setReadTimeout(READ_TIMEOUT);
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
         return connection;

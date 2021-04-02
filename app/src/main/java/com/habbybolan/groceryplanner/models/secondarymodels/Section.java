@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.models;
+package com.habbybolan.groceryplanner.models.secondarymodels;
 
 import com.habbybolan.groceryplanner.database.entities.SectionEntity;
 

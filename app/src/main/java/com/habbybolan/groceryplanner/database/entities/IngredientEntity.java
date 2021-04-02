@@ -3,14 +3,17 @@ package com.habbybolan.groceryplanner.database.entities;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
-@Entity
+@Entity(indices = {@Index(value = {"ingredientName"}, unique = true)})
 public class IngredientEntity {
+
+    @PrimaryKey(autoGenerate = true)
+    private long ingredientId;
     @NonNull
-    @PrimaryKey
     private String ingredientName;
     private int price;
     @ColumnInfo(name="price_per")
@@ -20,7 +23,8 @@ public class IngredientEntity {
     @ColumnInfo(name = "food_type")
     private String foodType;
 
-    public IngredientEntity(@NonNull String ingredientName, int price, int pricePer, String priceType, String foodType) {
+    public IngredientEntity(long ingredientId, @NonNull String ingredientName, int price, int pricePer, String priceType, String foodType) {
+        this.ingredientId = ingredientId;
         this.ingredientName = ingredientName;
         this.price = price;
         this.pricePer = pricePer;
@@ -29,6 +33,7 @@ public class IngredientEntity {
     }
 
     public IngredientEntity(Ingredient ingredient) {
+        ingredientId = ingredient.getId();
         ingredientName = ingredient.getName();
         price = ingredient.getPrice();
         pricePer = ingredient.getPricePer();
@@ -50,5 +55,8 @@ public class IngredientEntity {
     }
     public String getFoodType() {
         return foodType;
+    }
+    public long getIngredientId() {
+        return ingredientId;
     }
 }

@@ -1,8 +1,8 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 
 public class IngredientEditInteractorImpl implements IngredientEditInteractor {
 

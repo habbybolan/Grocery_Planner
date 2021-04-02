@@ -8,8 +8,6 @@
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorOnBackground">@color/colorOnBackground</item>
         <item name="colorAccent">@color/colorRedAccentBright</item>
-
-        <item name="fontFamily"></item>
     </style>
 
     <style name="DefaultButton" parent="android:style/Widget.Button">

@@ -1,10 +1,11 @@
-package com.habbybolan.groceryplanner.models;
+package com.habbybolan.groceryplanner.models.primarymodels;
 
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ public class Recipe extends IngredientHolder {
     private String description;
     private int prepTime;
     private int cookTime;
+    private int servingSize;
+
     private Nutrition calories;
     private Nutrition fat;
     private Nutrition saturatedFat;
@@ -34,6 +37,7 @@ public class Recipe extends IngredientHolder {
 
         prepTime = recipeEntity.getPrepTime();
         cookTime = recipeEntity.getCookTime();
+        servingSize = recipeEntity.getServingSize();
         calories = new Nutrition(Nutrition.CALORIES, recipeEntity.getCalories(), recipeEntity.getCaloriesType());
         fat = new Nutrition(Nutrition.FAT, recipeEntity.getFat(), recipeEntity.getFatType());
         saturatedFat = new Nutrition(Nutrition.SATURATED_FAT, recipeEntity.getSaturatedFat(), recipeEntity.getSaturatedFatType());
@@ -44,6 +48,7 @@ public class Recipe extends IngredientHolder {
         categoryId = recipeEntity.getRecipeCategoryId();
     }
 
+
     public Recipe(Parcel in) {
         id = in.readLong();
         name = in.readString();
@@ -52,6 +57,8 @@ public class Recipe extends IngredientHolder {
         description = in.readString();
         prepTime = in.readInt();
         cookTime = in.readInt();
+        servingSize = in.readInt();
+
         calories = in.readParcelable(Nutrition.class.getClassLoader());
         fat = in.readParcelable(Nutrition.class.getClassLoader());
         saturatedFat = in.readParcelable(Nutrition.class.getClassLoader());
@@ -72,6 +79,8 @@ public class Recipe extends IngredientHolder {
         dest.writeString(description);
         dest.writeInt(prepTime);
         dest.writeInt(cookTime);
+        dest.writeInt(servingSize);
+
         dest.writeParcelable(calories, flags);
         dest.writeParcelable(fat, flags);
         dest.writeParcelable(saturatedFat, flags);
@@ -139,6 +148,8 @@ public class Recipe extends IngredientHolder {
         private String description;
         private int prepTime;
         private int cookTime;
+        private int servingSize;
+
         private Nutrition calories;
         private Nutrition fat;
         private Nutrition saturatedFat;
@@ -163,6 +174,10 @@ public class Recipe extends IngredientHolder {
         }
         public RecipeBuilder setCookTime(int cookTime) {
             this.cookTime = cookTime;
+            return this;
+        }
+        public RecipeBuilder setServingSize(int servingSize) {
+            this.servingSize = servingSize;
             return this;
         }
         public RecipeBuilder setCalories(Nutrition calories) {
@@ -208,6 +223,8 @@ public class Recipe extends IngredientHolder {
             recipe.description = description;
             recipe.prepTime = prepTime;
             recipe.cookTime = cookTime;
+            recipe.servingSize = servingSize;
+
             recipe.calories = calories;
             recipe.fat = fat;
             recipe.saturatedFat = saturatedFat;
@@ -252,6 +269,9 @@ public class Recipe extends IngredientHolder {
     public int getCookTime() {
         return cookTime;
     }
+    public int getServingSize() {
+        return servingSize;
+    }
     public Nutrition getCalories() {
         return calories;
     }
@@ -285,6 +305,9 @@ public class Recipe extends IngredientHolder {
     }
     public void setCookTime(int cookTime) {
         this.cookTime = cookTime;
+    }
+    public void setServingSize(int servingSize) {
+        this.servingSize = servingSize;
     }
     public void setCalories(Nutrition calories) {
         this.calories = calories;

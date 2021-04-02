@@ -14,7 +14,7 @@ import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 public interface IngredientDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertIngredient(IngredientEntity ingredientEntity);
+    long insertIngredient(IngredientEntity ingredientEntity);
 
     @Delete
     void deleteIngredient(IngredientEntity ingredientEntity);

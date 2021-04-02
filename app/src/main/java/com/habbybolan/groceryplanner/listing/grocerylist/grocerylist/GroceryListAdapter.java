@@ -11,7 +11,7 @@ import com.habbybolan.groceryplanner.listfragments.ListAdapter;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.GroceryListDetailsBinding;
-import com.habbybolan.groceryplanner.models.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 import java.util.List;
 

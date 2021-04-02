@@ -1,45 +1,51 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.habbybolan.groceryplanner.listfragments.ListAdapter;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.databinding.GroceryIngredientListDetailsBinding;
+import com.habbybolan.groceryplanner.listfragments.ListAdapter;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.RecipeWithIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 
-public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAdapter.ViewHolder, Ingredient> {
+public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAdapter.ViewHolder, GroceryIngredient> {
 
-    GroceryIngredientsAdapter(List<Ingredient> ingredients, ListViewInterface<Ingredient> view) {
+    private Context context;
+
+    GroceryIngredientsAdapter(List<GroceryIngredient> ingredients, GroceryIngredientsView view, Context context) {
         super(view, ingredients);
+        this.context = context;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        IngredientListDetailsBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.ingredient_list_details, parent, false);
+        GroceryIngredientListDetailsBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.grocery_ingredient_list_details, parent, false);
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Ingredient ingredient = items.get(position);
-        holder.bind(ingredient);
+        GroceryIngredient groceryIngredient = items.get(position);
+        holder.bind(groceryIngredient);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final IngredientListDetailsBinding binding;
+        private final GroceryIngredientListDetailsBinding binding;
 
-        ViewHolder(IngredientListDetailsBinding binding) {
+        ViewHolder(GroceryIngredientListDetailsBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 
@@ -55,9 +61,16 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
 
             // on long click, go into select mode
             binding.ingredientListContainer.setOnLongClickListener(v -> setOnLongClickItem(getAdapterPosition()));
+
+            // on checking the grocery item, sent to view to be saved in database
+            binding.ingredientCheckBoxChecklist.setOnClickListener(l -> {
+                GroceryIngredient groceryIngredient = items.get(getAdapterPosition());
+                groceryIngredient.setIsChecked(binding.ingredientCheckBoxChecklist.isChecked());
+            });
         }
 
-        public void bind(Ingredient ingredient) {
+        public void bind(GroceryIngredient groceryIngredient) {
+            Ingredient ingredient = groceryIngredient.getIngredient();
             binding.setIngredientName(ingredient.getName());
             if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
             if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
@@ -66,6 +79,12 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
             if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
             binding.setImageResource(ingredient.getFoodType().getImageResource());
             displayCheckBox(binding.ingredientCheckBox);
+            binding.recipeNameHolder.removeAllViews();
+            for (RecipeWithIngredient recipeWithIngredient : groceryIngredient.getRecipeWithIngredients()) {
+                TextView textView = new TextView(context);
+                textView.setText(recipeWithIngredient.getRecipeName() + ": x" + recipeWithIngredient.getRecipeAmount());
+                binding.recipeNameHolder.addView(textView);
+            }
         }
     }
 

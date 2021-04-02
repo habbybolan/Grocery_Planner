@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeNutritionDetailsBinding;
-import com.habbybolan.groceryplanner.models.Nutrition;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 import java.util.ArrayList;
 import java.util.List;

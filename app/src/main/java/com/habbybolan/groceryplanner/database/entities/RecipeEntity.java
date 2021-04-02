@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 @Entity(foreignKeys = @ForeignKey(entity = RecipeCategoryEntity.class,
                                 parentColumns = "recipeCategoryId",
@@ -24,6 +24,8 @@ public class RecipeEntity {
     private int prepTime;
     @ColumnInfo(name="cook_time")
     private int cookTime;
+    @ColumnInfo(name="serving_size")
+    private int servingSize;
     private int calories;
     @ColumnInfo(name = "calories_type")
     private String caloriesType;
@@ -46,10 +48,10 @@ public class RecipeEntity {
     private int protein;
     @ColumnInfo(name = "protein_type")
     private String proteinType;
-    @ColumnInfo(name = "recipe_category_id")
+    @ColumnInfo(name = "recipe_category_id", index = true)
     private Long recipeCategoryId;
 
-    public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int calories, String caloriesType,
+    public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, int calories, String caloriesType,
                         int fat, String fatType, int saturatedFat, String saturatedFatType, int carbohydrates, String carbohydratesType, int fiber,
                         String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId) {
         this.recipeId = recipeId;
@@ -58,6 +60,7 @@ public class RecipeEntity {
         this.description = description;
         this.prepTime = prepTime;
         this.cookTime = cookTime;
+        this.servingSize = servingSize;
         this.calories = calories;
         this.caloriesType = caloriesType;
         this.fat = fat;
@@ -83,6 +86,8 @@ public class RecipeEntity {
         description = recipe.getDescription();
         prepTime = recipe.getPrepTime();
         cookTime = recipe.getCookTime();
+        servingSize = recipe.getServingSize();
+
         if (recipe.getCalories() != null) {
             calories = recipe.getCalories().getAmount();
             caloriesType = recipe.getCalories().getMeasurement();
@@ -114,6 +119,7 @@ public class RecipeEntity {
         recipeCategoryId = recipe.getCategoryId();
     }
 
+
     public long getRecipeId() {
         return recipeId;
     }
@@ -133,6 +139,10 @@ public class RecipeEntity {
     public int getCookTime() {
         return cookTime;
     }
+    public int getServingSize() {
+        return servingSize;
+    }
+
     public int getCalories() {
         return calories;
     }

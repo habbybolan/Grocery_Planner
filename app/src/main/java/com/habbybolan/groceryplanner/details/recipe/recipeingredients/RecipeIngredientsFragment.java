@@ -23,8 +23,8 @@ import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeD
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import javax.inject.Inject;

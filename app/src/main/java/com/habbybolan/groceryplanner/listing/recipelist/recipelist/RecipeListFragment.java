@@ -26,10 +26,10 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
-import com.habbybolan.groceryplanner.models.Category;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.Category;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
 import java.util.List;

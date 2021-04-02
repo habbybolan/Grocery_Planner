@@ -4,7 +4,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableList;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.models.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

@@ -1,8 +1,8 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 import java.util.List;
 

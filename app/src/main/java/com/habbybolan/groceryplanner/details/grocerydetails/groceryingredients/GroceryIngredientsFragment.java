@@ -23,8 +23,9 @@ import com.habbybolan.groceryplanner.databinding.FragmentGroceryDetailBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ import javax.inject.Inject;
 
 /**
  */
-public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredient>  {
+public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryIngredient> implements GroceryIngredientsView {
 
     private FragmentGroceryDetailBinding binding;
-    private GroceryDetailsListener groceryDetailsListener;
+    private GroceryIngredientsListener groceryIngredientsListener;
     private Grocery grocery;
     private Toolbar toolbar;
 
@@ -57,7 +58,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        groceryDetailsListener = (GroceryDetailsListener) context;
+        groceryIngredientsListener = (GroceryIngredientsListener) context;
         attachListener(getContext());
     }
 
@@ -133,8 +134,9 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
             grocery = getArguments().getParcelable(Grocery.GROCERY);
             if (getArguments().containsKey(Ingredient.INGREDIENT)) {
                 listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
+                showList(listItems);
             } else
-                // only the grocery saved, must retrieve its associated Ingredients
+                // only the grocery is saved, retrieve its associated Ingredients
                 groceryIngredientsPresenter.createIngredientList((Grocery) getArguments().getParcelable(Grocery.GROCERY));
         }
     }
@@ -143,7 +145,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
     private void initLayout() {
-        adapter = new GroceryIngredientsAdapter(listItems, this);
+        adapter = new GroceryIngredientsAdapter(listItems, this, getContext());
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -151,14 +153,14 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
         // on click for adding an Ingredient from floating action button
         View view = binding.groceryDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
-        floatingActionButton.setOnClickListener(v -> groceryDetailsListener.createNewItem());
+        floatingActionButton.setOnClickListener(v -> groceryIngredientsListener.createNewItem());
 
         // on Click for entering check list mode
         ImageButton imgBtnChecklist = view.findViewById(R.id.btn_checklist);
-        imgBtnChecklist.setOnClickListener(l -> groceryDetailsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
+        imgBtnChecklist.setOnClickListener(l -> groceryIngredientsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
 
         ImageButton imgBtnAddIngredients = view.findViewById(R.id.btn_add_multiple);
-        imgBtnAddIngredients.setOnClickListener(l -> groceryDetailsListener.gotoAddIngredients());
+        imgBtnAddIngredients.setOnClickListener(l -> groceryIngredientsListener.gotoAddIngredients());
     }
 
     /**
@@ -178,7 +180,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
      */
     private void deleteGrocery() {
         groceryIngredientsPresenter.deleteGrocery(grocery);
-        groceryDetailsListener.onGroceryDeleted();
+        groceryIngredientsListener.onGroceryDeleted();
     }
 
     @Override
@@ -197,11 +199,16 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<Ingredie
         outState.putParcelable(Grocery.GROCERY, grocery);
     }
 
-    public interface GroceryDetailsListener extends ItemListener<Ingredient> {
+    @Override
+    public void onChecklistSelected(GroceryIngredient groceryIngredient) {
+        // todo:
+    }
+
+    public interface GroceryIngredientsListener extends ItemListener<Ingredient> {
 
         void createNewItem();
         void onGroceryDeleted();
-        void gotoChecklist(List<Ingredient> ingredients);
+        void gotoChecklist(List<GroceryIngredient> ingredients);
         void gotoAddIngredients();
     }
 }

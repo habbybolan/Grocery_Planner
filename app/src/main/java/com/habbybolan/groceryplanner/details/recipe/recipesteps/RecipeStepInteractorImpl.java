@@ -1,8 +1,8 @@
 package com.habbybolan.groceryplanner.details.recipe.recipesteps;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.Step;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Step;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

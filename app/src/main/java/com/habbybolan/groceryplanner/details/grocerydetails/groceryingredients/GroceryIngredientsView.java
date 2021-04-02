@@ -1,13 +1,9 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 
-import java.util.List;
+public interface GroceryIngredientsView extends ListViewInterface<GroceryIngredient> {
 
-public interface GroceryIngredientsView {
-
-    void onIngredientSelected(Ingredient ingredient);
-    void showIngredientList(List<Ingredient> ingredients);
-    void loadingStarted();
-    void loadingFailed(String message);
+    void onChecklistSelected(GroceryIngredient groceryIngredient);
 }

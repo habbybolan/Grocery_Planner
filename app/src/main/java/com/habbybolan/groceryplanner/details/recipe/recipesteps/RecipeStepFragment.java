@@ -25,8 +25,8 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeStepBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.Recipe;
-import com.habbybolan.groceryplanner.models.Step;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Step;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.ArrayList;

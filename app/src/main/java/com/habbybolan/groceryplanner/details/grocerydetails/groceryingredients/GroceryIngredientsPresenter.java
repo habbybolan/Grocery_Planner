@@ -1,8 +1,9 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.models.Grocery;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface GroceryIngredientsPresenter {
      * @param grocery       The grocery to delete the ingredients from
      * @param ingredients   The ingredients to delete
      */
-    void deleteIngredients(Grocery grocery, List<Ingredient> ingredients);
+    void deleteIngredients(Grocery grocery, List<GroceryIngredient> ingredients);
 
     /**
      * Get all Ingredient objects associated with grocery from the database.
@@ -48,5 +49,12 @@ public interface GroceryIngredientsPresenter {
      * Get all loaded ingredients
      * @return  Loaded ingredients
      */
-    List<Ingredient> getIngredients();
+    List<GroceryIngredient> getIngredients();
+
+    /**
+     * Update the ingredients bridges with new isChecked
+     * @param grocery               Grocery holding the ingredient to update
+     * @param groceryIngredient     holds the check value to change it to
+     */
+    void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient);
 }

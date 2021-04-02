@@ -2,8 +2,8 @@ package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import androidx.databinding.ObservableArrayList;
 
-import com.habbybolan.groceryplanner.models.Ingredient;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

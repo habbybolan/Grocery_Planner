@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="IngredientName"
+            type="String" />
+        <variable
+            name="ingredientPrice"
+            type="Integer" />
+        <variable
+            name="ingredientPricePer"
+            type="Integer" />
+        <variable
+            name="ingredientPriceType"
+            type="String" />
+        <variable
+            name="ingredientQuantity"
+            type="Integer" />
+        <variable
+            name="ingredientQuantityType"
+            type="String" />
+        <variable
+            name="imageResource"
+            type="Integer" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorListBackground">
+
+        <LinearLayout
+            android:id="@+id/ingredient_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:background="@color/colorList">
+
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/icon_food_type"
+                android:layout_width="@dimen/icon_ingredient_size"
+                android:layout_height="@dimen/icon_ingredient_size"
+                android:layout_marginStart="5dp"
+                android:imageResource="@{imageResource}"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:id="@+id/ingredient_check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/txt_ingredient_name"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/list_txt_margin_start"
+                    android:layout_toEndOf="@+id/ingredient_check_box"
+                    android:text="@{IngredientName}" />
+
+                <TextView
+                    android:id="@+id/txt_ingredient_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/txt_size_small"
+                    android:layout_below="@+id/txt_ingredient_name"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginStart="@dimen/list_txt_margin_start"
+                    android:layout_toEndOf="@+id/ingredient_check_box"
+                    quantity="@{ingredientQuantity}"
+                    quantityType="@{ingredientQuantityType}" />
+
+                <TextView
+                    android:id="@+id/txt_ingredient_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/txt_size_small"
+                    android:layout_below="@+id/txt_ingredient_name"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/txt_ingredient_quantity"
+                    price="@{ingredientPrice}"
+                    pricePer="@{ingredientPricePer}"
+                    priceType="@{ingredientPriceType}"/>
+
+                <CheckBox
+                    android:id="@+id/ingredient_check_box_checklist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ingredient_list_container"
+            android:background="@color/colorList"
+            android:layout_marginBottom="@dimen/list_margin_top_bottom">
+
+            <LinearLayout
+                android:id="@+id/recipe_name_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="20dp" />
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+</layout>
+
+

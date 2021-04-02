@@ -16,11 +16,11 @@ public class RecipeWithIngredients {
     public RecipeEntity recipe;
     @Relation(
             parentColumn = "recipeId",
-            entityColumn = "ingredientName",
+            entityColumn = "ingredientId",
             associateBy = @Junction(
                     value = RecipeIngredientBridge.class,
                     parentColumn = "recipeId",
-                    entityColumn = "ingredientName")
+                    entityColumn = "ingredientId")
     )
     public List<IngredientEntity> ingredients;
 }

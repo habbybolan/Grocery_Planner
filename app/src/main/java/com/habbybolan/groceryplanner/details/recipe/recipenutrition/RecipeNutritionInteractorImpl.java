@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.recipe.recipenutrition;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 public class RecipeNutritionInteractorImpl implements RecipeNutritionInteractor {
 

@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.models.Category;
+import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 
 import java.util.ArrayList;
 

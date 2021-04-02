@@ -3,7 +3,7 @@ package com.habbybolan.groceryplanner.listing.grocerylist.grocerylist;
 import androidx.databinding.ObservableArrayList;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.Grocery;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 import java.util.ArrayList;
 import java.util.List;

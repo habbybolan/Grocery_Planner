@@ -2,7 +2,7 @@ package com.habbybolan.groceryplanner.details.recipe.recipenutrition;
 
 import android.widget.TextView;
 
-import com.habbybolan.groceryplanner.models.Nutrition;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 public interface PropertyChangedInterface {
 

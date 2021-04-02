@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientChecklistBinding;
-import com.habbybolan.groceryplanner.models.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -72,4 +72,16 @@ public class BindingAdapters {
         String text = builder.toString();
         textView.setText(text);
     }
+
+    /**
+     * Adapter for displaying the Groceries that contain Recipes in a list.
+     * @param textView      [groceryName]:  [recipeAmount]
+     * @param groceryName   Name of the grocery
+     * @param recipeAmount  amount recipe is added to the Ingredient
+     */
+    @BindingAdapter(value = {"groceryName", "recipeAmount"})
+    public static void GroceriesHoldingIngredientDisplay(TextView textView, String groceryName, int recipeAmount) {
+        String text = groceryName + ":  " + recipeAmount;
+        textView.setText(text);
+    }
 }
