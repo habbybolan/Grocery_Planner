@@ -24,7 +24,7 @@
 
         <include
             android:id="@+id/grocery_detail_bottom_action"
-            layout="@layout/bottom_action_bar_grocery_ingredient_list"/>
+            layout="@layout/bottom_action_bar_grocery_ingredient_list" />
 
     </LinearLayout>
 </layout>

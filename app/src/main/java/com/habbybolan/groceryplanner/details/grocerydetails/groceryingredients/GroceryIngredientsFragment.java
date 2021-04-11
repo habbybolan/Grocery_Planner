@@ -1,6 +1,8 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -75,6 +77,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_grocery_detail, container, false);
         initLayout();
+        setBottomActionBar();
         setToolbar();
         return binding.getRoot();
     }
@@ -149,7 +152,12 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
         RecyclerView rv = binding.ingredientList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
+    }
 
+    /**
+     * Sets up bottom action bar clickers
+     */
+    private void setBottomActionBar() {
         // on click for adding an Ingredient from floating action button
         View view = binding.groceryDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
@@ -161,6 +169,23 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
 
         ImageButton imgBtnAddIngredients = view.findViewById(R.id.btn_add_multiple);
         imgBtnAddIngredients.setOnClickListener(l -> groceryIngredientsListener.gotoAddIngredients());
+
+        ImageButton imgBtnInfoLevel = view.findViewById(R.id.btn_info_level);
+        imgBtnInfoLevel.setOnClickListener(l -> alertDialogInfoLevel());
+    }
+
+    private void alertDialogInfoLevel() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Pick info level")
+                .setItems(GroceryIngredientsAdapter.INFO_VIEW_LIST, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        GroceryIngredientsAdapter ingredientsAdapter = (GroceryIngredientsAdapter) adapter;
+                        ingredientsAdapter.setInfoView(which);
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
     /**
@@ -201,7 +226,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
 
     @Override
     public void onChecklistSelected(GroceryIngredient groceryIngredient) {
-        // todo:
+        groceryIngredientsPresenter.updateGroceryIngredientSelected(grocery, groceryIngredient);
     }
 
     public interface GroceryIngredientsListener extends ItemListener<Ingredient> {

@@ -1,7 +1,5 @@
 package com.habbybolan.groceryplanner.database;
 
-import android.util.Log;
-
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 
@@ -9,7 +7,6 @@ import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeDao;
 import com.habbybolan.groceryplanner.database.dao.SectionDao;
-import com.habbybolan.groceryplanner.database.dao.StepsDao;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryIngredientBridge;
 import com.habbybolan.groceryplanner.database.entities.GroceryIngredientEntity;
@@ -19,9 +16,9 @@ import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
-import com.habbybolan.groceryplanner.database.entities.StepsEntity;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.databasetuples.GroceryIngredientsTuple;
+import com.habbybolan.groceryplanner.models.databasetuples.RecipeGroceriesTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientInGroceryTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryTuple;
@@ -32,7 +29,6 @@ import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Step;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
@@ -54,52 +50,46 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     private RecipeDao recipeDao;
     private IngredientDao ingredientDao;
     private SectionDao sectionDao;
-    private StepsDao stepsDao;
-
 
     private static final String TAG = "DatabaseAccess";
 
     private Lock groceryTableLock = new ReentrantLock();
     private Lock ingredientTableLock = new ReentrantLock();
     private Lock recipeTableLock = new ReentrantLock();
-    private Lock sectionTableLock = new ReentrantLock();
-    private Lock stepsTableLock = new ReentrantLock();
     private Lock recipeCategoryLock = new ReentrantLock();
 
-    public DatabaseAccessImpl(GroceryDao groceryDao, RecipeDao recipeDao, IngredientDao ingredientDao, SectionDao sectionDao, StepsDao stepsDao) {
+    public DatabaseAccessImpl(GroceryDao groceryDao, RecipeDao recipeDao, IngredientDao ingredientDao, SectionDao sectionDao) {
         this.groceryDao = groceryDao;
         this.recipeDao = recipeDao;
         this.ingredientDao = ingredientDao;
         this.sectionDao = sectionDao;
-        this.stepsDao = stepsDao;
     }
 
     // GROCERIES
 
     @Override
-    public void deleteGrocery(Grocery grocery) {
-        deleteGroceries(new ArrayList<Grocery>(){{add(grocery);}});
+    public void deleteGrocery(Long groceryId) {
+        deleteGroceries(new ArrayList<Long>(){{add(groceryId);}});
     }
 
     @Override
-    public void deleteGroceries(List<Grocery> groceries) {
+    public void deleteGroceries(List<Long> groceryIds) {
         Runnable task = () -> {
             try {
                 groceryTableLock.lock();
                 ingredientTableLock.lock();
-                for (Grocery grocery : groceries) {
-                    GroceryEntity groceryEntity = new GroceryEntity(grocery);
-                    // delete the grocery from the grocery table
-                    groceryDao.deleteGrocery(groceryEntity);
-                    // delete the rows including the grocery from the GroceryIngredientBridge table
-                    groceryDao.deleteGroceryFromBridge(groceryEntity.getGroceryId());
-                    // delete grocery from GroceryRecipeBridge
-                    groceryDao.deleteGroceryFromGroceryRecipeBridge(grocery.getId());
-                    // delete Grocery from GroceryIngredientEntity table
-                    groceryDao.deleteGroceryFromGroceryIngredientEntity(grocery.getId());
-                    // delete Grocery from GroceryRecipeIngredientEntity table
-                    groceryDao.deleteGroceryFromGroceryRecipeIngredientEntity(grocery.getId());
-                }
+
+                // delete the grocery from the grocery table
+                groceryDao.deleteGroceries(groceryIds);
+                // delete the rows including the grocery from the GroceryIngredientBridge table
+                groceryDao.deleteGroceryFromBridge(groceryIds);
+                // delete grocery from GroceryRecipeBridge
+                groceryDao.deleteGroceryFromGroceryRecipeBridge(groceryIds);
+                // delete Grocery from GroceryIngredientEntity table
+                groceryDao.deleteGroceryFromGroceryIngredientEntity(groceryIds);
+                // delete Grocery from GroceryRecipeIngredientEntity table
+                groceryDao.deleteGroceryFromGroceryRecipeIngredientEntity(groceryIds);
+
             } finally {
                 ingredientTableLock.unlock();
                 groceryTableLock.unlock();
@@ -152,14 +142,10 @@ public class DatabaseAccessImpl implements DatabaseAccess {
             try {
                 groceryTableLock.lock();
                 recipeTableLock.lock();
-                // todo: make into one query
-                List<GroceryEntity> groceries = recipeDao.getGroceriesHoldingRecipe(recipe.getId()).groceries;
-                List<GroceryRecipeBridge> groceryRecipeBridges = recipeDao.getRecipeAmountsInsideGrocery(recipe.getId());
+                List<RecipeGroceriesTuple> groceries = recipeDao.getGroceriesHoldingRecipe(recipe.getId());
                 List<GroceryRecipe> groceryRecipes = new ArrayList<>();
-                for (int i = 0; i < groceries.size(); i++) {
-                    GroceryEntity groceryEntity = groceries.get(i);
-                    GroceryRecipeBridge groceryRecipeBridge = groceryRecipeBridges.get(i);
-                    groceryRecipes.add(new GroceryRecipe(groceryEntity.getName(), groceryEntity.getGroceryId(), groceryEntity.getIsFavorite(), groceryRecipeBridge.amount));
+                for (RecipeGroceriesTuple grocery : groceries) {
+                    groceryRecipes.add(new GroceryRecipe( grocery.groceryName, grocery.groceryId, grocery.amount));
                 }
                 return groceryRecipes;
             } finally {
@@ -259,28 +245,27 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     // RECIPES
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        deleteRecipes(new ArrayList<Recipe>(){{add(recipe);}});
+    public void deleteRecipe(Long recipeId) {
+        deleteRecipes(new ArrayList<Long>(){{add(recipeId);}});
     }
 
     @Override
-    public void deleteRecipes(List<Recipe> recipes) {
+    public void deleteRecipes(List<Long> recipeIds) {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
                 ingredientTableLock.lock();
-                for (Recipe recipe : recipes) {
-                    RecipeEntity recipeEntity = new RecipeEntity(recipe);
-                    // delete the recipe from the RecipeEntity table
-                    recipeDao.deleteRecipe(recipeEntity);
-                    // delete Recipe from GroceryRecipeBridge
-                    recipeDao.deleteRecipeFromGroceryRecipeBridge(recipeEntity.getRecipeId());
-                    // delete Recipe from RecipeIngredientBridge
-                    recipeDao.deleteRecipeFromRecipeIngredientBridge(recipe.getId());
-                    // delete recipe rows from GroceryRecipeIngredientEntity
-                    recipeDao.deleteRecipeFromGroceryRecipeIngredient(recipe.getId());
-                    groceryDao.deleteIngredientsNotInGroceryAnymore();
-                }
+
+                // delete the recipe from the RecipeEntity table
+                recipeDao.deleteRecipes(recipeIds);
+                // delete Recipe from GroceryRecipeBridge
+                recipeDao.deleteRecipesFromGroceryRecipeBridge(recipeIds);
+                // delete Recipe from RecipeIngredientBridge
+                recipeDao.deleteRecipesFromRecipeIngredientBridge(recipeIds);
+                // delete recipe rows from GroceryRecipeIngredientEntity
+                recipeDao.deleteRecipeFromGroceryRecipeIngredient(recipeIds);
+                groceryDao.deleteIngredientsNotInGroceryAnymore();
+
             } finally {
                 ingredientTableLock.unlock();
                 recipeTableLock.unlock();
@@ -313,7 +298,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 if (recipeCategoryId == null)
                     return recipeDao.getAllRecipes();
                 else
-                    // todo: should this return all or only un-categorized recipes
                     return recipeDao.getAllRecipes(recipeCategoryId);
             } finally {
                 recipeCategoryLock.unlock();
@@ -471,48 +455,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
 
-    // Steps
-
-    @Override
-    public List<Step> fetchStepsFromRecipe(long recipeId) throws ExecutionException, InterruptedException {
-        // execute database access with Callable
-        Callable<List<StepsEntity>> task = () -> {
-            stepsTableLock.lock();
-            try {
-                return stepsDao.getStepByRecipe(recipeId);
-            } finally {
-                stepsTableLock.unlock();
-            }
-        };
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<List<StepsEntity>> futureTask = executorService.submit(task);
-        List<Step> steps = new ArrayList<>();
-        List<StepsEntity> stepEntities = futureTask.get();
-        for (StepsEntity stepsEntity : stepEntities) {
-            steps.add(new Step(stepsEntity));
-        }
-        Log.i(TAG, "fetchStepsFromRecipe: " + steps);
-        return steps;
-    }
-
-    @Override
-    public void addStep(Step step) {
-        Runnable task = () -> {
-            stepsTableLock.lock();
-            try {
-                stepsDao.insertStep(new StepsEntity(step));
-            } finally {
-                stepsTableLock.unlock();
-            }
-        };
-        Thread thread = new Thread(task);
-        thread.start();
-    }
-
-    // Section
-    // todo:
-
-
     // INGREDIENTS
 
     @Override
@@ -536,6 +478,22 @@ public class DatabaseAccessImpl implements DatabaseAccess {
             insertIngredientsIntoRecipe((Recipe) ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
         }
     }
+
+    @Override
+    public void addIngredient(Ingredient ingredient) {
+        Runnable task = () -> {
+            try {
+                ingredientTableLock.lock();
+                ingredientDao.insertIngredient(new IngredientEntity(ingredient));
+            } finally {
+                ingredientTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+
 
     /**
      * Insert an ingredient into a grocery list
@@ -593,7 +551,36 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void deleteIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients) {
+    public void deleteIngredient(long ingredientId) {
+        deleteIngredients(new ArrayList<Long>(){{add(ingredientId);}});
+    }
+
+    @Override
+    public void deleteIngredients(List<Long> ingredientIds) {
+        Runnable task = () -> {
+            try {
+                ingredientTableLock.lock();
+                    // delete the ingredient
+                    ingredientDao.deleteIngredient(ingredientIds);
+                    // delete the ingredient from RecipeIngredientBridge
+                    ingredientDao.deleteIngredientsFromRecipeIngredientBridge(ingredientIds);
+                    // delete the ingredient from GroceryRecipeIngredientEntity
+                    ingredientDao.deleteIngredientsFromGroceryRecipeIngredientEntity(ingredientIds);
+                    // delete the ingredient from GroceryIngredientEntity
+                    ingredientDao.deleteIngredientsFromGroceryIngredientEntity(ingredientIds);
+                    // delete the ingredient from GroceryIngredientBridge
+                    ingredientDao.deleteIngredientsFromGroceryIngredientBridge(ingredientIds);
+
+            } finally {
+                ingredientTableLock.unlock();
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    @Override
+    public void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Ingredient> ingredients) {
         if (ingredientHolder.isGrocery()) {
             // If the ingredientHolder is a Grocery, then delete the Ingredient relationship from Grocery
             deleteIngredientsFromGrocery((Grocery) ingredientHolder, ingredients);
@@ -604,7 +591,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
+    public void deleteIngredientFromHolder(IngredientHolder ingredientHolder, Ingredient ingredient) {
         if (ingredientHolder.isGrocery()) {
             // If the ingredientHolder is a Grocery, then delete the Ingredient relationship from Grocery
             deleteIngredientsFromGrocery((Grocery) ingredientHolder, new ArrayList<Ingredient>(){{add(ingredient);}});
@@ -754,6 +741,39 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         ingredientsObserver.addAll(futureTask.get());
     }
 
+
+    @Override
+    public void fetchIngredients(ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
+        Callable<List<Ingredient>> task = () -> {
+            try {
+                recipeTableLock.lock();
+                ingredientTableLock.lock();
+                List<Ingredient> ingredients = new ArrayList<>();
+                // todo: do in one query
+                List<IngredientEntity> ingredientEntities = ingredientDao.getIngredients();
+                for (int i = 0; i < ingredientEntities.size(); i++) {
+                    IngredientEntity ingredientEntity = ingredientEntities.get(i);
+                    //Section section = new Section(recipeIngredientBridge.sectionEntity);
+                    ingredients.add(new Ingredient.IngredientBuilder(ingredientEntity.getIngredientId(), ingredientEntity.getIngredientName())
+                            .setPrice(ingredientEntity.getPrice())
+                            .setPriceType(ingredientEntity.getPriceType())
+                            .setPricePer(ingredientEntity.getPricePer())
+                            .setFoodType(ingredientEntity.getFoodType())
+                            .build());
+                }
+                return ingredients;
+            } finally {
+                ingredientTableLock.unlock();
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<Ingredient>> futureTask = executorService.submit(task);
+        ingredientsObserver.clear();
+        ingredientsObserver.addAll(futureTask.get());
+    }
+
     @Override
     public void deleteRecipeFromGrocery(Grocery grocery, Recipe recipe) {
         Runnable task = () -> {
@@ -835,36 +855,6 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         ingredientObserver.addAll(futureTask.get());
     }
 
-    /*
-    @Override
-    public void fetchIngredientsFromRecipeWithCheck(Recipe recipe, Grocery grocery, ObservableArrayList<IngredientWithCheck> ingredientObserver) throws ExecutionException, InterruptedException {
-        Callable<List<IngredientWithCheck>> task = () -> {
-            try {
-                groceryTableLock.lock();
-                recipeTableLock.lock();
-                ingredientTableLock.lock();
-                List<IngredientWithCheck> ingredients = new ArrayList<>();
-                List<GroceryRecipeIngredientTuple> tuples = recipeDao.getIngredientsInRecipeWithCheck(recipe.getId(), grocery.getId());
-                for (GroceryRecipeIngredientTuple tuple : tuples) {
-                    Ingredient ingredient = new Ingredient(tuple.ingredientId, tuple.ingredientName, tuple.price,
-                            tuple.pricePer, tuple.priceType, tuple.recipeQuantity, tuple.recipeQuantityType, new FoodType(tuple.foodType));
-                    IngredientWithCheck ingredientWithCheck = new IngredientWithCheck(ingredient, tuple.isChecked);
-                    ingredients.add(ingredientWithCheck);
-                }
-                return ingredients;
-            } finally {
-                groceryTableLock.unlock();
-                recipeTableLock.unlock();
-                ingredientTableLock.unlock();
-            }
-        };
-        // execute database access with Callable
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<List<IngredientWithCheck>> futureTask = executorService.submit(task);
-        ingredientObserver.clear();
-        ingredientObserver.addAll(futureTask.get());
-    }*/
-
     @Override
     public void fetchIngredientsNotInRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException {
         Callable<List<Ingredient>> task = () -> {
@@ -938,12 +928,14 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 List<GroceryIngredientsTuple> tupleGrocery = groceryDao.getGroceryIngredients(grocery.getId());
                 List<RecipeIngredientInGroceryTuple> tupleRecipe = groceryDao.getRecipeIngredientsInGrocery(grocery.getId());
                 Map<Long, GroceryIngredient> map = new HashMap<>();
+                // retrieve the Grocery ingredients added directly
                 for (GroceryIngredientsTuple tuple : tupleGrocery) {
                     Ingredient ingredient = new Ingredient(tuple.ingredientId, tuple.ingredientName,
                             tuple.price, tuple.pricePer, tuple.priceType, tuple.quantity, tuple.quantityType, new FoodType(tuple.foodType));
                     GroceryIngredient groceryIngredient = new GroceryIngredient(ingredient, tuple.isChecked);
                     map.put(tuple.ingredientId, groceryIngredient);
                 }
+                // retrieve the recipe ingredients added to the grocery
                 for (RecipeIngredientInGroceryTuple tuple : tupleRecipe) {
                     if (!map.containsKey(tuple.ingredientId)) {
                         Ingredient ingredient = new Ingredient(tuple.ingredientId, tuple.ingredientName,
@@ -955,18 +947,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                     RecipeWithIngredient recipeWithIngredient = new RecipeWithIngredient(tuple.recipeId, tuple.recipeName, tuple.amount, tuple.quantity, tuple.quantityType);
                     groceryIngredient.addRecipe(recipeWithIngredient);
                 }
-                /*List<GroceryRecipeIngredientTuple> tupleList = groceryDao.getRecipeGroceryIngredients(grocery.getId());
-                HashMap<Long, GroceryIngredient> map = new HashMap<>();
-                for (GroceryRecipeIngredientTuple tuple : tupleList) {
-                    if (!map.containsKey(tuple.ingredientId)) {
-                        Ingredient ingredient = new Ingredient(tuple.ingredientId, tuple.ingredientName, tuple.price,
-                                tuple.pricePer, tuple.priceType, tuple.groceryQuantity, tuple.groceryQuantityType, new FoodType(tuple.foodType));
-                        GroceryIngredient groceryIngredient = new GroceryIngredient(ingredient, tuple.isChecked);
-                        map.put(tuple.ingredientId, groceryIngredient);
-                    }
-                    RecipeWithIngredient recipeWithIngredient = new RecipeWithIngredient(tuple.recipeId, tuple.recipeName, tuple.amount, tuple.recipeQuantity, tuple.recipeQuantityType);
-                    map.get(tuple.ingredientId).addRecipe(recipeWithIngredient);
-                }*/
+
                 List<GroceryIngredient> groceryIngredients = new ArrayList<>();
                 groceryIngredients.addAll(map.values());
                 return groceryIngredients;
@@ -990,17 +971,8 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 groceryTableLock.lock();
                 recipeTableLock.lock();
                 ingredientTableLock.lock();
-                // todo: updating if the ingredient is checked off or not
-                // update GroceryIngredientBridge with new isChecked value
-                /*GroceryIngredientBridge groceryIngredientBridge = new GroceryIngredientBridge(grocery.getId(), groceryIngredient.getId(),
-                        groceryIngredient.getIsFavorite(), groceryIngredient.getQuantity(), groceryIngredient.getQuantityType(), groceryIngredient.getIsChecked());
-                groceryDao.updateGroceryIngredients(groceryIngredientBridge);
-                // update GroceryRecipeIngredientBridge with new isChecked value
-                for (RecipeWithIngredient recipeWithIngredient : groceryIngredient.getRecipeWithIngredients()) {
-                    GroceryRecipeIngredientBridge groceryRecipeIngredientBridge = new GroceryRecipeIngredientBridge(grocery.getId(), recipeWithIngredient.getRecipeId(),
-                            groceryIngredient.getId(), groceryIngredient.getIsChecked(), groceryIngredient.getIsFavorite());
-                    groceryDao.updateGroceryRecipeIngredientBridge(groceryRecipeIngredientBridge);
-                }*/
+
+                groceryDao.updateGroceryIngredientChecked(new GroceryIngredientBridge(grocery.getId(), groceryIngredient.getId(), groceryIngredient.getIsChecked()));
             } finally {
                 ingredientTableLock.unlock();
                 recipeTableLock.unlock();

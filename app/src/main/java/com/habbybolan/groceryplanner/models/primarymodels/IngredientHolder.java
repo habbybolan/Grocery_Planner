@@ -12,7 +12,6 @@ public abstract class IngredientHolder implements Parcelable {
 
     String name;
     long id;
-    boolean isFavorite;
 
     /**
      * Check if the name of the Grocery is valid. Valid if it contains at least one non-empty character.
@@ -38,14 +37,9 @@ public abstract class IngredientHolder implements Parcelable {
     public long getId() {
         return id;
     }
-    public boolean getIsFavorite() {
-        return isFavorite;
-    }
 
     public void setName(String name) {
         this.name = name;
     }
-    public void setIsFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
+
 }

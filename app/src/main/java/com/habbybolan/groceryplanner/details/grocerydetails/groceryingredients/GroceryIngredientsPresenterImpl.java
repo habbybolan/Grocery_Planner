@@ -123,7 +123,7 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     }
 
     @Override
-    public void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient) {
-        groceryIngredientsInteractor.updateGroceryIngredient(grocery, groceryIngredient);
+    public void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient) {
+        groceryIngredientsInteractor.updateGroceryIngredientSelected(grocery, groceryIngredient);
     }
 }

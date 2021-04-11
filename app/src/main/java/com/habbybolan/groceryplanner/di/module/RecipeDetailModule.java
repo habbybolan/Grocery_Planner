@@ -5,6 +5,10 @@ import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngr
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsInteractorImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsPresenter;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsPresenterImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsInteractor;
+import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsInteractorImpl;
+import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsPresenter;
+import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsPresenterImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionInteractor;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionInteractorImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionPresenter;
@@ -13,10 +17,6 @@ import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOvervie
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewInteractorImpl;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewPresenter;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewPresenterImpl;
-import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepInteractor;
-import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepInteractorImpl;
-import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepPresenter;
-import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -55,12 +55,12 @@ public class RecipeDetailModule {
     }
 
     @Provides
-    RecipeStepInteractor provideRecipeStepInteractor(DatabaseAccess databaseAccess) {
-        return new RecipeStepInteractorImpl(databaseAccess);
+    RecipeInstructionsInteractor provideRecipeInstructionsInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeInstructionsInteractorImpl(databaseAccess);
     }
 
     @Provides
-    RecipeStepPresenter provideRecipeStepPresenter(RecipeStepInteractor recipeStepInteractor) {
-        return new RecipeStepPresenterImpl(recipeStepInteractor);
+    RecipeInstructionsPresenter provideRecipeInstructionsPresenter(RecipeInstructionsInteractor recipeInstructionsInteractor) {
+        return new RecipeInstructionsPresenterImpl(recipeInstructionsInteractor);
     }
 }

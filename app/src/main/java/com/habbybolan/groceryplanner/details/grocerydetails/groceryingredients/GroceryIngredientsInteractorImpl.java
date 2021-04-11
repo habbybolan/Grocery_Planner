@@ -29,7 +29,7 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
 
     @Override
     public void deleteGrocery(Grocery grocery) {
-        databaseAccess.deleteGrocery(grocery);
+        databaseAccess.deleteGrocery(grocery.getId());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
 
     @Override
     public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
-        databaseAccess.deleteIngredient(grocery, ingredient);
+        databaseAccess.deleteIngredientFromHolder(grocery, ingredient);
     }
 
     @Override
@@ -48,11 +48,11 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
         for (GroceryIngredient groceryIngredient : groceryIngredients) {
             ingredients.add(groceryIngredient.getIngredient());
         }
-        databaseAccess.deleteIngredients(grocery, ingredients);
+        databaseAccess.deleteIngredientsFromHolder(grocery, ingredients);
     }
 
     @Override
-    public void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient) {
+    public void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient) {
         databaseAccess.updateGroceryIngredientChecked(grocery, groceryIngredient);
     }
 }

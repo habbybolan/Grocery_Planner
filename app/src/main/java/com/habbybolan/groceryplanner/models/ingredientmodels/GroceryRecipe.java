@@ -11,8 +11,8 @@ public class GroceryRecipe extends Grocery {
 
     private int amount;
 
-    public GroceryRecipe(String name, long id, boolean isFavorite, int amount) {
-        super(name, id, isFavorite);
+    public GroceryRecipe(String name, long id, int amount) {
+        super(name, id);
         this.amount = amount;
     }
 

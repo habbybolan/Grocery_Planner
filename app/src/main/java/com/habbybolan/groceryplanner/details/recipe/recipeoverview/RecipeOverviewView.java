@@ -4,7 +4,6 @@ import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface RecipeOverviewView {
@@ -35,7 +34,7 @@ public interface RecipeOverviewView {
      * @param ingredientNames   Array of Ingredient names to display in list.
      * @param grocery           Grocery list to add the recipe ingredients to
      */
-    void displayRecipeIngredients(ArrayList<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery);
+    void displayRecipeIngredients(List<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery);
 
     /**
      * Displays the Groceries not holding the recipes inside a Dialog.

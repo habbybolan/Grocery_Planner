@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
+import com.habbybolan.groceryplanner.databinding.CreatePopupDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentGroceryListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
@@ -57,7 +57,6 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().groceryListSubComponent(new GroceryListModule()).inject(this);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -147,7 +146,7 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
     private void onAddGroceryClicked() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Write a Grocery list name");
-        final CreateIngredientHolderDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_ingredient_holder_details, null, false);
+        final CreatePopupDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_popup_details, null, false);
         builder.setView(groceryBinding.getRoot());
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override

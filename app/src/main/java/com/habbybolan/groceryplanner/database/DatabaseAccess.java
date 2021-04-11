@@ -10,7 +10,6 @@ import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Step;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
@@ -19,8 +18,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface DatabaseAccess {
 
-    void deleteGrocery(Grocery grocery);
-    void deleteGroceries(List<Grocery> groceries);
+    void deleteGrocery(Long groceryId);
+    void deleteGroceries(List<Long> groceryIds);
     void addGrocery(Grocery grocery);
     void fetchGroceries(ObservableArrayList<Grocery> groceriesObserver) throws ExecutionException, InterruptedException;
 
@@ -54,8 +53,8 @@ public interface DatabaseAccess {
      */
     void deleteGroceryRecipeBridge(Recipe recipe, Grocery grocery);
 
-    void deleteRecipe(Recipe recipe);
-    void deleteRecipes(List<Recipe> recipes);
+    void deleteRecipe(Long recipeId);
+    void deleteRecipes(List<Long> recipeIds);
     void addRecipe(Recipe recipe);
     void fetchRecipes(Long recipeCategoryId, ObservableArrayList<Recipe> recipesObserver) throws ExecutionException, InterruptedException;
     List<Recipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
@@ -68,18 +67,24 @@ public interface DatabaseAccess {
     void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
 
-    List<Step> fetchStepsFromRecipe(long recipeId) throws ExecutionException, InterruptedException;
-    void addStep(Step step);
-
     void addIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients);
     void addIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
-    void deleteIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients);
-    void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
+    void deleteIngredient(long ingredientId);
+    void deleteIngredients(List<Long> ingredientIds);
+    void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Ingredient> ingredients);
+    void deleteIngredientFromHolder(IngredientHolder ingredientHolder, Ingredient ingredient);
     void deleteIngredientHolderRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
     void fetchIngredientsFromRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 
+    void addIngredient(Ingredient ingredient);
+
+    /**
+     * Fetch all ingredients created.
+     * @param ingredients   Ingredient observer to store fetched ingredients into.
+     */
+    void fetchIngredients(ObservableArrayList<Ingredient> ingredients) throws ExecutionException, InterruptedException;
+
     void deleteRecipeFromGrocery(Grocery grocery, Recipe recipe);
-    //void fetchIngredientsFromRecipeWithCheck(Recipe recipe, Grocery grocery, ObservableArrayList<IngredientWithCheck> ingredientObserver) throws ExecutionException, InterruptedException;
 
     /**
      * Called for querying a recipe's ingredients where the recipe is inside the grocery. Retrieves all ingredients the recipe

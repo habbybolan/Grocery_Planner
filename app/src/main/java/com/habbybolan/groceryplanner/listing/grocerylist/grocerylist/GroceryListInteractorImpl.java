@@ -23,12 +23,14 @@ public class GroceryListInteractorImpl implements GroceryListInteractor {
 
     @Override
     public void deleteGrocery(Grocery grocery) {
-        databaseAccess.deleteGrocery(grocery);
+        databaseAccess.deleteGrocery(grocery.getId());
     }
 
     @Override
     public void deleteGroceries(List<Grocery> groceries) {
-        databaseAccess.deleteGroceries(groceries);
+        List<Long> groceryIds = new ArrayList<>();
+        for (Grocery grocery : groceries) groceryIds.add(grocery.getId());
+        databaseAccess.deleteGroceries(groceryIds);
     }
 
     @Override

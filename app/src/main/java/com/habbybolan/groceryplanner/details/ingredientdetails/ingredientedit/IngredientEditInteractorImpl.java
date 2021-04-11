@@ -13,12 +13,18 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
 
     @Override
     public void updateIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        databaseAccess.addIngredient(ingredientHolder, ingredient);
+        if (ingredientHolder != null)
+            databaseAccess.addIngredient(ingredientHolder, ingredient);
+        else
+            databaseAccess.addIngredient(ingredient);
     }
 
     @Override
     public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        databaseAccess.deleteIngredient(ingredientHolder, ingredient);
+        if (ingredientHolder != null)
+            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient);
+        else
+            databaseAccess.deleteIngredient(ingredient.getId());
     }
 
     @Override

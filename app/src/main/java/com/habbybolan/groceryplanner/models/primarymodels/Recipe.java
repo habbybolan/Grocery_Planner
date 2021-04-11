@@ -12,6 +12,8 @@ import java.util.List;
 
 public class Recipe extends IngredientHolder {
 
+    private boolean isFavorite;
+
     private String description;
     private int prepTime;
     private int cookTime;
@@ -25,6 +27,7 @@ public class Recipe extends IngredientHolder {
     private Nutrition sugar;
     private Nutrition protein;
     private Long categoryId;
+    private String instructions;
 
     public final static String RECIPE = "recipe";
 
@@ -46,6 +49,7 @@ public class Recipe extends IngredientHolder {
         sugar = new Nutrition(Nutrition.SUGARS, recipeEntity.getSugar(), recipeEntity.getSugarType());
         protein = new Nutrition(Nutrition.PROTEIN, recipeEntity.getProtein(), recipeEntity.getProteinType());
         categoryId = recipeEntity.getRecipeCategoryId();
+        instructions = recipeEntity.getInstructions();
     }
 
 
@@ -68,6 +72,7 @@ public class Recipe extends IngredientHolder {
         protein = in.readParcelable(Nutrition.class.getClassLoader());
         long idTemp = in.readLong();
         categoryId = idTemp != 0 ? idTemp : null;
+        instructions = in.readString();
     }
 
     @Override
@@ -90,6 +95,7 @@ public class Recipe extends IngredientHolder {
         dest.writeParcelable(protein, flags);
         if (categoryId != null) dest.writeLong(categoryId);
         else dest.writeLong(0);
+        dest.writeString(instructions);
     }
 
     public List<Nutrition> getNutritionList() {
@@ -159,6 +165,7 @@ public class Recipe extends IngredientHolder {
         private Nutrition protein;
 
         private Long categoryId;
+        private String instructions;
 
         public RecipeBuilder(@NonNull String name) {
             this.name = name;
@@ -212,6 +219,10 @@ public class Recipe extends IngredientHolder {
             this.categoryId = categoryId;
             return this;
         }
+        public RecipeBuilder setInstructions(String instructions) {
+            this.instructions = instructions;
+            return this;
+        }
 
 
         public Recipe build() {
@@ -233,6 +244,7 @@ public class Recipe extends IngredientHolder {
             recipe.sugar = sugar;
             recipe.protein = protein;
             recipe.categoryId = categoryId;
+            recipe.instructions = instructions;
 
             return recipe;
         }
@@ -296,6 +308,12 @@ public class Recipe extends IngredientHolder {
     public Long getCategoryId() {
         return categoryId;
     }
+    public String getInstructions() {
+        return instructions;
+    }
+    public boolean getIsFavorite() {
+        return isFavorite;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -332,5 +350,11 @@ public class Recipe extends IngredientHolder {
     }
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 }

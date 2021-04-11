@@ -56,5 +56,5 @@ public interface GroceryIngredientsPresenter {
      * @param grocery               Grocery holding the ingredient to update
      * @param groceryIngredient     holds the check value to change it to
      */
-    void updateGroceryIngredient(Grocery grocery, GroceryIngredient groceryIngredient);
+    void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient);
 }

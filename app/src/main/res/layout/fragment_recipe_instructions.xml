@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".details.recipe.recipeinstructions.RecipeInstructionsFragment">
+
+    <LinearLayout
+        android:id="@+id/recipe_step_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?attr/colorOnBackground">
+
+        <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar_recipe_steps"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/recipe_detail_margin_top">
+
+            <EditText
+                android:id="@+id/edit_txt_instructions"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textSize="13sp"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:scrollbars="vertical" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DefaultButton"
+                android:text="@string/btn_save_text"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DefaultButton"
+                android:text="@string/btn_cancel_text"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

@@ -14,8 +14,8 @@ import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
-import com.habbybolan.groceryplanner.database.relations.GroceryWithRecipes;
 import com.habbybolan.groceryplanner.database.relations.RecipeWithIngredients;
+import com.habbybolan.groceryplanner.models.databasetuples.RecipeGroceriesTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryTuple;
 
@@ -43,6 +43,9 @@ public interface RecipeDao {
 
     @Delete
     void deleteRecipe(RecipeEntity recipeEntity);
+
+    @Query("DELETE FROM RecipeEntity WHERE recipeId IN (:recipeIds)")
+    void deleteRecipes(List<Long> recipeIds);
 
     @Query("SELECT * FROM RecipeEntity WHERE recipeId = :recipeId")
     RecipeEntity getRecipe(long recipeId);
@@ -102,8 +105,8 @@ public interface RecipeDao {
     void insertRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
 
 
-    @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId=:recipeId")
-    void deleteRecipeFromRecipeIngredientBridge(long recipeId);
+    @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId IN (:recipeIds)")
+    void deleteRecipesFromRecipeIngredientBridge(List<Long> recipeIds);
 
     @Delete
     void deleteRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
@@ -126,11 +129,11 @@ public interface RecipeDao {
     @Delete
     void deleteRecipeFromGroceryInGroceryRecipeBridge(GroceryRecipeBridge groceryRecipeBridge);
 
-    @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId = :recipeId")
-    void deleteRecipeFromGroceryRecipeBridge(long recipeId);
+    @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId IN (:recipeIds)")
+    void deleteRecipesFromGroceryRecipeBridge(List<Long> recipeIds);
 
-    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId")
-    void deleteRecipeFromGroceryRecipeIngredient(long recipeId);
+    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId IN (:recipeIds)")
+    void deleteRecipeFromGroceryRecipeIngredient(List<Long> recipeIds);
 
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND groceryId=:groceryId")
     void deleteRecipeGroceryFromGroceryRecipeIngredient(long groceryId, long recipeId);
@@ -141,9 +144,6 @@ public interface RecipeDao {
             "WHERE GRB.recipeId == :recipeId)")
     List<GroceryEntity> getGroceriesNotHoldingRecipe(long recipeId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE recipeId = :recipeId LIMIT 1")
-    GroceryWithRecipes getGroceriesHoldingRecipe(long recipeId);
-
     @Query("SELECT * FROM GroceryRecipeBridge WHERE recipeId = :recipeId")
     List<GroceryRecipeBridge> getRecipeAmountsInsideGrocery(long recipeId);
 
@@ -153,5 +153,12 @@ public interface RecipeDao {
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND ingredientId=:ingredientId")
     void deleteRecipeIngredientFromGroceryRecipeIngredient(long recipeId, long ingredientId);
 
+    @Query("SELECT groceryId, groceryName, amount " +
+            "   FROM" +
+            "   (SELECT groceryId, amount FROM GroceryRecipeBridge WHERE recipeId=:recipeId) " +
+            "   JOIN" +
+            "   (SELECT groceryId, name AS groceryName FROM GroceryEntity) " +
+            "   USING (groceryId)")
+    List<RecipeGroceriesTuple> getGroceriesHoldingRecipe(long recipeId);
 
 }

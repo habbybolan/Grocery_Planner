@@ -8,16 +8,14 @@ public class Grocery extends IngredientHolder {
 
     public final static String GROCERY = "grocery";
 
-    public Grocery(String name, long id, boolean isFavorite) {
+    public Grocery(String name, long id) {
         this.name = name;
         this.id = id;
-        this.isFavorite = isFavorite;
     }
 
     public Grocery(String name) {
         this.name = name;
         id = 0;
-        isFavorite = false;
     }
 
     public Grocery(GroceryEntity groceryEntity) {
@@ -28,7 +26,6 @@ public class Grocery extends IngredientHolder {
     public Grocery(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        isFavorite = in.readBoolean();
     }
 
     @Override
@@ -57,6 +54,5 @@ public class Grocery extends IngredientHolder {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeBoolean(isFavorite);
     }
 }

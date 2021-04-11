@@ -1,9 +1,7 @@
-package com.habbybolan.groceryplanner.details.recipe.recipesteps;
+package com.habbybolan.groceryplanner.details.recipe.recipeinstructions;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,50 +10,34 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
-import com.habbybolan.groceryplanner.databinding.FragmentRecipeStepBinding;
+import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsBinding;
 import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Step;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipeStepFragment extends Fragment implements RecipeStepView {
+public class RecipeInstructionsFragment extends Fragment implements RecipeInstructionsView {
 
     @Inject
-    RecipeStepPresenter recipeStepPresenter;
+    RecipeInstructionsPresenter recipeInstructionsPresenter;
 
-    private List<Step> steps = new ArrayList<>();
-    private FragmentRecipeStepBinding binding;
-    private RecipeStepAdapter adapter;
-    private Recipe recipe;
+    private FragmentRecipeInstructionsBinding binding;
     private RecipeStepListener recipeStepListener;
     private Toolbar toolbar;
 
-    private static final String TAG = "RecipeStepFragment";
 
+    public RecipeInstructionsFragment() {}
 
-    public RecipeStepFragment() {}
-
-    public static RecipeStepFragment getInstance(@NonNull Recipe recipe) {
-        RecipeStepFragment fragment = new RecipeStepFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(Recipe.RECIPE, recipe);
-        fragment.setArguments(args);
+    public static RecipeInstructionsFragment getInstance() {
+        RecipeInstructionsFragment fragment = new RecipeInstructionsFragment();
         return fragment;
     }
 
@@ -76,10 +58,29 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_step, container, false);
-        initLayout();
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_instructions, container, false);
         setToolbar();
+        initClickers();
+        binding.editTxtInstructions.setText(recipeStepListener.getRecipe().getInstructions());
         return binding.getRoot();
+    }
+
+    /**
+     * Set up button clicker functionality.
+     */
+    private void initClickers() {
+
+        // clicker for saving the instructions text to the recipe
+        binding.btnSave.setOnClickListener(l -> {
+            String instructions = binding.editTxtInstructions.getText().toString();
+            recipeStepListener.getRecipe().setInstructions(instructions);
+            recipeInstructionsPresenter.updateRecipe(recipeStepListener.getRecipe());
+        });
+
+        // clicker for undoing the instructions text
+        binding.btnCancel.setOnClickListener(l -> {
+            binding.editTxtInstructions.setText(recipeStepListener.getRecipe().getInstructions());
+        });
     }
 
     private void setToolbar() {
@@ -107,15 +108,7 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeStepPresenter.setView(this);
-        if (getArguments() != null) {
-            recipe = getArguments().getParcelable(Recipe.RECIPE);
-            if (getArguments().containsKey(Step.STEP)) {
-                steps = getArguments().getParcelableArrayList(Step.STEP);
-            } else
-                // only the grocery saved, must retrieve its associated Ingredients
-                recipeStepPresenter.createStepList((Recipe) getArguments().getParcelable(Recipe.RECIPE));
-        }
+        recipeInstructionsPresenter.setView(this);
     }
 
     /**
@@ -140,15 +133,6 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
         popup.show();
     }
 
-    private void initLayout() {
-        adapter = new RecipeStepAdapter(steps, this);
-        RecyclerView rv = binding.stepsList;
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        rv.setAdapter(adapter);
-
-        binding.btnAddStep.setOnClickListener(v -> addNewStep());
-    }
-
     /**
      * Ask the user to confirm deleting the Recipe.
      */
@@ -165,45 +149,8 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        recipeStepPresenter.deleteRecipe(recipe);
+        recipeInstructionsPresenter.deleteRecipe(recipeStepListener.getRecipe());
         recipeStepListener.onRecipeDeleted();
-    }
-
-    private void addNewStep() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Write a Recipe list name");
-        final CreateIngredientHolderDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_ingredient_holder_details, null, false);
-        builder.setView(groceryBinding.getRoot());
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String description = groceryBinding.editTxtGroceryName.getText().toString();
-                Step step = new Step(recipe.getId(), description, steps.size()+1);
-                recipeStepPresenter.addNewStep(recipe, step);
-                steps.add(step);
-                adapter.notifyItemInserted(steps.size()-1);
-            }
-        });
-        builder.show();
-    }
-
-    @Override
-    public void showStepList(List<Step> steps) {
-        Log.i(TAG, "showStepList: " + this.steps);
-        this.steps.clear();
-        this.steps.addAll(steps);
-        Log.i(TAG, "showStepList: " + this.steps);
-        adapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -218,5 +165,6 @@ public class RecipeStepFragment extends Fragment implements RecipeStepView {
     public interface RecipeStepListener {
 
         void onRecipeDeleted();
+        Recipe getRecipe();
     }
 }

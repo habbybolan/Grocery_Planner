@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".listing.ingredientlist.IngredientListActivity">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/fragment_ingredient_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <fragment
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:name="com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist.IngredientListFragment"
+                    tools:layout="@layout/fragment_ingredient_list"
+                    android:tag="@string/INGREDIENT_LIST"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fragment_ingredient_edit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</layout>

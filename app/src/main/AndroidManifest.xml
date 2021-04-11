@@ -12,9 +12,9 @@
         android:networkSecurityConfig="@xml/server_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme" >
-        <activity
-            android:name=".loginpage.LoginActivity">
+        android:theme="@style/MyMaterialTheme">
+        <activity android:name=".listing.ingredientlist.IngredientListActivity"></activity>
+        <activity android:name=".loginpage.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +23,7 @@
         </activity>
         <activity
             android:name=".MainPage.MainActivity"
-            android:parentActivityName=".listing.grocerylist.GroceryListActivity">
-        </activity>
+            android:parentActivityName=".listing.grocerylist.GroceryListActivity"></activity>
         <activity
             android:name=".details.recipe.recipedetailactivity.RecipeDetailActivity"
             android:parentActivityName=".MainPage.MainActivity" />

@@ -38,6 +38,8 @@
     <string name="GROCERY_LIST_TAG">grocery_list_tag</string>
     <string name="LOGIN_TAG">login_tag</string>
     <string name="SIGN_UP_TAG">sign_up_tag</string>
+    <string name="INGREDIENT_LIST">ingredient_list</string>
+    <string name="INGREDIENT_EDIT">ingredient_edit</string>
 
     <string name="teaspoon">Teaspoon</string>
     <string name="dessertspoon">Dessertspoon</string>

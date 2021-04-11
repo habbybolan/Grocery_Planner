@@ -61,8 +61,9 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     private void displayIngredientsWithCheck() {
-        String[] ingredients = recipeOverviewInteractor.getArrayOfIngredientNames(loadedIngredientsWithCheck);
-        view.displayRecipeIngredients(loadedIngredientsWithCheck, ingredients, selectedGrocery);
+        String[] ingredientNames = recipeOverviewInteractor.getArrayOfIngredientNames(loadedIngredientsWithCheck);
+        List<IngredientWithGroceryCheck> ingredients = recipeOverviewInteractor.checkIfAllUnselected(loadedIngredientsWithCheck);
+        view.displayRecipeIngredients(ingredients, ingredientNames, selectedGrocery);
     }
 
     private void setGroceriesNotHoldingRecipeCallback() {
@@ -115,7 +116,6 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             public void onItemRangeInserted(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {
                 // set the loaded recipe categories as loaded in
                 loadingRecipeCategories = false;
-                displayIngredientsWithCheck();
             }
             @Override
             public void onItemRangeMoved(ObservableList<RecipeCategory> sender, int fromPosition, int toPosition, int itemCount) {}

@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.CreateIngredientHolderDetailsBinding;
+import com.habbybolan.groceryplanner.databinding.CreatePopupDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeCategoryBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeCategoryModule;
@@ -179,7 +179,7 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
     private void onAddRecipeCategoryClicked() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Write a Recipe Category name");
-        final CreateIngredientHolderDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_ingredient_holder_details, null, false);
+        final CreatePopupDetailsBinding groceryBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.create_popup_details, null, false);
         builder.setView(groceryBinding.getRoot());
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override

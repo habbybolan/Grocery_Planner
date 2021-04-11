@@ -17,16 +17,16 @@ import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsFragment;
+import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
-import com.habbybolan.groceryplanner.details.recipe.recipesteps.RecipeStepFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 public class RecipeDetailActivity extends AppCompatActivity
                                 implements IngredientEditFragment.IngredientEditListener,
                                             RecipeIngredientsFragment.RecipeDetailListener,
-                                            RecipeStepFragment.RecipeStepListener,
+                                            RecipeInstructionsFragment.RecipeStepListener,
                                             RecipeOverviewFragment.RecipeOverviewListener,
                                             RecipeNutritionFragment.RecipeNutritionListener,
                                             IngredientAddFragment.IngredientAddListener {
@@ -35,7 +35,7 @@ public class RecipeDetailActivity extends AppCompatActivity
     private ActivityRecipeDetailBinding binding;
 
     private RecipeIngredientsFragment recipeIngredientsFragment;
-    private RecipeStepFragment recipeStepFragment;
+    private RecipeInstructionsFragment recipeInstructionsFragment;
     private RecipeOverviewFragment recipeOverviewFragment;
     private RecipeNutritionFragment recipeNutritionFragment;
 
@@ -173,11 +173,11 @@ public class RecipeDetailActivity extends AppCompatActivity
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Ingredients";
-                case 1:
-                    return "Steps";
-                case 2:
                     return "Overview";
+                case 1:
+                    return "Ingredients";
+                case 2:
+                    return "Instructions";
                 default:
                     return "Nutrition";
             }
@@ -188,17 +188,17 @@ public class RecipeDetailActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    // position 0 corresponding to the Ingredient List for the Recipe
-                    recipeIngredientsFragment = RecipeIngredientsFragment.getInstance();
-                    return recipeIngredientsFragment;
-                case 1:
-                    // position 1 corresponds to the step List for the recipe
-                    recipeStepFragment = RecipeStepFragment.getInstance(recipe);
-                    return recipeStepFragment;
-                case 2:
                     // position 2 corresponding to the Recipe overview
                     recipeOverviewFragment = RecipeOverviewFragment.getInstance();
                     return recipeOverviewFragment;
+                case 1:
+                    // position 0 corresponding to the Ingredient List for the Recipe
+                    recipeIngredientsFragment = RecipeIngredientsFragment.getInstance();
+                    return recipeIngredientsFragment;
+                case 2:
+                    // position 1 corresponds to the step List for the recipe
+                    recipeInstructionsFragment = RecipeInstructionsFragment.getInstance();
+                    return recipeInstructionsFragment;
                 default:
                     // position 3 corresponding to the Recipe Nutrition
                     recipeNutritionFragment = RecipeNutritionFragment.newInstance();

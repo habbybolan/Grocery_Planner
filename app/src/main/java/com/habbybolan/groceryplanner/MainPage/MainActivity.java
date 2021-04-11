@@ -17,6 +17,7 @@ import com.habbybolan.groceryplanner.databinding.ToolbarBinding;
 import com.habbybolan.groceryplanner.http.requests.HttpGrocery;
 import com.habbybolan.groceryplanner.http.requests.HttpGroceryImpl;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
+import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onGroceryClick(View v) {
         Intent intent = new Intent(this, GroceryListActivity.class);
+        startActivity(intent);
+    }
+
+    public void onIngredientClick(View v) {
+        Intent intent = new Intent(this, IngredientListActivity.class);
         startActivity(intent);
     }
 

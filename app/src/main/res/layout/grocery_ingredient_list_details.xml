@@ -43,6 +43,7 @@
                 android:layout_width="@dimen/icon_ingredient_size"
                 android:layout_height="@dimen/icon_ingredient_size"
                 android:layout_marginStart="5dp"
+                android:visibility="gone"
                 android:imageResource="@{imageResource}"/>
 
             <RelativeLayout
@@ -64,6 +65,7 @@
                     android:layout_marginStart="@dimen/list_txt_margin_start"
                     android:layout_toEndOf="@+id/ingredient_check_box"
                     android:text="@{IngredientName}" />
+
 
                 <TextView
                     android:id="@+id/txt_ingredient_quantity"

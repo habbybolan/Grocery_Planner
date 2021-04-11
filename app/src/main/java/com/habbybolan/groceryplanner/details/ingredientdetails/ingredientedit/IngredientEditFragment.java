@@ -23,12 +23,10 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentIngredientEditBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
-import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
-
-import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -40,6 +38,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private FragmentIngredientEditBinding binding;
     private IngredientEditListener ingredientEditListener;
 
+    // Set to the ingredient holder if there is one. NULL otherwise
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
     private FoodTypeAdapter adapter;
@@ -50,9 +49,27 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
 
     public IngredientEditFragment() {}
 
+    /**
+     * Create the Fragment with an IngredientHolder
+     * @param ingredient    Ingredient to edit inside the IngredientHolder
+     * @return              Created fragment
+     */
     public static IngredientEditFragment getInstance(IngredientHolder ingredientHolder, Ingredient ingredient) {
         Bundle args = new Bundle();
         args.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
+        args.putParcelable(Ingredient.INGREDIENT, ingredient);
+        IngredientEditFragment fragment = new IngredientEditFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    /**
+     * Create the Fragment with no IngredientHolder
+     * @param ingredient    Ingredient to edit
+     * @return              Created fragment
+     */
+    public static IngredientEditFragment getInstance(Ingredient ingredient) {
+        Bundle args = new Bundle();
         args.putParcelable(Ingredient.INGREDIENT, ingredient);
         IngredientEditFragment fragment = new IngredientEditFragment();
         fragment.setArguments(args);
@@ -87,12 +104,20 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         return binding.getRoot();
     }
 
+    /**
+     * @return  True if the ingredient is called from an ingredient Holder.
+     */
+    private boolean hasIngredientHolder() {
+        return ingredientHolder != null;
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
         ingredientEditPresenter.setView(this);
         if (getArguments() != null) {
-            ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
+            if (getArguments().containsKey(IngredientHolder.INGREDIENT_HOLDER))
+                ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
             ingredient = getArguments().getParcelable(Ingredient.INGREDIENT);
             setViews();
             setTextListeners();
@@ -108,16 +133,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         toolbar = binding.toolbarIngredientEdit.toolbar;
         toolbar.inflateMenu(R.menu.menu_ingredient_edit);
         toolbar.setTitle(getString(R.string.title_ingredient_edit));
-    }
-
-    @Override
-    public void showListOfIngredients(String[] ingredientNames) {
-        PopupBuilder.createListDialogue(getLayoutInflater(), "Select Ingredients to add", binding.ingredientEditContainer, getContext(), ingredientNames, new PopupBuilder.listDialogInterface() {
-            @Override
-            public void onAddItemsSelected(HashSet<Integer> set) {
-                // todo: adding multiple Ingredients
-            }
-        });
     }
 
     private void setFoodTypeGrid() {
@@ -159,9 +174,24 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (ingredient.getPrice() != 0) binding.setPrice(String.valueOf(ingredient.getPrice()));
         if (ingredient.getPricePer() != 0)binding.setPricePer(String.valueOf(ingredient.getPricePer()));
         binding.setPriceType(ingredient.getPriceType());
-        if (ingredient.getQuantity() != 0)binding.setQuantity(String.valueOf(ingredient.getQuantity()));
-        binding.setQuantityType(ingredient.getQuantityType());
+        if (hasIngredientHolder()) {
+            if (ingredient.getQuantity() != 0)
+                binding.setQuantity(String.valueOf(ingredient.getQuantity()));
+            binding.setQuantityType(ingredient.getQuantityType());
+        } else {
+            hideIngredientHolderViews();
+        }
         isViewChanged(false);
+    }
+
+    /**
+     * Hide the Ingredient Holder specific views.
+     */
+    private void hideIngredientHolderViews() {
+        binding.quantityTag.setVisibility(View.GONE);
+        binding.editTxtQuantity.setVisibility(View.GONE);
+        binding.quantityTypeTag.setVisibility(View.GONE);
+        binding.txtQuantityType.setVisibility(View.GONE);
     }
 
     /**
@@ -185,10 +215,12 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
             createPriceTypePopup();
         });
 
-        // popup for selecting quantity type
-        binding.txtQuantityType.setOnClickListener(v -> {
-            createQuantityTypePopup();
-        });
+        if (hasIngredientHolder()) {
+            // popup for selecting quantity type
+            binding.txtQuantityType.setOnClickListener(v -> {
+                createQuantityTypePopup();
+            });
+        }
     }
 
     /**
@@ -199,8 +231,10 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         binding.editTxtPrice.addTextChangedListener(textWatcher);
         binding.editTxtPricePer.addTextChangedListener(textWatcher);
         binding.txtPriceType.addTextChangedListener(textWatcher);
-        binding.editTxtQuantity.addTextChangedListener(textWatcher);
-        binding.txtQuantityType.addTextChangedListener(textWatcher);
+        if (hasIngredientHolder()) {
+            binding.editTxtQuantity.addTextChangedListener(textWatcher);
+            binding.txtQuantityType.addTextChangedListener(textWatcher);
+        }
     }
 
     /**
@@ -240,6 +274,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * If any changed were made, save the changes to the local database by updating/adding the Ingredient.
      */
     private void saveChangedToLocal() {
+        // if the Ingredient values were changed, then check if the values were valid
         String name = binding.editTxtName.getText().toString();
         String price = binding.editTxtPrice.getText().toString();
         String pricePer = binding.editTxtPricePer.getText().toString();
@@ -247,10 +282,13 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         String quantity = binding.editTxtQuantity.getText().toString();
         String quantityType = binding.txtQuantityType.getText().toString();
 
-        // if the Ingredient values were changed, then check if the values were valid
+        // if the values were valid, then save the new user created Ingredient
         if (Ingredient.isValidName(name)) {
-            // if the values were valid, then save the new user created Ingredient
-            setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType, adapter.getSelectedFoodType());
+
+            if (hasIngredientHolder())
+                setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType, adapter.getSelectedFoodType());
+            else
+                setEditTextIntoIngredient(name, price, pricePer, priceType, adapter.getSelectedFoodType());
             ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
             onEditSaved();
         } else {
@@ -259,7 +297,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     }
 
     /**
-     * Set the values of the saved Ingredient.
+     * Set the values of the saved Ingredient with an ingredient holder.
      * @param name          name for the Ingredient
      * @param price         price for the Ingredient
      * @param pricePer      pricePer  for the Ingredient
@@ -277,6 +315,23 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (!quantity.equals("")) ingredient.setQuantity(Integer.parseInt(quantity));
         else ingredient.setQuantity(0);
         ingredient.setQuantityType(quantityType);
+        ingredient.setFoodType(foodType);
+    }
+
+    /**
+     * Set the values of the saved Ingredient with no ingredient holder.
+     * @param name          name for the Ingredient
+     * @param price         price for the Ingredient
+     * @param pricePer      pricePer  for the Ingredient
+     * @param priceType     priceType for the Ingredient
+     */
+    private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String foodType) {
+        ingredient.setName(name);
+        if (!price.equals("")) ingredient.setPrice(Integer.parseInt(price));
+        else ingredient.setPrice(0);
+        if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
+        else ingredient.setPricePer(0);
+        ingredient.setPriceType(priceType);
         ingredient.setFoodType(foodType);
     }
 

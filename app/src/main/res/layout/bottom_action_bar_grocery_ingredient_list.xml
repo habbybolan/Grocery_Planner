@@ -27,6 +27,13 @@
             android:layout_gravity="end"
             android:src="@android:drawable/ic_input_add" />
 
+        <ImageButton
+            android:id="@+id/btn_info_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:src="@android:drawable/ic_menu_info_details" />
+
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

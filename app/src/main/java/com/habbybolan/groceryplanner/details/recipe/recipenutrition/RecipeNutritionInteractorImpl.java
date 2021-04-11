@@ -16,6 +16,6 @@ public class RecipeNutritionInteractorImpl implements RecipeNutritionInteractor 
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe);
+        databaseAccess.deleteRecipe(recipe.getId());
     }
 }

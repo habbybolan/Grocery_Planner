@@ -27,12 +27,32 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe);
+        databaseAccess.deleteRecipe(recipe.getId());
     }
 
     @Override
     public void loadAllRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException {
         databaseAccess.fetchRecipeCategories(recipeCategoriesObserved);
+    }
+
+    @Override
+    public List<IngredientWithGroceryCheck> checkIfAllUnselected(List<IngredientWithGroceryCheck> ingredients) {
+        boolean allUnselected = true;
+        // find if all the ingredients are in the Grocery or not
+        for (IngredientWithGroceryCheck ingredient : ingredients) {
+            if (ingredient.getIsInGrocery()) {
+                allUnselected = false;
+                break;
+            }
+        }
+        // if all ingredients not in grocery, then its recipe is not yet added to the grocery list
+        // start the list with all ingredients selected
+        if (allUnselected) {
+            for (IngredientWithGroceryCheck ingredient : ingredients) {
+                ingredient.setIsInGrocery(true);
+            }
+        }
+        return ingredients;
     }
 
     @Override
@@ -62,7 +82,6 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
 
     @Override
     public void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
-        databaseAccess.updateRecipeIngredientsInGrocery(recipe, grocery, amount, ingredients);
         // loop through the ingredients and find if all of them are not added to Grocery list
         // if none added, then delete the recipe from the GroceryRecipeBridge
         boolean hasIngredientSelected = false;
@@ -75,6 +94,9 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
         // if no ingredient inside the grocery list, then remove the recipe grocery relationship
         if (!hasIngredientSelected)
             databaseAccess.deleteGroceryRecipeBridge(recipe, grocery);
+        else
+            // otherwise, update update or add the recipe and its selected/unselected ingredients to the grocery list
+            databaseAccess.updateRecipeIngredientsInGrocery(recipe, grocery, amount, ingredients);
     }
 
     @Override

@@ -30,12 +30,14 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe);
+        databaseAccess.deleteRecipe(recipe.getId());
     }
 
     @Override
     public void deleteRecipes(List<Recipe> recipes) {
-        databaseAccess.deleteRecipes(recipes);
+        List<Long> recipeIds = new ArrayList<>();
+        for (Recipe recipe : recipes) recipeIds.add(recipe.getId());
+        databaseAccess.deleteRecipes(recipeIds);
     }
 
     @Override

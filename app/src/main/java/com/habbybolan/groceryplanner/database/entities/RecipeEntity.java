@@ -50,10 +50,12 @@ public class RecipeEntity {
     private String proteinType;
     @ColumnInfo(name = "recipe_category_id", index = true)
     private Long recipeCategoryId;
+    @ColumnInfo(name = "instructions")
+    private String instructions;
 
     public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, int calories, String caloriesType,
                         int fat, String fatType, int saturatedFat, String saturatedFatType, int carbohydrates, String carbohydratesType, int fiber,
-                        String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId) {
+                        String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId, String instructions) {
         this.recipeId = recipeId;
         this.name = name;
         this.isFavorite = isFavorite;
@@ -76,6 +78,7 @@ public class RecipeEntity {
         this.protein = protein;
         this.proteinType = proteinType;
         this.recipeCategoryId = recipeCategoryId;
+        this.instructions = instructions;
     }
 
     public RecipeEntity(Recipe recipe) {
@@ -117,6 +120,7 @@ public class RecipeEntity {
             proteinType = recipe.getProtein().getMeasurement();
         }
         recipeCategoryId = recipe.getCategoryId();
+        instructions = recipe.getInstructions();
     }
 
 
@@ -188,5 +192,8 @@ public class RecipeEntity {
     }
     public Long getRecipeCategoryId() {
         return recipeCategoryId;
+    }
+    public String getInstructions() {
+        return instructions;
     }
 }

@@ -24,7 +24,7 @@ public class RecipeIngredientsInteractorImpl implements RecipeIngredientsInterac
 
     @Override
     public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe);
+        databaseAccess.deleteRecipe(recipe.getId());
     }
 
     @Override
@@ -34,11 +34,11 @@ public class RecipeIngredientsInteractorImpl implements RecipeIngredientsInterac
 
     @Override
     public void deleteIngredient(Recipe recipe, Ingredient ingredient) {
-        databaseAccess.deleteIngredient(recipe, ingredient);
+        databaseAccess.deleteIngredientFromHolder(recipe, ingredient);
     }
 
     @Override
     public void deleteIngredients(Recipe recipe, List<Ingredient> ingredients) {
-        databaseAccess.deleteIngredients(recipe, ingredients);
+        databaseAccess.deleteIngredientsFromHolder(recipe, ingredients);
     }
 }

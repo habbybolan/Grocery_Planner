@@ -21,6 +21,14 @@ public interface RecipeOverviewInteractor {
     void loadAllRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException;
 
     /**
+     * Select all ingredients if all unselected, otherwise do nothing.
+     * Used for when a recipe is being added to a grocery, all ingredients should be selected at first.
+     * @param ingredients   Ingredients holding a isInGrocery value
+     * @return              Fully checked ingredients list, or an unchanged list
+     */
+    List<IngredientWithGroceryCheck> checkIfAllUnselected(List<IngredientWithGroceryCheck> ingredients);
+
+    /**
      * Converts the list of RecipeCategory to an array of their names
      * @param recipeCategories  loaded recipe categories
      * @return                  Array of the loaded RecipeCategory names to display

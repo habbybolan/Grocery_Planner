@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -23,14 +22,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.DialogAddRecipeToGroceryBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.secondarymodels.Category;
-import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
@@ -283,7 +281,9 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     }
 
     @Override
-    public void displayRecipeIngredients(ArrayList<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery) {
+    public void displayRecipeIngredients(List<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery) {
+        // todo: add boolean to check if the recipe is about to be added or is already added
+            // todo: if about to be added, preselect add ingredients
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the dialog title
         builder.setTitle("Select Ingredients to add to Grocery")
@@ -337,11 +337,14 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
+
+
         // set the pre-selection of the items
         for (int i = 0; i < ingredients.size(); i++) {
             dialog.getListView().setItemChecked(i, ingredients.get(i).getIsInGrocery());
         }
 
+        // set positions and sizes of the bottom dialog buttons
         Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         btnPositive.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
         Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
@@ -387,36 +390,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void displayRecipeIngredientsInGrocery(Grocery grocery) {
         // get the ingredients from a recipe that was added to the grocery list
         recipeOverviewPresenter.fetchRecipeIngredients(recipeOverviewListener.getRecipe(), grocery, false);
-    }
-
-    /**
-     * Opens dialogue that allows changing the amount of times the recipe is put in the Grocery,
-     * as well as removing the recipe from the Grocery.
-     * @param grocery   Grocery holding the recipe to alter
-     * @return          Dialog to display
-     */
-    public Dialog createEditRecipeInGroceryDialog(GroceryRecipe grocery) {
-        DialogAddRecipeToGroceryBinding dialogBiding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_add_recipe_to_grocery, binding.recipeOverviewContainer, false);
-        dialogBiding.setGroceryName(grocery.getName());
-        dialogBiding.setRecipeAmount(String.valueOf(grocery.getAmount()));
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(binding.getRoot())
-                // Add action buttons
-                .setPositiveButton("save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // todo: save
-                    }
-                })
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // todo: cancel
-                    }
-                });
-        return builder.create();
     }
 
 
