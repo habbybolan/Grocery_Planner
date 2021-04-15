@@ -6,6 +6,7 @@ import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -24,12 +25,15 @@ public class RecipeCategoryInteractorImpl implements RecipeCategoryInteractor {
 
     @Override
     public void deleteRecipeCategory(RecipeCategory recipeCategory) {
-        databaseAccess.deleteRecipeCategory(recipeCategory);
+        databaseAccess.deleteRecipeCategory(recipeCategory.getId());
     }
 
     @Override
     public void deleteRecipeCategories(List<RecipeCategory> recipeCategories) {
-        databaseAccess.deleteRecipeCategories(recipeCategories);
+        // convert into a list of recipe category ids to delete
+        List<Long> categoryIds = new ArrayList<>();
+        for (RecipeCategory recipeCategory : recipeCategories) categoryIds.add(recipeCategory.getId());
+        databaseAccess.deleteRecipeCategories(categoryIds);
     }
 
     @Override

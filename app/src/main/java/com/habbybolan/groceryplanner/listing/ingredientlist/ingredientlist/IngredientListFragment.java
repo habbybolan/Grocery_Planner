@@ -99,7 +99,7 @@ public class IngredientListFragment extends NonCategoryListFragment<Ingredient> 
     private void setToolbar() {
         toolbar = binding.toolbarIngredientList.toolbar;
         toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
-        toolbar.setTitle(getString(R.string.title_grocery_list));
+        toolbar.setTitle(getString(R.string.title_ingredient_list));
 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

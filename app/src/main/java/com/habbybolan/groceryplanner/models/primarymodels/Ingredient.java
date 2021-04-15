@@ -13,16 +13,16 @@ import java.util.Objects;
 
 public class Ingredient implements Parcelable {
 
-    private long id;
-    private int price;
-    private int pricePer;
-    private String priceType;
-    private int quantity;
-    private String quantityType;
+    protected long id;
+    protected int price;
+    protected int pricePer;
+    protected String priceType;
+    protected int quantity;
+    protected String quantityType;
     @NonNull
-    private String name = "";
-    private Section section;
-    private FoodType foodType;
+    protected String name = "";
+    protected Section section;
+    protected FoodType foodType;
 
     public final static String INGREDIENT = "ingredient";
     public final static String INGREDIENT_CHECKED = "ingredient_checked";

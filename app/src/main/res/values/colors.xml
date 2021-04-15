@@ -19,7 +19,6 @@
     <color name="colorList">#222222</color>
 
     <color name="colorFoodTypeSelected">#8F8F8F</color>
-    <color name="colorFoodTypeNotSelected">#000000</color>
 
     <color name="colorBtnAccent">#272443</color>
     <color name="colorBtnAccentPressed">#22203A</color>

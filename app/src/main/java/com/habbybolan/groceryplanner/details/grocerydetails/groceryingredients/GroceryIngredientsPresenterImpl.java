@@ -85,8 +85,11 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
 
     @Override
     public void deleteIngredients(Grocery grocery, List<GroceryIngredient> ingredients) {
-        groceryIngredientsInteractor.deleteIngredients(grocery, ingredients);
-        createIngredientList(grocery);
+        try {
+            groceryIngredientsInteractor.deleteIngredients(grocery, ingredients);
+        } finally {
+            createIngredientList(grocery);
+        }
     }
 
     /**

@@ -38,13 +38,28 @@ public interface DatabaseAccess {
     void fetchGroceriesNotHoldingRecipe(Recipe recipe, ObservableArrayList<Grocery> groceries) throws ExecutionException, InterruptedException;
 
     /**
-     * Adds the recipe to the grocery list.
+     * Adds / updates the recipe to the grocery list.
      * @param recipe            Recipe to add to grocery
      * @param grocery           grocery to hold the recipe
      * @param amount            The number of times to add the Recipe to the grocery
      * @param recipeIngredients recipe ingredients to with a check to add or remove from grocery list
      */
     void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
+
+    /**
+     * Remove a recipe ingredient relationship with the grocery
+     * @param groceryId     id of grocery holding the recipe ingredient
+     * @param recipeId      id of recipe holding the ingredient
+     * @param ingredientId  id of the ingredient
+     */
+    void deleteRecipeIngredientFromGrocery(long groceryId, long recipeId, long ingredientId);
+
+    /**
+     * Remove the direct relationship between an ingredient and a grocery list
+     * @param groceryId     id of the grocery
+     * @param ingredientId  id of the ingredient
+     */
+    void deleteDirectIngredientFromGrocery(long groceryId, long ingredientId);
 
     /**
      * Delete the Grocery Recipe relationship in GroceryRecipeBridge
@@ -61,8 +76,8 @@ public interface DatabaseAccess {
     void updateRecipes(ArrayList<Recipe> recipes);
     void fetchRecipe(ObservableField<Recipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
 
-    void deleteRecipeCategory(RecipeCategory recipeCategory);
-    void deleteRecipeCategories(List<RecipeCategory> recipeCategories);
+    void deleteRecipeCategory(long categoryId);
+    void deleteRecipeCategories(List<Long> categoryIds);
     void fetchRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException;
     void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
@@ -71,9 +86,8 @@ public interface DatabaseAccess {
     void addIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
     void deleteIngredient(long ingredientId);
     void deleteIngredients(List<Long> ingredientIds);
-    void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Ingredient> ingredients);
-    void deleteIngredientFromHolder(IngredientHolder ingredientHolder, Ingredient ingredient);
-    void deleteIngredientHolderRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
+    void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Long> ingredientIds);
+    void deleteIngredientFromHolder(IngredientHolder ingredientHolder, long ingredientId);
     void fetchIngredientsFromRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
 
     void addIngredient(Ingredient ingredient);

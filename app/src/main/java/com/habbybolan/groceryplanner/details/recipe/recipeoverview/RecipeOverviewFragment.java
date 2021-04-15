@@ -282,8 +282,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
 
     @Override
     public void displayRecipeIngredients(List<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery) {
-        // todo: add boolean to check if the recipe is about to be added or is already added
-            // todo: if about to be added, preselect add ingredients
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set the dialog title
         builder.setTitle("Select Ingredients to add to Grocery")

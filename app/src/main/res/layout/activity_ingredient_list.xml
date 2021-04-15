@@ -23,7 +23,7 @@
                     android:layout_height="match_parent"
                     android:name="com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist.IngredientListFragment"
                     tools:layout="@layout/fragment_ingredient_list"
-                    android:tag="@string/INGREDIENT_LIST"/>
+                    android:tag="@string/INGREDIENT_LIST_TAG"/>
 
             </FrameLayout>
 

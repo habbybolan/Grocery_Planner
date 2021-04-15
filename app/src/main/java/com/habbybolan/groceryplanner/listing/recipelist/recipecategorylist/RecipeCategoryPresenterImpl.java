@@ -60,7 +60,11 @@ public class RecipeCategoryPresenterImpl implements RecipeCategoryPresenter {
 
     @Override
     public void deleteRecipeCategories(List<RecipeCategory> recipeCategories) {
-        recipeCategoryInteractor.deleteRecipeCategories(recipeCategories);
+        try {
+            recipeCategoryInteractor.deleteRecipeCategories(recipeCategories);
+        } finally {
+            fetchRecipeCategories();
+        }
     }
 
     @Override

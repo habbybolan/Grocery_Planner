@@ -23,18 +23,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <FrameLayout
-                    android:id="@+id/fragment_ingredient_edit"
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/container_edit_ingredient"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:id="@+id/fragment_ingredient_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <FrameLayout
+                            android:id="@+id/fragment_ingredient_location"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
 
                 <FrameLayout
                     android:id="@+id/fragment_ingredient_add"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <FrameLayout
-                    android:id="@+id/fragment_checklist"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

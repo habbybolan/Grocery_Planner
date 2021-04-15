@@ -31,9 +31,10 @@ import com.habbybolan.groceryplanner.ui.PopupBuilder;
 import javax.inject.Inject;
 
 /**
- * Deals with editing an existing Ingredient inside an IngredientHolder, or adding a new Ingredient.
+ * Deals with editing an existing Ingredient, or adding a new Ingredient.
+ * Ingredient can be apart of an IngredientHolder, or viewed separately through the IngredientListFragment.
  */
-public class IngredientEditFragment extends Fragment implements IngredientEditView{
+public class IngredientEditFragment extends Fragment implements IngredientEditView {
 
     private FragmentIngredientEditBinding binding;
     private IngredientEditListener ingredientEditListener;
@@ -130,9 +131,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Sets up the toolbar.
      */
     private void setToolbar() {
-        toolbar = binding.toolbarIngredientEdit.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_edit);
-        toolbar.setTitle(getString(R.string.title_ingredient_edit));
+        toolbar = binding.toolbarIngredientEdit;
+        binding.setHeader("Ingredient Edit");
     }
 
     private void setFoodTypeGrid() {

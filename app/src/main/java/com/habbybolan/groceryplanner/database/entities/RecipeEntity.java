@@ -10,7 +10,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 @Entity(foreignKeys = @ForeignKey(entity = RecipeCategoryEntity.class,
                                 parentColumns = "recipeCategoryId",
                                 childColumns = "recipe_category_id",
-                                onDelete = ForeignKey.CASCADE))
+                                onDelete = ForeignKey.SET_NULL))
 public class RecipeEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -18,7 +18,6 @@ public class RecipeEntity {
     private String name;
     @ColumnInfo(name="is_favorite")
     private boolean isFavorite;
-
     private String description;
     @ColumnInfo(name="prep_time")
     private int prepTime;

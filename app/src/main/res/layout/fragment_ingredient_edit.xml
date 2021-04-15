@@ -26,6 +26,9 @@
         <variable
             name="isChanged"
             type="Boolean" />
+        <variable
+            name="header"
+            type="String" />
         <import type="android.view.View"/>
     </data>
 
@@ -35,9 +38,40 @@
         android:orientation="vertical"
         android:background="?attr/colorOnBackground">
 
-        <include
-            layout="@layout/toolbar"
-            android:id="@+id/toolbar_ingredient_edit"/>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_ingredient_edit"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/toolbar_header_txt_size"
+                android:text="@{header}"/>
+
+            <ImageButton
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/toolbar_icon_margin_end"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+            <ImageButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:src="@android:drawable/ic_menu_save"
+                android:layout_marginEnd="@dimen/toolbar_icon_margin_end"
+                android:layout_gravity="end"/>
+
+
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ingredient_edit_container"
@@ -86,11 +120,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/price_type_tag" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dropdown_arrow_width"
+                android:layout_height="@dimen/dropdown_arrow_height"
                 app:layout_constraintEnd_toEndOf="@+id/txt_price_type"
                 app:layout_constraintTop_toBottomOf="@+id/txt_price_type"
-                tools:srcCompat="@android:drawable/arrow_down_float" />
+                app:srcCompat="@android:drawable/arrow_down_float" />
 
             <EditText
                 android:id="@+id/edit_txt_quantity"
@@ -114,11 +148,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/quantity_type_tag" />
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/dropdown_arrow_width"
+                android:layout_height="@dimen/dropdown_arrow_height"
                 app:layout_constraintEnd_toEndOf="@+id/txt_quantity_type"
                 app:layout_constraintTop_toBottomOf="@+id/txt_quantity_type"
-                tools:srcCompat="@android:drawable/arrow_down_float" />
+                app:srcCompat="@android:drawable/arrow_down_float" />
 
             <TextView
                 android:id="@+id/name_tag"
@@ -197,28 +231,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/food_type_tag" />
-
-            <Button
-                android:id="@+id/btn_save"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/default_button_height"
-                android:layout_marginStart="36dp"
-                android:layout_marginBottom="36dp"
-                android:text="@string/btn_save_text"
-                android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/default_button_height"
-                android:layout_marginStart="36dp"
-                android:layout_marginBottom="36dp"
-                android:text="@string/btn_cancel_text"
-                android:visibility="@{isChanged ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_save" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

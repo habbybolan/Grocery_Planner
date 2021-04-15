@@ -46,7 +46,7 @@ public interface GroceryDao {
     void deleteGroceries(List<Long> groceryIds);
 
     @Query("DELETE FROM GroceryIngredientBridge WHERE groceryId IN (:groceryIds)")
-    void deleteGroceryFromBridge(List<Long> groceryIds);
+    void deleteGroceriesFromBridge(List<Long> groceryIds);
 
     // Bridge table access
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -59,13 +59,13 @@ public interface GroceryDao {
     void deleteFromGroceryIngredientEntity(GroceryIngredientEntity groceryIngredientEntity);
 
     @Query("DELETE FROM GroceryRecipeBridge WHERE groceryId IN (:groceryIds)")
-    void deleteGroceryFromGroceryRecipeBridge(List<Long> groceryIds);
+    void deleteGroceriesFromGroceryRecipeBridge(List<Long> groceryIds);
 
     @Query("DELETE FROM GroceryIngredientEntity WHERE groceryId IN (:groceryIds)")
-    void deleteGroceryFromGroceryIngredientEntity(List<Long> groceryIds);
+    void deleteGroceriesFromGroceryIngredientEntity(List<Long> groceryIds);
 
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE groceryId IN (:groceryIds)")
-    void deleteGroceryFromGroceryRecipeIngredientEntity(List<Long> groceryIds);
+    void deleteGroceriesFromGroceryRecipeIngredientEntity(List<Long> groceryIds);
 
     @Query("SELECT * FROM IngredientEntity " +
             "WHERE ingredientId NOT IN " +
@@ -140,6 +140,11 @@ public interface GroceryDao {
     @Query("SELECT COUNT(ingredientId) FROM GroceryIngredientBridge WHERE groceryId = :groceryId AND ingredientId = :ingredientId ")
     int getCountIngredientInGroceryBridge(long groceryId, long ingredientId);
 
+    @Query("DELETE FROM GroceryIngredientEntity WHERE groceryId=:groceryId AND ingredientId IN (:ingredientIds)")
+    void deleteIngredientsFromGroceryIngredient(long groceryId, List<Long> ingredientIds);
+
+    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE groceryId=:groceryId AND ingredientId IN (:ingredientIds)")
+    void deleteGroceryIngredientsFromGroceryRecipeIngredientEntity(long groceryId, List<Long> ingredientIds);
 
     @Query("DELETE FROM GroceryIngredientBridge AS GIB " +
             "    WHERE NOT EXISTS " +
@@ -150,6 +155,11 @@ public interface GroceryDao {
             "                   UNION ALL SELECT groceryId, ingredientId FROM GroceryIngredientEntity) GI " +
             "               WHERE GI.ingredientId = GIB.ingredientId AND GI.groceryId = GIB.groceryId)" )
     void deleteIngredientsNotInGroceryAnymore();
+
+    @Query("DELETE FROM GroceryRecipeBridge AS GRB " +
+            "   WHERE GRB.groceryId = :groceryId" +
+            "   AND GRB.recipeId NOT IN (SELECT recipeId FROM GroceryRecipeIngredientEntity WHERE groceryId = :groceryId)")
+    void deleteRecipeIfIngredientsNotInGroceryAnymore(long groceryId);
 
     @Update
     void updateGroceryIngredientChecked(GroceryIngredientBridge bridge);
@@ -172,7 +182,6 @@ public interface GroceryDao {
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE ingredientId = :recipeId AND groceryId = :groceryId")
     void deleteRecipeFromGroceryRecipeIngredient(long recipeId, long groceryId);
 
-    @Delete
-    void deleteIngredientFromGroceryIngredient(GroceryIngredientEntity entity);
+
 
 }

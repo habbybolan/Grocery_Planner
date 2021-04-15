@@ -31,7 +31,6 @@ import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.ui.PopupBuilder;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -163,10 +162,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> groceryIngredientsListener.createNewItem());
 
-        // on Click for entering check list mode
-        ImageButton imgBtnChecklist = view.findViewById(R.id.btn_checklist);
-        imgBtnChecklist.setOnClickListener(l -> groceryIngredientsListener.gotoChecklist(groceryIngredientsPresenter.getIngredients()));
-
         ImageButton imgBtnAddIngredients = view.findViewById(R.id.btn_add_multiple);
         imgBtnAddIngredients.setOnClickListener(l -> groceryIngredientsListener.gotoAddIngredients());
 
@@ -229,11 +224,10 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
         groceryIngredientsPresenter.updateGroceryIngredientSelected(grocery, groceryIngredient);
     }
 
-    public interface GroceryIngredientsListener extends ItemListener<Ingredient> {
+    public interface GroceryIngredientsListener extends ItemListener<GroceryIngredient> {
 
         void createNewItem();
         void onGroceryDeleted();
-        void gotoChecklist(List<GroceryIngredient> ingredients);
         void gotoAddIngredients();
     }
 }

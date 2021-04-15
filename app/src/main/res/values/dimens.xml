@@ -45,4 +45,12 @@
     <dimen name="fragment_horizontal_margin">16dp</dimen>
     <dimen name="fragment_vertical_margin">16dp</dimen>
 
+    <!-- dropdown text -->\
+    <dimen name="dropdown_arrow_width">20dp</dimen>
+    <dimen name="dropdown_arrow_height">13dp</dimen>
+
+    <!-- Toolbar -->
+    <dimen name="toolbar_header_txt_size">24sp</dimen>
+    <dimen name="toolbar_icon_margin_end">15dp</dimen>
+
 </resources>

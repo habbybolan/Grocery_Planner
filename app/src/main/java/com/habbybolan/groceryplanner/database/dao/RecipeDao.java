@@ -58,6 +58,12 @@ public interface RecipeDao {
     @Delete
     void deleteFromRecipeIngredientBridge(RecipeIngredientBridge recipeIngredientBridge);
 
+    @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
+    void deleteIngredientsFromRecipeIngredientBridge(long recipeId, List<Long> ingredientIds);
+
+    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
+    void deleteRecipeIngredientsFromGroceryRecipeIngredientEntity(long recipeId, List<Long> ingredientIds);
+
     @Transaction
     @Query("SELECT * FROM RecipeEntity WHERE recipeId = :recipeId LIMIT 1")
     RecipeWithIngredients getIngredientsFromRecipe(long recipeId);
@@ -108,8 +114,8 @@ public interface RecipeDao {
     @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId IN (:recipeIds)")
     void deleteRecipesFromRecipeIngredientBridge(List<Long> recipeIds);
 
-    @Delete
-    void deleteRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
+    @Query("DELETE FROM RecipeCategoryEntity WHERE recipeCategoryId IN (:categoryIds)")
+    void deleteRecipeCategories(List<Long> categoryIds);
 
     @Update
     void updateRecipes(RecipeEntity recipeEntity);
@@ -149,9 +155,6 @@ public interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecipeIntoGrocery(GroceryRecipeBridge groceryRecipeBridge);
-
-    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND ingredientId=:ingredientId")
-    void deleteRecipeIngredientFromGroceryRecipeIngredient(long recipeId, long ingredientId);
 
     @Query("SELECT groceryId, groceryName, amount " +
             "   FROM" +

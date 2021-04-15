@@ -9,27 +9,24 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryDetailBinding;
 import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.GroceryIngredientsFragment;
-import com.habbybolan.groceryplanner.details.grocerydetails.ingredientChecklist.IngredientChecklistFragment;
+import com.habbybolan.groceryplanner.details.grocerydetails.ingredientlocation.IngredientLocationFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
-import java.util.List;
-
 public class GroceryIngredientsActivity extends AppCompatActivity
                                         implements GroceryIngredientsFragment.GroceryIngredientsListener,
                                                     IngredientEditFragment.IngredientEditListener,
-                                                    IngredientChecklistFragment.IngredientChecklistListener,
                                                     IngredientAddFragment.IngredientAddListener {
 
     private Grocery grocery;
 
     private final String DETAILS_TAG = "details_tag";
     private final String EDIT_TAG = "edit_tag";
-    private final String CHECKLIST_TAG = "checklist_tag";
     private final String ADD_TAG = "add_tag";
+    private final String LOCATION_TAG = "location_tag";
     private ActivityGroceryDetailBinding binding;
     GroceryIngredientsFragment groceryIngredientsFragment;
 
@@ -62,13 +59,13 @@ public class GroceryIngredientsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemClicked(Ingredient ingredient) {
-        startEditFragment(ingredient);
+    public void onItemClicked(GroceryIngredient groceryIngredient) {
+        startEditFragment(groceryIngredient);
     }
 
     @Override
     public void createNewItem() {
-        startEditFragment(new Ingredient());
+        startEditFragment(null);
     }
 
     @Override
@@ -76,27 +73,31 @@ public class GroceryIngredientsActivity extends AppCompatActivity
         goBackToGroceryList();
     }
 
-    @Override
-    public void gotoChecklist(List<GroceryIngredient> ingredients) {
-        // todo: make checklist be able to use GroceryIngredient instead of Ingredient
-        /*IngredientChecklistFragment ingredientChecklistFragment = IngredientChecklistFragment.newInstance(ingredients);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_checklist, ingredientChecklistFragment, CHECKLIST_TAG)
-                .commit();
-        GroceryIngredientVisibility(View.GONE);*/
-    }
-
     /**
      * Creates and starts the IngredientEditFragment, hiding the details fragment.
      * @param ingredient    The Ingredient to edit
      */
-    private void startEditFragment(Ingredient ingredient) {
-        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(grocery, ingredient);
+    private void startEditFragment(GroceryIngredient ingredient) {
+        IngredientEditFragment ingredientEditFragment;
+        if (ingredient != null) {
+            ingredientEditFragment = IngredientEditFragment.getInstance(grocery, ingredient);
+
+            IngredientLocationFragment ingredientLocationFragment = IngredientLocationFragment.newInstance(grocery, ingredient);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_ingredient_location, ingredientLocationFragment, LOCATION_TAG)
+                    .commit();
+        } else {
+            // create an empty ingredient to start the edit ingredient with
+            ingredientEditFragment = IngredientEditFragment.getInstance(grocery, new Ingredient());
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_ingredient_edit, ingredientEditFragment, EDIT_TAG)
                 .commit();
+
+        binding.containerEditIngredient.setVisibility(View.VISIBLE);
         GroceryIngredientVisibility(View.GONE);
     }
 
@@ -129,6 +130,12 @@ public class GroceryIngredientsActivity extends AppCompatActivity
         IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
         // destroy the ingredient edit Fragment
         if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
+
+        IngredientLocationFragment ingredientLocationFragment = (IngredientLocationFragment) getSupportFragmentManager().findFragmentByTag(LOCATION_TAG);
+        // destroy the ingredient location Fragment
+        if (ingredientLocationFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientLocationFragment).commitAllowingStateLoss();
+
+        binding.containerEditIngredient.setVisibility(View.GONE);
         reloadGroceryIngredientFragment();
     }
 
@@ -137,15 +144,6 @@ public class GroceryIngredientsActivity extends AppCompatActivity
         IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
         // destroy the ingredient add Fragment
         if (ingredientAddFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientAddFragment).commitAllowingStateLoss();
-        reloadGroceryIngredientFragment();
-    }
-
-    @Override
-    public void leaveCheckList() {
-        IngredientChecklistFragment ingredientChecklistFragment = (IngredientChecklistFragment) getSupportFragmentManager().findFragmentByTag(CHECKLIST_TAG);
-        // destroy the ingredient checklist
-        if (ingredientChecklistFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientChecklistFragment).commitAllowingStateLoss();
-        // set grocery ingredient list as visible again
         reloadGroceryIngredientFragment();
     }
 
@@ -160,14 +158,11 @@ public class GroceryIngredientsActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        IngredientChecklistFragment checklistFragment = (IngredientChecklistFragment) getSupportFragmentManager().findFragmentByTag(CHECKLIST_TAG);
         IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
         IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
-        // if one of the checkList, IngredientEdit or AddIngredient fragments are open, close them and reload the Ingredient list
+        // if one of the IngredientEdit or AddIngredient fragments are open, close them and reload the Ingredient list
         // otherwise, destroy and leave this activity.
-        if (checklistFragment != null)
-            leaveCheckList();
-        else if (ingredientEditFragment != null)
+       if (ingredientEditFragment != null)
             leaveIngredientEdit();
         else if (ingredientAddFragment != null)
             leaveIngredientAdd();

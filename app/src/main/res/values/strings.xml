@@ -16,10 +16,11 @@
     <string name="title_main_page">Account</string>
     <string name="title_ingredient_edit">Ingredient Edit</string>
     <string name="title_ingredient_add">Ingredient Add</string>
-    <!-- IngredientHolder lists -->
+    <!-- list headers -->
     <string name="title_recipe_list">Recipe List</string>
     <string name="title_category_list">Category List</string>
     <string name="title_grocery_list">Grocery List</string>
+    <string name="title_ingredient_list">Ingredient List</string>
     <!-- Recipe Details -->
     <string name="title_recipe_overview">Recipe Overview</string>
     <string name="title_recipe_ingredients">Recipe Ingredients</string>
@@ -38,8 +39,9 @@
     <string name="GROCERY_LIST_TAG">grocery_list_tag</string>
     <string name="LOGIN_TAG">login_tag</string>
     <string name="SIGN_UP_TAG">sign_up_tag</string>
-    <string name="INGREDIENT_LIST">ingredient_list</string>
-    <string name="INGREDIENT_EDIT">ingredient_edit</string>
+    <string name="INGREDIENT_LIST_TAG">ingredient_list_tag</string>
+    <string name="INGREDIENT_EDIT_TAG">ingredient_edit_tag</string>
+    <string name="INGREDIENT_LOCATION_TAG">ingredient_location_tag</string>
 
     <string name="teaspoon">Teaspoon</string>
     <string name="dessertspoon">Dessertspoon</string>

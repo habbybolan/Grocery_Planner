@@ -22,7 +22,7 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
     @Override
     public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
         if (ingredientHolder != null)
-            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient);
+            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient.getId());
         else
             databaseAccess.deleteIngredient(ingredient.getId());
     }
@@ -34,6 +34,10 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
 
     @Override
     public void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        databaseAccess.deleteIngredientHolderRelationship(ingredientHolder, ingredient);
+        if (ingredientHolder != null)
+            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient.getId());
+        else {
+            // todo:
+        }
     }
 }

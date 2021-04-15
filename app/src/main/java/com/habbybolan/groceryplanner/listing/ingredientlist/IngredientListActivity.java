@@ -36,7 +36,7 @@ public class IngredientListActivity extends AppCompatActivity implements Ingredi
         IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(ingredient);
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_ingredient_edit, ingredientEditFragment, getResources().getString(R.string.INGREDIENT_EDIT))
+                .add(R.id.fragment_ingredient_edit, ingredientEditFragment, getResources().getString(R.string.INGREDIENT_EDIT_TAG))
                 .commit();
         ingredientListVisibility(View.GONE);
     }
@@ -51,18 +51,18 @@ public class IngredientListActivity extends AppCompatActivity implements Ingredi
 
     @Override
     public void leaveIngredientEdit() {
-        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_EDIT));
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_EDIT_TAG));
         // destroy the ingredient edit Fragment
         if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
         // reload the ingredient list fragment to update with any changes made in IngredientEditFragment
         ingredientListVisibility(View.VISIBLE);
-        IngredientListFragment ingredientListFragment = (IngredientListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_LIST));
+        IngredientListFragment ingredientListFragment = (IngredientListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_LIST_TAG));
         ingredientListFragment.reloadList();
     }
 
     @Override
     public void onBackPressed() {
-        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_EDIT));
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.INGREDIENT_EDIT_TAG));
         // if the IngredientEditFragment is not null, then destroy the IngredientEditFragment
         if (ingredientEditFragment != null)
             leaveIngredientEdit();
