@@ -1,9 +1,9 @@
 package com.habbybolan.groceryplanner.listing.grocerylist.grocerylist;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +34,13 @@ public class GroceryListInteractorImpl implements GroceryListInteractor {
     }
 
     @Override
-    public void fetchGroceries(ObservableArrayList<Grocery> groceriesObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceries(groceriesObserver);
+    public void fetchGroceries(DbCallback<Grocery> callback, SortType sortType) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceries(callback, sortType);
     }
 
     @Override
-    public ArrayList<Grocery> searchGroceries(String search) {
-        // todo:
-        return null;
+    public void searchGroceries(String grocerySearch, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.searchGroceries(grocerySearch, callback);
     }
 
     @Override

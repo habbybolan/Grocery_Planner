@@ -1,11 +1,10 @@
 package com.habbybolan.groceryplanner.listing.grocerylist.grocerylist;
 
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,33 +17,22 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
     private GroceryListInteractor groceryListInteractor;
     // true if the groceries are being loaded
     private boolean loadingGroceries = false;
-    private ObservableArrayList<Grocery> loadedGroceries = new ObservableArrayList<>();
+    private List<Grocery> loadedGroceries = new ArrayList<>();
+
+    private DbCallback<Grocery> groceryDbCallback = new DbCallback<Grocery>() {
+        @Override
+        public void onResponse(List<Grocery> response) {
+            // set the loaded recipe categories as loaded in
+            loadedGroceries.clear();
+            loadedGroceries.addAll(response);
+            loadingGroceries = false;
+            displayGroceries();
+        }
+    };
 
     @Inject
     public GroceryListPresenterImpl(GroceryListInteractor groceryListInteractor) {
         this.groceryListInteractor = groceryListInteractor;
-        setGroceryCallback();
-    }
-
-    // set up callback for loading Grocery
-    private void setGroceryCallback() {
-        loadedGroceries.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Grocery>>() {
-            @Override
-            public void onChanged(ObservableList<Grocery> sender) {}
-
-            @Override
-            public void onItemRangeChanged(ObservableList<Grocery> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<Grocery> sender, int positionStart, int itemCount) {
-                // set the loaded recipe categories as loaded in
-                loadingGroceries = false;
-                displayGroceries();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<Grocery> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<Grocery> sender, int positionStart, int itemCount) {}
-        });
     }
 
     private boolean isGroceryReady() {
@@ -82,8 +70,16 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
     }
 
     @Override
-    public void searchGroceryList(String groceryName) {
-        // todo:
+    public void searchGroceryList(String grocerySearch) {
+        try {
+            loadingGroceries = true;
+            view.loadingStarted();
+            groceryListInteractor.searchGroceries(grocerySearch, groceryDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to retrieve data");
+            loadingGroceries = false;
+        }
     }
 
     @Override
@@ -101,7 +97,7 @@ public class GroceryListPresenterImpl implements GroceryListPresenter {
         try {
             loadingGroceries = true;
             view.loadingStarted();
-            groceryListInteractor.fetchGroceries(loadedGroceries);
+            groceryListInteractor.fetchGroceries(groceryDbCallback, view.getSortType());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");

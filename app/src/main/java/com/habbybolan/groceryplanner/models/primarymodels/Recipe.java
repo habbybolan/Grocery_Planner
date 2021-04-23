@@ -8,6 +8,7 @@ import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Recipe extends IngredientHolder {
@@ -28,6 +29,7 @@ public class Recipe extends IngredientHolder {
     private Nutrition protein;
     private Long categoryId;
     private String instructions;
+    private Date dateCreated;
 
     public final static String RECIPE = "recipe";
 
@@ -50,13 +52,14 @@ public class Recipe extends IngredientHolder {
         protein = new Nutrition(Nutrition.PROTEIN, recipeEntity.getProtein(), recipeEntity.getProteinType());
         categoryId = recipeEntity.getRecipeCategoryId();
         instructions = recipeEntity.getInstructions();
+        dateCreated = recipeEntity.getDateCreated();
     }
 
 
     public Recipe(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        isFavorite = in.readBoolean();
+        isFavorite = in.readByte() == 1;
 
         description = in.readString();
         prepTime = in.readInt();
@@ -73,13 +76,14 @@ public class Recipe extends IngredientHolder {
         long idTemp = in.readLong();
         categoryId = idTemp != 0 ? idTemp : null;
         instructions = in.readString();
+        dateCreated = (Date) in.readSerializable();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeBoolean(isFavorite);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
 
         dest.writeString(description);
         dest.writeInt(prepTime);
@@ -96,6 +100,7 @@ public class Recipe extends IngredientHolder {
         if (categoryId != null) dest.writeLong(categoryId);
         else dest.writeLong(0);
         dest.writeString(instructions);
+        dest.writeSerializable(dateCreated);
     }
 
     public List<Nutrition> getNutritionList() {
@@ -164,6 +169,8 @@ public class Recipe extends IngredientHolder {
         private Nutrition sugar;
         private Nutrition protein;
 
+        private Date dateCreated;
+
         private Long categoryId;
         private String instructions;
 
@@ -223,6 +230,10 @@ public class Recipe extends IngredientHolder {
             this.instructions = instructions;
             return this;
         }
+        public RecipeBuilder setDateCreated(Date dateCreated) {
+            this.dateCreated = dateCreated;
+            return this;
+        }
 
 
         public Recipe build() {
@@ -245,6 +256,8 @@ public class Recipe extends IngredientHolder {
             recipe.protein = protein;
             recipe.categoryId = categoryId;
             recipe.instructions = instructions;
+
+            recipe.dateCreated = dateCreated;
 
             return recipe;
         }
@@ -314,6 +327,9 @@ public class Recipe extends IngredientHolder {
     public boolean getIsFavorite() {
         return isFavorite;
     }
+    public Date getDateCreated() {
+        return dateCreated;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -356,5 +372,8 @@ public class Recipe extends IngredientHolder {
     }
     public void setIsFavorite(boolean isFavorite) {
         this.isFavorite = isFavorite;
+    }
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 }

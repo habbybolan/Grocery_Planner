@@ -3,15 +3,11 @@ package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +21,8 @@ import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.ui.PopupBuilder;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import javax.inject.Inject;
 
@@ -33,7 +30,8 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
 
     private RecipeDetailListener recipeDetailListener;
     private FragmentRecipeDetailBinding binding;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
+    private SortType sortType = new SortType();
 
     @Inject
     RecipeIngredientsPresenter recipeIngredientsPresenter;
@@ -70,27 +68,27 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     }
 
     private void setToolbar() {
-        toolbar = binding.toolbarRecipeDetails.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
-        toolbar.setTitle(getString(R.string.title_recipe_ingredients));
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        return true;
-                    case R.id.action_sort:
-                        showSortPopup(getActivity().findViewById(R.id.action_sort));
-                        return true;
-                    case R.id.action_delete:
-                        deleteRecipeCheck();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addSearch(new CustomToolbar.SearchCallback() {
+                    @Override
+                    public void search(String search) {
+                        recipeIngredientsPresenter.searchIngredients(recipeDetailListener.getRecipe(), search);
+                    }
+                })
+                .addSortIcon(new CustomToolbar.SortCallback() {
+                    @Override
+                    public void sortMethodClicked(String sortMethod) {
+                        sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
+                        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
+                    }
+                }, SortType.SORT_LIST_ALPHABETICAL)
+                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
+                    @Override
+                    public void deleteClicked() {
+                        deleteRecipe();
+                    }
+                }, "Recipe")
+                .build();
     }
 
     @Override
@@ -103,28 +101,6 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
             // retrieve ingredients associated with recipe
             recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
         }
-    }
-
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_grocery_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_grocery_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_grocery_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
     }
 
     /**
@@ -147,20 +123,6 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         });
     }
 
-
-
-    /**
-     * Ask user to confirm deleting the Recipe
-     */
-    private void deleteRecipeCheck() {
-        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeDetailsContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
-            @Override
-            public void deleteItem() {
-                deleteRecipe();
-            }
-        });
-    }
-
     private void deleteRecipe() {
         recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getRecipe());
         recipeDetailListener.onRecipeDeleted();
@@ -179,6 +141,11 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     @Override
     public void deleteSelectedItems() {
         recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getRecipe(), listItemsChecked);
+    }
+
+    @Override
+    public SortType getSortType() {
+        return sortType;
     }
 
     /**

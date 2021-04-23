@@ -1,8 +1,8 @@
 package com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,13 +23,14 @@ public interface IngredientListInteractor {
 
     /**
      * Fetch the Ingredients in the database
-     * @param ingredientObserver    observer to store the retrieved ingredients in
+     * @param callback    callback to update the ingredients fetched
      */
-    void fetchIngredients(ObservableArrayList<Ingredient> ingredientObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredients(DbCallback<Ingredient> callback, SortType sortType) throws ExecutionException, InterruptedException;
 
     /**
      * Find Ingredient objects based on the ingredientName typed by user.
      * @param ingredientName   The name of the ingredient object to try to retrieve.
+     * @param callback         callback for updating the ingredient fetched
      */
-    public void searchIngredients(String ingredientName, ObservableArrayList<Ingredient> ingredientObserver) throws ExecutionException, InterruptedException;
+    public void searchIngredients(String ingredientName, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 }

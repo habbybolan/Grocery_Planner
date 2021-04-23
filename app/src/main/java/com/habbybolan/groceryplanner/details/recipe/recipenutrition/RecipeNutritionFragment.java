@@ -4,15 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +19,9 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeNutritionBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.ui.PopupBuilder;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import javax.inject.Inject;
 
@@ -34,7 +31,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     RecipeNutritionPresenter recipeNutritionPresenter;
     private FragmentRecipeNutritionBinding binding;
     private RecipeNutritionListener recipeNutritionListener;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
     private RecipeNutritionAdapter adapter;
 
     public RecipeNutritionFragment() {}
@@ -55,43 +52,16 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_nutrition, container, false);
-        displayRecipeData();
         setToolbar();
         setList();
-        setSaveCancelButton();
         return binding.getRoot();
-    }
-
-    private void setSaveCancelButton() {
-
-        // Save the changes made to the nutritional facts
-        binding.saveButton.setOnClickListener(l -> {
-            recipeNutritionListener.getRecipe().updateNutrition(adapter.getCurrNutritionList());
-            recipeNutritionPresenter.updateRecipe(recipeNutritionListener.getRecipe());
-            adapter.saveChanges();
-            setSaveCancelButtonVisibility(View.GONE);
-        });
-        // cancel the changes made to the nutritional facts
-        binding.cancelButton.setOnClickListener(l -> {
-            adapter.cancelChanges();
-            setSaveCancelButtonVisibility(View.GONE);
-        });
-    }
-
-    /**
-     * Set the visibility of the Save and Cancel buttons
-     * @param visibility    The visibility of the buttons
-     */
-    public void setSaveCancelButtonVisibility(int visibility) {
-        binding.saveButton.setVisibility(visibility);
-        binding.cancelButton.setVisibility(visibility);
     }
 
     private void setList() {
         adapter = new RecipeNutritionAdapter(recipeNutritionListener.getRecipe().getNutritionList(), new PropertyChangedInterface() {
             @Override
             public void onPropertyChanged() {
-                setSaveCancelButtonVisibility(View.VISIBLE);
+                // todo: remove this if not hiding/showing save/cancel buttons...
             }
 
             @Override
@@ -113,61 +83,43 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
         rv.setAdapter(adapter);
     }
 
+    /**
+     * Save the nutrition changes to the Recipe.
+     */
+    private void saveNutrition() {
+        recipeNutritionListener.getRecipe().updateNutrition(adapter.getCurrNutritionList());
+        recipeNutritionPresenter.updateRecipe(recipeNutritionListener.getRecipe());
+        adapter.saveChanges();
+    }
+
+    /**
+     * Cancel the nutrition changes to the recipe.
+     */
+    private void cancelNutritionChanges() {
+        adapter.cancelChanges();
+    }
+
     private void setToolbar() {
-        toolbar = binding.toolbarRecipeNutrition.toolbar;
-        toolbar.inflateMenu(R.menu.menu_recipe_non_list);
-        toolbar.setTitle(getString(R.string.title_recipe_nutrition));
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_sort:
-                        showSortPopup(getActivity().findViewById(R.id.action_sort));
-                        return true;
-                    case R.id.action_delete:
-                        deleteRecipeCheck();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-    }
-
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_grocery_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_grocery_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_grocery_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
-    }
-
-
-    /**
-     * Ask the user to confirm deleting the Recipe
-     */
-    private void deleteRecipeCheck() {
-        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeNutritionContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
-            @Override
-            public void deleteItem() {
-                deleteRecipe();
-            }
-        });
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
+                    @Override
+                    public void deleteClicked() {
+                        deleteRecipe();
+                    }
+                }, "Recipe")
+                .addSaveIcon(new CustomToolbar.SaveCallback() {
+                    @Override
+                    public void saveClicked() {
+                        saveNutrition();
+                    }
+                })
+                .addCancelIcon(new CustomToolbar.CancelCallback() {
+                    @Override
+                    public void cancelClicked() {
+                        cancelNutritionChanges();
+                    }
+                })
+                .build();
     }
 
     /**
@@ -182,13 +134,6 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         recipeNutritionListener = (RecipeNutritionListener) context;
-    }
-
-    /**
-     * Displays the Recipe nutritional data inside the edit-text views
-     */
-    private void displayRecipeData() {
-        // todo:
     }
 
     public interface RecipeNutritionListener {

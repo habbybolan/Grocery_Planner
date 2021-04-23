@@ -1,38 +1,31 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
-import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
-
-    private DatabaseAccess databaseAccess;
+public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl implements RecipeOverviewInteractor {
 
     public RecipeOverviewInteractorImpl(DatabaseAccess databaseAccess) {
-        this.databaseAccess = databaseAccess;
-    }
-    @Override
-    public void updateRecipe(Recipe recipe) {
-        databaseAccess.addRecipe(recipe);
+        super(databaseAccess);
     }
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe.getId());
-    }
-
-    @Override
-    public void loadAllRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchRecipeCategories(recipeCategoriesObserved);
+    public void loadAllRecipeCategories(DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException {
+        SortType sortType = new SortType();
+        sortType.setSortType(SortType.SORT_ALPHABETICAL_ASC);
+        databaseAccess.fetchRecipeCategories(callback, sortType);
     }
 
     @Override
@@ -56,7 +49,7 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
     }
 
     @Override
-    public String[] getNamedOfRecipeCategories(ArrayList<RecipeCategory> recipeCategories) {
+    public String[] getNamedOfRecipeCategories(List<RecipeCategory> recipeCategories) {
         String[] categoryNames = new String[recipeCategories.size()+1];
         for (int i = 0; i < recipeCategories.size(); i++) {
             categoryNames[i] = recipeCategories.get(i).getName();
@@ -71,13 +64,13 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
     }
 
     @Override
-    public void fetchGroceriesHoldingRecipe(Recipe recipe, ObservableArrayList<GroceryRecipe> groceriesObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceriesHoldingRecipe(recipe, groceriesObserver);
+    public void fetchGroceriesHoldingRecipe(Recipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceriesHoldingRecipe(recipe, callback);
     }
 
     @Override
-    public void fetchGroceriesNotHoldingRecipe(Recipe recipe, ObservableArrayList<Grocery> groceriesObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceriesNotHoldingRecipe(recipe, groceriesObserver);
+    public void fetchGroceriesNotHoldingRecipe(Recipe recipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceriesNotHoldingRecipe(recipe, callback);
     }
 
     @Override
@@ -118,11 +111,11 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
     }
 
     @Override
-    public void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery, ObservableArrayList<IngredientWithGroceryCheck> ingredientsObserver) throws ExecutionException, InterruptedException {
+    public void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException {
        if (isNotInGrocery) {
-           databaseAccess.fetchRecipeIngredientsNotInGrocery(recipe, ingredientsObserver);
+           databaseAccess.fetchRecipeIngredientsNotInGrocery(recipe, callback);
        } else {
-           databaseAccess.fetchRecipeIngredientsInGrocery(grocery, recipe, ingredientsObserver);
+           databaseAccess.fetchRecipeIngredientsInGrocery(grocery, recipe, callback);
        }
     }
 
@@ -131,4 +124,66 @@ public class RecipeOverviewInteractorImpl implements RecipeOverviewInteractor {
         databaseAccess.deleteRecipeFromGrocery(grocery, recipe);
     }
 
+    @Override
+    public void addTag(Recipe recipe, String title) {
+        databaseAccess.addRecipeTag(recipe.getId(), title);
+    }
+
+    @Override
+    public void fetchTags(Recipe recipe, DbCallback<RecipeTag> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchRecipeTags(recipe.getId(), callback);
+    }
+
+    @Override
+    public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
+        databaseAccess.deleteRecipeTag(recipe.getId(), recipeTag.getId());
+    }
+
+    @Override
+    public boolean isTagTitleValid(String title) {
+        boolean isNotEmpty = false;
+        boolean noSpecialCharacter = true;
+        boolean noLogicBreaks = true;
+
+        for (char c : title.toCharArray()) {
+            // title has to have at least one non-empty character
+            if (c != ' ') {
+                isNotEmpty = true;
+                break;
+            }
+            // title chars must be either letters, space or a dash
+            if (!(c >= 65 && c <= 90) && !(c >= 97 && c <= 122) && (c != ' ') && (c != '-')) {
+                noSpecialCharacter = false;
+                break;
+            }
+        }
+        return isNotEmpty && noSpecialCharacter;
+    }
+
+    @Override
+    public String reformatTagTitle(String title) {
+        StringBuilder sb = new StringBuilder();
+        // reformat the string
+        for (char c : title.toCharArray()) {
+            // if the last char added is not a space or dash, append the space
+            if (c == ' ') {
+                if (sb.charAt(sb.length() - 1) != ' ' && sb.charAt(sb.length() - 1) != '-')
+                    sb.append(c);
+                // if the last char added is not a space or dash, append the dash
+            } else if (c == '-') {
+                if (sb.charAt(sb.length() - 1) != ' ' && sb.charAt(sb.length() - 1) != '-')
+                    sb.append(c);
+                // if it's the first character, then capitalize it
+            } else if (sb.length() == 0) {
+                sb.append(Character.toUpperCase(c));
+                // if the last character was a space or dash and current character is a letter, capitalize it
+            } else if (sb.length() > 0 && (sb.charAt(sb.length()-1) == ' ' || sb.charAt(sb.length()-1) == '-')) {
+                sb.append(Character.toUpperCase(c));
+                // otherwise, append the character normally
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 
@@ -12,9 +11,10 @@ public interface IngredientAddInteractor {
 
     /**
      * Fetch the Ingredients not inside the current IngredientHolder.
+     * @param callback              callback for updating the ingredients fetched
      * @param ingredientHolder      Holds the Ingredients to not display
      */
-    void fetchIngredientsNotInIngredientHolder(ObservableArrayList<Ingredient> ingredientsObserver, IngredientHolder ingredientHolder) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInIngredientHolder(DbCallback<Ingredient> callback, IngredientHolder ingredientHolder) throws ExecutionException, InterruptedException;
 
     /**
      * Add the checked Ingredients to the IngredientHolder

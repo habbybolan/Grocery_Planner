@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
-import com.habbybolan.groceryplanner.models.secondarymodels.Section;
 
 import java.util.Objects;
 
@@ -21,7 +20,6 @@ public class Ingredient implements Parcelable {
     protected String quantityType;
     @NonNull
     protected String name = "";
-    protected Section section;
     protected FoodType foodType;
 
     public final static String INGREDIENT = "ingredient";
@@ -68,7 +66,6 @@ public class Ingredient implements Parcelable {
         private String quantityType;
         @NonNull
         private String name;
-        private Section section;
         private FoodType foodType;
 
         public IngredientBuilder(long id, String name) {
@@ -96,10 +93,6 @@ public class Ingredient implements Parcelable {
             this.quantityType = quantityType;
             return this;
         }
-        public IngredientBuilder setSection(Section section) {
-            this.section = section;
-            return this;
-        }
         public IngredientBuilder setFoodType(String foodType) {
             this.foodType = new FoodType(foodType);
             return this;
@@ -114,7 +107,6 @@ public class Ingredient implements Parcelable {
             ingredient.pricePer = pricePer;
             ingredient.quantity = quantity;
             ingredient.quantityType = quantityType;
-            ingredient.section = section;
             if (foodType == null) foodType = new FoodType(FoodType.OTHER);
             ingredient.foodType = foodType;
             return ingredient;
@@ -219,9 +211,6 @@ public class Ingredient implements Parcelable {
     }
     public String getQuantityType() {
         return quantityType;
-    }
-    public Section getSection() {
-        return section;
     }
     public FoodType getFoodType() {
         return foodType;

@@ -1,10 +1,9 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,8 @@ public class RecipeCategoryInteractorImpl implements RecipeCategoryInteractor {
     }
 
     @Override
-    public void fetchRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserver) throws ExecutionException, InterruptedException {
-       databaseAccess.fetchRecipeCategories(recipeCategoriesObserver);
+    public void fetchRecipeCategories(DbCallback<RecipeCategory> callback, SortType sortType) throws ExecutionException, InterruptedException {
+       databaseAccess.fetchRecipeCategories(callback, sortType);
     }
 
     @Override
@@ -37,13 +36,12 @@ public class RecipeCategoryInteractorImpl implements RecipeCategoryInteractor {
     }
 
     @Override
-    public List<Recipe> searchRecipeCategories(String search) {
-        // todo:
-        return null;
+    public void addRecipeCategory(RecipeCategory recipeCategory) {
+        databaseAccess.addRecipeCategory(recipeCategory);
     }
 
     @Override
-    public void addRecipeCategory(RecipeCategory recipeCategory) {
-        databaseAccess.addRecipeCategory(recipeCategory);
+    public void searchRecipeCategories(String categorySearch, DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.searchRecipeCategories(categorySearch, callback);
     }
 }

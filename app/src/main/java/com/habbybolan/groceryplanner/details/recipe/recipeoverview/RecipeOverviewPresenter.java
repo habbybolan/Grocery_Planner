@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.List;
 
@@ -96,4 +97,38 @@ public interface RecipeOverviewPresenter {
      * @param grocery   Grocery holding recipe and its ingredients to delete
      */
     void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery);
+
+    /**
+     * create the list of recipe tags from the database.
+     * @param recipe    Recipe holding the tags
+     */
+    void createRecipeTagList(Recipe recipe);
+
+    /**
+     * Adds a tag to the recipe.
+     * @param title     title of the tag
+     * @param recipe    recipe to place the tag into
+     */
+    void addTag(Recipe recipe, String title);
+
+    /**
+     * Delete the tag from the recipe
+     * @param recipe    recipe holding the tag
+     * @param recipeTag tag to delete from the recipe
+     */
+    void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag);
+
+    /**
+     * Check if the tag title is valid.
+     * @param title title of the tag to check
+     * @return      True if the tag title is valid, false otherwise.
+     */
+    boolean isTagTitleValid(String title);
+
+    /**
+     * Reformat the tag title so it is in Camel Case, no leading zeros, single space zeros, and single occurring dashes.
+     * @param title Tag title to reformat if needed.
+     * @return      The reformatted tag title String
+     */
+    String reformatTagTitle(String title);
 }

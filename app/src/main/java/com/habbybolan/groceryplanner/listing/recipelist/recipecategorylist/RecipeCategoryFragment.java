@@ -8,11 +8,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,14 +24,17 @@ import com.habbybolan.groceryplanner.di.module.RecipeCategoryModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCategory> {
+public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCategory> implements RecipeCategoryView {
 
     private FragmentRecipeCategoryBinding binding;
     private RecipeCategoryListener recipeCategoryListener;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
+    private SortType sortType = new SortType();
 
     @Inject
     RecipeCategoryPresenter recipeCategoryPresenter;
@@ -77,28 +78,6 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_recipe_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_recipe_list:
-                    Toast.makeText(getContext(), "cat alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_recipe_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -110,40 +89,35 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
     }
 
     private void setToolbar() {
-        toolbar = binding.toolbarRecipeCategoryList.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
-        binding.toolbarRecipeCategoryList.setTitle(getString(R.string.title_category_list));
-
-        toolbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_search:
-                    return true;
-                case R.id.action_sort:
-                    showSortPopup(getActivity().findViewById(R.id.action_sort));
-                    return true;
-                default:
-                    return false;
-            }
-        });
-
-        // onClick event on toolbar title to swap between Recipe List and Category List
-        binding.toolbarRecipeCategoryList.toolbarTitle.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(getContext(), v);
-            popup.inflate(R.menu.menu_recipe_list_displayed);
-            popup.setOnMenuItemClickListener(item -> {
-                switch (item.getItemId()) {
-                    case R.id.popup_recipe_list:
-                        recipeCategoryListener.gotoRecipeListUnCategorized();
-                        return true;
-                    case R.id.popup_recipe_category:
-                        recipeCategoryListener.gotoRecipeCategories();
-                        return true;
-                    default:
-                        return false;
-                }
-            });
-            popup.show();
-        });
+        String[] titleMethods = new String[]{"Category", "Recipe"};
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_category_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addSearch(new CustomToolbar.SearchCallback() {
+                    @Override
+                    public void search(String search) {
+                        recipeCategoryPresenter.searchRecipeCategories(search);
+                    }
+                })
+                .addSortIcon(new CustomToolbar.SortCallback() {
+                    @Override
+                    public void sortMethodClicked(String sortMethod) {
+                        sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
+                        recipeCategoryPresenter.fetchRecipeCategories();
+                    }
+                }, SortType.SORT_LIST_ALPHABETICAL)
+                .allowClickTitle(new CustomToolbar.TitleSelectCallback() {
+                    @Override
+                    public void selectTitle(int pos) {
+                        switch (pos) {
+                            case 0:
+                                recipeCategoryListener.gotoRecipeCategories();
+                                break;
+                            case 1:
+                                recipeCategoryListener.gotoRecipeListUnCategorized();
+                                break;
+                        }
+                    }
+                }, titleMethods)
+                .build();
     }
 
     @Override
@@ -212,6 +186,11 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
     @Override
     public void deleteSelectedItems() {
         recipeCategoryPresenter.deleteRecipeCategories(listItemsChecked);
+    }
+
+    @Override
+    public SortType getSortType() {
+        return sortType;
     }
 
     public interface RecipeCategoryListener extends ItemListener<RecipeCategory> {

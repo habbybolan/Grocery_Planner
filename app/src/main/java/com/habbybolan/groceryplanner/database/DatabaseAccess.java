@@ -1,8 +1,8 @@
 package com.habbybolan.groceryplanner.database;
 
-import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
@@ -11,8 +11,11 @@ import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -21,21 +24,21 @@ public interface DatabaseAccess {
     void deleteGrocery(Long groceryId);
     void deleteGroceries(List<Long> groceryIds);
     void addGrocery(Grocery grocery);
-    void fetchGroceries(ObservableArrayList<Grocery> groceriesObserver) throws ExecutionException, InterruptedException;
+    void fetchGroceries(DbCallback<Grocery> callback, SortType sortType) throws ExecutionException, InterruptedException;
 
     /**
      * Fetch the groceries that contain the recipe, and store the groceries inside groceries
      * @param recipe        Recipe inside the groceries
-     * @param groceries     The groceries holding the recipe and the amount of the recipe it holds
+     * @param callback      Callback for updating the GroceryRecipes fetched
      */
-    void fetchGroceriesHoldingRecipe(Recipe recipe, ObservableArrayList<GroceryRecipe> groceries) throws ExecutionException, InterruptedException;
+    void fetchGroceriesHoldingRecipe(Recipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Fetch the groceries that does not contain the recipe, and store the groceries inside groceries
      * @param recipe        Recipe not inside the groceries
-     * @param groceries     The groceries not holding the recipe
+     * @param callback      Callback for updating the Groceries fetched
      */
-    void fetchGroceriesNotHoldingRecipe(Recipe recipe, ObservableArrayList<Grocery> groceries) throws ExecutionException, InterruptedException;
+    void fetchGroceriesNotHoldingRecipe(Recipe recipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Adds / updates the recipe to the grocery list.
@@ -70,15 +73,21 @@ public interface DatabaseAccess {
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
-    void addRecipe(Recipe recipe);
-    void fetchRecipes(Long recipeCategoryId, ObservableArrayList<Recipe> recipesObserver) throws ExecutionException, InterruptedException;
+    void addRecipe(Recipe recipe, Date dateCreated);
+    void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
     List<Recipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<Recipe> recipes);
+    void updateRecipe(Recipe recipe);
     void fetchRecipe(ObservableField<Recipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
+
+    void addRecipeTag(long recipeId, String title);
+    void addRecipeTags(long recipeId, List<String> titles);
+    void fetchRecipeTags(long recipeId, DbCallback<RecipeTag> recipeTags) throws ExecutionException, InterruptedException;
+    void deleteRecipeTag(long recipeId, long tagId);
 
     void deleteRecipeCategory(long categoryId);
     void deleteRecipeCategories(List<Long> categoryIds);
-    void fetchRecipeCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException;
+    void fetchRecipeCategories(DbCallback<RecipeCategory> callback, SortType sortType) throws ExecutionException, InterruptedException;
     void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
 
@@ -88,15 +97,15 @@ public interface DatabaseAccess {
     void deleteIngredients(List<Long> ingredientIds);
     void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Long> ingredientIds);
     void deleteIngredientFromHolder(IngredientHolder ingredientHolder, long ingredientId);
-    void fetchIngredientsFromRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredientsFromRecipe(Recipe recipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
     void addIngredient(Ingredient ingredient);
 
     /**
      * Fetch all ingredients created.
-     * @param ingredients   Ingredient observer to store fetched ingredients into.
+     * @param callback   callback for updating the ingredients fetched.
      */
-    void fetchIngredients(ObservableArrayList<Ingredient> ingredients) throws ExecutionException, InterruptedException;
+    void fetchIngredients(DbCallback<Ingredient> callback, SortType sortType) throws ExecutionException, InterruptedException;
 
     void deleteRecipeFromGrocery(Grocery grocery, Recipe recipe);
 
@@ -105,38 +114,37 @@ public interface DatabaseAccess {
      * with info if the ingredient was added to grocery.
      * @param grocery               Grocery list holding the recipe
      * @param recipe                Recipe holding the ingredients to query
-     * @param ingredientObserver    Observer for the queries recipe ingredients
+     * @param callback              callback for updating the list of recipe ingredients fetched
      */
-    void fetchRecipeIngredientsInGrocery(Grocery grocery, Recipe recipe, ObservableArrayList<IngredientWithGroceryCheck> ingredientObserver) throws ExecutionException, InterruptedException;
+    void fetchRecipeIngredientsInGrocery(Grocery grocery, Recipe recipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Called for querying a recipe that is known is not inside a grocery list. Retrieves all of its ingredients inside the recipe.
      * @param recipe                Recipe to query for ingredients
-     * @param ingredientObserver    Observer for the queried ingredients
+     * @param callback              callback for updating the list of recipe ingredients fetched
      */
-    void fetchRecipeIngredientsNotInGrocery(Recipe recipe, ObservableArrayList<IngredientWithGroceryCheck> ingredientObserver) throws ExecutionException, InterruptedException;
+    void fetchRecipeIngredientsNotInGrocery(Recipe recipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Get all the Ingredients that are not part of the recipe
      * @param recipe                Recipe that is not holding the ingredients to fetch
-     * @param ingredientsObserver   Observer for list of ingredients not in recipe
+     * @param callback              callback for updating ingredients not in recipe
      */
-    void fetchIngredientsNotInRecipe(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInRecipe(Recipe recipe, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
     /**
      * Get all the Ingredients that are not part of the grocery
-     * @param grocery                grocery that is not holding the ingredients to fetch
-     * @param ingredientsObserver    Observer for list of ingredients not in grocery
+     * @param grocery     grocery that is not holding the ingredients to fetch
+     * @param callback    callback for updating ingredients not in grocery
      */
-    void fetchIngredientsNotInGrocery(Grocery grocery, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInGrocery(Grocery grocery, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Fetch the Ingredients inside a Grocery, both directly added Ingredients, or through the recipes
      * added to the Grocery list
-     * @param grocery                       The grocery list holding the ingredients
-     * @param groceryIngredientsObserver    Holds the Ingredient that displays how they are associated
-     *                                      with the grocery list
+     * @param grocery     The grocery list holding the ingredients
+     * @param callback    callback for updating the Ingredient inside a grocery list
      */
-    void fetchGroceryIngredients(Grocery grocery, ObservableArrayList<GroceryIngredient> groceryIngredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchGroceryIngredients(Grocery grocery, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Update the ingredients bridges with new isChecked
@@ -144,4 +152,56 @@ public interface DatabaseAccess {
      * @param groceryIngredient     holds the check value to change it to
      */
     void updateGroceryIngredientChecked(Grocery grocery, GroceryIngredient groceryIngredient);
+
+    /**
+     * Search for any grocery with the grocerySearch name.
+     * @param grocerySearch grocery name to search
+     * @param callback      callback to update the Groceries retrieved
+     */
+    void searchGroceries(String grocerySearch, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any grocery ingredient with the ingredientSearch name.
+     * @param groceryId         id of the grocery
+     * @param ingredientSearch  grocery ingredient name to search
+     * @param callback          callback to update the Grocery Ingredients retrieved
+     */
+    void searchGroceryIngredients(long groceryId, String ingredientSearch, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any recipe with the recipeSearch name.
+     * @param recipeSearch  recipe name to search
+     * @param callback    callback to update the Recipes retrieved
+     */
+    void searchRecipes(String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any recipe inside the category with the recipeSearch name.
+     * @param categoryId        id of the recipe category
+     * @param recipeSearch      recipe name to search
+     *  @param callback         callback to update the Recipes in a category retrieved
+     */
+    void searchRecipesInCategory(long categoryId, String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any recipe category with the recipeSearch name.
+     * @param categorySearch    category name to search
+     * @param callback          callback to update the categories retrieved
+     */
+    void searchRecipeCategories(String categorySearch, DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any recipe ingredient with the ingredientSearch name.
+     * @param recipeId          id of the recipe
+     * @param ingredientSearch  recipe ingredient name to search
+     *  @param callback         callback to update the Recipe Ingredients retrieved
+     */
+    void searchRecipeIngredients(long recipeId, String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for any ingredient with the ingredientSearch name.
+     * @param ingredientSearch  ingredient name to search
+     *  @param callback         callback to update the Ingredients retrieved
+     */
+    void searchIngredients(String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 }

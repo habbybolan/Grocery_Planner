@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.List;
 
@@ -47,4 +48,16 @@ public interface RecipeOverviewView {
      * @param grocery   The Grocery holding the ingredients
      */
     void displayRecipeIngredientsInGrocery(Grocery grocery);
+
+    /**
+     * Display the recipe tags.
+     * @param recipeTags    List of recipe tags to display.
+     */
+    void displayRecipeTags(List<RecipeTag> recipeTags);
+
+    /**
+     * Delete the tag from the recipe.
+     * @param recipeTag Tag to delete
+     */
+    void deleteRecipeTag(RecipeTag recipeTag);
 }

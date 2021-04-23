@@ -6,15 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +24,8 @@ import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.ui.PopupBuilder;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import java.util.ArrayList;
 
@@ -41,7 +38,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
     private FragmentGroceryDetailBinding binding;
     private GroceryIngredientsListener groceryIngredientsListener;
     private Grocery grocery;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
 
     @Inject
     GroceryIngredientsPresenter groceryIngredientsPresenter;
@@ -82,50 +79,26 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
     }
 
     private void setToolbar() {
-        toolbar = binding.toolbarGroceryDetail.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_holder_details);
-        toolbar.setTitle(getString(R.string.title_grocery_ingredients));
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        return true;
-                    case R.id.action_sort:
-                        // todo: what to anchor to? - not search
-                        showSortPopup(getActivity().findViewById(R.id.action_search));
-                        return true;
-                    case R.id.action_delete:
-                        deleteGroceryCheck();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-    }
-
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_grocery_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_grocery_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_grocery_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addSearch(new CustomToolbar.SearchCallback() {
+                    @Override
+                    public void search(String search) {
+                        groceryIngredientsPresenter.searchIngredients(grocery, search);
+                    }
+                })
+                .addSortIcon(new CustomToolbar.SortCallback() {
+                    @Override
+                    public void sortMethodClicked(String sortMethod) {
+                        // todo:
+                    }
+                }, SortType.SORT_LIST_ALPHABETICAL)
+                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
+                    @Override
+                    public void deleteClicked() {
+                        deleteGrocery();
+                    }
+                }, "Grocery")
+                .build();
     }
 
     @Override
@@ -184,18 +157,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
     }
 
     /**
-     * Delete the grocery from database and go back to the Grocery List
-     */
-    private void deleteGroceryCheck() {
-        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Grocery", binding.groceryDetailsContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
-            @Override
-            public void deleteItem() {
-                deleteGrocery();
-            }
-        });
-    }
-
-    /**
      * Delete the Grocery and leave the Fragment
      */
     private void deleteGrocery() {
@@ -222,6 +183,11 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
     @Override
     public void onChecklistSelected(GroceryIngredient groceryIngredient) {
         groceryIngredientsPresenter.updateGroceryIngredientSelected(grocery, groceryIngredient);
+    }
+
+    @Override
+    public SortType getSortType() {
+        return null;
     }
 
     public interface GroceryIngredientsListener extends ItemListener<GroceryIngredient> {

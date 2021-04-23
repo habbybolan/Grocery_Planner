@@ -4,6 +4,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public interface RecipeListPresenter {
@@ -11,9 +12,8 @@ public interface RecipeListPresenter {
     void destroy();
     void deleteRecipe(Recipe recipe);
     void deleteRecipes(List<Recipe> recipes);
-    void addRecipe(Recipe recipe);
+    void addRecipe(Recipe recipe, Date dateCreated);
 
-    //
     void addRecipesToCategory(ArrayList<Recipe> recipe, RecipeCategory category);
     void removeRecipesFromCategory(ArrayList<Recipe> recipes);
 
@@ -27,4 +27,10 @@ public interface RecipeListPresenter {
     void attachCategory(RecipeCategory recipeCategory);
     void fetchCategories() ;
     ArrayList<RecipeCategory> getLoadedRecipeCategories();
+
+    /**
+     * Search for the recipes with name recipeSearch.
+     * @param recipeSearch   recipe to search for
+     */
+    void searchRecipes(String recipeSearch);
 }

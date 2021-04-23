@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
@@ -25,11 +24,11 @@ public class IngredientAddInteractorImpl implements IngredientAddInteractor {
     }
 
     @Override
-    public void fetchIngredientsNotInIngredientHolder(ObservableArrayList<Ingredient> ingredientsObserver, IngredientHolder ingredientHolder) throws ExecutionException, InterruptedException {
+    public void fetchIngredientsNotInIngredientHolder(DbCallback<Ingredient> callback, IngredientHolder ingredientHolder) throws ExecutionException, InterruptedException {
         if (ingredientHolder.isGrocery())
-            databaseAccess.fetchIngredientsNotInGrocery((Grocery) ingredientHolder, ingredientsObserver);
+            databaseAccess.fetchIngredientsNotInGrocery((Grocery) ingredientHolder, callback);
         else
-            databaseAccess.fetchIngredientsNotInRecipe((Recipe) ingredientHolder, ingredientsObserver);
+            databaseAccess.fetchIngredientsNotInRecipe((Recipe) ingredientHolder, callback);
     }
 
     @Override

@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
+import java.util.Date;
+
 @Entity(foreignKeys = @ForeignKey(entity = RecipeCategoryEntity.class,
                                 parentColumns = "recipeCategoryId",
                                 childColumns = "recipe_category_id",
@@ -15,6 +17,7 @@ public class RecipeEntity {
 
     @PrimaryKey(autoGenerate = true)
     private long recipeId;
+    @ColumnInfo(name="name")
     private String name;
     @ColumnInfo(name="is_favorite")
     private boolean isFavorite;
@@ -51,10 +54,12 @@ public class RecipeEntity {
     private Long recipeCategoryId;
     @ColumnInfo(name = "instructions")
     private String instructions;
+    @ColumnInfo(name = "date_created", index = true)
+    private Date dateCreated;
 
     public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, int calories, String caloriesType,
                         int fat, String fatType, int saturatedFat, String saturatedFatType, int carbohydrates, String carbohydratesType, int fiber,
-                        String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId, String instructions) {
+                        String fiberType, int sugar, String sugarType, int protein, String proteinType, Long recipeCategoryId, String instructions, Date dateCreated) {
         this.recipeId = recipeId;
         this.name = name;
         this.isFavorite = isFavorite;
@@ -120,6 +125,7 @@ public class RecipeEntity {
         }
         recipeCategoryId = recipe.getCategoryId();
         instructions = recipe.getInstructions();
+        dateCreated = recipe.getDateCreated();
     }
 
 
@@ -194,5 +200,15 @@ public class RecipeEntity {
     }
     public String getInstructions() {
         return instructions;
+    }
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public static String getNameColumn() {
+        return "name";
+    }
+    public static String getDateColumn() {
+        return "date_created";
     }
 }

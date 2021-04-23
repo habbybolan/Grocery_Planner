@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Deals with some list functionality of the generic list item T.
- * Deals with the selectMode, Toolbar visibility, and selecting list items.
+ * Deals with the selectMode, and selecting list items.
  * @param <T>   The list of the object type
  */
 public abstract class ListFragment<T> extends Fragment implements ListViewInterface<T> {

@@ -43,4 +43,11 @@ public interface RecipeIngredientsPresenter {
      * @param recipe   The recipe associated with the Ingredients to display
      */
     void createIngredientList(Recipe recipe);
+
+    /**
+     * Search for the recipe ingredients with name ingredientSearch.
+     * @param recipe             recipe to search in for the ingredient
+     * @param ingredientSearch   ingredient to search for
+     */
+    void searchIngredients(Recipe recipe, String ingredientSearch);
 }

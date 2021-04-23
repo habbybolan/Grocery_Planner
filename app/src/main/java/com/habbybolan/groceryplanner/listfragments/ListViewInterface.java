@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.listfragments;
 
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
+
 import java.util.List;
 
 public interface ListViewInterface<T> {
@@ -7,6 +9,8 @@ public interface ListViewInterface<T> {
     boolean isSelectMode();
     void enterSelectMode();
     void exitSelectedMode();
+
+    SortType getSortType();
 
     void createActionMode();
     void destroyActionMode();

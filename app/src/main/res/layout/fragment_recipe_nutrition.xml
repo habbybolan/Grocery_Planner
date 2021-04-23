@@ -14,31 +14,16 @@
         android:orientation="vertical"
         android:background="?attr/colorOnBackground">
 
-        <include
-            layout="@layout/toolbar"
-            android:id="@+id/toolbar_recipe_nutrition"/>
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/recipe_detail_margin_top"
             android:layout_weight="1">
-
-            <Button
-                android:id="@+id/save_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:text="Save" />
-
-            <Button
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/save_button"
-                android:text="Cancel" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recipe_nutrition_list"

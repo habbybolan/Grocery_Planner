@@ -15,7 +15,7 @@ public interface GroceryListPresenter {
     void setView(ListViewInterface view);
 
     /**
-     * Create a list by accessing local/online database.
+     * Create a list of groceries from database
      * Call for the list to be displayed if the view is connected.
      */
     void createGroceryList();
@@ -38,10 +38,10 @@ public interface GroceryListPresenter {
     void deleteGroceries(List<Grocery>groceries);
 
     /**
-     * Find Grocery objects based on the groceryName typed.
-     * @param groceryName   The name of the Grocery object.
+     * Find Grocery items based on the groceryName typed.
+     * @param grocerySearch   The string to search in grocery names
      */
-    void searchGroceryList(String groceryName);
+    void searchGroceryList(String grocerySearch);
 
     /**
      * Add a grocery object to the database and display it.

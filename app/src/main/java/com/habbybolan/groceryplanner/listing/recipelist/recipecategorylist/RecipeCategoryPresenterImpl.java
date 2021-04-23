@@ -1,48 +1,35 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist;
 
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class RecipeCategoryPresenterImpl implements RecipeCategoryPresenter {
 
     private RecipeCategoryInteractor recipeCategoryInteractor;
-    private ListViewInterface view;
+    private RecipeCategoryView view;
 
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
-    private ObservableArrayList<RecipeCategory> loadedRecipeCategories = new ObservableArrayList<>();
+    private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
+
+    private DbCallback<RecipeCategory> recipeCategoryDbCallback = new DbCallback<RecipeCategory>() {
+        @Override
+        public void onResponse(List<RecipeCategory> response) {
+            loadedRecipeCategories.clear();
+            loadedRecipeCategories.addAll(response);
+            loadingRecipeCategories = false;
+            displayRecipeCategories();
+        }
+    };
 
     public RecipeCategoryPresenterImpl(RecipeCategoryInteractor recipeCategoryInteractor) {
         this.recipeCategoryInteractor = recipeCategoryInteractor;
-        setRecipeCategoryCallback();
     }
 
-    // set up callback for loading recipeCategories
-    private void setRecipeCategoryCallback() {
-        loadedRecipeCategories.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<RecipeCategory>>() {
-            @Override
-            public void onChanged(ObservableList<RecipeCategory> sender) {}
-
-            @Override
-            public void onItemRangeChanged(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {
-                // set the loaded recipe categories as loaded in
-                loadingRecipeCategories = false;
-                displayRecipeCategories();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<RecipeCategory> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-        });
-    }
 
     @Override
     public void destroy() {
@@ -74,7 +61,7 @@ public class RecipeCategoryPresenterImpl implements RecipeCategoryPresenter {
     }
 
     @Override
-    public void setView(ListViewInterface view) {
+    public void setView(RecipeCategoryView view) {
         this.view = view;
     }
 
@@ -82,11 +69,24 @@ public class RecipeCategoryPresenterImpl implements RecipeCategoryPresenter {
     public void fetchRecipeCategories() {
         try {
             loadingRecipeCategories = true;
-            recipeCategoryInteractor.fetchRecipeCategories(loadedRecipeCategories);
+            recipeCategoryInteractor.fetchRecipeCategories(recipeCategoryDbCallback, view.getSortType());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve Recipe Categories");
             loadingRecipeCategories = false;
+        }
+    }
+
+    @Override
+    public void searchRecipeCategories(String categorySearch) {
+        try {
+            loadingRecipeCategories = true;
+            view.loadingStarted();
+            recipeCategoryInteractor.searchRecipeCategories(categorySearch, recipeCategoryDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            loadingRecipeCategories = false;
+            view.loadingFailed("Failed to retrieve data");
         }
     }
 

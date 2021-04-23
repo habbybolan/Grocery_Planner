@@ -11,12 +11,11 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeGroceriesDetailsBinding;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeGroceriesAdapter extends RecyclerView.Adapter<RecipeGroceriesAdapter.ViewHolder> {
 
-    private List<GroceryRecipe> groceries = new ArrayList<>();
+    private List<GroceryRecipe> groceries;
     private RecipeOverviewView view;
 
     public RecipeGroceriesAdapter(List<GroceryRecipe> groceries, RecipeOverviewView view) {

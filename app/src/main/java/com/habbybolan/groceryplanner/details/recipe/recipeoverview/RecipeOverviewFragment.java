@@ -4,23 +4,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
@@ -30,7 +26,8 @@ import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
-import com.habbybolan.groceryplanner.ui.PopupBuilder;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +40,14 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     RecipeOverviewPresenter recipeOverviewPresenter;
     private FragmentRecipeOverviewBinding binding;
     private RecipeOverviewListener recipeOverviewListener;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
     private RecipeCategory selectedRecipeCategory;
-    private RecipeGroceriesAdapter adapter;
+
+    private RecipeGroceriesAdapter groceriesAdapter;
     private List<GroceryRecipe> groceriesHoldingRecipe = new ArrayList<>();
 
+    private RecipeTagAdapter tagAdapter;
+    private List<RecipeTag> recipeTags = new ArrayList<>();
     public RecipeOverviewFragment() {}
 
     public static RecipeOverviewFragment getInstance() {
@@ -77,18 +77,26 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         recipeOverviewPresenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getRecipe());
         setToolbar();
         setRV();
-        setSaveCancelClickers();
+        setTagClicker();
         return binding.getRoot();
     }
 
     /**
      * Set up the RecyclerView for displaying Groceries holding the current Recipe
+     * Set up RecyclerView for displaying the tags added to the recipe
      */
     private void setRV() {
-        RecyclerView rv = binding.rvRecipeOverviewGroceries;
-        adapter = new RecipeGroceriesAdapter(groceriesHoldingRecipe, this);
-        rv.setAdapter(adapter);
+        RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
+        groceriesAdapter = new RecipeGroceriesAdapter(groceriesHoldingRecipe, this);
+        rvGroceries.setAdapter(groceriesAdapter);
         recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
+
+        RecyclerView rvTags = binding.recipeOverviewRvTags;
+        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getContext());
+        rvTags.setLayoutManager(flexboxLayoutManager);
+        tagAdapter = new RecipeTagAdapter(recipeTags, this);
+        rvTags.setAdapter(tagAdapter);
+        recipeOverviewPresenter.createRecipeTagList(recipeOverviewListener.getRecipe());
     }
 
     @Override
@@ -100,99 +108,69 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     }
 
     /**
-     * Click functionality of Save and Cancel button.
+     * Sets the tag clicker for adding a new tag to the recipe.
      */
-    private void setSaveCancelClickers() {
-        // onClick save button
-        binding.saveButton.setOnClickListener(l -> {
-            // update name
-            recipeOverviewListener.getRecipe().setName(binding.recipeOverviewName.getText().toString());
-            // update serving size
-            recipeOverviewListener.getRecipe().setServingSize(Integer.parseInt(binding.recipeOverviewServingSize.getText().toString()));
-            // update RecipeCategory if selected one
-            if (selectedRecipeCategory != null) {
-                recipeOverviewListener.getRecipe().setCategoryId(selectedRecipeCategory.getId());
+    private void setTagClicker() {
+        binding.recipeOverviewBtnAddTag.setOnClickListener(l -> {
+            String tagTitle = binding.recipeOverviewTag.getText().toString();
+            if (recipeOverviewPresenter.isTagTitleValid(tagTitle)) {
+                String reformattedTitle = recipeOverviewPresenter.reformatTagTitle(tagTitle);
+                recipeOverviewPresenter.addTag(recipeOverviewListener.getRecipe(), reformattedTitle);
+                binding.recipeOverviewTag.setText("");
             } else {
-                // otherwise, the 'No Category' was selected
-                recipeOverviewListener.getRecipe().setCategoryId(null);
+                Toast.makeText(getContext(), "Invalid name", Toast.LENGTH_SHORT).show();
             }
-            recipeOverviewPresenter.updateRecipe(recipeOverviewListener.getRecipe());
-            // todo: tag
-            setVisibilitySaveCancelButton(View.GONE);
-        });
-
-        // onClick cancel button
-        binding.cancelButton.setOnClickListener(l -> {
-            setDisplayToCurrentRecipe();
-            // todo: tag
-            selectedRecipeCategory = null;
-            setVisibilitySaveCancelButton(View.GONE);
         });
     }
+
+    /**
+     * Saves the recipe changes.
+     */
+    private void saveRecipe() {
+        // update name
+        recipeOverviewListener.getRecipe().setName(binding.recipeOverviewName.getText().toString());
+        // update serving size
+        recipeOverviewListener.getRecipe().setServingSize(Integer.parseInt(binding.recipeOverviewServingSize.getText().toString()));
+        // update RecipeCategory if selected one
+        if (selectedRecipeCategory != null) {
+            recipeOverviewListener.getRecipe().setCategoryId(selectedRecipeCategory.getId());
+        } else {
+            // otherwise, the 'No Category' was selected
+            recipeOverviewListener.getRecipe().setCategoryId(null);
+        }
+        recipeOverviewPresenter.updateRecipe(recipeOverviewListener.getRecipe());
+    }
+
+    /**
+     * Cancels the recipe changes.
+     */
+    private void cancelRecipeChanges() {
+        setDisplayToCurrentRecipe();
+        selectedRecipeCategory = null;
+    }
+
 
     private void setToolbar() {
-        toolbar = binding.toolbarRecipeOverview.toolbar;
-        toolbar.inflateMenu(R.menu.menu_recipe_non_list);
-        toolbar.setTitle(getString(R.string.title_recipe_overview));
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_sort:
-                        showSortPopup(getActivity().findViewById(R.id.action_sort));
-                        return true;
-                    case R.id.action_delete:
-                        deleteRecipeCheck();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-    }
-
-    /**
-     * Sets the visibility of the save and cancel button
-     * @param visibility    Visibility to set buttons to
-     */
-    private void setVisibilitySaveCancelButton(int visibility) {
-        binding.saveButton.setVisibility(visibility);
-        binding.cancelButton.setVisibility(visibility);
-    }
-
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_grocery_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_grocery_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_grocery_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
-    }
-
-    /**
-     * Ask the user to confirm deleting the Recipe
-     */
-    private void deleteRecipeCheck() {
-        PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Recipe", binding.recipeOverviewContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
-            @Override
-            public void deleteItem() {
-                deleteRecipe();
-            }
-        });
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
+                    @Override
+                    public void deleteClicked() {
+                        deleteRecipe();
+                    }
+                }, "Recipe")
+                .addSaveIcon(new CustomToolbar.SaveCallback() {
+                    @Override
+                    public void saveClicked() {
+                        saveRecipe();
+                    }
+                })
+                .addCancelIcon(new CustomToolbar.CancelCallback() {
+                    @Override
+                    public void cancelClicked() {
+                        cancelRecipeChanges();
+                    }
+                })
+                .build();
     }
 
     /**
@@ -214,22 +192,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         binding.recipeOverviewCategory.setOnClickListener(v -> {
             // display the recipe categories if they are loaded in
             recipeOverviewPresenter.displayRecipeCategories();
-        });
-
-        // text change listener to display the save button
-        binding.recipeOverviewName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // do nothing
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // do nothing
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                setVisibilitySaveCancelButton(View.VISIBLE);
-            }
         });
 
         // clicker for opening the Grocery list of Groceries that don't contain the recipe
@@ -261,7 +223,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
             public void onClick(DialogInterface dialog, int which) {
                 selectedRecipeCategory = recipeOverviewPresenter.getRecipeCategory(which);
                 binding.setCategoryName(categoryNames[which]);
-                setVisibilitySaveCancelButton(View.VISIBLE);
             }
         });
         builder.show();
@@ -277,7 +238,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void displayGroceriesHoldingRecipe(List<GroceryRecipe> groceries) {
         this.groceriesHoldingRecipe.clear();
         this.groceriesHoldingRecipe.addAll(groceries);
-        adapter.notifyDataSetChanged();
+        groceriesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -388,6 +349,18 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void displayRecipeIngredientsInGrocery(Grocery grocery) {
         // get the ingredients from a recipe that was added to the grocery list
         recipeOverviewPresenter.fetchRecipeIngredients(recipeOverviewListener.getRecipe(), grocery, false);
+    }
+
+    @Override
+    public void displayRecipeTags(List<RecipeTag> recipeTags) {
+        this.recipeTags.clear();
+        this.recipeTags.addAll(recipeTags);
+        tagAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void deleteRecipeTag(RecipeTag recipeTag) {
+        recipeOverviewPresenter.deleteRecipeTag(recipeOverviewListener.getRecipe(), recipeTag);
     }
 
 

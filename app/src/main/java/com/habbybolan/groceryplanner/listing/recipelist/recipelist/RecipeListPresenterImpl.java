@@ -1,12 +1,11 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,61 +17,34 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
-    private ObservableArrayList<Recipe> loadedRecipes = new ObservableArrayList<>();
+    private List<Recipe> loadedRecipes = new ArrayList<>();
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
-    private ObservableArrayList<RecipeCategory> loadedRecipeCategories = new ObservableArrayList<>();
+    private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
+
+    private DbCallback<RecipeCategory> recipeCategoryDbCallback = new DbCallback<RecipeCategory>() {
+        @Override
+        public void onResponse(List<RecipeCategory> response) {
+            loadedRecipeCategories.clear();
+            loadedRecipeCategories.addAll(response);
+            loadingRecipeCategories = false;
+        }
+    };
+
+    private DbCallback<Recipe> recipeDbCallback = new DbCallback<Recipe>() {
+        @Override
+        public void onResponse(List<Recipe> response) {
+            loadedRecipes.clear();
+            loadedRecipes.addAll(response);
+            loadingRecipes = false;
+            displayRecipes();
+        }
+    };
 
     public RecipeListPresenterImpl(RecipeListInteractor recipeListInteractor) {
         this.recipeListInteractor = recipeListInteractor;
-        setRecipeCategoryCallback();
-        setRecipeCallback();
     }
 
-    // set up callback for loading recipeCategories
-    private void setRecipeCategoryCallback() {
-        loadedRecipeCategories.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<RecipeCategory>>() {
-            @Override
-            public void onChanged(ObservableList<RecipeCategory> sender) {}
-
-            @Override
-            public void onItemRangeChanged(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {
-                // set the loaded recipe categories as loaded in
-                loadingRecipeCategories = false;
-                displayRecipeCategories();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<RecipeCategory> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-        });
-    }
-
-    private void setRecipeCallback() {
-        loadedRecipes.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Recipe>>() {
-            @Override
-            public void onChanged(ObservableList<Recipe> sender) {}
-
-            @Override
-            public void onItemRangeChanged(ObservableList<Recipe> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<Recipe> sender, int positionStart, int itemCount) {
-                // set the loaded recipe categories as loaded in
-                loadingRecipes = false;
-                displayRecipes();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<Recipe> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<Recipe> sender, int positionStart, int itemCount) {
-                // todo: change this - currently there to make going to an empty list possible, but doubled up displayRecipe when changing to a new, non-empty list
-                loadingRecipes = false;
-                displayRecipes();
-            }
-        });
-    }
 
     @Override
     public void destroy() {
@@ -82,34 +54,18 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     @Override
     public void deleteRecipe(Recipe recipe) {
         recipeListInteractor.deleteRecipe(recipe);
-        try {
-            view.loadingStarted();
-            loadingRecipes = true;
-            recipeListInteractor.fetchRecipes(recipeCategory, loadedRecipes);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            view.loadingFailed("Failed to retrieve Recipe");
-            loadingRecipes = false;
-        }
+        createRecipeList();
     }
 
     @Override
     public void deleteRecipes(List<Recipe> recipes) {
         recipeListInteractor.deleteRecipes(recipes);
-        try {
-            view.loadingStarted();
-            loadingRecipes = true;
-            recipeListInteractor.fetchRecipes(recipeCategory, loadedRecipes);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            view.loadingFailed("Failed to retrieve Recipes");
-            loadingRecipes = false;
-        }
+        createRecipeList();
     }
 
     @Override
-    public void addRecipe(Recipe recipe) {
-        recipeListInteractor.addRecipe(recipe);
+    public void addRecipe(Recipe recipe, Date dateCreated) {
+        recipeListInteractor.addRecipe(recipe, dateCreated);
         createRecipeList();
     }
 
@@ -139,7 +95,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             view.loadingStarted();
             loadingRecipes = true;
-            recipeListInteractor.fetchRecipes(recipeCategory, loadedRecipes);
+            recipeListInteractor.fetchRecipes(recipeCategory, view.getSortType(), recipeDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -166,7 +122,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             loadingRecipeCategories = true;
             view.loadingStarted();
-            recipeListInteractor.fetchCategories(loadedRecipeCategories);
+            recipeListInteractor.fetchCategories(recipeCategoryDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -178,15 +134,23 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         return !loadingRecipeCategories;
     }
 
-    private void displayRecipeCategories() {
-        if (isViewAttached() && isCategoriesReady())
-            view.storeAllRecipeCategories(loadedRecipeCategories);
-    }
-
     @Override
     public ArrayList<RecipeCategory> getLoadedRecipeCategories() {
         if (!isCategoriesReady())
             view.loadingFailed("recipe categories are being loaded");
         return new ArrayList<>(loadedRecipeCategories);
+    }
+
+    @Override
+    public void searchRecipes(String recipeSearch) {
+        try {
+            loadingRecipes = true;
+            view.loadingStarted();
+            recipeListInteractor.searchRecipes(recipeCategory, recipeSearch, recipeDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            loadingRecipes = false;
+            view.loadingFailed("Failed to retrieve data");
+        }
     }
 }

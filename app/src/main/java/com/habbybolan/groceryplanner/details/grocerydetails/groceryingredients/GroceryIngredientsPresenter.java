@@ -57,4 +57,11 @@ public interface GroceryIngredientsPresenter {
      * @param groceryIngredient     holds the check value to change it to
      */
     void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient);
+
+    /**
+     * Search for the grocery ingredients with name ingredientSearch.
+     * @param grocery             grocery to search in for the ingredient
+     * @param ingredientSearch   ingredient to search for
+     */
+    void searchIngredients(Grocery grocery, String ingredientSearch);
 }

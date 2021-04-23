@@ -1,12 +1,13 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,13 +20,13 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
-    public void fetchRecipes(RecipeCategory recipeCategory, ObservableArrayList<Recipe> recipesObserved) throws ExecutionException, InterruptedException {
+    public void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException {
         // find the recipes associated with the id if there is any
         if (recipeCategory != null)
-            databaseAccess.fetchRecipes(recipeCategory.getId(), recipesObserved);
+            databaseAccess.fetchRecipes(recipeCategory.getId(), sortType, callback);
         // otherwise, no category selected, get all recipes
         else
-            databaseAccess.fetchRecipes(null, recipesObserved);
+            databaseAccess.fetchRecipes(null, sortType, callback);
     }
 
     @Override
@@ -41,14 +42,8 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
-    public List<Recipe> searchRecipes(String search) {
-        // todo:
-        return null;
-    }
-
-    @Override
-    public void addRecipe(Recipe recipe) {
-        databaseAccess.addRecipe(recipe);
+    public void addRecipe(Recipe recipe, Date dateCreated) {
+        databaseAccess.addRecipe(recipe, dateCreated);
     }
 
     @Override
@@ -73,7 +68,17 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
-    public void fetchCategories(ObservableArrayList<RecipeCategory> recipeCategoriesObserved) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchRecipeCategories(recipeCategoriesObserved);
+    public void fetchCategories(DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException {
+        SortType sortType = new SortType();
+        sortType.setSortType(SortType.SORT_ALPHABETICAL_ASC);
+        databaseAccess.fetchRecipeCategories(callback, sortType);
+    }
+
+    @Override
+    public void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException {
+        if (recipeCategory == null)
+            databaseAccess.searchRecipes(recipeSearch, callback);
+        else
+            databaseAccess.searchRecipesInCategory(recipeCategory.getId(), recipeSearch, callback);
     }
 }

@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,7 +25,7 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
-import com.habbybolan.groceryplanner.ui.PopupBuilder;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import javax.inject.Inject;
 
@@ -43,7 +42,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private IngredientHolder ingredientHolder;
     private Ingredient ingredient;
     private FoodTypeAdapter adapter;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
 
     @Inject
     IngredientEditPresenter ingredientEditPresenter;
@@ -131,8 +130,22 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Sets up the toolbar.
      */
     private void setToolbar() {
-        toolbar = binding.toolbarIngredientEdit;
-        binding.setHeader("Ingredient Edit");
+        customToolbar = new CustomToolbar.CustomToolbarBuilder("Ingredient Edit", getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addSaveIcon(new CustomToolbar.SaveCallback() {
+                    @Override
+                    public void saveClicked() {
+                        saveChangedToLocal();
+                    }
+                })
+                .addCancelIcon(new CustomToolbar.CancelCallback() {
+                    @Override
+                    public void cancelClicked() {
+                        isViewChanged(false);
+                        setViews();
+                        adapter.resetSelected(ingredient.getFoodType());
+                    }
+                })
+                .build();
     }
 
     private void setFoodTypeGrid() {
@@ -146,24 +159,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         adapter.setHasStableIds(true);
         binding.gridFoodTypes.setLayoutManager(new GridLayoutManager(getContext(), 4));
         binding.gridFoodTypes.setAdapter(adapter);
-    }
-
-    /**
-     * Ask the user to confirm deleting the Ingredient
-     */
-    private void deleteIngredientCheck() {
-        if (ingredientEditPresenter.isNewIngredient(ingredient)) {
-            // if there ingredient is new, then leave the fragment and don't save the Ingredient
-            ingredientEditListener.leaveIngredientEdit();
-        } else {
-            // otherwise, the Ingredient exists in the database, ask to delete and leave fragment
-            PopupBuilder.createDeleteDialogue(getLayoutInflater(), "Ingredient", binding.ingredientEditContainer, getContext(), new PopupBuilder.DeleteDialogueInterface() {
-                @Override
-                public void deleteItem() {
-                    deleteIngredient();
-                }
-            });
-        }
     }
 
     /**
@@ -195,21 +190,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     }
 
     /**
-     * Set up clicker functionality for the save button, saving any changes to the database.
      * Set up clicker functionality for price type and quantity type.
      */
     private void setClickers() {
-
-        // button for saving the changes/new Ingredient to the database
-        binding.btnSave.setOnClickListener(v -> saveChangedToLocal());
-
-        // button for un-doing any changes made, but not saved, to the Ingredient
-        binding.btnCancel.setOnClickListener(l -> {
-            isViewChanged(false);
-            setViews();
-            adapter.resetSelected(ingredient.getFoodType());
-        });
-
         // popup for selecting price type
         binding.txtPriceType.setOnClickListener(v -> {
             createPriceTypePopup();

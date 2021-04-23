@@ -6,14 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +23,8 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
+import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import java.util.ArrayList;
 
@@ -42,7 +41,8 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
 
     private GroceryListListener groceryListListener;
     private FragmentGroceryListBinding binding;
-    private Toolbar toolbar;
+    private CustomToolbar customToolbar;
+    private SortType sortType= new SortType();
 
     public GroceryListFragment() {}
 
@@ -70,46 +70,21 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
     }
 
     private void setToolbar() {
-        toolbar = binding.toolbarGroceryList.toolbar;
-        toolbar.inflateMenu(R.menu.menu_ingredient_holder_list);
-        toolbar.setTitle(getString(R.string.title_grocery_list));
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        return true;
-                    case R.id.action_sort:
-                        showSortPopup(getActivity().findViewById(R.id.action_sort));
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-    }
-
-    /**
-     * Menu popup for giving different ways to sort the list.
-     * @param v     The view to anchor the popup menu to
-     */
-    private void showSortPopup(View v) {
-        PopupMenu popup = new PopupMenu(getContext(), v);
-        popup.inflate(R.menu.popup_sort_grocery_list);
-        popup.setOnMenuItemClickListener(item -> {
-            switch(item.getItemId()) {
-                case R.id.popup_alphabetically_grocery_list:
-                    Toast.makeText(getContext(), "alphabetically", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.popup_test_grocery_list:
-                    Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+                .addSearch(new CustomToolbar.SearchCallback() {
+                    @Override
+                    public void search(String search) {
+                        groceryListPresenter.searchGroceryList(search);
+                    }
+                })
+                .addSortIcon(new CustomToolbar.SortCallback() {
+                    @Override
+                    public void sortMethodClicked(String sortMethod) {
+                        sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
+                        groceryListPresenter.createGroceryList();
+                    }
+                }, SortType.SORT_LIST_ALPHABETICAL)
+                .build();
     }
 
     /**
@@ -186,6 +161,11 @@ public class GroceryListFragment extends NonCategoryListFragment<Grocery> {
     @Override
     public void deleteSelectedItems() {
         groceryListPresenter.deleteGroceries(listItemsChecked);
+    }
+
+    @Override
+    public SortType getSortType() {
+        return sortType;
     }
 
     // Allows communication between GroceryListActivity and GroceryListFragment

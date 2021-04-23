@@ -11,8 +11,13 @@
         android:orientation="vertical"
         android:background="?attr/colorOnBackground">
 
-        <include layout="@layout/toolbar"
-            android:id="@+id/toolbar_recipe_list"/>
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- <include layout="@layout/toolbar"
+            android:id="@+id/toolbar_recipe_list"/> -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipe_list"

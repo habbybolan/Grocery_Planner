@@ -1,24 +1,22 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractor;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface RecipeIngredientsInteractor {
-
-    void editRecipeName(Recipe recipe, String name);
-    void deleteRecipe(Recipe recipe);
+public interface RecipeIngredientsInteractor extends RecipeDetailsInteractor {
 
     /**
      * Get all Ingredient objects associated with Recipe from the database.
-     * @param recipe                The ingredient to display
-     * @param ingredientsObserver   Ingredients observer that holds the fetched ingredients
+     * @param recipe     The ingredient to display
+     * @param callback   callback that updates the ingredients feteched
      */
-    void fetchIngredients(Recipe recipe, ObservableArrayList<Ingredient> ingredientsObserver) throws ExecutionException, InterruptedException;
+    void fetchIngredients(Recipe recipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Delete an ingredient from the recipe
@@ -33,4 +31,12 @@ public interface RecipeIngredientsInteractor {
      * @param ingredients   The ingredients to delete
      */
     void deleteIngredients(Recipe recipe, List<Ingredient> ingredients);
+
+    /**
+     * Search for the recipe ingredients with name ingredientSearch.
+     * @param recipe             recipe to search in for the ingredient
+     * @param ingredientSearch   ingredient to search for
+     * @param callback           callback to update the list of ingredients showing
+     */
+    void searchIngredients(Recipe recipe, String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 }

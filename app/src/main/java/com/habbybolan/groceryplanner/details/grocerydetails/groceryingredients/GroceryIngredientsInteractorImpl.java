@@ -1,11 +1,10 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.database.DatabaseAccess;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,8 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
     }
 
     @Override
-    public void fetchIngredients(Grocery grocery, ObservableArrayList<GroceryIngredient> ingredientsObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceryIngredients(grocery, ingredientsObserver);
+    public void fetchIngredients(Grocery grocery, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceryIngredients(grocery, callback);
     }
 
     @Override
@@ -52,5 +51,10 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
     @Override
     public void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient) {
         databaseAccess.updateGroceryIngredientChecked(grocery, groceryIngredient);
+    }
+
+    @Override
+    public void searchIngredients(Grocery grocery, String ingredientSearch, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.searchGroceryIngredients(grocery.getId(), ingredientSearch, callback);
     }
 }

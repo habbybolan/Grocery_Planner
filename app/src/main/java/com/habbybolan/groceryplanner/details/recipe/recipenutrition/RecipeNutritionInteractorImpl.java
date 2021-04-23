@@ -1,21 +1,11 @@
 package com.habbybolan.groceryplanner.details.recipe.recipenutrition;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 
-public class RecipeNutritionInteractorImpl implements RecipeNutritionInteractor {
-
-    private DatabaseAccess databaseAccess;
+public class RecipeNutritionInteractorImpl extends RecipeDetailsInteractorImpl implements RecipeNutritionInteractor {
+    
     public RecipeNutritionInteractorImpl(DatabaseAccess databaseAccess) {
-        this.databaseAccess = databaseAccess;
-    }
-    @Override
-    public void updateRecipe(Recipe recipe) {
-        databaseAccess.addRecipe(recipe);
-    }
-
-    @Override
-    public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe.getId());
+        super(databaseAccess);
     }
 }

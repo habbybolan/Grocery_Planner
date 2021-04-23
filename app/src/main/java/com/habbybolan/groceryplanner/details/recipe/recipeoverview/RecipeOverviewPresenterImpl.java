@@ -1,14 +1,14 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
 import androidx.databinding.Observable;
-import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
-import androidx.databinding.ObservableList;
 
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,44 +20,82 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     private RecipeOverviewView view;
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
-    private ObservableArrayList<RecipeCategory> loadedRecipeCategories = new ObservableArrayList<>();
+    private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
+
     private ObservableField<RecipeCategory> currRecipeCategory = new ObservableField<>();
 
     private boolean loadingGroceriesRecipeIn = false;
-    private ObservableArrayList<GroceryRecipe> loadedGroceriesHoldingRecipe = new ObservableArrayList<>();
+    private List<GroceryRecipe> loadedGroceriesHoldingRecipe = new ArrayList<>();
 
     private boolean loadingGroceriesRecipeNotIn = false;
-    private ObservableArrayList<Grocery> loadedGroceriesNotHoldingRecipe = new ObservableArrayList<>();
+    private List<Grocery> loadedGroceriesNotHoldingRecipe = new ArrayList<>();
 
     private boolean loadingIngredientsWithCheck = false;
-    private ObservableArrayList<IngredientWithGroceryCheck> loadedIngredientsWithCheck = new ObservableArrayList<>();
+    private List<IngredientWithGroceryCheck> loadedIngredientsWithCheck = new ArrayList<>();
+
+    private boolean loadingRecipeTags = false;
+    private List<RecipeTag> loadedRecipeTags = new ArrayList<>();
 
     private Grocery selectedGrocery;
+
+    private DbCallback<RecipeCategory> recipeCategoryDbCallback = new DbCallback<RecipeCategory>() {
+        @Override
+        public void onResponse(List<RecipeCategory> response) {
+            // set the loaded recipe categories as loaded in
+            loadedRecipeCategories.clear();
+            loadedRecipeCategories.addAll(response);
+            loadingRecipeCategories = false;
+        }
+    };
+
+    // callback for retrieving groceries holding current recipe
+    private DbCallback<GroceryRecipe> groceryRecipeDbCallback = new DbCallback<GroceryRecipe>() {
+        @Override
+        public void onResponse(List<GroceryRecipe> response) {
+            loadedGroceriesHoldingRecipe.clear();
+            loadedGroceriesHoldingRecipe.addAll(response);
+            loadingGroceriesRecipeIn = false;
+            displayGroceriesHoldingRecipe();
+        }
+    };
+
+    // callback for retrieving groceries not holding current recipe
+    private DbCallback<Grocery> groceryRecipeNotDbCallback = new DbCallback<Grocery>() {
+        @Override
+        public void onResponse(List<Grocery> response) {
+            loadedGroceriesNotHoldingRecipe.clear();
+            loadedGroceriesNotHoldingRecipe.addAll(response);
+            loadingGroceriesRecipeNotIn = false;
+        }
+    };
+
+    private DbCallback<IngredientWithGroceryCheck> ingredientWithGroceryCheckDbCallback = new DbCallback<IngredientWithGroceryCheck>() {
+        @Override
+        public void onResponse(List<IngredientWithGroceryCheck> response) {
+            loadedIngredientsWithCheck.clear();
+            loadedIngredientsWithCheck.addAll(response);
+            loadingIngredientsWithCheck = false;
+            displayIngredientsWithCheck();
+        }
+    };
+
+    private DbCallback<RecipeTag> recipeTagDbCallback = new DbCallback<RecipeTag>() {
+        @Override
+        public void onResponse(List<RecipeTag> response) {
+            loadedRecipeTags.clear();
+            loadedRecipeTags.addAll(response);
+            loadingRecipeTags = false;
+            displayRecipeTags();
+        }
+    };
 
     public RecipeOverviewPresenterImpl(RecipeOverviewInteractor recipeOverviewInteractor) {
         this.recipeOverviewInteractor = recipeOverviewInteractor;
         setRecipeCategoryCallback();
-        setGroceriesHoldingRecipeCallback();
-        setGroceriesNotHoldingRecipeCallback();
-        setIngredientsWithCheckCallback();
     }
 
-    private void setIngredientsWithCheckCallback() {
-        loadedIngredientsWithCheck.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<IngredientWithGroceryCheck>>() {
-            @Override
-            public void onChanged(ObservableList<IngredientWithGroceryCheck> sender) {}
-            @Override
-            public void onItemRangeChanged(ObservableList<IngredientWithGroceryCheck> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<IngredientWithGroceryCheck> sender, int positionStart, int itemCount) {
-                loadingIngredientsWithCheck = false;
-                displayIngredientsWithCheck();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<IngredientWithGroceryCheck> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<IngredientWithGroceryCheck> sender, int positionStart, int itemCount) {}
-        });
+    private void displayRecipeTags() {
+        view.displayRecipeTags(loadedRecipeTags);
     }
 
     private void displayIngredientsWithCheck() {
@@ -66,62 +104,8 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         view.displayRecipeIngredients(ingredients, ingredientNames, selectedGrocery);
     }
 
-    private void setGroceriesNotHoldingRecipeCallback() {
-        loadedGroceriesNotHoldingRecipe.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Grocery>>() {
-            @Override
-            public void onChanged(ObservableList<Grocery> sender) { }
-            @Override
-            public void onItemRangeChanged(ObservableList<Grocery> sender, int positionStart, int itemCount) { }
-            @Override
-            public void onItemRangeInserted(ObservableList<Grocery> sender, int positionStart, int itemCount) {
-                loadingGroceriesRecipeNotIn = false;
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<Grocery> sender, int fromPosition, int toPosition, int itemCount) { }
-            @Override
-            public void onItemRangeRemoved(ObservableList<Grocery> sender, int positionStart, int itemCount) { }
-        });
-    }
-
-    private void setGroceriesHoldingRecipeCallback() {
-        loadedGroceriesHoldingRecipe.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<GroceryRecipe>>() {
-            @Override
-            public void onChanged(ObservableList<GroceryRecipe> sender) {}
-            @Override
-            public void onItemRangeChanged(ObservableList<GroceryRecipe> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<GroceryRecipe> sender, int positionStart, int itemCount) {
-                loadingGroceriesRecipeIn = false;
-                displayGroceriesHoldingRecipe();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<GroceryRecipe> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<GroceryRecipe> sender, int positionStart, int itemCount) {
-                loadingGroceriesRecipeIn = false;
-                displayGroceriesHoldingRecipe();
-            }
-        });
-    }
-
     // set up callback for loading recipeCategories
     private void setRecipeCategoryCallback() {
-        loadedRecipeCategories.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<RecipeCategory>>() {
-            @Override
-            public void onChanged(ObservableList<RecipeCategory> sender) {}
-
-            @Override
-            public void onItemRangeChanged(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {
-                // set the loaded recipe categories as loaded in
-                loadingRecipeCategories = false;
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<RecipeCategory> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<RecipeCategory> sender, int positionStart, int itemCount) {}
-        });
 
         currRecipeCategory.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
@@ -159,7 +143,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             view.loadingStarted();
             loadingRecipeCategories = true;
             try {
-                recipeOverviewInteractor.loadAllRecipeCategories(loadedRecipeCategories);
+                recipeOverviewInteractor.loadAllRecipeCategories(recipeCategoryDbCallback);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 view.loadingFailed("failed retrieving data");
@@ -179,7 +163,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public ArrayList<RecipeCategory> getAllCategories() {
+    public List<RecipeCategory> getAllCategories() {
         return loadedRecipeCategories;
     }
 
@@ -237,7 +221,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         try {
             loadingGroceriesRecipeIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesHoldingRecipe(recipe, loadedGroceriesHoldingRecipe);
+            recipeOverviewInteractor.fetchGroceriesHoldingRecipe(recipe, groceryRecipeDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeIn = false;
@@ -249,7 +233,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         try {
             loadingGroceriesRecipeNotIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesNotHoldingRecipe(recipe, loadedGroceriesNotHoldingRecipe);
+            recipeOverviewInteractor.fetchGroceriesNotHoldingRecipe(recipe, groceryRecipeNotDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeNotIn = false;
@@ -258,7 +242,9 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
 
     @Override
     public void displayGroceriesNotHoldingRecipe() {
-        if (!loadingGroceriesRecipeNotIn) {
+        if (loadedGroceriesNotHoldingRecipe.isEmpty()) {
+            view.loadingFailed("Can't add recipe to any more groceries");
+        } else if (!loadingGroceriesRecipeNotIn) {
             view.displayGroceriesNotHoldingRecipe(loadedGroceriesNotHoldingRecipe);
         } else {
             view.loadingFailed("Loading not finished");
@@ -277,7 +263,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             loadingIngredientsWithCheck = true;
             view.loadingStarted();
             selectedGrocery = grocery;
-            recipeOverviewInteractor.fetchRecipeIngredients(recipe, grocery, isNotInGrocery, loadedIngredientsWithCheck);
+            recipeOverviewInteractor.fetchRecipeIngredients(recipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             loadingIngredientsWithCheck = false;
@@ -292,5 +278,41 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     @Override
     public void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery) {
         recipeOverviewInteractor.deleteRecipeFromGrocery(recipe, grocery);
+    }
+
+    @Override
+    public void createRecipeTagList(Recipe recipe) {
+        try {
+            loadingRecipeTags = true;
+            recipeOverviewInteractor.fetchTags(recipe, recipeTagDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            loadingRecipeTags = false;
+            view.loadingFailed("Failed to retrieve tags");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void addTag(Recipe recipe, String title) {
+        try {
+            recipeOverviewInteractor.addTag(recipe, title);
+        } finally {
+            createRecipeTagList(recipe);
+        }
+    }
+
+    @Override
+    public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
+        recipeOverviewInteractor.deleteRecipeTag(recipe, recipeTag);
+    }
+
+    @Override
+    public boolean isTagTitleValid(String title) {
+        return recipeOverviewInteractor.isTagTitleValid(title);
+    }
+
+    @Override
+    public String reformatTagTitle(String title) {
+        return recipeOverviewInteractor.reformatTagTitle(title);
     }
 }

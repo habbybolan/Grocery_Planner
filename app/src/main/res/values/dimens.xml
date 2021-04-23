@@ -53,4 +53,6 @@
     <dimen name="toolbar_header_txt_size">24sp</dimen>
     <dimen name="toolbar_icon_margin_end">15dp</dimen>
 
+    <dimen name="toolbar_icon_size">40dp</dimen>
+
 </resources>

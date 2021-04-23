@@ -1,9 +1,9 @@
 package com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist;
 
-import androidx.databinding.ObservableArrayList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +33,12 @@ public class IngredientListInteractorImpl implements IngredientListInteractor {
     }
 
     @Override
-    public void fetchIngredients(ObservableArrayList<Ingredient> ingredientObserver) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchIngredients(ingredientObserver);
+    public void fetchIngredients(DbCallback<Ingredient> callback, SortType sortType) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchIngredients(callback, sortType);
     }
 
     @Override
-    public void searchIngredients(String ingredientName, ObservableArrayList<Ingredient> ingredientObserver) throws ExecutionException, InterruptedException {
-        // todo:
+    public void searchIngredients(String ingredientName, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.searchIngredients(ingredientName, callback);
     }
 }

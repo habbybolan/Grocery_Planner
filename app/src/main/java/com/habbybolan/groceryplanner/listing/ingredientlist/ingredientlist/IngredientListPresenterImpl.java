@@ -1,11 +1,10 @@
 package com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist;
 
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -17,32 +16,24 @@ public class IngredientListPresenterImpl implements IngredientListPresenter {
     private ListViewInterface view;
 
     // ingredients loaded from the database
-    private ObservableArrayList<Ingredient> loadedIngredients = new ObservableArrayList<>();
+    private List<Ingredient> loadedIngredients = new ArrayList<>();
     // true if the ingredients are being retrieved from the database
     private boolean loadingIngredients = false;
+
+    private DbCallback<Ingredient> ingredientDbCallback = new DbCallback<Ingredient>() {
+        @Override
+        public void onResponse(List<Ingredient> response) {
+            loadedIngredients.clear();
+            loadedIngredients.addAll(response);
+            loadingIngredients = false;
+            view.showList(loadedIngredients);
+        }
+    };
+
 
     @Inject
     public IngredientListPresenterImpl(IngredientListInteractor interactor) {
         this.interactor = interactor;
-        setIngredientsCallback();
-    }
-
-    private void setIngredientsCallback() {
-        loadedIngredients.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Ingredient>>() {
-            @Override
-            public void onChanged(ObservableList<Ingredient> sender) {}
-            @Override
-            public void onItemRangeChanged(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<Ingredient> sender, int positionStart, int itemCount) {
-                loadingIngredients = false;
-                view.showList(loadedIngredients);
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<Ingredient> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
-        });
     }
 
     @Override
@@ -55,7 +46,7 @@ public class IngredientListPresenterImpl implements IngredientListPresenter {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            interactor.fetchIngredients(loadedIngredients);
+            interactor.fetchIngredients(ingredientDbCallback, view.getSortType());
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;
@@ -86,7 +77,7 @@ public class IngredientListPresenterImpl implements IngredientListPresenter {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            interactor.searchIngredients(ingredientName, loadedIngredients);
+            interactor.searchIngredients(ingredientName, ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;

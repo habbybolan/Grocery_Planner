@@ -1,13 +1,12 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients;
 
-import androidx.databinding.ObservableArrayList;
-import androidx.databinding.ObservableList;
-
+import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -21,32 +20,22 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     // true if the ingredients are being loaded
     private boolean loadingIngredients = false;
 
-    private ObservableArrayList<GroceryIngredient> loadedIngredients = new ObservableArrayList<>();
+    private List<GroceryIngredient> loadedIngredients = new ArrayList<>();
+
+    private DbCallback<GroceryIngredient> groceryIngredientDbCallback = new DbCallback<GroceryIngredient>() {
+        @Override
+        public void onResponse(List<GroceryIngredient> response) {
+            // set the loaded ingredients as loaded in
+            loadedIngredients.clear();
+            loadedIngredients.addAll(response);
+            loadingIngredients = false;
+            displayIngredients();
+        }
+    };
 
     @Inject
     public GroceryIngredientsPresenterImpl(GroceryIngredientsInteractor groceryIngredientsInteractor) {
         this.groceryIngredientsInteractor = groceryIngredientsInteractor;
-        setGroceryCallback();
-    }
-
-    // set up callback for loading ingredients
-    private void setGroceryCallback() {
-        loadedIngredients.addOnListChangedCallback(new ObservableList.OnListChangedCallback<ObservableList<Ingredient>>() {
-            @Override
-            public void onChanged(ObservableList<Ingredient> sender) {}
-            @Override
-            public void onItemRangeChanged(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
-            @Override
-            public void onItemRangeInserted(ObservableList<Ingredient> sender, int positionStart, int itemCount) {
-                // set the loaded ingredients as loaded in
-                loadingIngredients = false;
-                displayIngredients();
-            }
-            @Override
-            public void onItemRangeMoved(ObservableList<Ingredient> sender, int fromPosition, int toPosition, int itemCount) {}
-            @Override
-            public void onItemRangeRemoved(ObservableList<Ingredient> sender, int positionStart, int itemCount) {}
-        });
     }
 
     @Override
@@ -113,7 +102,7 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            groceryIngredientsInteractor.fetchIngredients(grocery, loadedIngredients);
+            groceryIngredientsInteractor.fetchIngredients(grocery, groceryIngredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;
@@ -128,5 +117,18 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     @Override
     public void updateGroceryIngredientSelected(Grocery grocery, GroceryIngredient groceryIngredient) {
         groceryIngredientsInteractor.updateGroceryIngredientSelected(grocery, groceryIngredient);
+    }
+
+    @Override
+    public void searchIngredients(Grocery grocery, String ingredientSearch) {
+        try {
+            loadingIngredients = true;
+            view.loadingStarted();
+            groceryIngredientsInteractor.searchIngredients(grocery, ingredientSearch, groceryIngredientDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to retrieve data");
+            loadingIngredients = false;
+        }
     }
 }
