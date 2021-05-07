@@ -4,8 +4,8 @@ import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryRecipe;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
@@ -14,8 +14,8 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -73,7 +73,7 @@ public interface DatabaseAccess {
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
-    void addRecipe(Recipe recipe, Date dateCreated);
+    void addRecipe(Recipe recipe, Timestamp dateCreated);
     void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
     List<Recipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<Recipe> recipes);

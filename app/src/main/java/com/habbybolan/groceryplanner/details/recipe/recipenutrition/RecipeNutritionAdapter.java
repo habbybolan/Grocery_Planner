@@ -84,7 +84,7 @@ public class RecipeNutritionAdapter extends RecyclerView.Adapter<RecipeNutrition
             if (nutrition.getAmount() != 0) binding.setNutritionAmount(String.valueOf(nutrition.getAmount()));
             else binding.setNutritionAmount("");
             binding.setNutritionTypeTag(nutrition.getName() + " Type");
-            if (nutrition.getMeasurement() != null) binding.setNutritionType(nutrition.getMeasurement());
+            if (nutrition.getMeasurementId() != null) binding.setNutritionType(nutrition.getMeasurement());
             else binding.setNutritionType("");
         }
     }

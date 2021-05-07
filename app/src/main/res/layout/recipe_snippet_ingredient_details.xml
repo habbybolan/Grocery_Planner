@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="ingredientName"
+            type="String" />
+        <variable
+            name="quantity"
+            type="Float" />
+        <variable
+            name="measurementType"
+            type="String" />
+        <variable
+            name="imageResource"
+            type="Integer" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:id="@+id/list_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/list_circle" />
+
+        <TextView
+            android:id="@+id/recipe_snippet_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/list_circle"
+            android:layout_marginStart="8dp"
+            android:textSize="15sp"
+            quantity="@{quantity}"
+            quantityType="@{measurementType}"
+            ingredientName="@{ingredientName}"/>
+
+    </RelativeLayout>
+</layout>

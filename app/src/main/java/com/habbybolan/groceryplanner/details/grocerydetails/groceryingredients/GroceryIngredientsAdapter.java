@@ -14,9 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.GroceryIngredientListDetailsBinding;
 import com.habbybolan.groceryplanner.listfragments.ListAdapter;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
-import com.habbybolan.groceryplanner.models.ingredientmodels.RecipeWithIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.RecipeWithIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -103,8 +104,8 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
                     binding.setIngredientPriceType(ingredient.getPriceType());
                 if (ingredient.hasQuantity())
                     binding.setIngredientQuantity(ingredient.getQuantity());
-                if (ingredient.hasQuantityType())
-                    binding.setIngredientQuantityType(ingredient.getQuantityType());
+                if (ingredient.hasQuantityMeasId())
+                    binding.setIngredientQuantityType(Nutrition.getMeasurement(ingredient.getQuantityMeasId()));
                 binding.setImageResource(ingredient.getFoodType().getImageResource());
             } else {
                 binding.iconFoodType.setVisibility(View.GONE);

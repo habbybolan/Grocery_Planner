@@ -193,10 +193,16 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
         return sortType;
     }
 
+    @Override
+    public void onCategoryListChanged() {
+        if (recipeCategoryListener != null) recipeCategoryListener.onCategoryListChange();
+    }
+
     public interface RecipeCategoryListener extends ItemListener<RecipeCategory> {
 
         void gotoGroceryList();
         void gotoRecipeListUnCategorized();
         void gotoRecipeCategories();
+        void onCategoryListChange();
     }
 }

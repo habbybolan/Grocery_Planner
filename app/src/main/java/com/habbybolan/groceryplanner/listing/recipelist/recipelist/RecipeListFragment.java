@@ -31,8 +31,8 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -45,15 +45,16 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
     private FragmentRecipeListBinding binding;
     private CustomToolbar customToolbar;
     private SortType sortType = new SortType();
+    private RecipeCategory recipeCategory;
 
     public RecipeListFragment() {}
 
-    /*@Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        recipeListListener = (RecipeListListener) context;
-        attachListener(getContext());
-    }*/
+    public RecipeListFragment newInstance(RecipeCategory recipeCategory) {
+        RecipeListFragment fragment = new RecipeListFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
+        return fragment;
+    }
 
     /**
      * Listeners implemented explicitly inside RecipeListActivity. Manually attach listener.
@@ -130,8 +131,8 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         // set up the view for view methods to be accessed from the presenter
         recipeListPresenter.setView(this);
         recipeListPresenter.fetchCategories();
-        attachCategoryToPresenter();
         if (savedInstanceState != null) {
+            recipeCategory = savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY);
             // pull saved recipe list from bundled save
             listItems = savedInstanceState.getParcelableArrayList(Recipe.RECIPE);
             adapter.notifyDataSetChanged();
@@ -145,7 +146,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
      * Initiate the Recycler View to display list of recipes and button clickers.
      */
     private void initLayout() {
-        attachCategoryToPresenter();
         adapter = new RecipeListAdapter(listItems, this);
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -155,14 +155,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         View view = binding.recipeListBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> onAddRecipeClicked());
-    }
-
-    /**
-     * Called when category has changed. Stores the category and loads the recipes inside that category.
-     */
-    public void resetList() {
-        attachCategoryToPresenter();
-        recipeListPresenter.createRecipeList();
     }
 
     /**
@@ -194,7 +186,15 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         Recipe.RecipeBuilder recipeBuilder = new Recipe.RecipeBuilder(recipeName);
         RecipeCategory recipeCategory = ((RecipeListActivity) getActivity()).getRecipeCategory();
         if (recipeCategory != null) recipeBuilder.setCategoryId(recipeCategory.getId());
-        recipeListPresenter.addRecipe(recipeBuilder.build(), new Date());
+        recipeListPresenter.addRecipe(recipeBuilder.build(), new Timestamp(System.currentTimeMillis()/1000));
+    }
+
+    /**
+     * Called from activity when the recipe category list changed.
+     * Reloads the list of loaded Recipe Categories.
+     */
+    public void onCategoryListChanged() {
+        recipeListPresenter.fetchCategories();
     }
 
     @Override
@@ -234,15 +234,19 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         return recipeListPresenter.getLoadedRecipeCategories();
     }
 
-    private void attachCategoryToPresenter() {
-        // todo: listener badly implemented
-        if (recipeListListener != null)
-            recipeListPresenter.attachCategory(recipeListListener.getRecipeCategory());
-    }
-
     @Override
     public SortType getSortType() {
         return sortType;
+    }
+
+    @Override
+    public RecipeCategory getRecipeCategory() {
+        return recipeCategory;
+    }
+
+    public void setList(RecipeCategory recipeCategory) {
+        this.recipeCategory = recipeCategory;
+        recipeListPresenter.createRecipeList();
     }
 
     public interface RecipeListListener extends ItemListener<Recipe> {
@@ -250,6 +254,5 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         void gotoGroceryList();
         void gotoRecipeListUnCategorized();
         void gotoRecipeCategories();
-        RecipeCategory getRecipeCategory();
     }
 }

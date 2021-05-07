@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:text="Name"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,7 +54,7 @@
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="wrap_content"
                     android:text="@{name}"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name_tag" />
 
@@ -62,7 +62,7 @@
                     android:id="@+id/recipe_overview_tag_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:text="Label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name" />
@@ -71,7 +71,7 @@
                     android:id="@+id/recipe_overview_tag"
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     android:maxLength="10"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_tag_tag" />
@@ -90,7 +90,7 @@
                     android:id="@+id/recipe_overview_rv_tags"
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_tag" />
 
@@ -98,7 +98,7 @@
                     android:id="@+id/recipe_overview_category_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:text="Category"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_rv_tags" />
@@ -108,7 +108,7 @@
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="40dp"
                     android:text="@{categoryName}"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category_tag"
                     android:textColor="?attr/editTextColor"
@@ -118,7 +118,7 @@
                     android:id="@+id/recipe_overview_serving_size_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:text="Serving Size"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category" />
@@ -127,7 +127,7 @@
                     android:id="@+id/recipe_overview_serving_size"
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="40dp"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:inputType="number"
                     android:text="@{servingSize}"
                     android:textColor="?attr/editTextColor"
@@ -138,7 +138,7 @@
                     android:id="@+id/recipe_overview_grocery_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:text="Groceries"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_serving_size" />
@@ -148,7 +148,7 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/recipe_overview_grocery_tag" />
 
@@ -156,7 +156,7 @@
                     android:id="@+id/btn_recipe_overview_add_to_grocery"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginStart="@dimen/edit_txt_margin_start"
+                    android:layout_marginStart="@dimen/margin_start_info"
                     android:background="@android:color/transparent"
                     android:src="@android:drawable/ic_input_add"
                     app:layout_constraintStart_toStartOf="parent"

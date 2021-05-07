@@ -5,6 +5,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.transition.Fade;
+import androidx.transition.TransitionManager;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryDetailBinding;
@@ -12,7 +14,7 @@ import com.habbybolan.groceryplanner.details.grocerydetails.groceryingredients.G
 import com.habbybolan.groceryplanner.details.grocerydetails.ingredientlocation.IngredientLocationFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
@@ -78,6 +80,7 @@ public class GroceryIngredientsActivity extends AppCompatActivity
      * @param ingredient    The Ingredient to edit
      */
     private void startEditFragment(GroceryIngredient ingredient) {
+        GroceryIngredientVisibility(View.GONE);
         IngredientEditFragment ingredientEditFragment;
         if (ingredient != null) {
             ingredientEditFragment = IngredientEditFragment.getInstance(grocery, ingredient);
@@ -97,8 +100,9 @@ public class GroceryIngredientsActivity extends AppCompatActivity
                 .add(R.id.fragment_ingredient_edit, ingredientEditFragment, EDIT_TAG)
                 .commit();
 
+        Fade fade = new Fade();
+        TransitionManager.beginDelayedTransition(binding.containerEditIngredient, fade);
         binding.containerEditIngredient.setVisibility(View.VISIBLE);
-        GroceryIngredientVisibility(View.GONE);
     }
 
     /**

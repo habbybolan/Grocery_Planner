@@ -42,6 +42,8 @@
     <string name="INGREDIENT_LIST_TAG">ingredient_list_tag</string>
     <string name="INGREDIENT_EDIT_TAG">ingredient_edit_tag</string>
     <string name="INGREDIENT_LOCATION_TAG">ingredient_location_tag</string>
+    <string name="RECIPE_SIDE_SCROLL_NEW_TAG">recipe_side_scroll_new_tag</string>
+    <string name="RECIPE_SIDE_SCROLL_TRENDING_TAG">recipe_side_scroll_trending_tag</string>
 
     <string name="teaspoon">Teaspoon</string>
     <string name="dessertspoon">Dessertspoon</string>

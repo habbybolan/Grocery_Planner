@@ -7,38 +7,41 @@ import androidx.annotation.NonNull;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Recipe extends IngredientHolder {
 
-    private boolean isFavorite;
+    protected boolean isFavorite;
 
-    private String description;
-    private int prepTime;
-    private int cookTime;
-    private int servingSize;
+    protected String description;
+    protected int prepTime = -1;
+    protected int cookTime = -1;
+    protected int servingSize = -1;
 
-    private Nutrition calories;
-    private Nutrition fat;
-    private Nutrition saturatedFat;
-    private Nutrition carbohydrates;
-    private Nutrition fiber;
-    private Nutrition sugar;
-    private Nutrition protein;
-    private Long categoryId;
-    private String instructions;
-    private Date dateCreated;
+    protected Nutrition calories;
+    protected Nutrition fat;
+    protected Nutrition saturatedFat;
+    protected Nutrition carbohydrates;
+    protected Nutrition fiber;
+    protected Nutrition sugar;
+    protected Nutrition protein;
+    protected Long categoryId;
+    protected String instructions;
+    protected Timestamp dateCreated;
+
+    protected int likes;
 
     public final static String RECIPE = "recipe";
 
-    private Recipe() {}
+    protected Recipe() {}
 
     public Recipe(RecipeEntity recipeEntity) {
         name = recipeEntity.getName();
         id = recipeEntity.getRecipeId();
         isFavorite = recipeEntity.getIsFavorite();
+        description = recipeEntity.getDescription();
 
         prepTime = recipeEntity.getPrepTime();
         cookTime = recipeEntity.getCookTime();
@@ -48,7 +51,7 @@ public class Recipe extends IngredientHolder {
         saturatedFat = new Nutrition(Nutrition.SATURATED_FAT, recipeEntity.getSaturatedFat(), recipeEntity.getSaturatedFatType());
         carbohydrates = new Nutrition(Nutrition.CARBOHYDRATES, recipeEntity.getCarbohydrates(), recipeEntity.getCarbohydratesType());
         fiber = new Nutrition(Nutrition.FIBRE, recipeEntity.getFiber(), recipeEntity.getFiberType());
-        sugar = new Nutrition(Nutrition.SUGARS, recipeEntity.getSugar(), recipeEntity.getSugarType());
+        sugar = new Nutrition(Nutrition.SUGAR, recipeEntity.getSugar(), recipeEntity.getSugarType());
         protein = new Nutrition(Nutrition.PROTEIN, recipeEntity.getProtein(), recipeEntity.getProteinType());
         categoryId = recipeEntity.getRecipeCategoryId();
         instructions = recipeEntity.getInstructions();
@@ -76,7 +79,8 @@ public class Recipe extends IngredientHolder {
         long idTemp = in.readLong();
         categoryId = idTemp != 0 ? idTemp : null;
         instructions = in.readString();
-        dateCreated = (Date) in.readSerializable();
+        dateCreated = (Timestamp) in.readSerializable();
+        likes = in.readInt();
     }
 
     @Override
@@ -101,6 +105,7 @@ public class Recipe extends IngredientHolder {
         else dest.writeLong(0);
         dest.writeString(instructions);
         dest.writeSerializable(dateCreated);
+        dest.writeInt(likes);
     }
 
     public List<Nutrition> getNutritionList() {
@@ -137,7 +142,7 @@ public class Recipe extends IngredientHolder {
                 case Nutrition.FIBRE:
                     fiber = nutrition;
                     break;
-                case Nutrition.SUGARS:
+                case Nutrition.SUGAR:
                     sugar = nutrition;
                     break;
                 case Nutrition.PROTEIN:
@@ -147,91 +152,134 @@ public class Recipe extends IngredientHolder {
         }
     }
 
+    public interface RecipeBuilderInterface<T> {
+        T setId(long id);
+        T setDescription(String description);
+        T setPrepTime(int prepTime);
+        T setCookTime(int cookTime);
+        T setServingSize(int servingSize);
+        T setCalories(Nutrition calories);
+        T setFat(Nutrition fat);
+        T setSaturatedFat(Nutrition saturatedFat);
+        T setCarbohydrates(Nutrition carbohydrates);
+        T setFiber(Nutrition fiber);
+        T setSugar(Nutrition sugar);
+        T setProtein(Nutrition protein);
+        T setCategoryId(Long categoryId);
+        T setInstructions(String instructions);
+        T setDateCreated(Timestamp dateCreated);
+        T setLikes(int likes);
+    }
+
     /**
      * Builder for Ingredient.
      */
-    public static class RecipeBuilder {
+    public static class RecipeBuilder implements RecipeBuilderInterface<RecipeBuilder> {
 
-        private String name;
-        private long id;
-        private boolean isFavorite;
+        protected String name;
+        protected long id;
 
-        private String description;
-        private int prepTime;
-        private int cookTime;
-        private int servingSize;
+        protected String description;
+        protected int prepTime;
+        protected int cookTime;
+        protected int servingSize;
 
-        private Nutrition calories;
-        private Nutrition fat;
-        private Nutrition saturatedFat;
-        private Nutrition carbohydrates;
-        private Nutrition fiber;
-        private Nutrition sugar;
-        private Nutrition protein;
+        protected Nutrition calories;
+        protected Nutrition fat;
+        protected Nutrition saturatedFat;
+        protected Nutrition carbohydrates;
+        protected Nutrition fiber;
+        protected Nutrition sugar;
+        protected Nutrition protein;
 
-        private Date dateCreated;
+        protected Timestamp dateCreated;
 
-        private Long categoryId;
-        private String instructions;
+        protected Long categoryId;
+        protected String instructions;
+
+        protected int likes;
 
         public RecipeBuilder(@NonNull String name) {
             this.name = name;
         }
-
+        @Override
+        public RecipeBuilder setId(long id) {
+            this.id = id;
+            return this;
+        }
+        @Override
         public RecipeBuilder setDescription(String description) {
             this.description = description;
             return this;
         }
+        @Override
         public RecipeBuilder setPrepTime(int prepTime) {
            this.prepTime = prepTime;
             return this;
         }
+        @Override
         public RecipeBuilder setCookTime(int cookTime) {
             this.cookTime = cookTime;
             return this;
         }
+        @Override
         public RecipeBuilder setServingSize(int servingSize) {
             this.servingSize = servingSize;
             return this;
         }
+        @Override
         public RecipeBuilder setCalories(Nutrition calories) {
             this.calories = calories;
             return this;
         }
+        @Override
         public RecipeBuilder setFat(Nutrition fat) {
             this.fat = fat;
             return this;
         }
+        @Override
         public RecipeBuilder setSaturatedFat(Nutrition saturatedFat) {
             this.saturatedFat = saturatedFat;
             return this;
         }
+        @Override
         public RecipeBuilder setCarbohydrates(Nutrition carbohydrates) {
             this.carbohydrates = carbohydrates;
             return this;
         }
+        @Override
         public RecipeBuilder setFiber(Nutrition fiber) {
             this.fiber = fiber;
             return this;
         }
+        @Override
         public RecipeBuilder setSugar(Nutrition sugar) {
             this.sugar = sugar;
             return this;
         }
+        @Override
         public RecipeBuilder setProtein(Nutrition protein) {
             this.protein = protein;
             return this;
         }
+        @Override
         public RecipeBuilder setCategoryId(Long categoryId) {
             this.categoryId = categoryId;
             return this;
         }
+        @Override
         public RecipeBuilder setInstructions(String instructions) {
             this.instructions = instructions;
             return this;
         }
-        public RecipeBuilder setDateCreated(Date dateCreated) {
+        @Override
+        public RecipeBuilder setDateCreated(Timestamp dateCreated) {
             this.dateCreated = dateCreated;
+            return this;
+        }
+        @Override
+        public RecipeBuilder setLikes(int likes) {
+            this.likes = likes;
             return this;
         }
 
@@ -240,7 +288,6 @@ public class Recipe extends IngredientHolder {
             Recipe recipe = new Recipe();
             recipe.name = name;
             recipe.id = id;
-            recipe.isFavorite = isFavorite;
 
             recipe.description = description;
             recipe.prepTime = prepTime;
@@ -258,7 +305,7 @@ public class Recipe extends IngredientHolder {
             recipe.instructions = instructions;
 
             recipe.dateCreated = dateCreated;
-
+            recipe.likes = likes;
             return recipe;
         }
     }
@@ -327,8 +374,11 @@ public class Recipe extends IngredientHolder {
     public boolean getIsFavorite() {
         return isFavorite;
     }
-    public Date getDateCreated() {
+    public Timestamp getDateCreated() {
         return dateCreated;
+    }
+    public int getLikes() {
+        return likes;
     }
 
     public void setDescription(String description) {
@@ -373,7 +423,7 @@ public class Recipe extends IngredientHolder {
     public void setIsFavorite(boolean isFavorite) {
         this.isFavorite = isFavorite;
     }
-    public void setDateCreated(Date dateCreated) {
+    public void setDateCreated(Timestamp dateCreated) {
         this.dateCreated = dateCreated;
     }
 }

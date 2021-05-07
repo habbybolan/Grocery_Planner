@@ -15,7 +15,7 @@ public class IngredientEntity {
     private long ingredientId;
     @NonNull
     private String ingredientName;
-    private int price;
+    private float price;
     @ColumnInfo(name="price_per")
     private int pricePer;
     @ColumnInfo(name="price_type")
@@ -23,7 +23,7 @@ public class IngredientEntity {
     @ColumnInfo(name = "food_type")
     private String foodType;
 
-    public IngredientEntity(long ingredientId, @NonNull String ingredientName, int price, int pricePer, String priceType, String foodType) {
+    public IngredientEntity(long ingredientId, @NonNull String ingredientName, float price, int pricePer, String priceType, String foodType) {
         this.ingredientId = ingredientId;
         this.ingredientName = ingredientName;
         this.price = price;
@@ -44,7 +44,7 @@ public class IngredientEntity {
     public String getIngredientName() {
         return ingredientName;
     }
-    public int getPrice() {
+    public float getPrice() {
         return price;
     }
     public int getPricePer() {

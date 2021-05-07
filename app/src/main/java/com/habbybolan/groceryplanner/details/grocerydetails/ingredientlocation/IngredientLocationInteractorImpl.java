@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.ingredientlocation;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 public class IngredientLocationInteractorImpl implements IngredientLocationInteractor {

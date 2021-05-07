@@ -4,8 +4,8 @@ import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -13,7 +13,6 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
 
     private RecipeListView view;
     private RecipeListInteractor recipeListInteractor;
-    private RecipeCategory recipeCategory;
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
@@ -64,7 +63,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     }
 
     @Override
-    public void addRecipe(Recipe recipe, Date dateCreated) {
+    public void addRecipe(Recipe recipe, Timestamp dateCreated) {
         recipeListInteractor.addRecipe(recipe, dateCreated);
         createRecipeList();
     }
@@ -95,7 +94,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             view.loadingStarted();
             loadingRecipes = true;
-            recipeListInteractor.fetchRecipes(recipeCategory, view.getSortType(), recipeDbCallback);
+            recipeListInteractor.fetchRecipes(view.getRecipeCategory(), view.getSortType(), recipeDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -110,11 +109,6 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     private void displayRecipes() {
         if (isViewAttached() && isRecipesReady())
             view.showList(loadedRecipes);
-    }
-
-    @Override
-    public void attachCategory(RecipeCategory recipeCategory) {
-        this.recipeCategory = recipeCategory;
     }
 
     @Override
@@ -146,7 +140,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             loadingRecipes = true;
             view.loadingStarted();
-            recipeListInteractor.searchRecipes(recipeCategory, recipeSearch, recipeDbCallback);
+            recipeListInteractor.searchRecipes(view.getRecipeCategory(), recipeSearch, recipeDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingRecipes = false;

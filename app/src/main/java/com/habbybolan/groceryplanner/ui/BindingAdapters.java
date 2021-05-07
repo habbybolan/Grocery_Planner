@@ -36,7 +36,7 @@ public class BindingAdapters {
      * @param priceType The type of pricePer
      */
     @BindingAdapter(value = {"price", "pricePer", "priceType"}, requireAll = false)
-    public static void ingredientPriceDisplay(TextView textView, Integer price, Integer pricePer, String priceType) {
+    public static void ingredientPriceDisplay(TextView textView, Float price, Integer pricePer, String priceType) {
         StringBuilder builder = new StringBuilder();
         if (price != null) {
             builder.append(" At ");
@@ -61,7 +61,7 @@ public class BindingAdapters {
      * @param quantityType  The type of the quantity of the Ingredient
      */
     @BindingAdapter(value = {"quantity", "quantityType"}, requireAll = false)
-    public static void ingredientQuantityDisplay(TextView textView, Integer quantity, String quantityType) {
+    public static void ingredientQuantityDisplay(TextView textView, Float quantity, String quantityType) {
         StringBuilder builder = new StringBuilder();
         if (quantity != null) {
             builder.append(quantity);
@@ -71,6 +71,18 @@ public class BindingAdapters {
         }
         String text = builder.toString();
         textView.setText(text);
+    }
+
+    /**
+     * Adapter for displaying quantity information of an ingredient with the ingredient name
+     * @param textView      The view to display the quantity String
+     * @param quantity      The quantity of the Ingredient
+     * @param quantityType  The type of the quantity of the Ingredient
+     */
+    @BindingAdapter(value = {"quantity", "quantityType", "ingredientName"})
+    public static void ingredientQuantityDisplayWithName(TextView textView, Float quantity, String quantityType, String ingredientName) {
+        String s = quantity + " " + quantityType + " " + ingredientName;
+        textView.setText(s);
     }
 
     /**

@@ -6,8 +6,8 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -42,7 +42,7 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
-    public void addRecipe(Recipe recipe, Date dateCreated) {
+    public void addRecipe(Recipe recipe, Timestamp dateCreated) {
         databaseAccess.addRecipe(recipe, dateCreated);
     }
 

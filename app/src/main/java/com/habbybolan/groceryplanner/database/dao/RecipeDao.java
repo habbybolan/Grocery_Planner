@@ -104,9 +104,9 @@ public interface RecipeDao {
     List<RecipeIngredientBridge> getRecipeIngredient(long recipeId);
 
     @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
-            "   quantity, quantity_type, food_type " +
+            "   quantity, quantityMeasId, food_type " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_type " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
@@ -115,9 +115,9 @@ public interface RecipeDao {
     List<RecipeIngredientsTuple> getRecipeIngredients(long recipeId);
 
     @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
-            "   quantity, quantity_type, food_type " +
+            "   quantity, quantityMeasId, food_type " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_type " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
@@ -126,9 +126,9 @@ public interface RecipeDao {
     List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalAsc(long recipeId);
 
     @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
-            "   quantity, quantity_type, food_type " +
+            "   quantity, quantityMeasId, food_type " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_type " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
@@ -137,12 +137,12 @@ public interface RecipeDao {
     List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalDesc(long recipeId);
 
     @Query("SELECT groceryId, recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
-            "quantity, quantity_type, food_type " +
+            "quantity, quantityMeasId, food_type " +
             "   FROM " +
             "   (SELECT ingredientId, ingredientName, price, price_per, price_type, " +
-            "       quantity, quantity_type, food_type " +
+            "       quantity, quantityMeasId, food_type " +
             "       FROM " +
-            "           (SELECT ingredientId, quantity, quantity_type " +
+            "           (SELECT ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "               FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "           JOIN " +
             "           (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
@@ -241,9 +241,9 @@ public interface RecipeDao {
     List<RecipeEntity> searchRecipesInCategory(long categoryId, String recipeSearch);
 
     @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
-            "   quantity, quantity_type, food_type " +
+            "   quantity, quantityMeasId, food_type " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_type " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +

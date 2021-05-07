@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.grocerydetails.ingredientlocation;
 
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 import javax.inject.Inject;

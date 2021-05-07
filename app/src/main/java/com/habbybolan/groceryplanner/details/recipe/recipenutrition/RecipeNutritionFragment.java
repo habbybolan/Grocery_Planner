@@ -3,7 +3,6 @@ package com.habbybolan.groceryplanner.details.recipe.recipenutrition;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
@@ -20,6 +19,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeNutritionBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
@@ -67,11 +67,10 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
             @Override
             public void onRecipeTypeSelected(Nutrition nutrition, int position, TextView v) {
                 PopupMenu popupMenu = new PopupMenu(getContext(), v);
-                MenuInflater inflater = popupMenu.getMenuInflater();
-                inflater.inflate(R.menu.menu_measurement_types, popupMenu.getMenu());
+                MeasurementType.createMeasurementTypeMenu(popupMenu);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     String type = item.getTitle().toString();
-                    nutrition.setMeasurement(type);
+                    nutrition.setMeasurementId(Nutrition.getMeasurementId(type));
                     v.setText(type);
                     return true;
                 });

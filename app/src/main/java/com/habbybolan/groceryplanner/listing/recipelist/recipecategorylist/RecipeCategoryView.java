@@ -5,4 +5,5 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 public interface RecipeCategoryView extends ListViewInterface<RecipeCategory>  {
 
+    void onCategoryListChanged();
 }

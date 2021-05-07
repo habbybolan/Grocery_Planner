@@ -22,7 +22,9 @@ public class RoomModule {
     private LocalDatabase localDatabase;
 
     public RoomModule(Application application) {
-        localDatabase = Room.databaseBuilder(application, LocalDatabase.class, "grocery_database").build();
+        localDatabase = Room.databaseBuilder(application, LocalDatabase.class, "grocery_database")
+                .addCallback(LocalDatabase.createCallback())
+                .build();
     }
 
     @Singleton

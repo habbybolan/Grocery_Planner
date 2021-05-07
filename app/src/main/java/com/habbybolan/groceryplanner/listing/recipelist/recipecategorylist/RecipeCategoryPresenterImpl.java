@@ -97,5 +97,6 @@ public class RecipeCategoryPresenterImpl implements RecipeCategoryPresenter {
     private void displayRecipeCategories() {
         if (isViewAttached() && isCategoriesReady())
             view.showList(loadedRecipeCategories);
+        view.onCategoryListChanged();
     }
 }

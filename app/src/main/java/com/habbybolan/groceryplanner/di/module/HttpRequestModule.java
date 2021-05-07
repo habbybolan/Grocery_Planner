@@ -9,6 +9,8 @@ import com.habbybolan.groceryplanner.http.requests.HttpGrocery;
 import com.habbybolan.groceryplanner.http.requests.HttpGroceryImpl;
 import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUp;
 import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUpImpl;
+import com.habbybolan.groceryplanner.http.requests.HttpRecipe;
+import com.habbybolan.groceryplanner.http.requests.HttpRecipeImpl;
 
 import javax.inject.Singleton;
 
@@ -33,6 +35,12 @@ public class HttpRequestModule {
     @Provides
     HttpGrocery provideHttpGrocery(Context context) {
         return new HttpGroceryImpl(context);
+    }
+
+    @Singleton
+    @Provides
+    HttpRecipe provideHttpRecipe(Context context) {
+        return new HttpRecipeImpl(context);
     }
 
     @Singleton

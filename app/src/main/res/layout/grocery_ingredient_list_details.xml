@@ -7,7 +7,7 @@
             type="String" />
         <variable
             name="ingredientPrice"
-            type="Integer" />
+            type="Float" />
         <variable
             name="ingredientPricePer"
             type="Integer" />
@@ -16,7 +16,7 @@
             type="String" />
         <variable
             name="ingredientQuantity"
-            type="Integer" />
+            type="Float" />
         <variable
             name="ingredientQuantityType"
             type="String" />

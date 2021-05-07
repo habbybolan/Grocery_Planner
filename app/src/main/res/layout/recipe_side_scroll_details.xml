@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="recipeName"
+            type="String" />
+        <variable
+            name="likes"
+            type="String" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/recipe_side_scroll_container"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="3dp"
+        android:background="@drawable/recipe_tag_shape">
+
+        <TextView
+            android:id="@+id/txt_recipe_name"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:maxWidth="65dp"
+            android:textSize="12sp"
+            android:text="@{recipeName}"/>
+
+        <TextView
+            android:id="@+id/txt_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_alignParentEnd="true"
+            android:text="@{likes}"/>
+
+    </RelativeLayout>
+
+</layout>

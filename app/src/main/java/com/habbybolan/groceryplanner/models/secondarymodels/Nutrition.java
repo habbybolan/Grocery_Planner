@@ -1,37 +1,72 @@
 package com.habbybolan.groceryplanner.models.secondarymodels;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * Models Nutritional values of Recipes and Ingredients.
  */
-public class Nutrition implements Parcelable {
+public class Nutrition extends MeasurementType {
 
     public static final String CALORIES = "Calories";
     public static final String FAT = "fat";
     public static final String SATURATED_FAT = "Saturated Fat";
     public static final String CARBOHYDRATES = "Carbohydrates";
     public static final String FIBRE = "fibre";
-    public static final String SUGARS = "Sugars";
+    public static final String SUGAR = "Sugar";
     public static final String PROTEIN = "Protein";
+
+    public static final long CALORIES_ID = 1;
+    public static final long FAT_ID = 2;
+    public static final long SATURATED_FAT_ID = 3;
+    public static final long CARBOHYDRATES_ID = 4;
+    public static final long FIBER_ID = 5;
+    public static final long SUGAR_ID = 6;
+    public static final long PROTEIN_ID = 7;
 
     private String name;
     // Amount of the nutrition value
     private int amount;
-    // The type of measurement the amount is in (eg. g, mg, etc...)
-    private String measurement;
 
-    public Nutrition(String name, int amount, String measurement) {
+    public Nutrition(String name, int amount, @measurementIds Long measurementId) {
+        super(measurementId);
         this.name = name;
         this.amount = amount;
-        this.measurement = measurement;
+    }
+
+    public Nutrition(long nutritionId, int amount, @measurementIds Long measurementId) {
+        super(measurementId);
+        this.amount = amount;
+        switch ((int) nutritionId) {
+            case (int) CALORIES_ID:
+                name = CALORIES;
+                break;
+            case (int) FAT_ID:
+                name = FAT;
+                break;
+            case (int) SATURATED_FAT_ID:
+                name = SATURATED_FAT;
+                break;
+            case (int) CARBOHYDRATES_ID:
+                name = CARBOHYDRATES;
+                break;
+            case (int) FIBER_ID:
+                name = FIBRE;
+                break;
+            case (int) SUGAR_ID:
+                name = SUGAR;
+                break;
+            case (int) PROTEIN_ID:
+                name = PROTEIN;
+                break;
+            default:
+                throw new IllegalArgumentException(nutritionId + " is not a valid nutrition id");
+        }
     }
 
     protected Nutrition(Parcel in) {
+        super(in);
         name = in.readString();
         amount = in.readInt();
-        measurement = in.readString();
     }
 
     public static final Creator<Nutrition> CREATOR = new Creator<Nutrition>() {
@@ -48,14 +83,14 @@ public class Nutrition implements Parcelable {
 
     @Override
     public Nutrition clone() {
-        return new Nutrition(name, amount, measurement);
+        return new Nutrition(name, amount, measurementId);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeString(name);
         dest.writeInt(amount);
-        dest.writeString(measurement);
     }
 
     public String getName() {
@@ -66,15 +101,8 @@ public class Nutrition implements Parcelable {
         return amount;
     }
 
-    public String getMeasurement() {
-        return measurement;
-    }
-
     public void setAmount(int amount) {
         this.amount = amount;
-    }
-    public void setMeasurement(String measurement) {
-        this.measurement = measurement;
     }
 
     @Override

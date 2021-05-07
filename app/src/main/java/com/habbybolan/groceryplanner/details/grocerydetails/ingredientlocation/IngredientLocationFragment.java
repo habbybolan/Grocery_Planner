@@ -14,7 +14,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentIngredientLocationBindi
 import com.habbybolan.groceryplanner.databinding.IngredientLocationDetailsBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
-import com.habbybolan.groceryplanner.models.ingredientmodels.GroceryIngredient;
+import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 import javax.inject.Inject;

@@ -5,8 +5,8 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -15,7 +15,7 @@ public interface RecipeListInteractor {
     void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
     void deleteRecipe(Recipe recipe);
     void deleteRecipes(List<Recipe> recipes);
-    void addRecipe(Recipe recipe, Date dateCreated);
+    void addRecipe(Recipe recipe, Timestamp dateCreated);
     void addRecipesToCategory(ArrayList<Recipe>recipes, RecipeCategory category);
     void removeRecipesFromCategory(ArrayList<Recipe> recipes);
 

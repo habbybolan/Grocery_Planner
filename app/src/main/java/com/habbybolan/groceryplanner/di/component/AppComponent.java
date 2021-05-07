@@ -12,6 +12,7 @@ import com.habbybolan.groceryplanner.di.module.LoginModule;
 import com.habbybolan.groceryplanner.di.module.RecipeCategoryModule;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
+import com.habbybolan.groceryplanner.di.module.RecipeSideScrollModule;
 import com.habbybolan.groceryplanner.di.module.RoomModule;
 import com.habbybolan.groceryplanner.di.module.SignUpModule;
 
@@ -36,4 +37,6 @@ public interface AppComponent {
     LoginSubComponent loginSubComponent(SignUpModule signUpModule, LoginModule loginModule);
 
     IngredientListSubComponent ingredientListSubComponent(IngredientListModule ingredientListModule);
+
+    RecipeSideScrollSubComponent recipeSideScrollSubComponent(RecipeSideScrollModule recipeSideScrollModule);
 }

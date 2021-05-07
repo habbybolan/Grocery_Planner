@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.models.ingredientmodels;
+package com.habbybolan.groceryplanner.models.combinedmodels;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 

@@ -9,15 +9,15 @@ public class GroceryIngredientsTuple {
     @ColumnInfo(name = "ingredientName")
     public String ingredientName;
     @ColumnInfo(name = "price")
-    public int price;
+    public float price;
     @ColumnInfo(name = "price_per")
     public int pricePer;
     @ColumnInfo(name = "price_type")
     public String priceType;
     @ColumnInfo(name = "quantity")
-    public int quantity;
-    @ColumnInfo(name = "quantity_type")
-    public String quantityType;
+    public float quantity;
+    @ColumnInfo(name = "quantityMeasId")
+    public Long quantityMeasId;
     @ColumnInfo(name = "food_type")
     public String foodType;
     @ColumnInfo(name = "is_checked")

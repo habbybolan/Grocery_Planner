@@ -25,6 +25,8 @@ import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
+import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
 
 import javax.inject.Inject;
@@ -172,7 +174,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (hasIngredientHolder()) {
             if (ingredient.getQuantity() != 0)
                 binding.setQuantity(String.valueOf(ingredient.getQuantity()));
-            binding.setQuantityType(ingredient.getQuantityType());
+            if (ingredient.hasQuantityMeasId())
+                binding.setQuantityType(Nutrition.getMeasurement(ingredient.getQuantityMeasId()));
         } else {
             hideIngredientHolderViews();
         }
@@ -242,8 +245,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void setMeasurementType(TextView v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
-        MenuInflater inflater = popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.menu_measurement_types, popupMenu.getMenu());
+        MeasurementType.createMeasurementTypeMenu(popupMenu);
         popupMenu.setOnMenuItemClickListener(item -> {
             String type = item.getTitle().toString();
             v.setText(type);
@@ -290,14 +292,15 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String quantity, String quantityType, String foodType) {
         ingredient.setName(name);
-        if (!price.equals("")) ingredient.setPrice(Integer.parseInt(price));
+        if (!price.equals("")) ingredient.setPrice(Float.parseFloat(price));
         else ingredient.setPrice(0);
         if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
         else ingredient.setPricePer(0);
         ingredient.setPriceType(priceType);
-        if (!quantity.equals("")) ingredient.setQuantity(Integer.parseInt(quantity));
+        if (!quantity.equals("")) ingredient.setQuantity(Float.parseFloat(quantity));
         else ingredient.setQuantity(0);
-        ingredient.setQuantityType(quantityType);
+        if (!quantityType.equals(""))
+            ingredient.setQuantityMeasId(Nutrition.getMeasurementId(quantityType));
         ingredient.setFoodType(foodType);
     }
 
@@ -310,7 +313,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String foodType) {
         ingredient.setName(name);
-        if (!price.equals("")) ingredient.setPrice(Integer.parseInt(price));
+        if (!price.equals("")) ingredient.setPrice(Float.parseFloat(price));
         else ingredient.setPrice(0);
         if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
         else ingredient.setPricePer(0);

@@ -1,6 +1,7 @@
-package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
+package com.habbybolan.groceryplanner.ui.recipetagsadapter;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,11 +17,24 @@ import java.util.List;
 public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.ViewHolder> {
 
     private List<RecipeTag> recipeTags;
-    private RecipeOverviewView view;
+    private RecipeTagsView view;
 
-    public RecipeTagAdapter(List<RecipeTag> recipeTags, RecipeOverviewView view) {
+    /**
+     * Constructor for a modifiable recipe tag list.
+     * @param recipeTags    Recipe tags to display.
+     * @param view          Callback to allow interacting with the recipe tags
+     */
+    public RecipeTagAdapter(List<RecipeTag> recipeTags, RecipeTagsView view) {
         this.recipeTags = recipeTags;
         this.view = view;
+    }
+
+    /**
+     * Constructor for a read-only recipe tag list.
+     * @param recipeTags    Recipe tags to display.
+     */
+    public RecipeTagAdapter(List<RecipeTag> recipeTags) {
+        this.recipeTags = recipeTags;
     }
 
     @NonNull
@@ -51,14 +65,18 @@ public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.View
             this.binding = binding;
 
             binding.btnDeleteTag.setOnClickListener(l -> {
-                view.deleteRecipeTag(recipeTags.get(getAdapterPosition()));
-                recipeTags.remove(getAdapterPosition());
-                notifyItemRemoved(getAdapterPosition());
+                if (view != null) {
+                    view.deleteRecipeTag(recipeTags.get(getAdapterPosition()));
+                    recipeTags.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
+                }
             });
         }
 
         public void bind(RecipeTag recipeTag) {
             binding.setTitle(recipeTag.getTitle());
+            // if no view, then the tags are read-only
+            if (view == null) binding.btnDeleteTag.setVisibility(View.GONE);
         }
     }
 }

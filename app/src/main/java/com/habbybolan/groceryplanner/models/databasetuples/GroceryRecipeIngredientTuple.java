@@ -13,7 +13,7 @@ public class GroceryRecipeIngredientTuple {
     @ColumnInfo(name = "ingredientName")
     public String ingredientName;
     @ColumnInfo(name = "price")
-    public int price;
+    public float price;
     @ColumnInfo(name = "price_per")
     public int pricePer;
     @ColumnInfo(name = "price_type")
@@ -23,13 +23,13 @@ public class GroceryRecipeIngredientTuple {
     @ColumnInfo(name = "food_type")
     public String foodType;
     @ColumnInfo(name = "recipeQuantity")
-    public int recipeQuantity;
-    @ColumnInfo(name = "recipeQuantityType")
-    public String recipeQuantityType;
+    public float recipeQuantity;
+    @ColumnInfo(name = "recipeQuantityMeasId")
+    public Long recipeQuantityMeasId;
     @ColumnInfo(name = "groceryQuantity")
-    public int groceryQuantity;
-    @ColumnInfo(name = "groceryQuantityType")
-    public String groceryQuantityType;
+    public float groceryQuantity;
+    @ColumnInfo(name = "groceryQuantityMeasId")
+    public Long groceryQuantityMeasId;
     @ColumnInfo(name = "recipeName")
     public String recipeName;
     @ColumnInfo(name = "amount")

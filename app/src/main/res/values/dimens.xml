@@ -27,7 +27,7 @@
 
     <dimen name="txt_size_small">10sp</dimen>
 
-    <dimen name="edit_txt_margin_start">10dp</dimen>
+    <dimen name="margin_start_info">10dp</dimen>
     <dimen name="edit_txt_width">350dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 

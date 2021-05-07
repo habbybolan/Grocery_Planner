@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainPage.MainActivity"
@@ -11,74 +11,128 @@
 
         <include
             layout="@layout/toolbar"
-            android:id="@+id/toolbar_main_page">
+            android:id="@+id/toolbar_main_page"/>
 
-        </include>
-
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/default_button_height"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="80dp"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar_main_page">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/container_offline_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/default_button_height"
+                    android:layout_marginTop="15dp">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/btn_grocery">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_recipe"
+                            style="@style/DefaultButton"
+                            android:layout_width="@dimen/default_button_width"
+                            android:layout_height="@dimen/default_button_height"
+                            android:layout_gravity="center"
+                            android:onClick="onRecipeClick"
+                            android:text="Recipe" />
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_grocery"
+                        style="@style/DefaultButton"
+                        android:layout_width="@dimen/default_button_width"
+                        android:layout_height="@dimen/default_button_height"
+                        android:layout_centerInParent="true"
+                        android:onClick="onGroceryClick"
+                        android:text="Grocery" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@+id/btn_grocery">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btn_ingredient"
+                            style="@style/DefaultButton"
+                            android:layout_width="@dimen/default_button_width"
+                            android:layout_height="@dimen/default_button_height"
+                            android:layout_gravity="center"
+                            android:onClick="onIngredientClick"
+                            android:text="Ingredient" />
+
+                    </FrameLayout>
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/new_recipes_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/container_offline_buttons"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:layout_marginTop="10dp"
+                    android:text="New"/>
+
+                <FrameLayout
+                    android:id="@+id/container_new_recipe_side_scroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/new_recipes_tag"
+                    tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                <TextView
+                    android:id="@+id/trending_recipes_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/container_new_recipe_side_scroll"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:layout_marginTop="10dp"
+                    android:text="Trending"/>
+
+                <FrameLayout
+                    android:id="@+id/container_trending_recipe_side_scroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/trending_recipes_tag"
+                    tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                <TextView
+                    android:id="@+id/saved_recipes_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/container_trending_recipe_side_scroll"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:layout_marginTop="10dp"
+                    android:text="Saved"/>
+
+                <FrameLayout
+                    android:id="@+id/container_saved_recipe_side_scroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/saved_recipes_tag"
+                    tools:layout="@layout/fragment_recipe_side_scroll" />
+
+
+
+            </RelativeLayout>
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:id="@+id/fragment_recipe_snippet_container"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/btn_grocery">
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_recipe"
-                    android:layout_width="@dimen/default_button_width"
-                    android:layout_height="@dimen/default_button_height"
-                    android:onClick="onRecipeClick"
-                    android:layout_gravity="center"
-                    style="@style/DefaultButton"
-                    android:text="Recipe" />
+        </FrameLayout>
 
-            </FrameLayout>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_grocery"
-                android:layout_width="@dimen/default_button_width"
-                android:layout_height="@dimen/default_button_height"
-                android:onClick="onGroceryClick"
-                style="@style/DefaultButton"
-                android:text="Grocery"
-                android:layout_centerInParent="true"/>
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/btn_grocery">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_ingredient"
-                    android:layout_width="@dimen/default_button_width"
-                    android:layout_height="@dimen/default_button_height"
-                    android:layout_gravity="center"
-                    android:onClick="onIngredientClick"
-                    style="@style/DefaultButton"
-                    android:text="Ingredient" />
-
-            </FrameLayout>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/btn_http_request"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="Button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.922"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
 </layout>

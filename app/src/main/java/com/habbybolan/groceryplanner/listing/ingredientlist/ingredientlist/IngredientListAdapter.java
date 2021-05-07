@@ -12,6 +12,7 @@ import com.habbybolan.groceryplanner.databinding.IngredientListDetailsBinding;
 import com.habbybolan.groceryplanner.listfragments.ListAdapter;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class IngredientListAdapter extends ListAdapter<IngredientListAdapter.Vie
             if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
             if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
-            if (ingredient.hasQuantityType()) binding.setIngredientQuantityType(ingredient.getQuantityType());
+            if (ingredient.hasQuantityMeasId()) binding.setIngredientQuantityType(MeasurementType.getMeasurement(ingredient.getQuantityMeasId()));
             binding.setImageResource(ingredient.getFoodType().getImageResource());
             displayCheckBox(binding.ingredientCheckBox);
         }

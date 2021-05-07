@@ -1,29 +1,29 @@
-package com.habbybolan.groceryplanner.models.ingredientmodels;
+package com.habbybolan.groceryplanner.models.combinedmodels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class RecipeWithIngredient implements Parcelable {
 
-    private int ingredientQuantity;
-    private String ingredientQuantityType;
+    private float ingredientQuantity;
+    private Long ingredientQuantityMeasId;
     private long recipeId;
     private String recipeName;
     private int recipeAmount;
     private String foodType;
 
-    public RecipeWithIngredient(long recipeId, String recipeName, int recipeAmount, int ingredientQuantity,
-                                String ingredientQuantityType) {
+    public RecipeWithIngredient(long recipeId, String recipeName, int recipeAmount, float ingredientQuantity,
+                                Long ingredientQuantityMeasId) {
         this.recipeId = recipeId;
         this.recipeName = recipeName;
         this.recipeAmount = recipeAmount;
         this.ingredientQuantity = ingredientQuantity;
-        this.ingredientQuantityType = ingredientQuantityType;
+        this.ingredientQuantityMeasId = ingredientQuantityMeasId;
     }
 
     protected RecipeWithIngredient(Parcel in) {
-        ingredientQuantity = in.readInt();
-        ingredientQuantityType = in.readString();
+        ingredientQuantity = in.readFloat();
+        ingredientQuantityMeasId = in.readLong();
         recipeId = in.readLong();
         recipeName = in.readString();
         recipeAmount = in.readInt();
@@ -32,8 +32,8 @@ public class RecipeWithIngredient implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(ingredientQuantity);
-        dest.writeString(ingredientQuantityType);
+        dest.writeFloat(ingredientQuantity);
+        dest.writeLong(ingredientQuantityMeasId);
         dest.writeLong(recipeId);
         dest.writeString(recipeName);
         dest.writeInt(recipeAmount);
@@ -57,11 +57,11 @@ public class RecipeWithIngredient implements Parcelable {
         }
     };
 
-    public int getIngredientQuantity() {
+    public float getIngredientQuantity() {
         return ingredientQuantity;
     }
-    public String getIngredientQuantityType() {
-        return ingredientQuantityType;
+    public Long getIngredientQuantityMeasId() {
+        return ingredientQuantityMeasId;
     }
     public long getRecipeId() {
         return recipeId;
