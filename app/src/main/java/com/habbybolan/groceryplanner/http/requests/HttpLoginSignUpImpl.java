@@ -30,19 +30,28 @@ public class HttpLoginSignUpImpl extends HttpRequestImpl implements HttpLoginSig
             JSONArray response = new JSONArray();
 
             HttpURLConnection connection = getHttpConnection("/api/signup", "POST", "");
+            JSONObject jsonObject;
+            if (connection.getResponseCode() != 200) {
+                jsonObject = new JSONObject();
+                jsonObject.put("code", connection.getResponseCode());
+            } else {
 
-            // input parameters
-            Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("username", username)
-                    .appendQueryParameter("password", password)
-                    .appendQueryParameter("displayName", "testDisplay")
-                    .appendQueryParameter("email", email)
-                    .appendQueryParameter("externalType", "")
-                    .appendQueryParameter("externalId", "");
-            String query = builder.build().getEncodedQuery();
+                // input parameters
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("username", username)
+                        .appendQueryParameter("password", password)
+                        .appendQueryParameter("displayName", "testDisplay")
+                        .appendQueryParameter("email", email)
+                        .appendQueryParameter("externalType", "")
+                        .appendQueryParameter("externalId", "");
+                String query = builder.build().getEncodedQuery();
 
-            response = connectAndReadResponsePOST(query, connection);
-            return response.getJSONObject(0);
+                response = connectAndReadResponsePOST(query, connection);
+                jsonObject = response.getJSONObject(0);
+                jsonObject.put("code", connection.getResponseCode());
+                return jsonObject;
+            }
+            return jsonObject;
         };
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -55,14 +64,23 @@ public class HttpLoginSignUpImpl extends HttpRequestImpl implements HttpLoginSig
         Callable<JSONObject> task = () -> {
             JSONArray response = new JSONArray();
             HttpURLConnection connection = getHttpConnection("/api/login", "POST", "");
-            // input parameters
-            Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("username", username)
-                    .appendQueryParameter("password", password);
-            String query = builder.build().getEncodedQuery();
+            JSONObject jsonObject;
+            if (connection.getResponseCode() != 200) {
+                jsonObject = new JSONObject();
+                jsonObject.put("code", connection.getResponseCode());
+            } else {
+                // input parameters
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("username", username)
+                        .appendQueryParameter("password", password);
+                String query = builder.build().getEncodedQuery();
 
-            response = connectAndReadResponsePOST(query, connection);
-            return response.getJSONObject(0);
+                response = connectAndReadResponsePOST(query, connection);
+                jsonObject = response.getJSONObject(0);
+                jsonObject.put("code", connection.getResponseCode());
+                return jsonObject;
+            }
+            return jsonObject;
         };
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();

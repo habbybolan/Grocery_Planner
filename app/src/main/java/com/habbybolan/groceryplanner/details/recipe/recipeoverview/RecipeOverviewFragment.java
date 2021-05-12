@@ -16,7 +16,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
@@ -27,8 +26,8 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
-import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
-import com.habbybolan.groceryplanner.ui.recipetagsadapter.RecipeTagAdapter;
+import com.habbybolan.groceryplanner.ui.CustomToolbar;
+import com.habbybolan.groceryplanner.ui.recipetagsadapter.RecipeTagRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     private RecipeGroceriesAdapter groceriesAdapter;
     private List<GroceryRecipe> groceriesHoldingRecipe = new ArrayList<>();
 
-    private RecipeTagAdapter tagAdapter;
+    private RecipeTagRecyclerView tagRV;
     private List<RecipeTag> recipeTags = new ArrayList<>();
     public RecipeOverviewFragment() {}
 
@@ -92,11 +91,8 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         rvGroceries.setAdapter(groceriesAdapter);
         recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
 
-        RecyclerView rvTags = binding.recipeOverviewRvTags;
-        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getContext());
-        rvTags.setLayoutManager(flexboxLayoutManager);
-        tagAdapter = new RecipeTagAdapter(recipeTags, this);
-        rvTags.setAdapter(tagAdapter);
+
+        tagRV = new RecipeTagRecyclerView(recipeTags, this, binding.recipeOverviewRvTags, getContext());
         recipeOverviewPresenter.createRecipeTagList(recipeOverviewListener.getRecipe());
     }
 
@@ -356,7 +352,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void displayRecipeTags(List<RecipeTag> recipeTags) {
         this.recipeTags.clear();
         this.recipeTags.addAll(recipeTags);
-        tagAdapter.notifyDataSetChanged();
+        tagRV.updateDisplay();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.toolbar;
+package com.habbybolan.groceryplanner.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -28,14 +29,14 @@ import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 public class CustomToolbar {
 
     private static final int MAIN_MENU_GROUP_ID = 1;
+
     private static final int SEARCH_ICON_ID = 0;
     private static final int DELETE_ICON_ID = 1;
     private static final int SORT_ICON_ID = 2;
     private static final int SAVE_ICON_ID = 3;
     private static final int CANCEL_ICON_ID = 4;
 
-
-    private CustomToolbarBinding toolbar;
+    private CustomToolbarBinding toolbarBinding;
 
     private SearchCallback searchCallback;
     private boolean hasSearchIcon;
@@ -53,9 +54,6 @@ public class CustomToolbar {
 
     private CancelCallback cancelCallback;
     private boolean hasCancelIcon;
-
-    private HamburgerCallback hamburgerCallback;
-    private boolean hasHamburgerMenu;
 
     private int numIcons;
     private String toolbarTitle;
@@ -91,9 +89,6 @@ public class CustomToolbar {
         private CancelCallback cancelCallback;
         private boolean hasCancelIcon = false;
 
-        private HamburgerCallback hamburgerCallback;
-        private boolean hasHamburgerMenu = false;
-
         private TitleSelectCallback titleSelectCallback;
         private String[] titleMethods;
         private boolean canSelectTitle = false;
@@ -124,12 +119,6 @@ public class CustomToolbar {
             hasSortIcon = true;
             this.sortCallback = sortCallback;
             this.sortMethods = SortType.getSortListType(sortListType);
-            return this;
-        }
-
-        public CustomToolbarBuilder addHamburgerIcon(HamburgerCallback hamburgerCallback) {
-            hasHamburgerMenu = true;
-            this.hamburgerCallback = hamburgerCallback;
             return this;
         }
 
@@ -177,10 +166,6 @@ public class CustomToolbar {
             customToolbar.hasCancelIcon = hasCancelIcon;
             if (hasCancelIcon) addIconToToolbar(CANCEL_ICON_ID, "Cancel", android.R.drawable.ic_menu_close_clear_cancel);
 
-            customToolbar.hamburgerCallback = hamburgerCallback;
-            customToolbar.hasHamburgerMenu = hasHamburgerMenu;
-            toolbarBinding.toolbarBurger.setVisibility(hasHamburgerMenu ? View.VISIBLE : View.GONE);
-
             customToolbar.canSelectTitle = canSelectTitle;
             customToolbar.titleSelectCallback = titleSelectCallback;
             customToolbar.titleMethods = titleMethods;
@@ -190,7 +175,7 @@ public class CustomToolbar {
             customToolbar.toolbarTitle = toolbarTitle;
             toolbarBinding.setTitle(toolbarTitle);
 
-            customToolbar.toolbar = toolbarBinding;
+            customToolbar.toolbarBinding = toolbarBinding;
             setMenuClickers();
 
             return customToolbar;
@@ -224,10 +209,6 @@ public class CustomToolbar {
                 menu.findItem(CANCEL_ICON_ID).setOnMenuItemClickListener(l -> {
                     cancelCallback.cancelClicked();
                     return true;
-                });
-            if (hasHamburgerMenu)
-                toolbarBinding.toolbarBurger.setOnClickListener(l -> {
-                    hamburgerCallback.hamburgerClicked();
                 });
 
             if (canSelectTitle)
@@ -369,9 +350,6 @@ public class CustomToolbar {
     public interface SortCallback {
         void sortMethodClicked(String sortMethod);
     }
-    public interface HamburgerCallback {
-        void hamburgerClicked();
-    }
     public interface SaveCallback {
         void saveClicked();
     }
@@ -380,5 +358,9 @@ public class CustomToolbar {
     }
     public interface TitleSelectCallback {
         void selectTitle(int pos);
+    }
+
+    public Toolbar getToolbar() {
+        return toolbarBinding.customToolbar;
     }
 }

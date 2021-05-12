@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/popup_alphabetically_grocery_list"
-        android:title="Alphabetically" />
-    <item android:id="@+id/popup_test_grocery_list"
-        android:title="test" />
-</menu>

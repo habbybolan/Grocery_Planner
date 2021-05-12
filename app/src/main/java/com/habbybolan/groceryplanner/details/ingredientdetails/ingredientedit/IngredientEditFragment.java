@@ -27,7 +27,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
-import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
+import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 

@@ -38,7 +38,7 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
             public WebServiceResponse<OnlineRecipe> call() throws Exception {
 
                 try {
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/date?offset=" + offset + "&numRows=" + numRows + "&sortType=ASC", "GET", "");
+                    HttpURLConnection connection = getHttpConnection("/api/recipes/date?offset=" + offset + "&size=" + numRows + "&sortType=ASC", "GET", "");
                     if (connection.getResponseCode() == 200) {
                         JSONArray jsonArray = connectAndReadResponseGET(connection);
                         List<OnlineRecipe> recipes = createRecipes(jsonArray);
@@ -67,7 +67,7 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
             public WebServiceResponse<OnlineRecipe> call() throws Exception {
 
                 try {
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/trending?offset=" + offset + "&numRows=" + numRows, "GET", "");
+                    HttpURLConnection connection = getHttpConnection("/api/recipes/trending?offset=" + offset + "&size=" + numRows, "GET", "");
                     if (connection.getResponseCode() == 200) {
                         JSONArray jsonArray = connectAndReadResponseGET(connection);
                         List<OnlineRecipe> recipes = createRecipes(jsonArray);
@@ -95,7 +95,7 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
             public WebServiceResponse<OnlineRecipe> call() throws Exception {
 
                 try {// todo: get user id from savedPreferences of logged in user
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/users/1?offset=" + offset + "&numRows=" + numRows, "GET", "");
+                    HttpURLConnection connection = getHttpConnection("/api/recipes/users/1?offset=" + offset + "&size=" + numRows, "GET", "");
                     if (connection.getResponseCode() == 200) {
                         JSONArray jsonArray = connectAndReadResponseGET(connection);
                         List<OnlineRecipe> recipes = createRecipes(jsonArray);

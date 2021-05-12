@@ -1,138 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainPage.MainActivity">
 
-    <RelativeLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/main_activity_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainPage.MainActivity"
         android:background="?attr/colorOnBackground">
 
-        <include
-            layout="@layout/toolbar"
-            android:id="@+id/toolbar_main_page"/>
-
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar_main_page">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
+            <FrameLayout
+                android:id="@+id/toolbar_main_page"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/toolbar_main_page">
 
                 <RelativeLayout
-                    android:id="@+id/container_offline_buttons"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/default_button_height"
-                    android:layout_marginTop="15dp">
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/new_recipes_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="New"/>
 
                     <FrameLayout
+                        android:id="@+id/container_new_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/new_recipes_tag"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                    <TextView
+                        android:id="@+id/trending_recipes_tag"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentStart="true"
-                        android:layout_toStartOf="@+id/btn_grocery">
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_recipe"
-                            style="@style/DefaultButton"
-                            android:layout_width="@dimen/default_button_width"
-                            android:layout_height="@dimen/default_button_height"
-                            android:layout_gravity="center"
-                            android:onClick="onRecipeClick"
-                            android:text="Recipe" />
-
-                    </FrameLayout>
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btn_grocery"
-                        style="@style/DefaultButton"
-                        android:layout_width="@dimen/default_button_width"
-                        android:layout_height="@dimen/default_button_height"
-                        android:layout_centerInParent="true"
-                        android:onClick="onGroceryClick"
-                        android:text="Grocery" />
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/container_new_recipe_side_scroll"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Trending"/>
 
                     <FrameLayout
+                        android:id="@+id/container_trending_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/trending_recipes_tag"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                    <TextView
+                        android:id="@+id/saved_recipes_tag"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@+id/btn_grocery">
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/container_trending_recipe_side_scroll"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Saved"/>
 
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/btn_ingredient"
-                            style="@style/DefaultButton"
-                            android:layout_width="@dimen/default_button_width"
-                            android:layout_height="@dimen/default_button_height"
-                            android:layout_gravity="center"
-                            android:onClick="onIngredientClick"
-                            android:text="Ingredient" />
-
-                    </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/container_saved_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/saved_recipes_tag"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
 
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/new_recipes_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/container_offline_buttons"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    android:layout_marginTop="10dp"
-                    android:text="New"/>
-
                 <FrameLayout
-                    android:id="@+id/container_new_recipe_side_scroll"
+                    android:id="@+id/fragment_recipe_snippet_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/new_recipes_tag"
-                    tools:layout="@layout/fragment_recipe_side_scroll" />
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
-                <TextView
-                    android:id="@+id/trending_recipes_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/container_new_recipe_side_scroll"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    android:layout_marginTop="10dp"
-                    android:text="Trending"/>
+            </FrameLayout>
 
-                <FrameLayout
-                    android:id="@+id/container_trending_recipe_side_scroll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/trending_recipes_tag"
-                    tools:layout="@layout/fragment_recipe_side_scroll" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/saved_recipes_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/container_trending_recipe_side_scroll"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    android:layout_marginTop="10dp"
-                    android:text="Saved"/>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/main_activity_navigation"
+            app:menu="@menu/menu_navigation"
+            app:headerLayout="@layout/navigation_header"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
 
-                <FrameLayout
-                    android:id="@+id/container_saved_recipe_side_scroll"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/saved_recipes_tag"
-                    tools:layout="@layout/fragment_recipe_side_scroll" />
-
-
-
-            </RelativeLayout>
-
-            <FrameLayout
-                android:id="@+id/fragment_recipe_snippet_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-        </FrameLayout>
-
-    </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </layout>

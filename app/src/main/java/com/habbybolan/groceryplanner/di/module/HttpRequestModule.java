@@ -5,8 +5,6 @@ import android.content.Context;
 
 import com.habbybolan.groceryplanner.http.HttpRequest;
 import com.habbybolan.groceryplanner.http.HttpRequestImpl;
-import com.habbybolan.groceryplanner.http.requests.HttpGrocery;
-import com.habbybolan.groceryplanner.http.requests.HttpGroceryImpl;
 import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUp;
 import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUpImpl;
 import com.habbybolan.groceryplanner.http.requests.HttpRecipe;
@@ -29,12 +27,6 @@ public class HttpRequestModule {
     @Provides
     HttpRequest provideHttpRequest(Context context) {
         return new HttpRequestImpl(context);
-    }
-
-    @Singleton
-    @Provides
-    HttpGrocery provideHttpGrocery(Context context) {
-        return new HttpGroceryImpl(context);
     }
 
     @Singleton

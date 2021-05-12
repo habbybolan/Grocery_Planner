@@ -12,12 +12,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeSnippetBinding;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.ui.recipetagsadapter.RecipeTagAdapter;
+import com.habbybolan.groceryplanner.ui.recipetagsadapter.RecipeTagRecyclerView;
 
 import javax.inject.Inject;
 
@@ -25,7 +24,7 @@ public class RecipeSnippetFragment extends Fragment implements RecipeSnippetView
 
     private FragmentRecipeSnippetBinding binding;
     private OnlineRecipe recipe;
-    private RecipeTagAdapter tagAdapter;
+    private RecipeTagRecyclerView rvTags;
     private RecipeSnippetIngredientsAdapter ingredientAdapter;
 
     @Inject
@@ -65,7 +64,7 @@ public class RecipeSnippetFragment extends Fragment implements RecipeSnippetView
     private void setViews() {
         binding.setRecipeName(recipe.getName());
         binding.setLikes(String.valueOf(recipe.getLikes()));
-        binding.setInstructions("step 1: hshshshshhshsh \n step 2: afdafafgdsag");//recipe.getInstructions());
+        binding.setInstructions(recipe.getInstructions());//recipe.getInstructions());
     }
 
     @Override
@@ -74,14 +73,8 @@ public class RecipeSnippetFragment extends Fragment implements RecipeSnippetView
     }
 
     private void setRV() {
-
-        // set tags into FlexBox
-        RecyclerView rvTags = binding.recipeSnippetRvTags;
-        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getContext());
-        rvTags.setLayoutManager(flexboxLayoutManager);
-        // create a read-only tag view
-        tagAdapter = new RecipeTagAdapter(recipe.getRecipeTags());
-        rvTags.setAdapter(tagAdapter);
+        // set the tags recycler view
+        rvTags = new RecipeTagRecyclerView(recipe.getRecipeTags(), binding.recipeSnippetRvTags, getContext());
 
         // set ingredients into RecyclerView
         RecyclerView rvIngredients  = binding.recipeSnippetRvIngredients;

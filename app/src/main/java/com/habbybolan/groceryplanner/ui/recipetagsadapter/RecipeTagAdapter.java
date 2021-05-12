@@ -24,7 +24,7 @@ public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.View
      * @param recipeTags    Recipe tags to display.
      * @param view          Callback to allow interacting with the recipe tags
      */
-    public RecipeTagAdapter(List<RecipeTag> recipeTags, RecipeTagsView view) {
+    protected RecipeTagAdapter(List<RecipeTag> recipeTags, RecipeTagsView view) {
         this.recipeTags = recipeTags;
         this.view = view;
     }
@@ -33,7 +33,7 @@ public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.View
      * Constructor for a read-only recipe tag list.
      * @param recipeTags    Recipe tags to display.
      */
-    public RecipeTagAdapter(List<RecipeTag> recipeTags) {
+    protected RecipeTagAdapter(List<RecipeTag> recipeTags) {
         this.recipeTags = recipeTags;
     }
 

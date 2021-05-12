@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/group_settings">
+
+        <item
+            android:id="@+id/preferences"
+            android:icon="@android:drawable/presence_video_away"
+            android:title="My Account" />
+        <item
+            android:id="@+id/change_account"
+            android:icon="@android:drawable/presence_video_busy"
+            android:title="Change Account" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_online">
+
+        <item
+            android:id="@+id/discover_recipes"
+            android:icon="@android:drawable/presence_video_away"
+            android:title="Discover Recipes" />
+        <item
+            android:id="@+id/my_online_recipes"
+            android:icon="@android:drawable/presence_video_busy"
+            android:title="My Online Recipes" />
+        <item
+            android:id="@+id/saved_recipes"
+            android:icon="@android:drawable/presence_video_busy"
+            android:title="Saved Recipes" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_offline">
+        <item
+            android:id="@+id/my_offline_recipes"
+            android:icon="@android:drawable/presence_video_online"
+            android:title="My Offline Recipes" />
+        <item
+            android:id="@+id/my_grocery_list"
+            android:icon="@android:drawable/presence_video_online"
+            android:title="My Grocery List" />
+        <item
+            android:id="@+id/my_ingredients"
+            android:icon="@android:drawable/presence_video_online"
+            android:title="My Ingredients" />
+
+    </group>
+
+</menu>

@@ -25,7 +25,7 @@ import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
-import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
+import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 

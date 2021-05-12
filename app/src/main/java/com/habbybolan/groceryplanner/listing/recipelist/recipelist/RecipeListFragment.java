@@ -29,7 +29,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
-import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
+import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -104,12 +104,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
                         recipeListPresenter.createRecipeList();
                     }
                 }, SortType.SORT_LIST_ALL)
-                .addHamburgerIcon(new CustomToolbar.HamburgerCallback() {
-                    @Override
-                    public void hamburgerClicked() {
-                        Toast.makeText(getContext(), "Hamburger", Toast.LENGTH_SHORT).show();
-                    }
-                })
                 .allowClickTitle(new CustomToolbar.TitleSelectCallback() {
                     @Override
                     public void selectTitle(int pos) {
@@ -251,7 +245,6 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
 
     public interface RecipeListListener extends ItemListener<Recipe> {
 
-        void gotoGroceryList();
         void gotoRecipeListUnCategorized();
         void gotoRecipeCategories();
     }

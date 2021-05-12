@@ -16,7 +16,7 @@ import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeD
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
-import com.habbybolan.groceryplanner.toolbar.CustomToolbar;
+import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 

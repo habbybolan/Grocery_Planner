@@ -153,11 +153,6 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         }
 
         @Override
-        public void gotoGroceryList() {
-            gotoGroceryListFunc();
-        }
-
-        @Override
         public void gotoRecipeListUnCategorized() {
             RecipeListActivity.this.gotoRecipeListUnCategorized();
         }
