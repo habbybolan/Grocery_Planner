@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_overview"
+        android:enabled="true"
+        android:orderInCategory="1"
+        android:icon="@android:drawable/btn_dialog"
+        android:title="@string/overview_title" />
+    <item
+        android:id="@+id/item_ingredients"
+        android:enabled="true"
+        android:orderInCategory="2"
+        android:icon="@android:drawable/btn_dialog"
+        android:title="@string/ingredients_title" />
+    <item
+        android:id="@+id/item_instructions"
+        android:enabled="true"
+        android:orderInCategory="3"
+        android:icon="@android:drawable/btn_dialog"
+        android:title="@string/instructions_title" />
+    <item
+        android:id="@+id/item_nutrition"
+        android:enabled="true"
+        android:orderInCategory="4"
+        android:icon="@android:drawable/btn_dialog"
+        android:title="@string/nutrition_title" />
+
+</menu>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".online.discover.DiscoverActivity"
+        android:background="?attr/colorOnBackground"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/discover_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <fragment
+            android:id="@+id/fragment_discover_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="@string/RECIPE_FILTER_TAG"
+            android:name="com.habbybolan.groceryplanner.online.discover.searchfilter.RecipeFilterFragment" />
+
+        <fragment
+            android:id="@+id/fragment_searched_recipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="@string/ONLINE_RECIPE_LIST_TAG"
+            android:name="com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListFragment" />
+
+    </LinearLayout>
+
+</layout>

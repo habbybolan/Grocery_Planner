@@ -20,9 +20,12 @@ import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.online.discover.DiscoverActivity;
+import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivity;
+import com.habbybolan.groceryplanner.online.myrecipes.MyRecipesActivity;
+import com.habbybolan.groceryplanner.online.savedrecipes.SavedRecipesActivity;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
-
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements RecipeSideScrollFragment.RecipeSideScrollListener {
 
@@ -48,8 +51,8 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
      * Sets up the toolbar with Up button.
      */
     private void setToolBar() {
-        toolbar = new CustomToolbar.CustomToolbarBuilder("Account", getLayoutInflater(), binding.toolbarMainPage, getApplicationContext())
-                .build();
+        toolbar = new CustomToolbar.CustomToolbarBuilder("Account", getLayoutInflater(), binding.toolbarMainPage, getApplicationContext()).build();
+        setSupportActionBar(toolbar.getToolbar());
     }
 
     private void setNavigationDrawer() {
@@ -58,10 +61,6 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
 
         dl.addDrawerListener(t);
         t.syncState();
-
-        setSupportActionBar(toolbar.getToolbar());
-        //Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_menu);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         nv = (NavigationView) binding.mainActivityNavigation;
         nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -73,10 +72,13 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
                 } else if (id == R.id.change_account) {
                     return true;
                 } else if (id == R.id.discover_recipes) {
+                    gotoDiscoverRecipe();
                     return true;
                 } else if (id == R.id.my_online_recipes) {
+                    gotoMyRecipesList();
                     return true;
                 } else if (id == R.id.saved_recipes) {
+                    gotoSavedRecipesList();
                     return true;
                 } else if (id == R.id.my_offline_recipes) {
                     gotoOfflineRecipeList();
@@ -112,10 +114,24 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container_trending_recipe_side_scroll, trendingScroll)
                 .commit();
-        RecipeSideScrollFragment savedScroll = RecipeSideScrollFragment.newInstance(RecipeListType.SAVED_TYPE);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_saved_recipe_side_scroll, savedScroll)
-                .commit();
+    }
+
+    /** Sends the activity to MyRecipesActivity */
+    private void gotoMyRecipesList() {
+        Intent intent = new Intent(this, MyRecipesActivity.class);
+        startActivity(intent);
+    }
+
+    /** Sends the activity to SavedRecipesActivity */
+    private void gotoSavedRecipesList() {
+        Intent intent = new Intent(this, SavedRecipesActivity.class);
+        startActivity(intent);
+    }
+
+    /** Sends the activity to the DiscoverActivity. */
+    private void gotoDiscoverRecipe() {
+        Intent intent = new Intent(this, DiscoverActivity.class);
+        startActivity(intent);
     }
 
     /** Sends the activity to GroceryListActivity. */
@@ -138,21 +154,9 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
 
     @Override
     public void onRecipeSelected(OnlineRecipe recipe) {
-        RecipeSnippetFragment fragment;
-        if (getSupportFragmentManager().findFragmentByTag(FRAGMENT_SNIPPET_TAG) != null) {
-            // if the fragment is already showing, retrieve the fragment
-            fragment = (RecipeSnippetFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_SNIPPET_TAG);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(fragment)
-                    .commit();
-        }
-        fragment = RecipeSnippetFragment.newInstance(recipe);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.anim_slide_enter_from_right, R.anim.anim_slide_exit_to_left)
-                .add(R.id.fragment_recipe_snippet_container, fragment, FRAGMENT_SNIPPET_TAG)
-                .commit();
+        Intent intent = new Intent(this, OnlineRecipeDetailActivity.class);
+        intent.putExtra(Recipe.RECIPE, recipe);
+        startActivity(intent);
     }
 
     @Override

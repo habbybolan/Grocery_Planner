@@ -105,13 +105,6 @@ public interface RecipeOverviewPresenter {
     void createRecipeTagList(Recipe recipe);
 
     /**
-     * Adds a tag to the recipe.
-     * @param title     title of the tag
-     * @param recipe    recipe to place the tag into
-     */
-    void addTag(Recipe recipe, String title);
-
-    /**
      * Delete the tag from the recipe
      * @param recipe    recipe holding the tag
      * @param recipeTag tag to delete from the recipe
@@ -119,16 +112,11 @@ public interface RecipeOverviewPresenter {
     void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag);
 
     /**
-     * Check if the tag title is valid.
-     * @param title title of the tag to check
-     * @return      True if the tag title is valid, false otherwise.
+     * Checks if the the name for the new RecipeTag is valid.
+     * Adds the new tag if valid, otherwise send back error message.
+     * @param title      Title of the new RecipeTag being added
+     * @param recipe    Recipe the tag will be added to
+     * @param recipeTags List of RecipeTag to add the new RecipeTag to
      */
-    boolean isTagTitleValid(String title);
-
-    /**
-     * Reformat the tag title so it is in Camel Case, no leading zeros, single space zeros, and single occurring dashes.
-     * @param title Tag title to reformat if needed.
-     * @return      The reformatted tag title String
-     */
-    String reformatTagTitle(String title);
+    void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, Recipe recipe);
 }

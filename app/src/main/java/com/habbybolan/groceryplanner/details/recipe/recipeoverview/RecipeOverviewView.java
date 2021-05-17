@@ -55,4 +55,9 @@ public interface RecipeOverviewView extends RecipeTagsView {
      * @param recipeTags    List of recipe tags to display.
      */
     void displayRecipeTags(List<RecipeTag> recipeTags);
+
+    /**
+     * Update the changes to the RecipeTag list.
+     */
+    void updateTagDisplay();
 }

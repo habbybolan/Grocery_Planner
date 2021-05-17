@@ -5,17 +5,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
-import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
@@ -68,7 +66,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     }
 
     private void setToolbar() {
-        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.ingredients_title), getLayoutInflater(), binding.toolbarContainer, getContext())
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
@@ -89,6 +87,12 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
                     }
                 }, "Recipe")
                 .build();
+        customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     @Override
@@ -112,6 +116,8 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
+        // todo: fix button for adding new ingredients (manual and existing)
+        /*
         // on click for adding an Ingredient from floating action button
         View view = binding.recipeDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
@@ -120,7 +126,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         ImageButton btnAddIngredients = view.findViewById(R.id.btn_add_multiple);
         btnAddIngredients.setOnClickListener(l -> {
             recipeDetailListener.gotoAddIngredients();
-        });
+        });*/
     }
 
     private void deleteRecipe() {

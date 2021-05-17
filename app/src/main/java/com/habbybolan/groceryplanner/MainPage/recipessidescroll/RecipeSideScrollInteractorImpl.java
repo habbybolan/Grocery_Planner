@@ -31,9 +31,6 @@ public class RecipeSideScrollInteractorImpl implements RecipeSideScrollInteracto
             case RecipeListType.TRENDING_TYPE:
                 httpRecipe.getRecipesTrending(offset, amount, callback);
                 break;
-            case RecipeListType.SAVED_TYPE:
-                httpRecipe.getRecipesSaved(offset, amount, callback);
-                break;
             default:
                 throw new IllegalArgumentException(infoType + " is not a valid type");
         }

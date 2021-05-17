@@ -90,10 +90,12 @@ public interface RecipeOverviewInteractor extends RecipeDetailsInteractor {
 
     /**
      * Adds a tag to the recipe.
+     * @param recipeTags List of RecipeTag to add the new RecipeTag to
      * @param title     title of the tag
      * @param recipe    recipe to place the tag into
+     * @return          True if the recipe tag addition is valid, otherwise false
      */
-    void addTag(Recipe recipe, String title);
+    boolean addTag(List<RecipeTag> recipeTags, Recipe recipe, String title);
 
     /**
      * Fetch all recipe tags associated to recipe.
@@ -108,18 +110,4 @@ public interface RecipeOverviewInteractor extends RecipeDetailsInteractor {
      * @param recipeTag tag to delete from the recipe
      */
     void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag);
-
-    /**
-     * Check if the tag title is valid.
-     * @param title title of the tag to check
-     * @return      True if the tag title is valid, false otherwise.
-     */
-    boolean isTagTitleValid(String title);
-
-    /**
-     * Reformat the tag title so it is in Camel Case, no leading zeros, single space zeros, and single occurring dashes.
-     * @param title Tag title to reformat if needed.
-     * @return      The reformatted tag title String
-     */
-    String reformatTagTitle(String title);
 }

@@ -99,7 +99,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     }
 
     private void setToolbar() {
-        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.nutrition_title), getLayoutInflater(), binding.toolbarContainer, getContext())
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
                     @Override
                     public void deleteClicked() {
@@ -119,6 +119,12 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
                     }
                 })
                 .build();
+        customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     /**

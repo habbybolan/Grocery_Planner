@@ -23,8 +23,6 @@ public class Ingredient implements Parcelable {
     protected FoodType foodType;
 
     public final static String INGREDIENT = "ingredient";
-    public final static String INGREDIENT_CHECKED = "ingredient_checked";
-    public final static String INGREDIENT_UNCHECKED = "ingredient_unchecked";
 
     public Ingredient(IngredientEntity ingredientEntity, float quantity, long quantityMeasId) {
         id = ingredientEntity.getIngredientId();
@@ -132,6 +130,7 @@ public class Ingredient implements Parcelable {
         priceType = in.readString();
         quantity = in.readFloat();
         quantityMeasId = in.readLong();
+        foodType = new FoodType(in.readString());
     }
 
     /**
@@ -144,12 +143,13 @@ public class Ingredient implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
         dest.writeFloat(price);
         dest.writeInt(pricePer);
         dest.writeString(priceType);
         dest.writeFloat(quantity);
         dest.writeLong(quantityMeasId);
-        dest.writeString(name);
+        dest.writeString(foodType.getType());
     }
 
     @Override

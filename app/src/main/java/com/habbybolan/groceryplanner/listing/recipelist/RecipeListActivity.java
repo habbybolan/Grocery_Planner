@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeListBinding;
-import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;

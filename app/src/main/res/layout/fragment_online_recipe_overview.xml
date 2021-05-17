@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="name"
+            type="String" />
+        <variable
+            name="servingSize"
+            type="String" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnBackground">
+
+        <LinearLayout
+            android:id="@+id/recipe_overview_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/toolbar_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".details.recipe.recipeoverview.RecipeOverviewFragment">
+
+                <TextView
+                    android:id="@+id/recipe_overview_name_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Name"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_name"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="wrap_content"
+                    android:text="@{name}"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name_tag" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_tag_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="Tags"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/online_recipe_overview_rv_tags"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_tag_tag" />
+
+
+                <TextView
+                    android:id="@+id/recipe_overview_serving_size_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="Serving Size"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/online_recipe_overview_rv_tags" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_serving_size"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="@{servingSize}"
+                    android:textColor="?attr/editTextColor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_serving_size_tag" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

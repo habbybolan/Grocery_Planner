@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.online.discover;
+package com.habbybolan.groceryplanner.online.discover.searchfilter;
 
 import android.os.Parcel;
 
@@ -8,29 +8,29 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
  * RecipeTags that hold an extra value for use in Discovering new recipes.
  * RecipeTag is either a pure RecipeTag search or a RecipeTag and recipe search.
  */
-public class DiscoverRecipeTag extends RecipeTag {
+public class OnlineRecipeTag extends RecipeTag {
 
     private boolean isRecipeSearch = false;
 
-    public DiscoverRecipeTag(String title, boolean isRecipeSearch) {
+    public OnlineRecipeTag(String title, boolean isRecipeSearch) {
         super(title);
         this.isRecipeSearch = isRecipeSearch;
     }
 
-    public DiscoverRecipeTag(Parcel in) {
+    public OnlineRecipeTag(Parcel in) {
         super(in);
         isRecipeSearch = in.readInt() == 1;
     }
 
-    public static final Creator<DiscoverRecipeTag> CREATOR = new Creator<DiscoverRecipeTag>() {
+    public static final Creator<OnlineRecipeTag> CREATOR = new Creator<OnlineRecipeTag>() {
         @Override
-        public DiscoverRecipeTag createFromParcel(Parcel in) {
-            return new DiscoverRecipeTag(in);
+        public OnlineRecipeTag createFromParcel(Parcel in) {
+            return new OnlineRecipeTag(in);
         }
 
         @Override
-        public DiscoverRecipeTag[] newArray(int size) {
-            return new DiscoverRecipeTag[size];
+        public OnlineRecipeTag[] newArray(int size) {
+            return new OnlineRecipeTag[size];
         }
     };
 

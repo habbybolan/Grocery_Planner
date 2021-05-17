@@ -54,5 +54,6 @@
     <dimen name="toolbar_icon_margin_end">15dp</dimen>
 
     <dimen name="toolbar_icon_size">40dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

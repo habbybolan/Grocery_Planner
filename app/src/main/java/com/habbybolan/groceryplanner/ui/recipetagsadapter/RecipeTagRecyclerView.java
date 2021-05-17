@@ -12,6 +12,7 @@ import java.util.List;
 public class RecipeTagRecyclerView {
 
     private RecipeTagAdapter adapter;
+    private List<? extends RecipeTag> recipeTags;
 
     /**
      * Constructor for creating an adapter that allows callback communication.
@@ -22,6 +23,7 @@ public class RecipeTagRecyclerView {
         @SuppressWarnings("unchecked")
         List<RecipeTag> recipeTagsCast = (List<RecipeTag>) recipeTags;
         this.adapter = new RecipeTagAdapter(recipeTagsCast, view);
+        this.recipeTags = recipeTags;
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(context);
         recyclerView.setLayoutManager(flexboxLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -40,5 +42,17 @@ public class RecipeTagRecyclerView {
 
     public void updateDisplay() {
         adapter.notifyDataSetChanged();
+    }
+
+    public void itemInserted(int position) {
+        adapter.notifyItemInserted(position);
+    }
+
+    public void removeTag(int position) {
+        adapter.notifyItemRemoved(position);
+    }
+
+    public void itemChanged(int position) {
+        adapter.notifyItemChanged(position);
     }
 }

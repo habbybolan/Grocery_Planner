@@ -1,19 +1,14 @@
-package com.habbybolan.groceryplanner.details.recipe.recipedetailactivity;
+package com.habbybolan.groceryplanner.details.recipe;
 
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsFragment;
@@ -22,8 +17,9 @@ import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutrit
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
 
-public class RecipeDetailActivity extends AppCompatActivity
+public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
                                 implements IngredientEditFragment.IngredientEditListener,
                                             RecipeIngredientsFragment.RecipeDetailListener,
                                             RecipeInstructionsFragment.RecipeStepListener,
@@ -42,47 +38,44 @@ public class RecipeDetailActivity extends AppCompatActivity
     private final String EDIT_TAG = "edit_tag";
     private final String ADD_TAG = "add_tag";
 
-    /**
-     * 2 fragments that can be swiped through.
-     */
-    private final int NUM_FRAGMENTS = 4;
-
-    /**
-     * Pager widget that handles the animations and allows swiping horizontally
-     */
-    private ViewPager mPager;
-
-    /**
-     * Provides the pages to mPager widget
-     */
-    private PagerAdapter pagerAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_detail);
-
         Bundle extras = getIntent().getExtras();
         // get the bundled Ingredients to display in the fragment if any exist.
         if (extras != null) {
             if (extras.containsKey(Recipe.RECIPE))
                 recipe = extras.getParcelable(Recipe.RECIPE);
         }
-
-        mPager = binding.recipePager;
-        pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        binding.tabLayout.setupWithViewPager(mPager);
-        mPager.setAdapter(pagerAdapter);
+        RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
+        setViews(binding.bottomNavigation, fragmentsBinding);
     }
 
-
+    @Override
+    protected void setFragments() {
+        recipeIngredientsFragment = new RecipeIngredientsFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_ingredients,recipeIngredientsFragment)
+                .commit();
+        recipeOverviewFragment = new RecipeOverviewFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_overview,recipeOverviewFragment)
+                .commit();
+        recipeInstructionsFragment = new RecipeInstructionsFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_instructions,recipeInstructionsFragment)
+                .commit();
+        recipeNutritionFragment = new RecipeNutritionFragment();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_nutrition,recipeNutritionFragment)
+                .commit();
+    }
 
     @Override
     public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
     }
-
-
 
     @Override
     public void createNewItem() {
@@ -90,10 +83,10 @@ public class RecipeDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Shows the Ingredient and Step fragment lists in the pager, hiding the Ingredient edit Fragment container.
+     * set visibility of the recipe details fragments.
      */
-    private void pagerContainerVisibility(int visibility) {
-        binding.recipePager.setVisibility(visibility);
+    private void detailsVisibility(int visibility) {
+        fragmentsBinding.containerNavigation.setVisibility(visibility);
     }
 
     @Override
@@ -101,9 +94,7 @@ public class RecipeDetailActivity extends AppCompatActivity
         goBackToRecipeList();
     }
 
-    /**
-     * Go back to the Recipe List Activity
-     */
+    /** Go back to the Recipe List Activity. */
     private void goBackToRecipeList() {
         finish();
     }
@@ -114,7 +105,7 @@ public class RecipeDetailActivity extends AppCompatActivity
     }
 
     /**
-     * Creates and starts the EditFragment to add/edit an Ingredient in the list
+     * Creates and starts the EditFragment to add/edit an Ingredient in the list.
      * @param ingredient    The Ingredient to edit
      */
     private void startEditFragment(Ingredient ingredient) {
@@ -123,7 +114,7 @@ public class RecipeDetailActivity extends AppCompatActivity
                 .beginTransaction()
                 .add(R.id.ingredient_edit_container, ingredientEditFragment, EDIT_TAG)
                 .commit();
-        pagerContainerVisibility(View.GONE);
+        detailsVisibility(View.GONE);
     }
 
     @Override
@@ -133,7 +124,7 @@ public class RecipeDetailActivity extends AppCompatActivity
                 .beginTransaction()
                 .add(R.id.ingredient_add_container, ingredientAddFragment, ADD_TAG)
                 .commit();
-        pagerContainerVisibility(View.GONE);
+        detailsVisibility(View.GONE);
     }
 
     @Override
@@ -156,60 +147,7 @@ public class RecipeDetailActivity extends AppCompatActivity
         if (recipeIngredientsFragment != null) {
             recipeIngredientsFragment.reloadList();
         }
-        mPager.setCurrentItem(0);
-        pagerContainerVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Pager adapter to allow swiping between the Recipe Ingredient list and step list
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-
-        ScreenSlidePagerAdapter(@NonNull FragmentManager fm, int behavior) {
-            super(fm, behavior);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Overview";
-                case 1:
-                    return "Ingredients";
-                case 2:
-                    return "Instructions";
-                default:
-                    return "Nutrition";
-            }
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    // position 2 corresponding to the Recipe overview
-                    recipeOverviewFragment = RecipeOverviewFragment.getInstance();
-                    return recipeOverviewFragment;
-                case 1:
-                    // position 0 corresponding to the Ingredient List for the Recipe
-                    recipeIngredientsFragment = RecipeIngredientsFragment.getInstance();
-                    return recipeIngredientsFragment;
-                case 2:
-                    // position 1 corresponds to the step List for the recipe
-                    recipeInstructionsFragment = RecipeInstructionsFragment.getInstance();
-                    return recipeInstructionsFragment;
-                default:
-                    // position 3 corresponding to the Recipe Nutrition
-                    recipeNutritionFragment = RecipeNutritionFragment.newInstance();
-                    return recipeNutritionFragment;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return NUM_FRAGMENTS;
-        }
+        detailsVisibility(View.VISIBLE);
     }
 
     @Override
@@ -236,12 +174,7 @@ public class RecipeDetailActivity extends AppCompatActivity
             // if in Ingredient Add Fragment, then go back to viewPager
             leaveIngredientAdd();
         } else {
-            if (mPager.getCurrentItem() == 0)
-                // if on Ingredient List, then leave this activity to go back to recipe list
-                goBackToRecipeList();
-            else
-                // otherwise, go from the steps list to Ingredients list
-                mPager.setCurrentItem(mPager.getCurrentItem() - 1);
+            super.onBackPressed();
         }
     }
 }

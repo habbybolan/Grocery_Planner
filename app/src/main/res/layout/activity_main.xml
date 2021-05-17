@@ -24,9 +24,24 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/toolbar_main_page">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/trending_recipes_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Trending"/>
+
+                    <FrameLayout
+                        android:id="@+id/container_trending_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
 
                     <TextView
                         android:id="@+id/new_recipes_tag"
@@ -39,43 +54,10 @@
                     <FrameLayout
                         android:id="@+id/container_new_recipe_side_scroll"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/new_recipes_tag"
+                        android:layout_height="50dp"
                         tools:layout="@layout/fragment_recipe_side_scroll" />
 
-                    <TextView
-                        android:id="@+id/trending_recipes_tag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/container_new_recipe_side_scroll"
-                        android:layout_marginStart="@dimen/margin_start_info"
-                        android:layout_marginTop="10dp"
-                        android:text="Trending"/>
-
-                    <FrameLayout
-                        android:id="@+id/container_trending_recipe_side_scroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/trending_recipes_tag"
-                        tools:layout="@layout/fragment_recipe_side_scroll" />
-
-                    <TextView
-                        android:id="@+id/saved_recipes_tag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/container_trending_recipe_side_scroll"
-                        android:layout_marginStart="@dimen/margin_start_info"
-                        android:layout_marginTop="10dp"
-                        android:text="Saved"/>
-
-                    <FrameLayout
-                        android:id="@+id/container_saved_recipe_side_scroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/saved_recipes_tag"
-                        tools:layout="@layout/fragment_recipe_side_scroll" />
-
-                </RelativeLayout>
+                </LinearLayout>
 
                 <FrameLayout
                     android:id="@+id/fragment_recipe_snippet_container"

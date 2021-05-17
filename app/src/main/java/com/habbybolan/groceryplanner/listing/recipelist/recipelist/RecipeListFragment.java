@@ -103,7 +103,7 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
                         recipeListPresenter.createRecipeList();
                     }
-                }, SortType.SORT_LIST_ALL)
+                }, SortType.SORT_LIST_MOST)
                 .allowClickTitle(new CustomToolbar.TitleSelectCallback() {
                     @Override
                     public void selectTitle(int pos) {

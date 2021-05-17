@@ -17,7 +17,7 @@ import java.util.List;
 
 public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder, Recipe> {
 
-    RecipeListAdapter(List<Recipe> recipes, ListViewInterface view) {
+    public RecipeListAdapter(List<Recipe> recipes, ListViewInterface view) {
         super(view, recipes);
     }
 

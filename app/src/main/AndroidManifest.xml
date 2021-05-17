@@ -13,7 +13,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
-        <activity android:name=".listing.ingredientlist.IngredientListActivity"></activity>
+        <activity
+            android:name=".online.myrecipes.MyRecipesActivity"
+            android:label="@string/title_activity_my_recipes"
+            android:theme="@style/MyMaterialTheme.NoActionBar"></activity>
+        <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditActivity" />
+        <activity android:name=".online.savedrecipes.SavedRecipesActivity" />
+        <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivity" />
+        <activity
+            android:name=".online.discover.DiscoverActivity"
+            android:label="@string/title_activity_discover" />
+        <activity android:name=".listing.ingredientlist.IngredientListActivity" />
         <activity android:name=".loginpage.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,9 +33,9 @@
         </activity>
         <activity
             android:name=".MainPage.MainActivity"
-            android:parentActivityName=".listing.grocerylist.GroceryListActivity"></activity>
+            android:parentActivityName=".listing.grocerylist.GroceryListActivity" />
         <activity
-            android:name=".details.recipe.recipedetailactivity.RecipeDetailActivity"
+            android:name=".details.recipe.RecipeDetailActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.recipelist.RecipeListActivity"

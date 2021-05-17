@@ -293,26 +293,16 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void addTag(Recipe recipe, String title) {
-        try {
-            recipeOverviewInteractor.addTag(recipe, title);
-        } finally {
-            createRecipeTagList(recipe);
-        }
-    }
-
-    @Override
     public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
         recipeOverviewInteractor.deleteRecipeTag(recipe, recipeTag);
     }
 
     @Override
-    public boolean isTagTitleValid(String title) {
-        return recipeOverviewInteractor.isTagTitleValid(title);
-    }
-
-    @Override
-    public String reformatTagTitle(String title) {
-        return recipeOverviewInteractor.reformatTagTitle(title);
+    public void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, Recipe recipe) {
+        if (recipeOverviewInteractor.addTag(recipeTags, recipe, title)) {
+            view.updateTagDisplay();
+        } else {
+            view.loadingFailed("Invalid Recipe tag name");
+        }
     }
 }

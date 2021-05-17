@@ -5,8 +5,8 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 public interface RecipeTagsView {
 
     /**
-     * Delete the tag from the recipe.
+     * Recipe tag removed from the list of RecipeTag
      * @param recipeTag Tag to delete
      */
-    void deleteRecipeTag(RecipeTag recipeTag);
+    void onDeleteRecipeTag(RecipeTag recipeTag);
 }

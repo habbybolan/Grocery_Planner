@@ -26,23 +26,6 @@ public class OnlineRecipe extends Recipe{
         in.readList(ingredients, Ingredient.class.getClassLoader());
     }
 
-    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
-        @Override
-        public OnlineRecipe createFromParcel(Parcel in) {
-            return new OnlineRecipe(in);
-        }
-
-        @Override
-        public OnlineRecipe[] newArray(int size) {
-            return new OnlineRecipe[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -215,5 +198,22 @@ public class OnlineRecipe extends Recipe{
 
     public List<RecipeTag> getRecipeTags() {
         return recipeTags;
+    }
+
+    public static final Creator<OnlineRecipe> CREATOR = new Creator<OnlineRecipe>() {
+        @Override
+        public OnlineRecipe createFromParcel(Parcel in) {
+            return new OnlineRecipe(in);
+        }
+
+        @Override
+        public OnlineRecipe[] newArray(int size) {
+            return new OnlineRecipe[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

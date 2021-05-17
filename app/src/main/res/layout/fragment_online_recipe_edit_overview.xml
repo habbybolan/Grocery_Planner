@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewFragment"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="name"
+            type="String" />
+        <variable
+            name="label"
+            type="String" />
+        <variable
+            name="categoryName"
+            type="String" />
+        <variable
+            name="servingSize"
+            type="String" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnBackground">
+
+        <LinearLayout
+            android:id="@+id/recipe_overview_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/toolbar_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/recipe_overview_name_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Name"
+                android:layout_marginStart="@dimen/margin_start_info" />
+
+            <EditText
+                android:id="@+id/recipe_overview_name"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="wrap_content"
+                android:text="@{name}"
+                android:layout_marginStart="@dimen/margin_start_info" />
+
+            <TextView
+                android:id="@+id/recipe_overview_tag_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_info"
+                android:text="Label" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/recipe_overview_tag"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:maxLength="10" />
+
+                <ImageButton
+                    android:id="@+id/recipe_overview_btn_add_tag"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@android:drawable/ic_input_add"
+                    android:background="@android:color/transparent"
+                    android:layout_toEndOf="@+id/recipe_overview_tag"/>
+
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recipe_overview_rv_tags"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_info" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

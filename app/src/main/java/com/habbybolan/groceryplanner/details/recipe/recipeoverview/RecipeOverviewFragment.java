@@ -91,7 +91,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         rvGroceries.setAdapter(groceriesAdapter);
         recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
 
-
         tagRV = new RecipeTagRecyclerView(recipeTags, this, binding.recipeOverviewRvTags, getContext());
         recipeOverviewPresenter.createRecipeTagList(recipeOverviewListener.getRecipe());
     }
@@ -110,13 +109,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     private void setTagClicker() {
         binding.recipeOverviewBtnAddTag.setOnClickListener(l -> {
             String tagTitle = binding.recipeOverviewTag.getText().toString();
-            if (recipeOverviewPresenter.isTagTitleValid(tagTitle)) {
-                String reformattedTitle = recipeOverviewPresenter.reformatTagTitle(tagTitle);
-                recipeOverviewPresenter.addTag(recipeOverviewListener.getRecipe(), reformattedTitle);
-                binding.recipeOverviewTag.setText("");
-            } else {
-                Toast.makeText(getContext(), "Invalid name", Toast.LENGTH_SHORT).show();
-            }
+            recipeOverviewPresenter.checkAddingRecipeTag(tagTitle, recipeTags, recipeOverviewListener.getRecipe());
         });
     }
 
@@ -148,7 +141,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
 
 
     private void setToolbar() {
-        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.overview_title), getLayoutInflater(), binding.toolbarContainer, getContext())
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
                     @Override
                     public void deleteClicked() {
@@ -168,6 +161,12 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                     }
                 })
                 .build();
+        customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     /**
@@ -356,7 +355,13 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     }
 
     @Override
-    public void deleteRecipeTag(RecipeTag recipeTag) {
+    public void updateTagDisplay() {
+        tagRV.itemInserted(recipeTags.size()-1);
+        binding.recipeOverviewTag.setText("");
+    }
+
+    @Override
+    public void onDeleteRecipeTag(RecipeTag recipeTag) {
         recipeOverviewPresenter.deleteRecipeTag(recipeOverviewListener.getRecipe(), recipeTag);
     }
 

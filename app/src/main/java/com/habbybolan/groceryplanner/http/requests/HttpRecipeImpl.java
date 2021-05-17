@@ -8,7 +8,9 @@ import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.models.webmodels.WebServiceResponse;
+import com.habbybolan.groceryplanner.online.discover.searchfilter.OnlineRecipeTag;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,41 +35,52 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
 
     @Override
     public void getRecipesNew(int offset, int numRows, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
-        Callable<WebServiceResponse<OnlineRecipe>> task = new Callable<WebServiceResponse<OnlineRecipe>>() {
-            @Override
-            public WebServiceResponse<OnlineRecipe> call() throws Exception {
-
-                try {
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/date?offset=" + offset + "&size=" + numRows + "&sortType=ASC", "GET", "");
-                    if (connection.getResponseCode() == 200) {
-                        JSONArray jsonArray = connectAndReadResponseGET(connection);
-                        List<OnlineRecipe> recipes = createRecipes(jsonArray);
-                        return new WebServiceResponse<>(recipes, 200);
-                    } else {
-                        return new WebServiceResponse<>(connection.getResponseCode());
-                    }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    // todo: what should be returned here to signal exception was thrown?
-                    return new WebServiceResponse<>(404);
-                }
-            }
-        };
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<WebServiceResponse<OnlineRecipe>> futureTask = executorService.submit(task);
-        WebServiceResponse<OnlineRecipe> webResponse = futureTask.get();
-        callback.onResponse(webResponse.getItems(), webResponse.getResponseCode());
-
+        String address = "/api/recipes/date?offset=" + offset + "&size=" + numRows + "&sort=ascending";
+        getRecipeRequest(address, callback);
     }
 
     @Override
     public void getRecipesTrending(int offset, int numRows, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
+        String address = "/api/recipes/trending?offset=" + offset + "&size=" + numRows;
+        getRecipeRequest(address, callback);
+    }
+
+    @Override
+    public void getRecipesSaved(int offset, int numRows, long userId, SortType sortType, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
+        String address = "/api/recipes/users/saved/" + userId + "?offset=" + offset + "&size=" + numRows + "&sort=" + sortType.getSortTitle();
+        getRecipeRequest(address, callback);
+    }
+
+    @Override
+    public void getRecipesUploaded(int offset, int numRows, long userId, SortType sortType, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
+        String address = "/api/recipes/users/uploaded/" + userId + "?offset=" + offset + "&size=" + numRows + "&sort=" + sortType.getSortTitle();
+        getRecipeRequest(address, callback);
+    }
+
+    @Override
+    public void getRecipes(int offset, int numRows, String recipeSearch, List<OnlineRecipeTag> tagSearches, SortType sortType, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
+        StringBuilder sb = new StringBuilder();
+        // if the tagSearches size is 0, set size at 0. If the first index is a recipe search, start at index 1, otherwise 0.
+        int index = tagSearches.size() == 0 ?
+                0 : tagSearches.get(0).getIsRecipeSearch() ?
+                1 : 0;
+        while (index < tagSearches.size()) {
+            sb.append("&tagSearch=").append(tagSearches.get(index).getTitle());
+            index++;
+        }
+        recipeSearch = recipeSearch == null ? "" : "&nameSearch=" + recipeSearch;
+        String address = "/api/recipes?offset=" + offset + "&size=" + numRows + "&sort=" + sortType.getSortTitle().toLowerCase() + recipeSearch + sb.toString();
+        getRecipeRequest(address, callback);
+    }
+
+    private void getRecipeRequest(String address, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
         Callable<WebServiceResponse<OnlineRecipe>> task = new Callable<WebServiceResponse<OnlineRecipe>>() {
             @Override
             public WebServiceResponse<OnlineRecipe> call() throws Exception {
 
                 try {
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/trending?offset=" + offset + "&size=" + numRows, "GET", "");
+                    // todo: add the recipe and tag search to address
+                    HttpURLConnection connection = getHttpConnection(address, "GET", "");
                     if (connection.getResponseCode() == 200) {
                         JSONArray jsonArray = connectAndReadResponseGET(connection);
                         List<OnlineRecipe> recipes = createRecipes(jsonArray);
@@ -89,17 +102,22 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
     }
 
     @Override
-    public void getRecipesSaved(int offset, int numRows, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException {
-        Callable<WebServiceResponse<OnlineRecipe>> task = new Callable<WebServiceResponse<OnlineRecipe>>() {
+    public void getTags(int offset, int size, String search, WebServiceCallback<RecipeTag> callback) throws ExecutionException, InterruptedException {
+        Callable<WebServiceResponse<RecipeTag>> task = new Callable<WebServiceResponse<RecipeTag>>() {
             @Override
-            public WebServiceResponse<OnlineRecipe> call() throws Exception {
+            public WebServiceResponse<RecipeTag> call() throws Exception {
 
-                try {// todo: get user id from savedPreferences of logged in user
-                    HttpURLConnection connection = getHttpConnection("/api/recipes/users/1?offset=" + offset + "&size=" + numRows, "GET", "");
+                try {
+                    // todo: add the recipe and tag search to address
+                    HttpURLConnection connection;
+                    if (search.equals(""))
+                        connection = getHttpConnection("/api/recipes/tags?offset=" + offset + "&size=" + size, "GET", "");
+                    else
+                        connection = getHttpConnection("/api/recipes/tags?offset=" + offset + "&size=" + size + "&tagSearch=" + search, "GET", "");
                     if (connection.getResponseCode() == 200) {
                         JSONArray jsonArray = connectAndReadResponseGET(connection);
-                        List<OnlineRecipe> recipes = createRecipes(jsonArray);
-                        return new WebServiceResponse<>(recipes, 200);
+                        List<RecipeTag> tags = createTags(jsonArray);
+                        return new WebServiceResponse<>(tags, 200);
                     } else {
                         return new WebServiceResponse<>(connection.getResponseCode());
                     }
@@ -111,14 +129,27 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
             }
         };
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<WebServiceResponse<OnlineRecipe>> futureTask = executorService.submit(task);
-        WebServiceResponse<OnlineRecipe> webResponse = futureTask.get();
+        Future<WebServiceResponse<RecipeTag>> futureTask = executorService.submit(task);
+        WebServiceResponse<RecipeTag> webResponse = futureTask.get();
         callback.onResponse(webResponse.getItems(), webResponse.getResponseCode());
     }
 
     /**
-     * Converts the JSON data from the web service into Recipe objects and notifies the conversion is done
-     * through the callback.
+     * Converts the jsonArray for recipe tags into an arrayList of RecipeTag objects.
+     * @param jsonArray     List of recipe tag titles.
+     * @return              List of RecipeTags from jsonArray values
+     */
+    private List<RecipeTag> createTags(JSONArray jsonArray) throws JSONException {
+        List<RecipeTag> recipeTags = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            RecipeTag recipeTag = new RecipeTag(jsonArray.getJSONObject(i).getString("title"));
+            recipeTags.add(recipeTag);
+        }
+        return recipeTags;
+    }
+
+    /**
+     * Converts the JSON data from the web service into Recipe objects.
      * @param jsonArray JSON Array data retrieved from the web service about the Recipe
      */
     private List<OnlineRecipe> createRecipes(JSONArray jsonArray) throws JSONException {
@@ -211,6 +242,6 @@ public class HttpRecipeImpl extends HttpRequestImpl implements HttpRecipe{
             }
         }
         // nutrition data not in recipe, return null
-        return null;
+        return new Nutrition(Nutrition.getNameFromId(nutritionId), 0, (long) 0);
     }
 }

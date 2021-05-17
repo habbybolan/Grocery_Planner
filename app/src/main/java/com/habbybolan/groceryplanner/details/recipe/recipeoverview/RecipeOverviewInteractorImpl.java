@@ -125,8 +125,15 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
     }
 
     @Override
-    public void addTag(Recipe recipe, String title) {
-        databaseAccess.addRecipeTag(recipe.getId(), title);
+    public boolean addTag(List<RecipeTag> recipeTags, Recipe recipe, String title) {
+        String reformattedTitle = RecipeTag.reformatTagTitle(title);
+        RecipeTag recipeTag = new RecipeTag(reformattedTitle);
+        if (RecipeTag.isTagTitleValid(title) && !recipeTags.contains(recipeTag)) {
+            databaseAccess.addRecipeTag(recipe.getId(), reformattedTitle);
+            recipeTags.add(new RecipeTag(reformattedTitle));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -137,53 +144,5 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
     @Override
     public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
         databaseAccess.deleteRecipeTag(recipe.getId(), recipeTag.getId());
-    }
-
-    @Override
-    public boolean isTagTitleValid(String title) {
-        boolean isNotEmpty = false;
-        boolean noSpecialCharacter = true;
-        boolean noLogicBreaks = true;
-
-        for (char c : title.toCharArray()) {
-            // title has to have at least one non-empty character
-            if (c != ' ') {
-                isNotEmpty = true;
-                break;
-            }
-            // title chars must be either letters, space or a dash
-            if (!(c >= 65 && c <= 90) && !(c >= 97 && c <= 122) && (c != ' ') && (c != '-')) {
-                noSpecialCharacter = false;
-                break;
-            }
-        }
-        return isNotEmpty && noSpecialCharacter;
-    }
-
-    @Override
-    public String reformatTagTitle(String title) {
-        StringBuilder sb = new StringBuilder();
-        // reformat the string
-        for (char c : title.toCharArray()) {
-            // if the last char added is not a space or dash, append the space
-            if (c == ' ') {
-                if (sb.charAt(sb.length() - 1) != ' ' && sb.charAt(sb.length() - 1) != '-')
-                    sb.append(c);
-                // if the last char added is not a space or dash, append the dash
-            } else if (c == '-') {
-                if (sb.charAt(sb.length() - 1) != ' ' && sb.charAt(sb.length() - 1) != '-')
-                    sb.append(c);
-                // if it's the first character, then capitalize it
-            } else if (sb.length() == 0) {
-                sb.append(Character.toUpperCase(c));
-                // if the last character was a space or dash and current character is a letter, capitalize it
-            } else if (sb.length() > 0 && (sb.charAt(sb.length()-1) == ' ' || sb.charAt(sb.length()-1) == '-')) {
-                sb.append(Character.toUpperCase(c));
-                // otherwise, append the character normally
-            } else {
-                sb.append(c);
-            }
-        }
-        return sb.toString();
     }
 }

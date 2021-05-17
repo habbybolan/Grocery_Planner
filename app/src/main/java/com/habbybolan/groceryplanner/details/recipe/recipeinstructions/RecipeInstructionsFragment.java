@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsBinding;
-import com.habbybolan.groceryplanner.details.recipe.recipedetailactivity.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
@@ -77,7 +77,7 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
     }
 
     private void setToolbar() {
-        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.title_grocery_list), getLayoutInflater(), binding.toolbarContainer, getContext())
+        customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.instructions_title), getLayoutInflater(), binding.toolbarContainer, getContext())
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
                     @Override
                     public void deleteClicked() {
@@ -97,6 +97,12 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
                     }
                 })
                 .build();
+        customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     @Override

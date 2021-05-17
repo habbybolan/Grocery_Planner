@@ -110,5 +110,23 @@ public class Nutrition extends MeasurementType {
         return 0;
     }
 
+    public static String getNameFromId(long id) {
+        switch ((int) id) {
+            case 1:
+                return CALORIES;
+            case 2:
+                return FAT;
+            case 3:
+                return SATURATED_FAT;
+            case 4:
+                return CARBOHYDRATES;
+            case 5:
+                return FIBRE;
+            case 6:
+                return SUGAR;
+            default: return PROTEIN;
+        }
+    }
+
 
 }

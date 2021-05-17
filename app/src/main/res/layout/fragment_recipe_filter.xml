@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="sortMethod"
+            type="String" />
+        <variable
+            name="filterVisible"
+            type="Boolean" />
+        <variable
+            name="view"
+            type="android.view.View" />
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="?attr/colorOnBackground">
 
         <FrameLayout
             android:id="@+id/bar_expand_filter"
             android:layout_width="match_parent"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@{filterVisible ? @android:drawable/arrow_down_float : @android:drawable/arrow_up_float}"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical"/>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/container_recipe_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_start_info"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="@{filterVisible ? view.VISIBLE : view.GONE}">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/discover_rv_tags"
@@ -45,7 +68,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/discover_rv_tag_search"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,22 +101,16 @@
                     android:text="Sort By"/>
 
                 <TextView
+                    android:id="@+id/txt_btn_sort_types"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/editTextColor"
-                    android:background="?attr/editTextBackground" />
-
+                    android:background="?attr/editTextBackground"
+                    android:text="@{sortMethod}"/>
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_searches_recipes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_start_info"/>
-
 
     </LinearLayout>
 

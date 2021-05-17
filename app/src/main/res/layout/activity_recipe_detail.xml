@@ -3,31 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".details.recipe.recipedetailactivity.RecipeDetailActivity">
+    tools:context=".details.recipe.RecipeDetailActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/recipe_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </androidx.viewpager.widget.ViewPager>
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabMode="scrollable"
-                android:background="@color/colorRedAccentMedium"/>
+            <include
+                android:id="@+id/recipe_details_fragments"
+                layout="@layout/recipe_details_fragments"/>
 
             <FrameLayout
                 android:id="@+id/ingredient_edit_container"
@@ -39,7 +29,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </RelativeLayout>
+        </FrameLayout>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            app:menu="@menu/menu_recipe_detail_bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
 
     </LinearLayout>
 

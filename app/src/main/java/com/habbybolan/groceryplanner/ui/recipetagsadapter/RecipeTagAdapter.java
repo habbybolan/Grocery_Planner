@@ -66,8 +66,11 @@ public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.View
 
             binding.btnDeleteTag.setOnClickListener(l -> {
                 if (view != null) {
-                    view.deleteRecipeTag(recipeTags.get(getAdapterPosition()));
+                    RecipeTag recipeTag = recipeTags.get(getAdapterPosition());
+                    // removed the RecipeTag from the display list
                     recipeTags.remove(getAdapterPosition());
+                    // notify the view that the RecipeTag has been removed
+                    view.onDeleteRecipeTag(recipeTag);
                     notifyItemRemoved(getAdapterPosition());
                 }
             });
