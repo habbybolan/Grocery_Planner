@@ -13,50 +13,36 @@ public class IngredientEntity {
 
     @PrimaryKey(autoGenerate = true)
     private long ingredientId;
+    private Long onlineIngredientId;
     @NonNull
     private String ingredientName;
-    private float price;
-    @ColumnInfo(name="price_per")
-    private int pricePer;
-    @ColumnInfo(name="price_type")
-    private String priceType;
     @ColumnInfo(name = "food_type")
     private String foodType;
 
-    public IngredientEntity(long ingredientId, @NonNull String ingredientName, float price, int pricePer, String priceType, String foodType) {
+    public IngredientEntity(long ingredientId, Long onlineIngredientId, @NonNull String ingredientName, String foodType) {
         this.ingredientId = ingredientId;
+        this.onlineIngredientId = onlineIngredientId;
         this.ingredientName = ingredientName;
-        this.price = price;
-        this.pricePer = pricePer;
-        this.priceType = priceType;
         this.foodType = foodType;
     }
 
     public IngredientEntity(Ingredient ingredient) {
         ingredientId = ingredient.getId();
+        onlineIngredientId = ingredient.getOnlineId();
         ingredientName = ingredient.getName();
-        price = ingredient.getPrice();
-        pricePer = ingredient.getPricePer();
-        priceType = ingredient.getPriceType();
         foodType = ingredient.getFoodType().getType();
     }
 
     public String getIngredientName() {
         return ingredientName;
     }
-    public float getPrice() {
-        return price;
-    }
-    public int getPricePer() {
-        return pricePer;
-    }
-    public String getPriceType() {
-        return priceType;
-    }
     public String getFoodType() {
         return foodType;
     }
     public long getIngredientId() {
         return ingredientId;
+    }
+    public Long getOnlineIngredientId() {
+        return onlineIngredientId;
     }
 }

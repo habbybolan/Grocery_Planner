@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeSideScrollDetailsBinding;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 
 import java.util.List;
 
@@ -34,8 +33,8 @@ public class RecipeSideScrollAdapter extends RecyclerView.Adapter<RecipeSideScro
 
     @Override
     public void onBindViewHolder(@NonNull RecipeSideScrollAdapter.ViewHolder holder, int position) {
-        Recipe recipe = recipes.get(position);
-        holder.bind(recipe.getName(), recipe.getLikes());
+        OnlineRecipe onlineRecipe = recipes.get(position);
+        holder.bind(onlineRecipe.getName(), onlineRecipe.getLikes());
     }
 
     @Override

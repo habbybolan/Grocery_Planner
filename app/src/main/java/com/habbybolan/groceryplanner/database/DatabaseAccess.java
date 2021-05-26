@@ -8,8 +8,7 @@ import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -28,26 +27,26 @@ public interface DatabaseAccess {
 
     /**
      * Fetch the groceries that contain the recipe, and store the groceries inside groceries
-     * @param recipe        Recipe inside the groceries
+     * @param offlineRecipe        Recipe inside the groceries
      * @param callback      Callback for updating the GroceryRecipes fetched
      */
-    void fetchGroceriesHoldingRecipe(Recipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchGroceriesHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Fetch the groceries that does not contain the recipe, and store the groceries inside groceries
-     * @param recipe        Recipe not inside the groceries
+     * @param offlineRecipe        Recipe not inside the groceries
      * @param callback      Callback for updating the Groceries fetched
      */
-    void fetchGroceriesNotHoldingRecipe(Recipe recipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
+    void fetchGroceriesNotHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Adds / updates the recipe to the grocery list.
-     * @param recipe            Recipe to add to grocery
+     * @param offlineRecipe            Recipe to add to grocery
      * @param grocery           grocery to hold the recipe
      * @param amount            The number of times to add the Recipe to the grocery
      * @param recipeIngredients recipe ingredients to with a check to add or remove from grocery list
      */
-    void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
+    void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
 
     /**
      * Remove a recipe ingredient relationship with the grocery
@@ -66,19 +65,19 @@ public interface DatabaseAccess {
 
     /**
      * Delete the Grocery Recipe relationship in GroceryRecipeBridge
-     * @param recipe    Recipe to be removed from relationship
+     * @param offlineRecipe    Recipe to be removed from relationship
      * @param grocery   Grocery to be removed from relationship
      */
-    void deleteGroceryRecipeBridge(Recipe recipe, Grocery grocery);
+    void deleteGroceryRecipeBridge(OfflineRecipe offlineRecipe, Grocery grocery);
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
-    void addRecipe(Recipe recipe, Timestamp dateCreated);
-    void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
-    List<Recipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
-    void updateRecipes(ArrayList<Recipe> recipes);
-    void updateRecipe(Recipe recipe);
-    void fetchRecipe(ObservableField<Recipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
+    void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated);
+    void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
+    void updateRecipes(ArrayList<OfflineRecipe> offlineRecipes);
+    void updateRecipe(OfflineRecipe offlineRecipe);
+    void fetchRecipe(ObservableField<OfflineRecipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
 
     void addRecipeTag(long recipeId, String title);
     void addRecipeTags(long recipeId, List<String> titles);
@@ -91,13 +90,33 @@ public interface DatabaseAccess {
     void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
 
-    void addIngredients(IngredientHolder ingredientHolder, List<Ingredient> ingredients);
-    void addIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
+    /**
+     * Insert an ingredient into a grocery list
+     * @param groceryId      id of Grocery list to insert the ingredient into
+     * @param ingredients    Ingredients to insert
+     */
+    void insertIngredientsIntoGrocery(long groceryId, List<Ingredient> ingredients);
+    /**
+     * Insert an ingredient into a recipe list
+     * @param recipeId       Id of Recipe list to insert the ingredient into
+     * @param ingredients    Ingredients to insert
+     */
+    void insertIngredientsIntoRecipe(long recipeId, List<Ingredient> ingredients);
     void deleteIngredient(long ingredientId);
     void deleteIngredients(List<Long> ingredientIds);
-    void deleteIngredientsFromHolder(IngredientHolder ingredientHolder, List<Long> ingredientIds);
-    void deleteIngredientFromHolder(IngredientHolder ingredientHolder, long ingredientId);
-    void fetchIngredientsFromRecipe(Recipe recipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
+    /**
+     * Delete a list of ingredients from the grocery list
+     * @param groceryId       The grocery id to delete the ingredients from
+     * @param ingredientIds   The list of ingredient ids to delete from the grocery
+     */
+    void deleteIngredientsFromGrocery(long groceryId, List<Long> ingredientIds);
+    /**
+     * Delete a list of ingredients from the recipe list
+     * @param recipeId        The recipe id to delete the ingredients from
+     * @param ingredientIds   The list of ingredient ids to delete from the recipe
+     */
+    void deleteIngredientsFromRecipe(long recipeId, List<Long> ingredientIds);
+    void fetchIngredientsFromRecipe(OfflineRecipe offlineRecipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
     void addIngredient(Ingredient ingredient);
 
@@ -107,30 +126,30 @@ public interface DatabaseAccess {
      */
     void fetchIngredients(DbCallback<Ingredient> callback, SortType sortType) throws ExecutionException, InterruptedException;
 
-    void deleteRecipeFromGrocery(Grocery grocery, Recipe recipe);
+    void deleteRecipeFromGrocery(Grocery grocery, OfflineRecipe offlineRecipe);
 
     /**
      * Called for querying a recipe's ingredients where the recipe is inside the grocery. Retrieves all ingredients the recipe
      * with info if the ingredient was added to grocery.
      * @param grocery               Grocery list holding the recipe
-     * @param recipe                Recipe holding the ingredients to query
+     * @param offlineRecipe                Recipe holding the ingredients to query
      * @param callback              callback for updating the list of recipe ingredients fetched
      */
-    void fetchRecipeIngredientsInGrocery(Grocery grocery, Recipe recipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
+    void fetchRecipeIngredientsInGrocery(Grocery grocery, OfflineRecipe offlineRecipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Called for querying a recipe that is known is not inside a grocery list. Retrieves all of its ingredients inside the recipe.
-     * @param recipe                Recipe to query for ingredients
+     * @param offlineRecipe                Recipe to query for ingredients
      * @param callback              callback for updating the list of recipe ingredients fetched
      */
-    void fetchRecipeIngredientsNotInGrocery(Recipe recipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
+    void fetchRecipeIngredientsNotInGrocery(OfflineRecipe offlineRecipe, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Get all the Ingredients that are not part of the recipe
-     * @param recipe                Recipe that is not holding the ingredients to fetch
+     * @param offlineRecipe                Recipe that is not holding the ingredients to fetch
      * @param callback              callback for updating ingredients not in recipe
      */
-    void fetchIngredientsNotInRecipe(Recipe recipe, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
+    void fetchIngredientsNotInRecipe(OfflineRecipe offlineRecipe, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
     /**
      * Get all the Ingredients that are not part of the grocery
      * @param grocery     grocery that is not holding the ingredients to fetch
@@ -173,7 +192,7 @@ public interface DatabaseAccess {
      * @param recipeSearch  recipe name to search
      * @param callback    callback to update the Recipes retrieved
      */
-    void searchRecipes(String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
+    void searchRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Search for any recipe inside the category with the recipeSearch name.
@@ -181,7 +200,7 @@ public interface DatabaseAccess {
      * @param recipeSearch      recipe name to search
      *  @param callback         callback to update the Recipes in a category retrieved
      */
-    void searchRecipesInCategory(long categoryId, String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
+    void searchRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Search for any recipe category with the recipeSearch name.

@@ -11,14 +11,14 @@ import com.habbybolan.groceryplanner.listfragments.ListAdapter;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeListDetailsBinding;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.List;
 
-public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder, Recipe> {
+public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder, OfflineRecipe> {
 
-    public RecipeListAdapter(List<Recipe> recipes, ListViewInterface view) {
-        super(view, recipes);
+    public RecipeListAdapter(List<OfflineRecipe> offlineRecipes, ListViewInterface view) {
+        super(view, offlineRecipes);
     }
 
     @NonNull
@@ -31,8 +31,8 @@ public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder,
 
     @Override
     public void onBindViewHolder(@NonNull RecipeListAdapter.ViewHolder holder, int position) {
-        Recipe recipe = items.get(position);
-        holder.bind(recipe);
+        OfflineRecipe offlineRecipe = items.get(position);
+        holder.bind(offlineRecipe);
     }
 
 
@@ -58,11 +58,11 @@ public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder,
             binding.recipeListContainer.setOnLongClickListener(v -> setOnLongClickItem(getAdapterPosition()));
         }
 
-        void bind(Recipe recipe) {
-            binding.setRecipeName(recipe.getName());
+        void bind(OfflineRecipe offlineRecipe) {
+            binding.setRecipeName(offlineRecipe.getName());
             displayCheckBox(binding.recipeCheckBox);
-            if (recipe.getCategoryId() != null)
-                binding.setRecipeCategory(String.valueOf(recipe.getCategoryId()));
+            if (offlineRecipe.getCategoryId() != null)
+                binding.setRecipeCategory(String.valueOf(offlineRecipe.getCategoryId()));
         }
     }
 }

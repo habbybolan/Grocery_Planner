@@ -28,31 +28,6 @@ public class BindingAdapters {
         textView.setText(text);
     }
 
-    /**
-     * Adapter for displaying price information of an Ingredient displayed in an ingredient list.
-     * @param textView  View to place the price information in
-     * @param price     The price of the ingredient
-     * @param pricePer  The amount of the ingredient at you can get at price
-     * @param priceType The type of pricePer
-     */
-    @BindingAdapter(value = {"price", "pricePer", "priceType"}, requireAll = false)
-    public static void ingredientPriceDisplay(TextView textView, Float price, Integer pricePer, String priceType) {
-        StringBuilder builder = new StringBuilder();
-        if (price != null) {
-            builder.append(" At ");
-            builder.append("$"); // tie this to a setting to set the type of currency
-            builder.append(price);
-            if (pricePer != null) {
-                builder.append("/");
-                builder.append(pricePer);
-                if (priceType != null) {
-                    builder.append(priceType);
-                }
-            }
-        }
-        String text = builder.toString();
-        textView.setText(text);
-    }
 
     /**
      * Adapter for displaying quantity information of an Ingredient.

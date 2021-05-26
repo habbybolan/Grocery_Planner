@@ -2,6 +2,7 @@ package com.habbybolan.groceryplanner.di.component;
 
 
 import com.habbybolan.groceryplanner.di.module.AppModule;
+import com.habbybolan.groceryplanner.di.module.NetworkModule;
 import com.habbybolan.groceryplanner.di.module.RecipeFilterModule;
 import com.habbybolan.groceryplanner.di.module.GroceryDetailModule;
 import com.habbybolan.groceryplanner.di.module.GroceryListModule;
@@ -23,7 +24,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, RoomModule.class, HttpRequestModule.class})
+@Component(modules = {AppModule.class, RoomModule.class, HttpRequestModule.class, NetworkModule.class})
 public interface AppComponent {
 
     GroceryListSubComponent groceryListSubComponent(GroceryListModule groceryListModule);

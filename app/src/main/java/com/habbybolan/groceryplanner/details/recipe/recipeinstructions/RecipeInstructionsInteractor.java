@@ -1,18 +1,18 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeinstructions;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 public interface RecipeInstructionsInteractor {
 
     /**
      * update the recipe with the new instructions
-     * @param recipe    Recipe to update
+     * @param offlineRecipe    Recipe to update
      */
-    void updateRecipe(Recipe recipe);
+    void updateRecipe(OfflineRecipe offlineRecipe);
 
     /**
      * Delete the recipe from the database
-     * @param recipe    Recipe to delete
+     * @param offlineRecipe    Recipe to delete
      */
-    void deleteRecipe(Recipe recipe);
+    void deleteRecipe(OfflineRecipe offlineRecipe);
 }

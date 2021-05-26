@@ -8,7 +8,7 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityOnlineRecipeDetailBinding;
 import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.ingredients.OnlineRecipeIngredientsFragment;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.nutrition.OnlineRecipeNutritionFragment;
 import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
@@ -29,7 +29,7 @@ public class OnlineRecipeDetailActivity extends RecipeDetailsAbstractActivity im
         binding = DataBindingUtil.setContentView(this, R.layout.activity_online_recipe_detail);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            onlineRecipe = extras.getParcelable(Recipe.RECIPE);
+            onlineRecipe = extras.getParcelable(OfflineRecipe.RECIPE);
         }
         RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);

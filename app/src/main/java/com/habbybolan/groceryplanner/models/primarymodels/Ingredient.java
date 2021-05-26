@@ -1,21 +1,16 @@
 package com.habbybolan.groceryplanner.models.primarymodels;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 
 import java.util.Objects;
 
-public class Ingredient implements Parcelable {
+public class Ingredient extends OnlineModel {
 
     protected long id;
-    protected float price;
-    protected int pricePer;
-    protected String priceType;
     protected float quantity;
     protected Long quantityMeasId;
     @NonNull
@@ -24,31 +19,18 @@ public class Ingredient implements Parcelable {
 
     public final static String INGREDIENT = "ingredient";
 
-    public Ingredient(IngredientEntity ingredientEntity, float quantity, long quantityMeasId) {
-        id = ingredientEntity.getIngredientId();
-        name = ingredientEntity.getIngredientName();
-        price = ingredientEntity.getPrice();
-        pricePer = ingredientEntity.getPricePer();
-        priceType = ingredientEntity.getPriceType();
-        this.quantity = quantity;
-        this.quantityMeasId = quantityMeasId;
-    }
-
-    public Ingredient(@NonNull long id, @NonNull String name, float price, int pricePer, String priceType,
+    public Ingredient(@NonNull long id, Long onlineId, @NonNull String name,
                       float quantity, Long quantityMeasId, FoodType foodType) {
         this.id = id;
+        this.onlineId = onlineId;
         this.name = name;
-        this.price = price;
-        this.pricePer = pricePer;
-        this.priceType = priceType;
         this.quantity = quantity;
         this.quantityMeasId = quantityMeasId;
         this.foodType = foodType;
     }
 
     public Ingredient(Ingredient ingredient) {
-        this(ingredient.getId(), ingredient.getName(), ingredient.getPrice(), ingredient.getPricePer(),
-                ingredient.getPriceType(), ingredient.getQuantity(), ingredient.getQuantityMeasId(), ingredient.getFoodType());
+        this(ingredient.getId(), ingredient.getOnlineId(), ingredient.getName(), ingredient.getQuantity(), ingredient.getQuantityMeasId(), ingredient.getFoodType());
     }
 
     /**
@@ -57,9 +39,7 @@ public class Ingredient implements Parcelable {
     public static class IngredientBuilder {
 
         private long id;
-        private float price;
-        private int pricePer;
-        private String priceType;
+        private Long onlineId;
         private float quantity;
         private Long quantityMeasId;
         @NonNull
@@ -67,9 +47,10 @@ public class Ingredient implements Parcelable {
         private FoodType foodType;
 
         // for creating an ingredient from the Room database
-        public IngredientBuilder(long id, @NonNull String name) {
+        public IngredientBuilder(long id, Long onlineId, @NonNull String name) {
             this.name = name;
             this.id = id;
+            this.onlineId = onlineId;
         }
 
         // for creating an ingredient from the web service
@@ -77,18 +58,6 @@ public class Ingredient implements Parcelable {
             this.name = name;
         }
 
-        public IngredientBuilder setPrice(float price) {
-            this.price = price;
-            return this;
-        }
-        public IngredientBuilder setPricePer(int pricePer) {
-            this.pricePer = pricePer;
-            return this;
-        }
-        public IngredientBuilder setPriceType(String priceType) {
-            this.priceType = priceType;
-            return this;
-        }
         public IngredientBuilder setQuantity(float quantity) {
             this.quantity = quantity;
             return this;
@@ -105,10 +74,8 @@ public class Ingredient implements Parcelable {
         public Ingredient build() {
             Ingredient ingredient = new Ingredient();
             ingredient.id = id;
+            ingredient.onlineId = onlineId;
             ingredient.name = name;
-            ingredient.price = price;
-            ingredient.priceType = priceType;
-            ingredient.pricePer = pricePer;
             ingredient.quantity = quantity;
             ingredient.quantityMeasId = quantityMeasId;
             if (foodType == null) foodType = new FoodType(FoodType.OTHER);
@@ -124,10 +91,9 @@ public class Ingredient implements Parcelable {
 
 
     protected Ingredient(Parcel in) {
+        super(in);
+        id = in.readLong();
         name = Objects.requireNonNull(in.readString());
-        price = in.readFloat();
-        pricePer = in.readInt();
-        priceType = in.readString();
         quantity = in.readFloat();
         quantityMeasId = in.readLong();
         foodType = new FoodType(in.readString());
@@ -143,10 +109,9 @@ public class Ingredient implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeLong(id);
         dest.writeString(name);
-        dest.writeFloat(price);
-        dest.writeInt(pricePer);
-        dest.writeString(priceType);
         dest.writeFloat(quantity);
         dest.writeLong(quantityMeasId);
         dest.writeString(foodType.getType());
@@ -184,15 +149,6 @@ public class Ingredient implements Parcelable {
         return numEmptySpaces < nameText.length();
     }
 
-    public boolean hasPrice() {
-        return price > 0;
-    }
-    public boolean hasPricePer() {
-        return pricePer > 0;
-    }
-    public boolean hasPriceType() {
-        return priceType != null;
-    }
     public boolean hasQuantity() {
         return quantity > 0;
     }
@@ -202,15 +158,6 @@ public class Ingredient implements Parcelable {
 
     public String getName() {
         return name;
-    }
-    public float getPrice() {
-        return price;
-    }
-    public int getPricePer() {
-        return pricePer;
-    }
-    public String getPriceType() {
-        return priceType;
     }
     public float getQuantity() {
         return quantity;
@@ -230,15 +177,6 @@ public class Ingredient implements Parcelable {
     }
     public void setName(String name) {
         this.name = name;
-    }
-    public void setPrice(float price) {
-        this.price = price;
-    }
-    public void setPricePer(int pricePer) {
-        this.pricePer = pricePer;
-    }
-    public void setPriceType(String priceType) {
-        this.priceType = priceType;
     }
     public void setQuantity(float quantity) {
         this.quantity = quantity;

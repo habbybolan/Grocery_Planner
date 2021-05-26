@@ -3,15 +3,30 @@ package com.habbybolan.groceryplanner.models.secondarymodels;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class RecipeTag implements Parcelable {
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.habbybolan.groceryplanner.models.primarymodels.OnlineModel;
+
+import java.lang.reflect.Type;
+
+public class RecipeTag extends OnlineModel implements Parcelable {
 
     public static final String RECIPE_TAG = "recipe_tag";
 
     private long id;
     private String title;
 
-    public RecipeTag(long id, String title) {
+    public RecipeTag(long id, long onlineId, String title) {
+        this.onlineId = onlineId;
         this.id = id;
+        this.title = title;
+    }
+
+    public RecipeTag(long onlineId, String title) {
+        this.onlineId = onlineId;
         this.title = title;
     }
 
@@ -27,6 +42,7 @@ public class RecipeTag implements Parcelable {
     }
 
     protected RecipeTag(Parcel in) {
+        super(in);
         id = in.readLong();
         title = in.readString();
     }
@@ -114,7 +130,8 @@ public class RecipeTag implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(1);
+        super.writeToParcel(dest, flags);
+        dest.writeLong(id);
         dest.writeString(title);
     }
 
@@ -134,4 +151,13 @@ public class RecipeTag implements Parcelable {
             return new RecipeTag[size];
         }
     };
+
+    public static class RecipeTagDeserializer implements JsonDeserializer<RecipeTag> {
+
+        @Override
+        public RecipeTag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject jsonObject = json.getAsJsonObject();
+            return new RecipeTag(jsonObject.get("recipe_tag_id").getAsLong(), jsonObject.get("title").getAsString());
+        }
+    }
 }

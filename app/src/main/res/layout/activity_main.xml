@@ -30,17 +30,55 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/trending_recipes_tag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_start_info"
                         android:layout_marginTop="10dp"
-                        android:text="Trending"/>
+                        android:text="Trending: Day"/>
 
                     <FrameLayout
-                        android:id="@+id/container_trending_recipe_side_scroll"
+                        android:id="@+id/container_trending_day_recipe_side_scroll"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="90dp"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Trending: Week"/>
+
+                    <FrameLayout
+                        android:id="@+id/container_trending_week_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Trending: Month"/>
+
+                    <FrameLayout
+                        android:id="@+id/container_trending_month_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        tools:layout="@layout/fragment_recipe_side_scroll" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:layout_marginTop="10dp"
+                        android:text="Trending: Year"/>
+
+                    <FrameLayout
+                        android:id="@+id/container_trending_year_recipe_side_scroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
                         tools:layout="@layout/fragment_recipe_side_scroll" />
 
                     <TextView
@@ -54,7 +92,7 @@
                     <FrameLayout
                         android:id="@+id/container_new_recipe_side_scroll"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="60dp"
                         tools:layout="@layout/fragment_recipe_side_scroll" />
 
                 </LinearLayout>

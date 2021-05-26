@@ -4,7 +4,7 @@ import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
@@ -18,29 +18,29 @@ public class RecipeIngredientsInteractorImpl extends RecipeDetailsInteractorImpl
     }
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        databaseAccess.deleteRecipe(recipe.getId());
+    public void deleteRecipe(OfflineRecipe offlineRecipe) {
+        databaseAccess.deleteRecipe(offlineRecipe.getId());
     }
 
     @Override
-    public void fetchIngredients(Recipe recipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchIngredientsFromRecipe(recipe, sortType, callback);
+    public void fetchIngredients(OfflineRecipe offlineRecipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchIngredientsFromRecipe(offlineRecipe, sortType, callback);
     }
 
     @Override
-    public void deleteIngredient(Recipe recipe, Ingredient ingredient) {
-        databaseAccess.deleteIngredientFromHolder(recipe, ingredient.getId());
+    public void deleteIngredient(OfflineRecipe offlineRecipe, Ingredient ingredient) {
+        databaseAccess.deleteIngredientsFromRecipe(offlineRecipe.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
     }
 
     @Override
-    public void deleteIngredients(Recipe recipe, List<Ingredient> ingredients) {
+    public void deleteIngredients(OfflineRecipe offlineRecipe, List<Ingredient> ingredients) {
         List<Long> ingredientIds = new ArrayList<>();
         for (Ingredient ingredient : ingredients) ingredientIds.add(ingredient.getId());
-        databaseAccess.deleteIngredientsFromHolder(recipe, ingredientIds);
+        databaseAccess.deleteIngredientsFromRecipe(offlineRecipe.getId(), ingredientIds);
     }
 
     @Override
-    public void searchIngredients(Recipe recipe, String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.searchRecipeIngredients(recipe.getId(), ingredientSearch, callback);
+    public void searchIngredients(OfflineRecipe offlineRecipe, String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.searchRecipeIngredients(offlineRecipe.getId(), ingredientSearch, callback);
     }
 }

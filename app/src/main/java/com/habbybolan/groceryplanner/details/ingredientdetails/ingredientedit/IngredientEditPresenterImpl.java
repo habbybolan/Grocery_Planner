@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 public class IngredientEditPresenterImpl implements IngredientEditPresenter {
 
@@ -23,12 +23,12 @@ public class IngredientEditPresenterImpl implements IngredientEditPresenter {
     }
 
     @Override
-    public void updateIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
+    public void updateIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
         ingredientEditInteractor.updateIngredient(ingredientHolder, ingredient);
     }
 
     @Override
-    public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
+    public void deleteIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
         ingredientEditInteractor.deleteIngredient(ingredientHolder, ingredient);
     }
 
@@ -38,7 +38,7 @@ public class IngredientEditPresenterImpl implements IngredientEditPresenter {
     }
 
     @Override
-    public void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
+    public void deleteRelationship(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
         ingredientEditInteractor.deleteRelationship(ingredientHolder, ingredient);
     }
 }

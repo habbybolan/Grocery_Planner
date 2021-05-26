@@ -61,9 +61,6 @@ public class RecipeIngredientsAdapter extends ListAdapter<RecipeIngredientsAdapt
 
         void bind(Ingredient ingredient) {
             binding.setIngredientName(ingredient.getName());
-            if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
-            if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
-            if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             if (ingredient.hasQuantity()) binding.setIngredientQuantity(ingredient.getQuantity());
             if (ingredient.hasQuantityMeasId()) binding.setIngredientQuantityType(MeasurementType.getMeasurement(ingredient.getQuantityMeasId()));
             binding.setImageResource(ingredient.getFoodType().getImageResource());

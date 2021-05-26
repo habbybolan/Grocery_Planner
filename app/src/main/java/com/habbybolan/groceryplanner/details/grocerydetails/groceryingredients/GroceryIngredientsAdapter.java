@@ -95,13 +95,6 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
                 // set part info views as visible
                 binding.iconFoodType.setVisibility(View.VISIBLE);
                 binding.txtIngredientQuantity.setVisibility(View.GONE);
-                binding.txtIngredientPrice.setVisibility(View.GONE);
-                // set part info price and quantity values
-                if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
-                if (ingredient.hasPricePer())
-                    binding.setIngredientPricePer(ingredient.getPricePer());
-                if (ingredient.hasPriceType())
-                    binding.setIngredientPriceType(ingredient.getPriceType());
                 if (ingredient.hasQuantity())
                     binding.setIngredientQuantity(ingredient.getQuantity());
                 if (ingredient.hasQuantityMeasId())
@@ -110,7 +103,6 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
             } else {
                 binding.iconFoodType.setVisibility(View.GONE);
                 binding.txtIngredientQuantity.setVisibility(View.GONE);
-                binding.txtIngredientPrice.setVisibility(View.GONE);
             }
 
             binding.recipeNameHolder.removeAllViews();

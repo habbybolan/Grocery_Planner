@@ -4,8 +4,8 @@ import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,16 +24,20 @@ public class IngredientAddInteractorImpl implements IngredientAddInteractor {
     }
 
     @Override
-    public void fetchIngredientsNotInIngredientHolder(DbCallback<Ingredient> callback, IngredientHolder ingredientHolder) throws ExecutionException, InterruptedException {
+    public void fetchIngredientsNotInIngredientHolder(DbCallback<Ingredient> callback, OfflineIngredientHolder ingredientHolder) throws ExecutionException, InterruptedException {
         if (ingredientHolder.isGrocery())
             databaseAccess.fetchIngredientsNotInGrocery((Grocery) ingredientHolder, callback);
         else
-            databaseAccess.fetchIngredientsNotInRecipe((Recipe) ingredientHolder, callback);
+            databaseAccess.fetchIngredientsNotInRecipe((OfflineRecipe) ingredientHolder, callback);
     }
 
     @Override
-    public void addCheckedToIngredientHolder(HashSet<Ingredient> checkedIngredients, IngredientHolder ingredientHolder) {
+    public void addCheckedToIngredientHolder(HashSet<Ingredient> checkedIngredients, OfflineIngredientHolder ingredientHolder) {
         List<Ingredient> checkIngredientsArray = new ArrayList<>(checkedIngredients);
-        databaseAccess.addIngredients(ingredientHolder, checkIngredientsArray);
+        if (ingredientHolder.isGrocery()) {
+            databaseAccess.insertIngredientsIntoGrocery(ingredientHolder.getId(), checkIngredientsArray);
+        } else {
+            databaseAccess.insertIngredientsIntoRecipe(ingredientHolder.getId(), checkIngredientsArray);
+        }
     }
 }

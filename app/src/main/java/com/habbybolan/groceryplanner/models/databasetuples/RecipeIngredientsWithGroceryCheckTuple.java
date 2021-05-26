@@ -3,21 +3,23 @@ package com.habbybolan.groceryplanner.models.databasetuples;
 import androidx.room.ColumnInfo;
 
 /**
- * Room Tuple for querying the Ingredient within a Grocery, including if the ingredient is checked or not.
+ * Room tuple to display Recipe ingredients with a check if they are added to the Grocery list or not.
+ * groceryId will either have an id > 0 if the recipe ingredient exists inside the Grocery, otherwise id = 0.
  */
-public class GroceryIngredientsTuple {
+public class RecipeIngredientsWithGroceryCheckTuple {
+
+    @ColumnInfo(name = "groceryId")
+    public long groceryId;
 
     @ColumnInfo(name = "ingredientId")
     public long ingredientId;
     public Long onlineIngredientId;
     @ColumnInfo(name = "ingredientName")
     public String ingredientName;
+    @ColumnInfo(name = "food_type")
+    public String foodType;
     @ColumnInfo(name = "quantity")
     public float quantity;
     @ColumnInfo(name = "quantityMeasId")
     public Long quantityMeasId;
-    @ColumnInfo(name = "food_type")
-    public String foodType;
-    @ColumnInfo(name = "is_checked")
-    public boolean isChecked;
 }

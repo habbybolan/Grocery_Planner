@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
@@ -12,12 +12,12 @@ import java.util.concurrent.ExecutionException;
 
 public interface RecipeListInteractor {
 
-    void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
-    void deleteRecipe(Recipe recipe);
-    void deleteRecipes(List<Recipe> recipes);
-    void addRecipe(Recipe recipe, Timestamp dateCreated);
-    void addRecipesToCategory(ArrayList<Recipe>recipes, RecipeCategory category);
-    void removeRecipesFromCategory(ArrayList<Recipe> recipes);
+    void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void deleteRecipe(OfflineRecipe offlineRecipe);
+    void deleteRecipes(List<OfflineRecipe> offlineRecipes);
+    void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated);
+    void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipes, RecipeCategory category);
+    void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes);
 
     /**
      * Get the ID of the recipe category.
@@ -33,5 +33,5 @@ public interface RecipeListInteractor {
      * @param recipeCategory category that is currently showing the recipes. NUll if no category.
      * @param callback      callback to update the list of recipes showing
      */
-    void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<Recipe> callback) throws ExecutionException, InterruptedException;
+    void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 }

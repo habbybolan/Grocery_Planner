@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.di.module;
 
-import com.habbybolan.groceryplanner.http.requests.HttpRecipe;
+import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListContract;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListInteractorImpl;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListPresenterImpl;
@@ -20,8 +20,8 @@ public class OnlineRecipeModule {
     }
 
     @Provides
-    OnlineRecipeListContract.Interactor provideOnlineRecipeListInteractor(HttpRecipe httpRecipe) {
-        return new OnlineRecipeListInteractorImpl(httpRecipe);
+    OnlineRecipeListContract.Interactor provideOnlineRecipeListInteractor(RestWebService restWebService) {
+        return new OnlineRecipeListInteractorImpl(restWebService);
     }
 
     @Provides

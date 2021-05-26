@@ -15,7 +15,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsBindi
 import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
@@ -56,7 +56,7 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_instructions, container, false);
         setToolbar();
-        binding.editTxtInstructions.setText(recipeStepListener.getRecipe().getInstructions());
+        binding.editTxtInstructions.setText(recipeStepListener.getOfflineRecipe().getInstructions());
         return binding.getRoot();
     }
 
@@ -65,15 +65,15 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
      */
     private void saveInstructions() {
         String instructions = binding.editTxtInstructions.getText().toString();
-        recipeStepListener.getRecipe().setInstructions(instructions);
-        recipeInstructionsPresenter.updateRecipe(recipeStepListener.getRecipe());
+        recipeStepListener.getOfflineRecipe().setInstructions(instructions);
+        recipeInstructionsPresenter.updateRecipe(recipeStepListener.getOfflineRecipe());
     }
 
     /**
      * Cancel the instruction changes.
      */
     private void cancelInstructionChanges() {
-        binding.editTxtInstructions.setText(recipeStepListener.getRecipe().getInstructions());
+        binding.editTxtInstructions.setText(recipeStepListener.getOfflineRecipe().getInstructions());
     }
 
     private void setToolbar() {
@@ -115,7 +115,7 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        recipeInstructionsPresenter.deleteRecipe(recipeStepListener.getRecipe());
+        recipeInstructionsPresenter.deleteRecipe(recipeStepListener.getOfflineRecipe());
         recipeStepListener.onRecipeDeleted();
     }
 
@@ -131,6 +131,6 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
     public interface RecipeStepListener {
 
         void onRecipeDeleted();
-        Recipe getRecipe();
+        OfflineRecipe getOfflineRecipe();
     }
 }

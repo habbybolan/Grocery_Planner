@@ -7,7 +7,7 @@ import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -64,17 +64,17 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
     }
 
     @Override
-    public void fetchGroceriesHoldingRecipe(Recipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceriesHoldingRecipe(recipe, callback);
+    public void fetchGroceriesHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceriesHoldingRecipe(offlineRecipe, callback);
     }
 
     @Override
-    public void fetchGroceriesNotHoldingRecipe(Recipe recipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceriesNotHoldingRecipe(recipe, callback);
+    public void fetchGroceriesNotHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceriesNotHoldingRecipe(offlineRecipe, callback);
     }
 
     @Override
-    public void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
+    public void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
         // loop through the ingredients and find if all of them are not added to Grocery list
         // if none added, then delete the recipe from the GroceryRecipeBridge
         boolean hasIngredientSelected = false;
@@ -86,10 +86,10 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
         }
         // if no ingredient inside the grocery list, then remove the recipe grocery relationship
         if (!hasIngredientSelected)
-            databaseAccess.deleteGroceryRecipeBridge(recipe, grocery);
+            databaseAccess.deleteGroceryRecipeBridge(offlineRecipe, grocery);
         else
             // otherwise, update update or add the recipe and its selected/unselected ingredients to the grocery list
-            databaseAccess.updateRecipeIngredientsInGrocery(recipe, grocery, amount, ingredients);
+            databaseAccess.updateRecipeIngredientsInGrocery(offlineRecipe, grocery, amount, ingredients);
     }
 
     @Override
@@ -111,25 +111,25 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
     }
 
     @Override
-    public void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException {
+    public void fetchRecipeIngredients(OfflineRecipe offlineRecipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException {
        if (isNotInGrocery) {
-           databaseAccess.fetchRecipeIngredientsNotInGrocery(recipe, callback);
+           databaseAccess.fetchRecipeIngredientsNotInGrocery(offlineRecipe, callback);
        } else {
-           databaseAccess.fetchRecipeIngredientsInGrocery(grocery, recipe, callback);
+           databaseAccess.fetchRecipeIngredientsInGrocery(grocery, offlineRecipe, callback);
        }
     }
 
     @Override
-    public void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery) {
-        databaseAccess.deleteRecipeFromGrocery(grocery, recipe);
+    public void deleteRecipeFromGrocery(OfflineRecipe offlineRecipe, Grocery grocery) {
+        databaseAccess.deleteRecipeFromGrocery(grocery, offlineRecipe);
     }
 
     @Override
-    public boolean addTag(List<RecipeTag> recipeTags, Recipe recipe, String title) {
+    public boolean addTag(List<RecipeTag> recipeTags, OfflineRecipe offlineRecipe, String title) {
         String reformattedTitle = RecipeTag.reformatTagTitle(title);
         RecipeTag recipeTag = new RecipeTag(reformattedTitle);
         if (RecipeTag.isTagTitleValid(title) && !recipeTags.contains(recipeTag)) {
-            databaseAccess.addRecipeTag(recipe.getId(), reformattedTitle);
+            databaseAccess.addRecipeTag(offlineRecipe.getId(), reformattedTitle);
             recipeTags.add(new RecipeTag(reformattedTitle));
             return true;
         }
@@ -137,12 +137,12 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
     }
 
     @Override
-    public void fetchTags(Recipe recipe, DbCallback<RecipeTag> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchRecipeTags(recipe.getId(), callback);
+    public void fetchTags(OfflineRecipe offlineRecipe, DbCallback<RecipeTag> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchRecipeTags(offlineRecipe.getId(), callback);
     }
 
     @Override
-    public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
-        databaseAccess.deleteRecipeTag(recipe.getId(), recipeTag.getId());
+    public void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag) {
+        databaseAccess.deleteRecipeTag(offlineRecipe.getId(), recipeTag.getId());
     }
 }

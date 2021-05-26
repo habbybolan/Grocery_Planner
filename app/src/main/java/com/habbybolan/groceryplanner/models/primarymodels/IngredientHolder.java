@@ -1,17 +1,22 @@
 package com.habbybolan.groceryplanner.models.primarymodels;
 
-import android.os.Parcelable;
+import android.os.Parcel;
 
 /**
  * Abstract class to represent a Grocery/Recipe List.
  * Both hold a list of Ingredients with a bridge table to represent the relationship between IngredientHolder and Ingredients.
  */
-public abstract class IngredientHolder implements Parcelable {
+public abstract class IngredientHolder extends OnlineModel {
 
     public static final String INGREDIENT_HOLDER = "ingredient_holder";
 
     String name;
-    long id;
+
+    public IngredientHolder(){}
+
+    public IngredientHolder(Parcel in) {
+        super(in);
+    }
 
     /**
      * Check if the name of the Grocery is valid. Valid if it contains at least one non-empty character.
@@ -28,14 +33,9 @@ public abstract class IngredientHolder implements Parcelable {
         return numEmptySpaces < nameText.length();
     }
 
-    public abstract boolean isGrocery();
-
 
     public String getName() {
         return name;
-    }
-    public long getId() {
-        return id;
     }
 
     public void setName(String name) {

@@ -2,7 +2,7 @@ package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.List;
 
@@ -13,41 +13,41 @@ public interface RecipeIngredientsPresenter {
 
     /**
      * Edits the Recipe name.
-     * @param recipe    Recipe to edit
+     * @param offlineRecipe    Recipe to edit
      * @param name      New name to set
      */
-    void editRecipeName(Recipe recipe, String name);
+    void editRecipeName(OfflineRecipe offlineRecipe, String name);
 
     /**
      * Recipe to delete.
-     * @param recipe   The recipe to delete.
+     * @param offlineRecipe   The recipe to delete.
      */
-    void deleteRecipe(Recipe recipe);
+    void deleteRecipe(OfflineRecipe offlineRecipe);
 
     /**
      * Delete an ingredient from the recipe
-     * @param recipe        The recipe to delete the ingredient from
+     * @param offlineRecipe        The recipe to delete the ingredient from
      * @param ingredient    The ingredient to delete
      */
-    void deleteIngredient(Recipe recipe, Ingredient ingredient);
+    void deleteIngredient(OfflineRecipe offlineRecipe, Ingredient ingredient);
 
     /**
      * Delete ingredients from the recipe
-     * @param recipe        The recipe to delete the ingredients from
+     * @param offlineRecipe        The recipe to delete the ingredients from
      * @param ingredients   The ingredients to delete
      */
-    void deleteIngredients(Recipe recipe, List<Ingredient> ingredients);
+    void deleteIngredients(OfflineRecipe offlineRecipe, List<Ingredient> ingredients);
 
     /**
      * Get all Ingredient objects associated with recipe from the database.
-     * @param recipe   The recipe associated with the Ingredients to display
+     * @param offlineRecipe   The recipe associated with the Ingredients to display
      */
-    void createIngredientList(Recipe recipe);
+    void createIngredientList(OfflineRecipe offlineRecipe);
 
     /**
      * Search for the recipe ingredients with name ingredientSearch.
-     * @param recipe             recipe to search in for the ingredient
+     * @param offlineRecipe             recipe to search in for the ingredient
      * @param ingredientSearch   ingredient to search for
      */
-    void searchIngredients(Recipe recipe, String ingredientSearch);
+    void searchIngredients(OfflineRecipe offlineRecipe, String ingredientSearch);
 }

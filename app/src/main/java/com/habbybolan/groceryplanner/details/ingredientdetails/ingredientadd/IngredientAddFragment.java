@@ -18,7 +18,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentIngredientAddBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientAddModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
  */
 public class IngredientAddFragment extends Fragment implements IngredientAddView{
 
-    private IngredientHolder ingredientHolder;
+    private OfflineIngredientHolder ingredientHolder;
     private FragmentIngredientAddBinding binding;
     private IngredientAddListener ingredientAddListener;
     private List<Ingredient> ingredients = new ArrayList<>();
@@ -42,10 +42,10 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
 
     public IngredientAddFragment() {}
 
-    public static IngredientAddFragment newInstance(IngredientHolder ingredientHolder) {
+    public static IngredientAddFragment newInstance(OfflineIngredientHolder ingredientHolder) {
         IngredientAddFragment fragment = new IngredientAddFragment();
         Bundle args = new Bundle();
-        args.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
+        args.putParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER, ingredientHolder);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +61,7 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().ingredientAddSubComponent(new IngredientAddModule()).inject(this);
         if (getArguments() != null) {
-            ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
+            ingredientHolder = getArguments().getParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER);
         }
     }
 
@@ -137,7 +137,7 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // todo: save the loaded and checked Ingredients from the presenter.
-        outState.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
+        outState.putParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER, ingredientHolder);
     }
 
     public interface IngredientAddItemClickedListener {

@@ -25,7 +25,7 @@ import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class RecipeListFragment extends CategoryListFragment<Recipe> implements RecipeListView {
+public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> implements RecipeListView {
 
     @Inject
     RecipeListPresenter recipeListPresenter;
@@ -128,7 +128,7 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         if (savedInstanceState != null) {
             recipeCategory = savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY);
             // pull saved recipe list from bundled save
-            listItems = savedInstanceState.getParcelableArrayList(Recipe.RECIPE);
+            listItems = savedInstanceState.getParcelableArrayList(OfflineRecipe.RECIPE);
             adapter.notifyDataSetChanged();
         } else {
             // otherwise, pull the list from database and display it.
@@ -177,7 +177,7 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
      * @param recipeName  The name of the new Recipe to create
      */
     private void createRecipe(String recipeName) {
-        Recipe.RecipeBuilder recipeBuilder = new Recipe.RecipeBuilder(recipeName);
+        OfflineRecipe.RecipeBuilder recipeBuilder = new OfflineRecipe.RecipeBuilder(recipeName);
         RecipeCategory recipeCategory = ((RecipeListActivity) getActivity()).getRecipeCategory();
         if (recipeCategory != null) recipeBuilder.setCategoryId(recipeCategory.getId());
         recipeListPresenter.addRecipe(recipeBuilder.build(), new Timestamp(System.currentTimeMillis()/1000));
@@ -209,7 +209,7 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(Recipe.RECIPE, (ArrayList<? extends Parcelable>) listItems);
+        outState.putParcelableArrayList(OfflineRecipe.RECIPE, (ArrayList<? extends Parcelable>) listItems);
     }
 
     @Override
@@ -243,7 +243,7 @@ public class RecipeListFragment extends CategoryListFragment<Recipe> implements 
         recipeListPresenter.createRecipeList();
     }
 
-    public interface RecipeListListener extends ItemListener<Recipe> {
+    public interface RecipeListListener extends ItemListener<OfflineRecipe> {
 
         void gotoRecipeListUnCategorized();
         void gotoRecipeCategories();

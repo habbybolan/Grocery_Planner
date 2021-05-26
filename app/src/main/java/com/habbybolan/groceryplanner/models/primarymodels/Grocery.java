@@ -4,13 +4,20 @@ import android.os.Parcel;
 
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 
-public class Grocery extends IngredientHolder {
+import java.sql.Timestamp;
+
+public class Grocery extends IngredientHolder implements OfflineIngredientHolder {
+
+    private Timestamp dateSynchronized;
+    private long id;
 
     public final static String GROCERY = "grocery";
 
-    public Grocery(String name, long id) {
+    public Grocery(String name, long id, Long onlineId, Timestamp dateSynchronized) {
         this.name = name;
         this.id = id;
+        this.onlineId = onlineId;
+        this.dateSynchronized = dateSynchronized;
     }
 
     public Grocery(String name) {
@@ -21,11 +28,15 @@ public class Grocery extends IngredientHolder {
     public Grocery(GroceryEntity groceryEntity) {
         name = groceryEntity.getName();
         id = groceryEntity.getGroceryId();
+        onlineId = groceryEntity.getOnlineGroceryId();
+        dateSynchronized = groceryEntity.getDateSynchronized();
     }
 
     public Grocery(Parcel in) {
+        super(in);
         id = in.readLong();
         name = in.readString();
+        dateSynchronized = (Timestamp) in.readSerializable();
     }
 
     @Override
@@ -52,7 +63,16 @@ public class Grocery extends IngredientHolder {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeSerializable(dateSynchronized);
+    }
+
+    public Timestamp getDateSynchronized() {
+        return dateSynchronized;
+    }
+    public long getId() {
+        return id;
     }
 }

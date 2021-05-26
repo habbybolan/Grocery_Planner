@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.sql.Timestamp;
 
@@ -40,6 +40,7 @@ public class RecipeEntity {
 
     @PrimaryKey(autoGenerate = true)
     private long recipeId;
+    private Long onlineRecipeId;
     @ColumnInfo(name="name")
     private String name;
     @ColumnInfo(name="is_favorite")
@@ -51,25 +52,31 @@ public class RecipeEntity {
     private int cookTime;
     @ColumnInfo(name="serving_size")
     private int servingSize;
+    @ColumnInfo(defaultValue = "0")
     private int calories;
     @ColumnInfo(name = "calories_type", index = true)
     private Long caloriesType;
+    @ColumnInfo(defaultValue = "0")
     private int fat;
     @ColumnInfo(name = "fat_type", index = true)
     private Long fatType;
-    @ColumnInfo(name = "saturated_fat")
+    @ColumnInfo(defaultValue = "0", name = "saturated_fat")
     private int saturatedFat;
     @ColumnInfo(name = "saturated_fat_type", index = true)
     private Long saturatedFatType;
+    @ColumnInfo(defaultValue = "0")
     private int carbohydrates;
     @ColumnInfo(name = "carbohydrates_type", index = true)
     private Long carbohydratesType;
+    @ColumnInfo(defaultValue = "0")
     private int fiber;
     @ColumnInfo(name = "fiber_type", index = true)
     private Long fiberType;
+    @ColumnInfo(defaultValue = "0")
     private int sugar;
     @ColumnInfo(name = "sugar_type", index = true)
     private Long sugarType;
+    @ColumnInfo(defaultValue = "0")
     private int protein;
     @ColumnInfo(name = "protein_type", index = true)
     private Long proteinType;
@@ -79,11 +86,16 @@ public class RecipeEntity {
     private String instructions;
     @ColumnInfo(name = "date_created", index = true)
     private Timestamp dateCreated;
+    @ColumnInfo(name = "date_synchronized", index = true)
+    private Timestamp dateSynchronized;
+    @ColumnInfo(name = "is_updated")
+    private boolean isUpdated;
 
-    public RecipeEntity(long recipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, int calories, Long caloriesType,
+    public RecipeEntity(long recipeId, Long onlineRecipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, int calories, Long caloriesType,
                         int fat, Long fatType, int saturatedFat, Long saturatedFatType, int carbohydrates, Long carbohydratesType, int fiber,
-                        Long fiberType, int sugar, Long sugarType, int protein, Long proteinType, Long recipeCategoryId, String instructions, Timestamp dateCreated) {
+                        Long fiberType, int sugar, Long sugarType, int protein, Long proteinType, Long recipeCategoryId, String instructions, Timestamp dateCreated, Timestamp dateSynchronized, boolean isUpdated) {
         this.recipeId = recipeId;
+        this.onlineRecipeId = onlineRecipeId;
         this.name = name;
         this.isFavorite = isFavorite;
         this.description = description;
@@ -106,54 +118,63 @@ public class RecipeEntity {
         this.proteinType = proteinType;
         this.recipeCategoryId = recipeCategoryId;
         this.instructions = instructions;
+        this.dateCreated = dateCreated;
+        this.dateSynchronized = dateSynchronized;
+        this.isUpdated = isUpdated;
     }
 
-    public RecipeEntity(Recipe recipe) {
-        recipeId = recipe.getId();
-        name = recipe.getName();
-        isFavorite = recipe.getIsFavorite();
+    public RecipeEntity(OfflineRecipe offlineRecipe) {
+        recipeId = offlineRecipe.getId();
+        onlineRecipeId = offlineRecipe.getOnlineId();
+        name = offlineRecipe.getName();
+        isFavorite = offlineRecipe.getIsFavorite();
 
-        description = recipe.getDescription();
-        prepTime = recipe.getPrepTime();
-        cookTime = recipe.getCookTime();
-        servingSize = recipe.getServingSize();
+        description = offlineRecipe.getDescription();
+        prepTime = offlineRecipe.getPrepTime();
+        cookTime = offlineRecipe.getCookTime();
+        servingSize = offlineRecipe.getServingSize();
 
-        if (recipe.getCalories() != null) {
-            calories = recipe.getCalories().getAmount();
-            caloriesType = recipe.getCalories().getMeasurementId();
+        if (offlineRecipe.getCalories() != null) {
+            calories = offlineRecipe.getCalories().getAmount();
+            caloriesType = offlineRecipe.getCalories().getMeasurementId();
         }
-        if (recipe.getFat() != null) {
-            fat = recipe.getFat().getAmount();
-            fatType = recipe.getFat().getMeasurementId();
+        if (offlineRecipe.getFat() != null) {
+            fat = offlineRecipe.getFat().getAmount();
+            fatType = offlineRecipe.getFat().getMeasurementId();
         }
-        if (recipe.getSaturatedFat() != null) {
-            saturatedFat = recipe.getSaturatedFat().getAmount();
-            saturatedFatType = recipe.getSaturatedFat().getMeasurementId();
+        if (offlineRecipe.getSaturatedFat() != null) {
+            saturatedFat = offlineRecipe.getSaturatedFat().getAmount();
+            saturatedFatType = offlineRecipe.getSaturatedFat().getMeasurementId();
         }
-        if (recipe.getCarbohydrates() != null) {
-            carbohydrates = recipe.getCarbohydrates().getAmount();
-            carbohydratesType = recipe.getCarbohydrates().getMeasurementId();
+        if (offlineRecipe.getCarbohydrates() != null) {
+            carbohydrates = offlineRecipe.getCarbohydrates().getAmount();
+            carbohydratesType = offlineRecipe.getCarbohydrates().getMeasurementId();
         }
-        if (recipe.getFiber() != null) {
-            fiber = recipe.getFiber().getAmount();
-            fiberType = recipe.getFiber().getMeasurementId();
+        if (offlineRecipe.getFiber() != null) {
+            fiber = offlineRecipe.getFiber().getAmount();
+            fiberType = offlineRecipe.getFiber().getMeasurementId();
         }
-        if (recipe.getSugar() != null) {
-            sugar = recipe.getSugar().getAmount();
-            sugarType = recipe.getSugar().getMeasurementId();
+        if (offlineRecipe.getSugar() != null) {
+            sugar = offlineRecipe.getSugar().getAmount();
+            sugarType = offlineRecipe.getSugar().getMeasurementId();
         }
-        if (recipe.getProtein() != null) {
-            protein = recipe.getProtein().getAmount();
-            proteinType = recipe.getProtein().getMeasurementId();
+        if (offlineRecipe.getProtein() != null) {
+            protein = offlineRecipe.getProtein().getAmount();
+            proteinType = offlineRecipe.getProtein().getMeasurementId();
         }
-        recipeCategoryId = recipe.getCategoryId();
-        instructions = recipe.getInstructions();
-        dateCreated = recipe.getDateCreated();
+        recipeCategoryId = offlineRecipe.getCategoryId();
+        instructions = offlineRecipe.getInstructions();
+        dateCreated = offlineRecipe.getDateCreated();
+        dateSynchronized = offlineRecipe.getDateSynchronized();
+        isUpdated = offlineRecipe.getIsUpdated();
     }
 
 
     public long getRecipeId() {
         return recipeId;
+    }
+    public Long getOnlineRecipeId() {
+        return onlineRecipeId;
     }
     public String getName() {
         return name;
@@ -196,6 +217,9 @@ public class RecipeEntity {
     public int getProtein() {
         return protein;
     }
+    public boolean getIsUpdated() {
+        return isUpdated;
+    }
 
     public Long getCaloriesType() {
         return caloriesType;
@@ -226,6 +250,9 @@ public class RecipeEntity {
     }
     public Timestamp getDateCreated() {
         return dateCreated;
+    }
+    public Timestamp getDateSynchronized() {
+        return dateSynchronized;
     }
 
     public static String getNameColumn() {

@@ -3,7 +3,7 @@ package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,25 +44,25 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
     }
 
     @Override
-    public void editRecipeName(Recipe recipe, String name) {
+    public void editRecipeName(OfflineRecipe offlineRecipe, String name) {
         // todo:
     }
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        recipeIngredientsInteractor.deleteRecipe(recipe);
+    public void deleteRecipe(OfflineRecipe offlineRecipe) {
+        recipeIngredientsInteractor.deleteRecipe(offlineRecipe);
     }
 
     @Override
-    public void deleteIngredient(Recipe recipe, Ingredient ingredient) {
-        recipeIngredientsInteractor.deleteIngredient(recipe, ingredient);
-        createIngredientList(recipe);
+    public void deleteIngredient(OfflineRecipe offlineRecipe, Ingredient ingredient) {
+        recipeIngredientsInteractor.deleteIngredient(offlineRecipe, ingredient);
+        createIngredientList(offlineRecipe);
     }
 
     @Override
-    public void deleteIngredients(Recipe recipe, List<Ingredient> ingredients) {
-        recipeIngredientsInteractor.deleteIngredients(recipe, ingredients);
-        createIngredientList(recipe);
+    public void deleteIngredients(OfflineRecipe offlineRecipe, List<Ingredient> ingredients) {
+        recipeIngredientsInteractor.deleteIngredients(offlineRecipe, ingredients);
+        createIngredientList(offlineRecipe);
     }
 
     /**
@@ -83,11 +83,11 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
     }
 
     @Override
-    public void createIngredientList(Recipe recipe) {
+    public void createIngredientList(OfflineRecipe offlineRecipe) {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            recipeIngredientsInteractor.fetchIngredients(recipe, view.getSortType(), ingredientDbCallback);
+            recipeIngredientsInteractor.fetchIngredients(offlineRecipe, view.getSortType(), ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("failed to delete Ingredients");
@@ -96,11 +96,11 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
     }
 
     @Override
-    public void searchIngredients(Recipe recipe, String ingredientSearch)  {
+    public void searchIngredients(OfflineRecipe offlineRecipe, String ingredientSearch)  {
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            recipeIngredientsInteractor.searchIngredients(recipe, ingredientSearch, ingredientDbCallback);
+            recipeIngredientsInteractor.searchIngredients(offlineRecipe, ingredientSearch, ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;

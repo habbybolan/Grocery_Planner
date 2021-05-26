@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.database.entities.RecipeTagBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeGroceriesTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTuple;
-import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryTuple;
+import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryCheckTuple;
 
 import java.util.List;
 
@@ -103,57 +103,70 @@ public interface RecipeDao {
     @Query("SELECT * FROM RecipeIngredientBridge WHERE recipeId = :recipeId")
     List<RecipeIngredientBridge> getRecipeIngredient(long recipeId);
 
-    @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
+    @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineingredientId, ingredientName, " +
             "   quantity, quantityMeasId, food_type " +
             "   FROM " +
             "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
-            "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
+            "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type " +
             "           FROM IngredientEntity) " +
-            "       USING (ingredientId)")
+            "       USING (ingredientId)" +
+            "       JOIN" +
+            "       (SELECT recipeId, onlineRecipeId FROM recipeentity)" +
+            "       USING (recipeId)")
     List<RecipeIngredientsTuple> getRecipeIngredients(long recipeId);
 
-    @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
+    @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
             "   quantity, quantityMeasId, food_type " +
             "   FROM " +
             "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
-            "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
+            "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type " +
             "           FROM IngredientEntity) " +
-            "       USING (ingredientId) ORDER BY ingredientName ASC")
+            "       USING (ingredientId) " +
+            "       JOIN " +
+            "       (SELECT recipeId, onlineRecipeId FROM recipeEntity)" +
+            "       USING (recipeId)" +
+            "       ORDER BY ingredientName ASC")
     List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalAsc(long recipeId);
 
-    @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
+    @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
             "   quantity, quantityMeasId, food_type " +
             "   FROM " +
             "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
-            "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
+            "       (SELECT ingredientId, onlineIngredientId, ingredientName,  food_type " +
             "           FROM IngredientEntity) " +
-            "       USING (ingredientId) ORDER BY ingredientName DESC")
+            "       USING (ingredientId) " +
+            "       JOIN " +
+            "       (SELECT recipeId, onlineRecipeId FROM RecipeEntity)" +
+            "       USING (recipeId)" +
+            "       ORDER BY ingredientName DESC")
     List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalDesc(long recipeId);
 
-    @Query("SELECT groceryId, recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
+    @Query("SELECT groceryId, onlineGroceryId, recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
             "quantity, quantityMeasId, food_type " +
             "   FROM " +
-            "   (SELECT ingredientId, ingredientName, price, price_per, price_type, " +
+            "   (SELECT ingredientId, onlineIngredientId, ingredientName, " +
             "       quantity, quantityMeasId, food_type " +
             "       FROM " +
             "           (SELECT ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "               FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "           JOIN " +
-            "           (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
+            "           (SELECT ingredientId, onlineIngredientId, ingredientName, food_type " +
             "               FROM IngredientEntity) " +
             "           USING (ingredientId))" +
             "LEFT JOIN" +
             "   (SElECT groceryId, recipeId, ingredientId " +
             "       FROM GroceryRecipeIngredientEntity" +
             "       WHERE recipeId = :recipeId AND groceryId = :groceryId) " +
-            "USING (ingredientId)")
-    List<RecipeIngredientsWithGroceryTuple> getRecipeIngredientsInGrocery(long recipeId, long groceryId);
+            "USING (ingredientId)" +
+            "JOIN GroceryEntity USING (groceryId)" +
+            "JOIN RecipeEntity USING (recipeId)")
+    List<RecipeIngredientsWithGroceryCheckTuple> getRecipeIngredientsInGrocery(long recipeId, long groceryId);
 
 
     // Recipe Category
@@ -163,7 +176,6 @@ public interface RecipeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
-
 
     @Query("DELETE FROM RecipeIngredientBridge WHERE recipeId IN (:recipeIds)")
     void deleteRecipesFromRecipeIngredientBridge(List<Long> recipeIds);
@@ -204,11 +216,11 @@ public interface RecipeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertRecipeIntoGrocery(GroceryRecipeBridge groceryRecipeBridge);
 
-    @Query("SELECT groceryId, groceryName, amount " +
+    @Query("SELECT groceryId, onlineGroceryId, dateSynchronized, groceryName, amount " +
             "   FROM" +
             "   (SELECT groceryId, amount FROM GroceryRecipeBridge WHERE recipeId=:recipeId) " +
             "   JOIN" +
-            "   (SELECT groceryId, name AS groceryName FROM GroceryEntity) " +
+            "   (SELECT groceryId, onlineGroceryId, dateSynchronized, name AS groceryName FROM GroceryEntity) " +
             "   USING (groceryId)")
     List<RecipeGroceriesTuple> getGroceriesHoldingRecipe(long recipeId);
 
@@ -218,17 +230,17 @@ public interface RecipeDao {
     @Insert
     void insertRecipeTagBridge(RecipeTagBridge bridge);
 
-    @Query("SELECT tagId, title FROM " +
+    @Query("SELECT tagId, onlineTagId, title FROM " +
             "   (SELECT tagId FROM RecipeTagBridge WHERE recipeId=:recipeId)" +
             "   JOIN" +
-            "   (SELECT tagId, title FROM RecipeTagEntity)" +
+            "   (SELECT tagId, onlineTagId, title FROM RecipeTagEntity)" +
             "   USING  (tagId)")
     List<RecipeTagEntity> getRecipeTags(long recipeId);
 
     @Delete
     void deleteRecipeTagBridge(RecipeTagBridge bridge);
 
-    @Query("SELECT tagId, title FROM RecipeTagEntity WHERE title=:title")
+    @Query("SELECT tagId, onlineTagId, title FROM RecipeTagEntity WHERE title=:title")
     RecipeTagEntity getRecipeTag(String title);
 
     @Query("SELECT * FROM RecipeEntity WHERE name like :recipeSearch")
@@ -240,14 +252,15 @@ public interface RecipeDao {
     @Query("SELECT * FROM RecipeEntity WHERE name like :recipeSearch AND recipe_category_id = :categoryId")
     List<RecipeEntity> searchRecipesInCategory(long categoryId, String recipeSearch);
 
-    @Query("SELECT recipeId, ingredientId, ingredientName, price, price_per, price_type, " +
+    @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
             "   quantity, quantityMeasId, food_type " +
             "   FROM " +
             "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
             "           FROM RecipeIngredientBridge WHERE recipeId = :recipeId) " +
             "       JOIN " +
-            "       (SELECT ingredientId, ingredientName, price, price_per, price_type, food_type " +
+            "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type " +
             "           FROM IngredientEntity WHERE ingredientName LIKE :ingredientSearch) " +
-            "       USING (ingredientId)")
+            "       USING (ingredientId)" +
+            "       JOIN RecipeEntity USING (recipeId)")
     List<RecipeIngredientsTuple> searchRecipeIngredients(long recipeId, String ingredientSearch);
 }

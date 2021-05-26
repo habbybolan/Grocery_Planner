@@ -21,5 +21,5 @@ public interface RecipeSideScrollInteractor {
      * @param amount   The amount of recipes to retrieve from the fetch
      * @param callback Callback to signal when the recipes are retrieved from web service
      */
-    void fetchRecipes(int infoType, int offset, int amount, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchRecipes(String infoType, int offset, int amount, WebServiceCallback<OnlineRecipe> callback) throws ExecutionException, InterruptedException;
 }

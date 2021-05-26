@@ -4,7 +4,7 @@ import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeSideScroll
 import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeSideScrollInteractorImpl;
 import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeSideScrollPresenter;
 import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeSideScrollPresenterImpl;
-import com.habbybolan.groceryplanner.http.requests.HttpRecipe;
+import com.habbybolan.groceryplanner.http.RestWebService;
 
 import dagger.Module;
 import dagger.Provides;
@@ -13,8 +13,8 @@ import dagger.Provides;
 public class RecipeSideScrollModule {
 
     @Provides
-    RecipeSideScrollInteractor provideSideScrollInteractor(HttpRecipe httpRecipe) {
-        return new RecipeSideScrollInteractorImpl(httpRecipe);
+    RecipeSideScrollInteractor provideSideScrollInteractor(RestWebService restWebService) {
+        return new RecipeSideScrollInteractorImpl(restWebService);
     }
 
     @Provides

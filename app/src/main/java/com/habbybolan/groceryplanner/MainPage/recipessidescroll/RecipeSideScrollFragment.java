@@ -19,7 +19,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeSideScrollBinding
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeSideScrollModule;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class RecipeSideScrollFragment extends Fragment implements RecipeSideScro
 
     public static final String RECIPE_LIST_TYPE = "TYPE_KEY";
     // recipe type list with code IntDef @recipeListType, default value NEW_TYPE
-    private int recipeType = RecipeListType.NEW_TYPE;
+    private String recipeType = RecipeListType.NEW_TYPE;
     public static final String OFFSET_KEY = "OFFSET";
     // The current offset of recipes to retrieve from web service
     private int offset = 0;
@@ -57,10 +57,10 @@ public class RecipeSideScrollFragment extends Fragment implements RecipeSideScro
         listener = (RecipeSideScrollListener) context;
     }
 
-    public static RecipeSideScrollFragment newInstance(@RecipeListType int recipeType) {
+    public static RecipeSideScrollFragment newInstance(@RecipeListType String recipeType) {
         RecipeSideScrollFragment fragment = new RecipeSideScrollFragment();
         Bundle args = new Bundle();
-        args.putInt(RECIPE_LIST_TYPE, recipeType);
+        args.putString(RECIPE_LIST_TYPE, recipeType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,10 +70,10 @@ public class RecipeSideScrollFragment extends Fragment implements RecipeSideScro
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeSideScrollSubComponent(new RecipeSideScrollModule()).inject(this);
         if (getArguments() != null) {
-            recipeType = getArguments().getInt(RECIPE_LIST_TYPE);
+            recipeType = getArguments().getString(RECIPE_LIST_TYPE);
             if (getArguments().containsKey(OFFSET_KEY)) offset = getArguments().getInt(OFFSET_KEY);
             if (getArguments().containsKey(NUM_RECIPES_KEY)) numRecipesToLoad = getArguments().getInt(NUM_RECIPES_KEY);
-            if (getArguments().containsKey(Recipe.RECIPE)) recipes = getArguments().getParcelableArrayList(Recipe.RECIPE);
+            if (getArguments().containsKey(OfflineRecipe.RECIPE)) recipes = getArguments().getParcelableArrayList(OfflineRecipe.RECIPE);
         }
     }
 
@@ -128,8 +128,8 @@ public class RecipeSideScrollFragment extends Fragment implements RecipeSideScro
         super.onSaveInstanceState(outState);
         outState.putInt(OFFSET_KEY, offset);
         outState.putInt(NUM_RECIPES_KEY, numRecipesToLoad);
-        outState.putInt(RECIPE_LIST_TYPE, recipeType);
-        outState.putParcelableArrayList(Recipe.RECIPE, (ArrayList<? extends Parcelable>) recipes);
+        outState.putString(RECIPE_LIST_TYPE, recipeType);
+        outState.putParcelableArrayList(OfflineRecipe.RECIPE, (ArrayList<? extends Parcelable>) recipes);
     }
 
     public interface RecipeSideScrollListener {

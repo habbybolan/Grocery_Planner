@@ -13,7 +13,7 @@ import com.habbybolan.groceryplanner.databinding.ActivityRecipeListBinding;
 import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.RecipeListListener, RecipeCategoryFragment.RecipeCategoryListener {
@@ -61,8 +61,6 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         if (recipeCategoryFragment != null) recipeCategoryFragment.attachListener(recipeCategoryListener);
     }
 
-
-
     /**
      * Sends the app to the GroceryListActivity
      */
@@ -74,11 +72,11 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
 
     /**
      * Sends the app the the RecipeDetailsActivity for selecting a specific recipe.
-     * @param recipe    The recipe info to display
+     * @param offlineRecipe    The recipe info to display
      */
-    public void onRecipeItemClicked(Recipe recipe) {
+    public void onRecipeItemClicked(OfflineRecipe offlineRecipe) {
         Intent intent = new Intent(this, RecipeDetailActivity.class);
-        intent.putExtra(Recipe.RECIPE, recipe);
+        intent.putExtra(OfflineRecipe.RECIPE, offlineRecipe);
         if (recipeCategory != null) intent.putExtra(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
         startActivityForResult(intent, RETURNED_FROM_RECIPE_DETAILS);
     }
@@ -148,8 +146,8 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
     private class RecipeListListener implements RecipeListFragment.RecipeListListener {
 
         @Override
-        public void onItemClicked(Recipe recipe) {
-            onRecipeItemClicked(recipe);
+        public void onItemClicked(OfflineRecipe offlineRecipe) {
+            onRecipeItemClicked(offlineRecipe);
         }
 
         @Override

@@ -9,10 +9,12 @@ public class RecipeTagEntity {
 
     @PrimaryKey(autoGenerate = true)
     public long tagId;
+    public Long onlineTagId;
     public String title;
 
-    public RecipeTagEntity(long tagId, String title) {
+    public RecipeTagEntity(long tagId, Long onlineTagId, String title) {
         this.tagId = tagId;
+        this.onlineTagId = onlineTagId;
         this.title = title;
     }
 }

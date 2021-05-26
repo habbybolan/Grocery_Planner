@@ -1,7 +1,7 @@
 # Grocery Planner
 
 ## So far ##
-An in the works, grocery/recipe planner app, programmed in Java for Android. <br>
+An in the works, grocery/offlineRecipe planner app, programmed in Java for Android. <br>
 Makes use of MVP UI architecture with a Room database and dagger library for dependency injection. <br>
 
 ## In the future ##

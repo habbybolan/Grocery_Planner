@@ -16,7 +16,7 @@
         <activity
             android:name=".online.myrecipes.MyRecipesActivity"
             android:label="@string/title_activity_my_recipes"
-            android:theme="@style/MyMaterialTheme.NoActionBar"></activity>
+            android:theme="@style/MyMaterialTheme.NoActionBar"/>
         <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditActivity" />
         <activity android:name=".online.savedrecipes.SavedRecipesActivity" />
         <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivity" />

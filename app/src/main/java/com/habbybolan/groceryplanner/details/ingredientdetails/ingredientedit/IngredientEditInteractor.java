@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 public interface IngredientEditInteractor {
 
@@ -11,8 +11,8 @@ public interface IngredientEditInteractor {
      * @param ingredientHolder      The IngredientHolder where the Ingredient is being added to.
      * @param ingredient            The Ingredient to update/add to the database
      */
-    void updateIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
-    void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient);
+    void updateIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient);
+    void deleteIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient);
     boolean isNewIngredient(Ingredient ingredient);
-    void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient);
+    void deleteRelationship(OfflineIngredientHolder ingredientHolder, Ingredient ingredient);
 }

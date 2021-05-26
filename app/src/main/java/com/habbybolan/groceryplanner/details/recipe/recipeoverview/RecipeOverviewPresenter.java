@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeoverview;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
@@ -12,9 +12,9 @@ public interface RecipeOverviewPresenter {
     void setView(RecipeOverviewView view);
     void destroy();
 
-    void deleteRecipe(Recipe recipe);
+    void deleteRecipe(OfflineRecipe offlineRecipe);
 
-    void updateRecipe(Recipe recipe);
+    void updateRecipe(OfflineRecipe offlineRecipe);
     /**
      * Loads all recipe categories
      */
@@ -52,15 +52,15 @@ public interface RecipeOverviewPresenter {
 
     /**
      * Fetch the Groceries that are holding the recipe.
-     * @param recipe    The recipe begin contained by the Grocery object
+     * @param offlineRecipe    The recipe begin contained by the Grocery object
      */
-    void fetchGroceriesHoldingRecipe(Recipe recipe);
+    void fetchGroceriesHoldingRecipe(OfflineRecipe offlineRecipe);
 
     /**
      * Fetch the Groceries that are not holding the recipe.
-     * @param recipe    The recipe not contained by the Grocery object
+     * @param offlineRecipe    The recipe not contained by the Grocery object
      */
-    void fetchGroceriesNotHoldingRecipe(Recipe recipe);
+    void fetchGroceriesNotHoldingRecipe(OfflineRecipe offlineRecipe);
 
     /**
      * Called to display the Groceries not holding the Recipe
@@ -69,20 +69,20 @@ public interface RecipeOverviewPresenter {
 
     /**
      * Adds the recipe to the grocery list.
-     * @param recipe        Recipe to add to grocery
+     * @param offlineRecipe        Recipe to add to grocery
      * @param grocery       grocery to hold the recipe
      * @param amount        The number of times to add the Recipe to the grocery
      * @param ingredients   recipe ingredients to add or remove from the grocery list
      */
-    void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
+    void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
 
     /**
      * Fetches the recipe ingredients where the recipe is not part of the selected grocery list.
-     * @param recipe            The recipe to add/change inside the grocery list
+     * @param offlineRecipe            The recipe to add/change inside the grocery list
      * @param grocery           The grocery list to hold/is holding the recipe ingredients
      * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
      */
-    void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery);
+    void fetchRecipeIngredients(OfflineRecipe offlineRecipe, Grocery grocery, boolean isNotInGrocery);
 
     /**
      * Returns an Array of all the Grocery names in groceries
@@ -93,30 +93,30 @@ public interface RecipeOverviewPresenter {
 
     /**
      * Delete All the recipe ingredients from the grocery
-     * @param recipe    Recipe to delete from grocery
+     * @param offlineRecipe    Recipe to delete from grocery
      * @param grocery   Grocery holding recipe and its ingredients to delete
      */
-    void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery);
+    void deleteRecipeFromGrocery(OfflineRecipe offlineRecipe, Grocery grocery);
 
     /**
      * create the list of recipe tags from the database.
-     * @param recipe    Recipe holding the tags
+     * @param offlineRecipe    Recipe holding the tags
      */
-    void createRecipeTagList(Recipe recipe);
+    void createRecipeTagList(OfflineRecipe offlineRecipe);
 
     /**
      * Delete the tag from the recipe
-     * @param recipe    recipe holding the tag
+     * @param offlineRecipe    recipe holding the tag
      * @param recipeTag tag to delete from the recipe
      */
-    void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag);
+    void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag);
 
     /**
      * Checks if the the name for the new RecipeTag is valid.
      * Adds the new tag if valid, otherwise send back error message.
      * @param title      Title of the new RecipeTag being added
-     * @param recipe    Recipe the tag will be added to
+     * @param offlineRecipe    Recipe the tag will be added to
      * @param recipeTags List of RecipeTag to add the new RecipeTag to
      */
-    void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, Recipe recipe);
+    void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, OfflineRecipe offlineRecipe);
 }

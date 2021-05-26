@@ -18,11 +18,15 @@ public class OnlineRecipeListPresenterImpl implements OnlineRecipeListContract.P
     private boolean isLoadingRecipes = false;
     private WebServiceCallback<OnlineRecipe> callback = new WebServiceCallback<OnlineRecipe>() {
         @Override
-        public void onResponse(List<OnlineRecipe> response, int responseCode) {
-            if (response != null) {
-                isLoadingRecipes = false;
-                view.showRecipes(response);
-            } else view.loadingFailed("Failed to retrieve filtered recipes");
+        public void onResponse(List<OnlineRecipe> response) {
+            isLoadingRecipes = false;
+            view.showRecipes(response);
+        }
+
+        @Override
+        public void onFailure(int responseCode) {
+            isLoadingRecipes = false;
+            view.loadingFailed("Failed to retrieve filtered recipes");
         }
     };
 

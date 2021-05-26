@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.MainPage.recipessidescroll;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 public interface RecipeSideScrollPresenter {
 
@@ -11,11 +11,11 @@ public interface RecipeSideScrollPresenter {
      * Retrieve the data from the RESTFul api, the type based on the recipeType.
      * @param infoType    Defines the type of info to gather. ex) New recipes, Trending recipes.
      */
-    void createList(int infoType);
+    void createList(String infoType);
 
     /**
      * On button clicked to save recipe, store the saved recipe on online database.
-     * @param recipe    Recipe to save to online database.
+     * @param offlineRecipe    Recipe to save to online database.
      */
-    void onRecipeSaved(Recipe recipe);
+    void onRecipeSaved(OfflineRecipe offlineRecipe);
 }

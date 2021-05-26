@@ -16,7 +16,7 @@ import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeIns
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
 
 public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
@@ -27,7 +27,7 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
                                             RecipeNutritionFragment.RecipeNutritionListener,
                                             IngredientAddFragment.IngredientAddListener {
 
-    private Recipe recipe;
+    private OfflineRecipe offlineRecipe;
     private ActivityRecipeDetailBinding binding;
 
     private RecipeIngredientsFragment recipeIngredientsFragment;
@@ -45,8 +45,8 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
         Bundle extras = getIntent().getExtras();
         // get the bundled Ingredients to display in the fragment if any exist.
         if (extras != null) {
-            if (extras.containsKey(Recipe.RECIPE))
-                recipe = extras.getParcelable(Recipe.RECIPE);
+            if (extras.containsKey(OfflineRecipe.RECIPE))
+                offlineRecipe = extras.getParcelable(OfflineRecipe.RECIPE);
         }
         RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
@@ -100,8 +100,8 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
     }
 
     @Override
-    public Recipe getRecipe() {
-        return recipe;
+    public OfflineRecipe getOfflineRecipe() {
+        return offlineRecipe;
     }
 
     /**
@@ -109,7 +109,7 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
      * @param ingredient    The Ingredient to edit
      */
     private void startEditFragment(Ingredient ingredient) {
-        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
+        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(offlineRecipe, ingredient);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.ingredient_edit_container, ingredientEditFragment, EDIT_TAG)
@@ -119,7 +119,7 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
 
     @Override
     public void gotoAddIngredients() {
-        IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(recipe);
+        IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(offlineRecipe);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.ingredient_add_container, ingredientAddFragment, ADD_TAG)
@@ -153,12 +153,12 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelable(Recipe.RECIPE, recipe);
+        savedInstanceState.putParcelable(OfflineRecipe.RECIPE, offlineRecipe);
     }
 
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        recipe = savedInstanceState.getParcelable(Recipe.RECIPE);
+        offlineRecipe = savedInstanceState.getParcelable(OfflineRecipe.RECIPE);
     }
 
     @Override

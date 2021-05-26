@@ -18,7 +18,7 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeNutritionBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
@@ -58,7 +58,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     }
 
     private void setList() {
-        adapter = new RecipeNutritionAdapter(recipeNutritionListener.getRecipe().getNutritionList(), new PropertyChangedInterface() {
+        adapter = new RecipeNutritionAdapter(recipeNutritionListener.getOfflineRecipe().getNutritionList(), new PropertyChangedInterface() {
             @Override
             public void onPropertyChanged() {
                 // todo: remove this if not hiding/showing save/cancel buttons...
@@ -86,8 +86,8 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
      * Save the nutrition changes to the Recipe.
      */
     private void saveNutrition() {
-        recipeNutritionListener.getRecipe().updateNutrition(adapter.getCurrNutritionList());
-        recipeNutritionPresenter.updateRecipe(recipeNutritionListener.getRecipe());
+        recipeNutritionListener.getOfflineRecipe().updateNutrition(adapter.getCurrNutritionList());
+        recipeNutritionPresenter.updateRecipe(recipeNutritionListener.getOfflineRecipe());
         adapter.saveChanges();
     }
 
@@ -131,7 +131,7 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        recipeNutritionPresenter.deleteRecipe(recipeNutritionListener.getRecipe());
+        recipeNutritionPresenter.deleteRecipe(recipeNutritionListener.getOfflineRecipe());
         recipeNutritionListener.onRecipeDeleted();
     }
 
@@ -143,6 +143,6 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
 
     public interface RecipeNutritionListener {
         void onRecipeDeleted();
-        Recipe getRecipe();
+        OfflineRecipe getOfflineRecipe();
     }
 }

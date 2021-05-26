@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityMyRecipesBinding;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListContract;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListFragment;
@@ -56,7 +56,7 @@ public class MyRecipesActivity extends AppCompatActivity implements OnlineRecipe
     @Override
     public void onRecipeClicked(OnlineRecipe onlineRecipe) {
         Intent intent = new Intent(this, OnlineRecipeDetailsEditActivity.class);
-        intent.putExtra(Recipe.RECIPE, onlineRecipe);
+        intent.putExtra(OfflineRecipe.RECIPE, onlineRecipe);
         startActivity(intent);
     }
 }

@@ -37,8 +37,8 @@ public class  RecipeIngredientBridge {
         this.quantityMeasId = quantityMeasId;
     }
 
-    public RecipeIngredientBridge(RecipeEntity recipeEntity, Ingredient ingredient) {
-        recipeId = recipeEntity.getRecipeId();
+    public RecipeIngredientBridge(long recipeId, Ingredient ingredient) {
+        this.recipeId = recipeId;
         ingredientId = ingredient.getId();
         quantity = ingredient.getQuantity();
         quantityMeasId = ingredient.getQuantityMeasId();

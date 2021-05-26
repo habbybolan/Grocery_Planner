@@ -6,7 +6,7 @@ import androidx.databinding.ObservableField;
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
@@ -127,13 +127,13 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        recipeOverviewInteractor.deleteRecipe(recipe);
+    public void deleteRecipe(OfflineRecipe offlineRecipe) {
+        recipeOverviewInteractor.deleteRecipe(offlineRecipe);
     }
 
     @Override
-    public void updateRecipe(Recipe recipe) {
-        recipeOverviewInteractor.updateRecipe(recipe);
+    public void updateRecipe(OfflineRecipe offlineRecipe) {
+        recipeOverviewInteractor.updateRecipe(offlineRecipe);
     }
 
     @Override
@@ -217,11 +217,11 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void fetchGroceriesHoldingRecipe(Recipe recipe) {
+    public void fetchGroceriesHoldingRecipe(OfflineRecipe offlineRecipe) {
         try {
             loadingGroceriesRecipeIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesHoldingRecipe(recipe, groceryRecipeDbCallback);
+            recipeOverviewInteractor.fetchGroceriesHoldingRecipe(offlineRecipe, groceryRecipeDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeIn = false;
@@ -229,11 +229,11 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void fetchGroceriesNotHoldingRecipe(Recipe recipe) {
+    public void fetchGroceriesNotHoldingRecipe(OfflineRecipe offlineRecipe) {
         try {
             loadingGroceriesRecipeNotIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesNotHoldingRecipe(recipe, groceryRecipeNotDbCallback);
+            recipeOverviewInteractor.fetchGroceriesNotHoldingRecipe(offlineRecipe, groceryRecipeNotDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeNotIn = false;
@@ -252,18 +252,18 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
-        recipeOverviewInteractor.updateRecipeIngredientsInGrocery(recipe, grocery, amount, ingredients);
-        fetchGroceriesHoldingRecipe(recipe);
+    public void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
+        recipeOverviewInteractor.updateRecipeIngredientsInGrocery(offlineRecipe, grocery, amount, ingredients);
+        fetchGroceriesHoldingRecipe(offlineRecipe);
     }
 
     @Override
-    public void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery) {
+    public void fetchRecipeIngredients(OfflineRecipe offlineRecipe, Grocery grocery, boolean isNotInGrocery) {
         try {
             loadingIngredientsWithCheck = true;
             view.loadingStarted();
             selectedGrocery = grocery;
-            recipeOverviewInteractor.fetchRecipeIngredients(recipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
+            recipeOverviewInteractor.fetchRecipeIngredients(offlineRecipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             loadingIngredientsWithCheck = false;
@@ -276,15 +276,15 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery) {
-        recipeOverviewInteractor.deleteRecipeFromGrocery(recipe, grocery);
+    public void deleteRecipeFromGrocery(OfflineRecipe offlineRecipe, Grocery grocery) {
+        recipeOverviewInteractor.deleteRecipeFromGrocery(offlineRecipe, grocery);
     }
 
     @Override
-    public void createRecipeTagList(Recipe recipe) {
+    public void createRecipeTagList(OfflineRecipe offlineRecipe) {
         try {
             loadingRecipeTags = true;
-            recipeOverviewInteractor.fetchTags(recipe, recipeTagDbCallback);
+            recipeOverviewInteractor.fetchTags(offlineRecipe, recipeTagDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             loadingRecipeTags = false;
             view.loadingFailed("Failed to retrieve tags");
@@ -293,13 +293,13 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag) {
-        recipeOverviewInteractor.deleteRecipeTag(recipe, recipeTag);
+    public void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag) {
+        recipeOverviewInteractor.deleteRecipeTag(offlineRecipe, recipeTag);
     }
 
     @Override
-    public void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, Recipe recipe) {
-        if (recipeOverviewInteractor.addTag(recipeTags, recipe, title)) {
+    public void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, OfflineRecipe offlineRecipe) {
+        if (recipeOverviewInteractor.addTag(recipeTags, offlineRecipe, title)) {
             view.updateTagDisplay();
         } else {
             view.loadingFailed("Invalid Recipe tag name");

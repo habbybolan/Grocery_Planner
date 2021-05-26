@@ -18,7 +18,7 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
@@ -70,14 +70,14 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
-                        recipeIngredientsPresenter.searchIngredients(recipeDetailListener.getRecipe(), search);
+                        recipeIngredientsPresenter.searchIngredients(recipeDetailListener.getOfflineRecipe(), search);
                     }
                 })
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
-                        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
+                        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
                     }
                 }, SortType.SORT_LIST_ALPHABETICAL)
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
@@ -103,7 +103,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
              listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
         } else {
             // retrieve ingredients associated with recipe
-            recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
+            recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
         }
     }
 
@@ -116,26 +116,22 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        // todo: fix button for adding new ingredients (manual and existing)
-        /*
-        // on click for adding an Ingredient from floating action button
-        View view = binding.recipeDetailBottomAction;
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
-        floatingActionButton.setOnClickListener(v -> recipeDetailListener.createNewItem());
+        binding.btnAddNewIngredient.setOnClickListener(l -> {
+            recipeDetailListener.createNewItem();
+        });
 
-        ImageButton btnAddIngredients = view.findViewById(R.id.btn_add_multiple);
-        btnAddIngredients.setOnClickListener(l -> {
+        binding.btnAddExistingIngredient.setOnClickListener(l -> {
             recipeDetailListener.gotoAddIngredients();
-        });*/
+        });
     }
 
     private void deleteRecipe() {
-        recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getRecipe());
+        recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getOfflineRecipe());
         recipeDetailListener.onRecipeDeleted();
     }
 
     public void reloadList() {
-        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getRecipe());
+        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
     }
 
     @Override
@@ -146,7 +142,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
 
     @Override
     public void deleteSelectedItems() {
-        recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getRecipe(), listItemsChecked);
+        recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getOfflineRecipe(), listItemsChecked);
     }
 
     @Override
@@ -161,7 +157,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
 
         void createNewItem();
         void onRecipeDeleted();
-        Recipe getRecipe();
+        OfflineRecipe getOfflineRecipe();
         void gotoAddIngredients();
     }
 }

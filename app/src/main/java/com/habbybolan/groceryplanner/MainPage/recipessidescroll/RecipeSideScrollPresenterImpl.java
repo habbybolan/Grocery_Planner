@@ -2,7 +2,7 @@ package com.habbybolan.groceryplanner.MainPage.recipessidescroll;
 
 import com.habbybolan.groceryplanner.WebServiceCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -16,13 +16,15 @@ public class RecipeSideScrollPresenterImpl implements RecipeSideScrollPresenter 
 
     private WebServiceCallback<OnlineRecipe> callback = new WebServiceCallback<OnlineRecipe>() {
         @Override
-        public void onResponse(List<OnlineRecipe> response, int responseCode) {
+        public void onResponse(List<OnlineRecipe> response) {
             if (isViewAttached()) {
-                if (responseCode == 200)
-                    view.addToList(response);
-                else
-                    view.loadingFailed(responseCode + " error when loading recipes");
+                view.addToList(response);
             }
+        }
+
+        @Override
+        public void onFailure(int responseCode) {
+            view.loadingFailed("Error "  + responseCode);
         }
     };
 
@@ -46,7 +48,7 @@ public class RecipeSideScrollPresenterImpl implements RecipeSideScrollPresenter 
     }
 
     @Override
-    public void createList(int infoType) {
+    public void createList(String infoType) {
         try {
             interactor.fetchRecipes(infoType, 0, 20, callback);
         } catch (InterruptedException | ExecutionException e) {
@@ -55,7 +57,7 @@ public class RecipeSideScrollPresenterImpl implements RecipeSideScrollPresenter 
     }
 
     @Override
-    public void onRecipeSaved(Recipe recipe) {
+    public void onRecipeSaved(OfflineRecipe offlineRecipe) {
         // todo:
     }
 }

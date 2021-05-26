@@ -2,7 +2,9 @@ package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
+
+import java.util.ArrayList;
 
 public class IngredientEditInteractorImpl implements IngredientEditInteractor {
 
@@ -12,19 +14,28 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
     }
 
     @Override
-    public void updateIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        if (ingredientHolder != null)
-            databaseAccess.addIngredient(ingredientHolder, ingredient);
-        else
+    public void updateIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
+        if (ingredientHolder != null) {
+            if (ingredientHolder.isGrocery())
+                databaseAccess.insertIngredientsIntoGrocery(ingredientHolder.getId(), new ArrayList<Ingredient>(){{add(ingredient);}});
+            else
+                databaseAccess.insertIngredientsIntoRecipe(ingredientHolder.getId(), new ArrayList<Ingredient>(){{add(ingredient);}});
+        } else {
             databaseAccess.addIngredient(ingredient);
+        }
     }
 
     @Override
-    public void deleteIngredient(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        if (ingredientHolder != null)
-            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient.getId());
-        else
+    public void deleteIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
+        if (ingredientHolder != null) {
+            if (ingredientHolder.isGrocery())
+                databaseAccess.deleteIngredientsFromGrocery(ingredientHolder.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
+            else
+                databaseAccess.deleteIngredientsFromRecipe(ingredientHolder.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
+
+        } else {
             databaseAccess.deleteIngredient(ingredient.getId());
+        }
     }
 
     @Override
@@ -33,11 +44,12 @@ public class IngredientEditInteractorImpl implements IngredientEditInteractor {
     }
 
     @Override
-    public void deleteRelationship(IngredientHolder ingredientHolder, Ingredient ingredient) {
-        if (ingredientHolder != null)
-            databaseAccess.deleteIngredientFromHolder(ingredientHolder, ingredient.getId());
-        else {
-            // todo:
+    public void deleteRelationship(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
+        if (ingredientHolder != null) {
+            if (ingredientHolder.isGrocery())
+                databaseAccess.deleteIngredientsFromGrocery(ingredientHolder.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
+            else
+                databaseAccess.deleteIngredientsFromRecipe(ingredientHolder.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
         }
     }
 }

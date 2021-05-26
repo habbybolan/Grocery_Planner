@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.online.discover.searchfilter;
 
 import com.habbybolan.groceryplanner.WebServiceCallback;
-import com.habbybolan.groceryplanner.http.requests.HttpRecipe;
+import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
@@ -10,13 +10,17 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RecipeFilterInteractorImpl implements RecipeFilterContract.DiscoverInteractor{
 
-    private HttpRecipe httpRecipe;
+    private RestWebService restWebService;
 
     @Inject
-    public RecipeFilterInteractorImpl(HttpRecipe httpRecipe) {
-        this.httpRecipe = httpRecipe;
+    public RecipeFilterInteractorImpl(RestWebService restWebService) {
+        this.restWebService = restWebService;
     }
 
     @Override
@@ -35,7 +39,21 @@ public class RecipeFilterInteractorImpl implements RecipeFilterContract.Discover
 
     @Override
     public void loadTags(String tagSearch, int offset, int size, WebServiceCallback<RecipeTag> callback) throws ExecutionException, InterruptedException {
-       httpRecipe.getTags(offset, size, tagSearch, callback);
+        Call<List<RecipeTag>> call = restWebService.listSearchedRecipeTags(offset, size, SortType.SORT_ALPHABETICAL_ASC_TITLE, tagSearch);
+        call.enqueue(new Callback<List<RecipeTag>>() {
+            @Override
+            public void onResponse(Call<List<RecipeTag>> call, Response<List<RecipeTag>> response) {
+                if (response.isSuccessful())
+                    callback.onResponse(response.body());
+                else
+                    callback.onFailure(response.code());
+            }
+
+            @Override
+            public void onFailure(Call<List<RecipeTag>> call, Throwable t) {
+                callback.onFailure(404);
+            }
+        });
     }
 
     @Override

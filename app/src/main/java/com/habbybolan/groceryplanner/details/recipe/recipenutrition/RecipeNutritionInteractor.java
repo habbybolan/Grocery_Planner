@@ -1,9 +1,9 @@
 package com.habbybolan.groceryplanner.details.recipe.recipenutrition;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 public interface RecipeNutritionInteractor {
 
-    void updateRecipe(Recipe recipe);
-    void deleteRecipe(Recipe recipe);
+    void updateRecipe(OfflineRecipe offlineRecipe);
+    void deleteRecipe(OfflineRecipe offlineRecipe);
 }

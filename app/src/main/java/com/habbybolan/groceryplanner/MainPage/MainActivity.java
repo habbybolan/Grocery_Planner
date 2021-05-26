@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
-import com.habbybolan.groceryplanner.MainPage.recipesnippet.RecipeSnippetFragment;
 import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeListType;
 import com.habbybolan.groceryplanner.MainPage.recipessidescroll.RecipeSideScrollFragment;
 import com.habbybolan.groceryplanner.R;
@@ -20,7 +19,7 @@ import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.online.discover.DiscoverActivity;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivity;
 import com.habbybolan.groceryplanner.online.myrecipes.MyRecipesActivity;
@@ -106,13 +105,30 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
     }
 
     private void setFragments() {
+        // new recipes
         RecipeSideScrollFragment newScroll = RecipeSideScrollFragment.newInstance(RecipeListType.NEW_TYPE);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container_new_recipe_side_scroll, newScroll)
                 .commit();
-        RecipeSideScrollFragment trendingScroll = RecipeSideScrollFragment.newInstance(RecipeListType.TRENDING_TYPE);
+        // trending by day
+        RecipeSideScrollFragment trendingDayScroll = RecipeSideScrollFragment.newInstance(RecipeListType.TRENDING_DAY_TYPE);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_trending_recipe_side_scroll, trendingScroll)
+                .add(R.id.container_trending_day_recipe_side_scroll, trendingDayScroll)
+                .commit();
+        // trending by week
+        RecipeSideScrollFragment trendingWeekScroll = RecipeSideScrollFragment.newInstance(RecipeListType.TRENDING_WEEK_TYPE);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_trending_week_recipe_side_scroll, trendingWeekScroll)
+                .commit();
+        // trending by month
+        RecipeSideScrollFragment trendingMonthScroll = RecipeSideScrollFragment.newInstance(RecipeListType.TRENDING_MONTH_TYPE);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_trending_month_recipe_side_scroll, trendingMonthScroll)
+                .commit();
+        // trending by year
+        RecipeSideScrollFragment trendingYearScroll = RecipeSideScrollFragment.newInstance(RecipeListType.TRENDING_YEAR_TYPE);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container_trending_year_recipe_side_scroll, trendingYearScroll)
                 .commit();
     }
 
@@ -155,20 +171,7 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
     @Override
     public void onRecipeSelected(OnlineRecipe recipe) {
         Intent intent = new Intent(this, OnlineRecipeDetailActivity.class);
-        intent.putExtra(Recipe.RECIPE, recipe);
+        intent.putExtra(OfflineRecipe.RECIPE, recipe);
         startActivity(intent);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().findFragmentByTag(FRAGMENT_SNIPPET_TAG) != null) {
-            RecipeSnippetFragment snippetFragment = (RecipeSnippetFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_SNIPPET_TAG);
-            if (snippetFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.anim_slide_enter_from_right, R.anim.anim_slide_exit_to_right)
-                        .remove(snippetFragment)
-                        .commit();
-            }
-        } else super.onBackPressed();
     }
 }

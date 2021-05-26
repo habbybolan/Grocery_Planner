@@ -30,7 +30,7 @@ public class HttpRequestImpl implements HttpRequest {
     public HttpURLConnection getHttpConnection(String path, String httpMethod, String token) throws IOException{
 
         final String SERVER = address + path;
-       final int READ_TIMEOUT  = 1500;
+        final int READ_TIMEOUT  = 1500;
         final int CONNECTION_TIMEOUT = 1500;
 
         URL myUrl = new URL(SERVER);

@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeinstructions;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 public class RecipeInstructionsPresenterImpl implements RecipeInstructionsPresenter {
 
@@ -22,14 +22,14 @@ public class RecipeInstructionsPresenterImpl implements RecipeInstructionsPresen
     }
 
     @Override
-    public void updateRecipe(Recipe recipe) {
-        recipeInstructionsInteractor.updateRecipe(recipe);
+    public void updateRecipe(OfflineRecipe offlineRecipe) {
+        recipeInstructionsInteractor.updateRecipe(offlineRecipe);
     }
 
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        recipeInstructionsInteractor.deleteRecipe(recipe);
+    public void deleteRecipe(OfflineRecipe offlineRecipe) {
+        recipeInstructionsInteractor.deleteRecipe(offlineRecipe);
     }
 
     private boolean isViewAttached() {

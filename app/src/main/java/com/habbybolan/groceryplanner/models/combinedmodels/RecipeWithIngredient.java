@@ -8,13 +8,15 @@ public class RecipeWithIngredient implements Parcelable {
     private float ingredientQuantity;
     private Long ingredientQuantityMeasId;
     private long recipeId;
+    private Long onlineRecipeId;
     private String recipeName;
     private int recipeAmount;
     private String foodType;
 
-    public RecipeWithIngredient(long recipeId, String recipeName, int recipeAmount, float ingredientQuantity,
+    public RecipeWithIngredient(long recipeId, Long onlineRecipeId, String recipeName, int recipeAmount, float ingredientQuantity,
                                 Long ingredientQuantityMeasId) {
         this.recipeId = recipeId;
+        this.onlineRecipeId = onlineRecipeId;
         this.recipeName = recipeName;
         this.recipeAmount = recipeAmount;
         this.ingredientQuantity = ingredientQuantity;
@@ -25,6 +27,7 @@ public class RecipeWithIngredient implements Parcelable {
         ingredientQuantity = in.readFloat();
         ingredientQuantityMeasId = in.readLong();
         recipeId = in.readLong();
+        onlineRecipeId = in.readLong();
         recipeName = in.readString();
         recipeAmount = in.readInt();
         foodType = in.readString();
@@ -35,6 +38,7 @@ public class RecipeWithIngredient implements Parcelable {
         dest.writeFloat(ingredientQuantity);
         dest.writeLong(ingredientQuantityMeasId);
         dest.writeLong(recipeId);
+        dest.writeLong(onlineRecipeId);
         dest.writeString(recipeName);
         dest.writeInt(recipeAmount);
         dest.writeString(foodType);
@@ -65,6 +69,9 @@ public class RecipeWithIngredient implements Parcelable {
     }
     public long getRecipeId() {
         return recipeId;
+    }
+    public Long getOnlineRecipeId() {
+        return onlineRecipeId;
     }
     public String getRecipeName() {
         return recipeName;

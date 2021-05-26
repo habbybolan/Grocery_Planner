@@ -63,9 +63,6 @@ public class IngredientAddAdapter extends RecyclerView.Adapter<IngredientAddAdap
 
         public void bind(Ingredient ingredient) {
             binding.setIngredientName(ingredient.getName());
-            if (ingredient.hasPrice()) binding.setIngredientPrice(ingredient.getPrice());
-            if (ingredient.hasPricePer()) binding.setIngredientPricePer(ingredient.getPricePer());
-            if (ingredient.hasPriceType()) binding.setIngredientPriceType(ingredient.getPriceType());
             binding.setImageResource(ingredient.getFoodType().getImageResource());
         }
     }

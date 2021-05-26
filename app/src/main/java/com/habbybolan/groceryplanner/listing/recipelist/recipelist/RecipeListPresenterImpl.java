@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.sql.Timestamp;
@@ -16,7 +16,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
-    private List<Recipe> loadedRecipes = new ArrayList<>();
+    private List<OfflineRecipe> loadedOfflineRecipes = new ArrayList<>();
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
     private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
@@ -30,11 +30,11 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         }
     };
 
-    private DbCallback<Recipe> recipeDbCallback = new DbCallback<Recipe>() {
+    private DbCallback<OfflineRecipe> recipeDbCallback = new DbCallback<OfflineRecipe>() {
         @Override
-        public void onResponse(List<Recipe> response) {
-            loadedRecipes.clear();
-            loadedRecipes.addAll(response);
+        public void onResponse(List<OfflineRecipe> response) {
+            loadedOfflineRecipes.clear();
+            loadedOfflineRecipes.addAll(response);
             loadingRecipes = false;
             displayRecipes();
         }
@@ -51,32 +51,32 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
     }
 
     @Override
-    public void deleteRecipe(Recipe recipe) {
-        recipeListInteractor.deleteRecipe(recipe);
+    public void deleteRecipe(OfflineRecipe offlineRecipe) {
+        recipeListInteractor.deleteRecipe(offlineRecipe);
         createRecipeList();
     }
 
     @Override
-    public void deleteRecipes(List<Recipe> recipes) {
-        recipeListInteractor.deleteRecipes(recipes);
+    public void deleteRecipes(List<OfflineRecipe> offlineRecipes) {
+        recipeListInteractor.deleteRecipes(offlineRecipes);
         createRecipeList();
     }
 
     @Override
-    public void addRecipe(Recipe recipe, Timestamp dateCreated) {
-        recipeListInteractor.addRecipe(recipe, dateCreated);
+    public void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated) {
+        recipeListInteractor.addRecipe(offlineRecipe, dateCreated);
         createRecipeList();
     }
 
     @Override
-    public void addRecipesToCategory(ArrayList<Recipe> recipes, RecipeCategory category) {
-        recipeListInteractor.addRecipesToCategory(recipes, category);
+    public void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipes, RecipeCategory category) {
+        recipeListInteractor.addRecipesToCategory(offlineRecipes, category);
         createRecipeList();
     }
 
     @Override
-    public void removeRecipesFromCategory(ArrayList<Recipe> recipes) {
-        recipeListInteractor.removeRecipesFromCategory(recipes);
+    public void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes) {
+        recipeListInteractor.removeRecipesFromCategory(offlineRecipes);
         createRecipeList();
     }
 
@@ -108,7 +108,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
 
     private void displayRecipes() {
         if (isViewAttached() && isRecipesReady())
-            view.showList(loadedRecipes);
+            view.showList(loadedOfflineRecipes);
     }
 
     @Override

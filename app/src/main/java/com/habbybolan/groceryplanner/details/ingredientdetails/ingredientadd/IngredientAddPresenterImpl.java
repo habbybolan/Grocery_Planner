@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +46,7 @@ public class IngredientAddPresenterImpl implements IngredientAddPresenter {
     }
 
     @Override
-    public void fetchIngredientsNotInIngredientHolder(IngredientHolder ingredientHolder) {
+    public void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder) {
         try {
             loadingIngredients = true;
             view.loadingStarted();
@@ -64,7 +65,7 @@ public class IngredientAddPresenterImpl implements IngredientAddPresenter {
     }
 
     @Override
-    public void addCheckedToIngredientHolder(IngredientHolder ingredientHolder) {
+    public void addCheckedToIngredientHolder(OfflineIngredientHolder ingredientHolder) {
         interactor.addCheckedToIngredientHolder(selectedIngredients, ingredientHolder);
     }
 

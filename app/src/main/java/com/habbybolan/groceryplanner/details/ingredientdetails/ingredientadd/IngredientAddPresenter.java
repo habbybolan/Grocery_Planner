@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 public interface IngredientAddPresenter {
 
@@ -11,7 +11,7 @@ public interface IngredientAddPresenter {
      * Fetch the Ingredients not inside the current IngredientHolder.
      * @param ingredientHolder      Holds the Ingredients to not display
      */
-    void fetchIngredientsNotInIngredientHolder(IngredientHolder ingredientHolder);
+    void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder);
 
     /**
      * Called to display the loaded Ingredients that are not inside the IngredientHolder.
@@ -21,7 +21,7 @@ public interface IngredientAddPresenter {
     /**
      * Add the checked Ingredients to the IngredientHolder
      */
-    void addCheckedToIngredientHolder(IngredientHolder ingredientHolder);
+    void addCheckedToIngredientHolder(OfflineIngredientHolder ingredientHolder);
 
     /**
      * Called when an Ingredient is selected.

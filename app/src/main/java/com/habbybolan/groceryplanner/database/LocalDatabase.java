@@ -62,9 +62,25 @@ public abstract class LocalDatabase extends RoomDatabase {
         final String nameTypeCodeCol = "type_code";
 
         return new RoomDatabase.Callback() {
+
+            @Override
+            public void onOpen(@NonNull SupportSQLiteDatabase db){
+                // prevent recursion
+                db.execSQL("PRAGMA recursive_triggers = OFF;");
+            }
+
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
+
+                // create recipe trigger to update is_updated to false every time recipe is updated
+                db.execSQL("" +
+                        "CREATE TRIGGER is_updated_trigger BEFORE UPDATE" +
+                        "       ON RecipeEntity" +
+                        "       BEGIN" +
+                        "           UPDATE RecipeEntity SET is_updated=false" +
+                        "           WHERE recipeId = NEW.recipeId; " +
+                        "       END; ");
                 // pound
                 ContentValues cvPound = new ContentValues(3);
                 cvPound.put(nameIdCol, MeasurementType.POUND_ID);

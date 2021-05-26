@@ -38,14 +38,14 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
 
     @Override
     public void deleteIngredient(Grocery grocery, Ingredient ingredient) {
-        databaseAccess.deleteIngredientFromHolder(grocery, ingredient.getId());
+        databaseAccess.deleteIngredientsFromGrocery(grocery.getId(), new ArrayList<Long>(){{add(ingredient.getId());}});
     }
 
     @Override
     public void deleteIngredients(Grocery grocery, List<GroceryIngredient> groceryIngredients) {
         List<Long> ingredientIds = new ArrayList<>();
         for (GroceryIngredient ingredient : groceryIngredients) ingredientIds.add(ingredient.getId());
-        databaseAccess.deleteIngredientsFromHolder(grocery, ingredientIds);
+        databaseAccess.deleteIngredientsFromGrocery(grocery.getId(), ingredientIds);
     }
 
     @Override

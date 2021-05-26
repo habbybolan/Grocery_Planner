@@ -17,11 +17,14 @@ public class RecipeFilterPresenterImpl implements RecipeFilterContract.Presenter
 
     private WebServiceCallback<RecipeTag> callbackRecipeTags = new WebServiceCallback<RecipeTag>() {
         @Override
-        public void onResponse(List<RecipeTag> response, int responseCode) {
-            if (response != null) {
-                isTagsLoading = false;
-                view.showSearchedTagList(response);
-            } else view.loadingFailed("Failed to retrieve tags");
+        public void onResponse(List<RecipeTag> response) {
+            isTagsLoading = false;
+            view.showSearchedTagList(response);
+        }
+
+        @Override
+        public void onFailure(int responseCode) {
+            view.loadingFailed("Error " + responseCode);
         }
     };
 

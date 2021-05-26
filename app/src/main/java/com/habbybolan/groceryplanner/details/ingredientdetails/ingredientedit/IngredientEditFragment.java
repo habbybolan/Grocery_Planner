@@ -24,6 +24,7 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.IngredientEditModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -41,7 +42,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private IngredientEditListener ingredientEditListener;
 
     // Set to the ingredient holder if there is one. NULL otherwise
-    private IngredientHolder ingredientHolder;
+    private OfflineIngredientHolder ingredientHolder;
     private Ingredient ingredient;
     private FoodTypeAdapter adapter;
     private CustomToolbar customToolbar;
@@ -56,9 +57,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * @param ingredient    Ingredient to edit inside the IngredientHolder
      * @return              Created fragment
      */
-    public static IngredientEditFragment getInstance(IngredientHolder ingredientHolder, Ingredient ingredient) {
+    public static IngredientEditFragment getInstance(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
         Bundle args = new Bundle();
-        args.putParcelable(IngredientHolder.INGREDIENT_HOLDER, ingredientHolder);
+        args.putParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER, ingredientHolder);
         args.putParcelable(Ingredient.INGREDIENT, ingredient);
         IngredientEditFragment fragment = new IngredientEditFragment();
         fragment.setArguments(args);
@@ -118,8 +119,8 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         // set up the view for view methods to be accessed from the presenter
         ingredientEditPresenter.setView(this);
         if (getArguments() != null) {
-            if (getArguments().containsKey(IngredientHolder.INGREDIENT_HOLDER))
-                ingredientHolder = getArguments().getParcelable(IngredientHolder.INGREDIENT_HOLDER);
+            if (getArguments().containsKey(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER))
+                ingredientHolder = getArguments().getParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER);
             ingredient = getArguments().getParcelable(Ingredient.INGREDIENT);
             setViews();
             setTextListeners();
@@ -168,9 +169,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void setViews() {
         binding.setName(ingredient.getName());
-        if (ingredient.getPrice() != 0) binding.setPrice(String.valueOf(ingredient.getPrice()));
-        if (ingredient.getPricePer() != 0)binding.setPricePer(String.valueOf(ingredient.getPricePer()));
-        binding.setPriceType(ingredient.getPriceType());
         if (hasIngredientHolder()) {
             if (ingredient.getQuantity() != 0)
                 binding.setQuantity(String.valueOf(ingredient.getQuantity()));
@@ -196,11 +194,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * Set up clicker functionality for price type and quantity type.
      */
     private void setClickers() {
-        // popup for selecting price type
-        binding.txtPriceType.setOnClickListener(v -> {
-            createPriceTypePopup();
-        });
-
         if (hasIngredientHolder()) {
             // popup for selecting quantity type
             binding.txtQuantityType.setOnClickListener(v -> {
@@ -214,9 +207,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void setTextListeners() {
         binding.editTxtName.addTextChangedListener(textWatcher);
-        binding.editTxtPrice.addTextChangedListener(textWatcher);
-        binding.editTxtPricePer.addTextChangedListener(textWatcher);
-        binding.txtPriceType.addTextChangedListener(textWatcher);
         if (hasIngredientHolder()) {
             binding.editTxtQuantity.addTextChangedListener(textWatcher);
             binding.txtQuantityType.addTextChangedListener(textWatcher);
@@ -229,14 +219,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void createQuantityTypePopup() {
         setMeasurementType(binding.txtQuantityType);
-    }
-
-    /**
-     * Clicker functionality for selecting a price type. Creates an AlertDialogue popup to select
-     * from a list of price types.
-     */
-    private void createPriceTypePopup() {
-        setMeasurementType(binding.txtPriceType);
     }
 
     /**
@@ -261,9 +243,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private void saveChangedToLocal() {
         // if the Ingredient values were changed, then check if the values were valid
         String name = binding.editTxtName.getText().toString();
-        String price = binding.editTxtPrice.getText().toString();
-        String pricePer = binding.editTxtPricePer.getText().toString();
-        String priceType = binding.txtPriceType.getText().toString();
         String quantity = binding.editTxtQuantity.getText().toString();
         String quantityType = binding.txtQuantityType.getText().toString();
 
@@ -271,9 +250,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         if (Ingredient.isValidName(name)) {
 
             if (hasIngredientHolder())
-                setEditTextIntoIngredient(name, price, pricePer, priceType, quantity, quantityType, adapter.getSelectedFoodType());
+                setEditTextIntoIngredient(name, quantity, quantityType, adapter.getSelectedFoodType());
             else
-                setEditTextIntoIngredient(name, price, pricePer, priceType, adapter.getSelectedFoodType());
+                setEditTextIntoIngredient(name, adapter.getSelectedFoodType());
             ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
             onEditSaved();
         } else {
@@ -284,19 +263,11 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     /**
      * Set the values of the saved Ingredient with an ingredient holder.
      * @param name          name for the Ingredient
-     * @param price         price for the Ingredient
-     * @param pricePer      pricePer  for the Ingredient
-     * @param priceType     priceType for the Ingredient
      * @param quantity      quantity for the Ingredient
      * @param quantityType  quantityType for the Ingredient
      */
-    private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String quantity, String quantityType, String foodType) {
+    private void setEditTextIntoIngredient(String name, String quantity, String quantityType, String foodType) {
         ingredient.setName(name);
-        if (!price.equals("")) ingredient.setPrice(Float.parseFloat(price));
-        else ingredient.setPrice(0);
-        if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
-        else ingredient.setPricePer(0);
-        ingredient.setPriceType(priceType);
         if (!quantity.equals("")) ingredient.setQuantity(Float.parseFloat(quantity));
         else ingredient.setQuantity(0);
         if (!quantityType.equals(""))
@@ -307,17 +278,9 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     /**
      * Set the values of the saved Ingredient with no ingredient holder.
      * @param name          name for the Ingredient
-     * @param price         price for the Ingredient
-     * @param pricePer      pricePer  for the Ingredient
-     * @param priceType     priceType for the Ingredient
      */
-    private void setEditTextIntoIngredient(String name, String price, String pricePer, String priceType, String foodType) {
+    private void setEditTextIntoIngredient(String name, String foodType) {
         ingredient.setName(name);
-        if (!price.equals("")) ingredient.setPrice(Float.parseFloat(price));
-        else ingredient.setPrice(0);
-        if (!pricePer.equals("")) ingredient.setPricePer(Integer.parseInt(pricePer));
-        else ingredient.setPricePer(0);
-        ingredient.setPriceType(priceType);
         ingredient.setFoodType(foodType);
     }
 

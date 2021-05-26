@@ -6,7 +6,7 @@ import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractor;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
@@ -36,26 +36,26 @@ public interface RecipeOverviewInteractor extends RecipeDetailsInteractor {
 
     /**
      * Fetch the Groceries that are holding the recipe.
-     * @param recipe            The recipe begin contained by the Grocery object
+     * @param offlineRecipe            The recipe begin contained by the Grocery object
      * @param callback          callback to update the Groceries with the amount of the recipe fetched
      */
-    void fetchGroceriesHoldingRecipe(Recipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchGroceriesHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Fetch the Groceries that are not holding the recipe.
-     * @param recipe    The recipe not contained by the Grocery object
+     * @param offlineRecipe    The recipe not contained by the Grocery object
      * @param callback  callback to update the Groceries not holding the recipe
      */
-    void fetchGroceriesNotHoldingRecipe(Recipe recipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
+    void fetchGroceriesNotHoldingRecipe(OfflineRecipe offlineRecipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Adds the recipe to the grocery list.
-     * @param recipe            Recipe to add to grocery
+     * @param offlineRecipe            Recipe to add to grocery
      * @param grocery           grocery to hold the recipe
      * @param amount            The number of times to add the Recipe to the grocery
      * @param recipeIngredients recipe ingredients to add or remove from the grocery list
      */
-    void updateRecipeIngredientsInGrocery(Recipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
+    void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
 
     /**
      * Returns an Array of all the Grocery names in groceries
@@ -73,41 +73,41 @@ public interface RecipeOverviewInteractor extends RecipeDetailsInteractor {
 
     /**
      * Fetches the recipe ingredients that will be or are already added to a grocery list through the recipe.
-     * @param recipe            The recipe to add/change inside the grocery list
+     * @param offlineRecipe            The recipe to add/change inside the grocery list
      * @param grocery           The grocery list to hold/is holding the recipe ingredients
      * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
      * @param callback          Callback to update the recipe ingredients to with a check value to show
      *                          if it is added to the grocery list.
      */
-    void fetchRecipeIngredients(Recipe recipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
+    void fetchRecipeIngredients(OfflineRecipe offlineRecipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Delete All the recipe ingredients from the grocery
-     * @param recipe    Recipe to delete from grocery
+     * @param offlineRecipe    Recipe to delete from grocery
      * @param grocery   Grocery holding recipe and its ingredients to delete
      */
-    void deleteRecipeFromGrocery(Recipe recipe, Grocery grocery);
+    void deleteRecipeFromGrocery(OfflineRecipe offlineRecipe, Grocery grocery);
 
     /**
      * Adds a tag to the recipe.
      * @param recipeTags List of RecipeTag to add the new RecipeTag to
      * @param title     title of the tag
-     * @param recipe    recipe to place the tag into
+     * @param offlineRecipe    recipe to place the tag into
      * @return          True if the recipe tag addition is valid, otherwise false
      */
-    boolean addTag(List<RecipeTag> recipeTags, Recipe recipe, String title);
+    boolean addTag(List<RecipeTag> recipeTags, OfflineRecipe offlineRecipe, String title);
 
     /**
      * Fetch all recipe tags associated to recipe.
-     * @param recipe    Recipe holding the tags to fetch
+     * @param offlineRecipe    Recipe holding the tags to fetch
      * @param callback  callback for updating recipe tags fetched
      */
-    void fetchTags(Recipe recipe, DbCallback<RecipeTag> callback) throws ExecutionException, InterruptedException;
+    void fetchTags(OfflineRecipe offlineRecipe, DbCallback<RecipeTag> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Delete the tag from the recipe
-     * @param recipe    recipe holding the tag
+     * @param offlineRecipe    recipe holding the tag
      * @param recipeTag tag to delete from the recipe
      */
-    void deleteRecipeTag(Recipe recipe, RecipeTag recipeTag);
+    void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag);
 }
