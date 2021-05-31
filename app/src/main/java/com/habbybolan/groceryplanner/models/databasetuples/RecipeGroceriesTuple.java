@@ -3,7 +3,7 @@ package com.habbybolan.groceryplanner.models.databasetuples;
 import java.sql.Timestamp;
 
 /**
- * Room tuple used to display the Grocery lists that are holding a specific, with the amount the recipe was added to the Grocery list
+ * Room tuple used to display the Grocery lists that are holding a specific recipe, with the amount the recipe was added to the Grocery list
  */
 public class RecipeGroceriesTuple {
 

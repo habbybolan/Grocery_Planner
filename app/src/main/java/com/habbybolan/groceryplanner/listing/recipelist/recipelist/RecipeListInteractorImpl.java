@@ -43,7 +43,8 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
 
     @Override
     public void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated) {
-        databaseAccess.addRecipe(offlineRecipe, dateCreated);
+        offlineRecipe.setDateCreated(dateCreated);
+        databaseAccess.addRecipe(offlineRecipe);
     }
 
     @Override

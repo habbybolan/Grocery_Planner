@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.di.component;
 
+import com.habbybolan.groceryplanner.details.recipe.recipedetailsactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngredientsFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
@@ -17,4 +18,5 @@ public interface RecipeDetailSubComponent {
     void inject(RecipeOverviewFragment fragment);
     void inject(RecipeIngredientsFragment fragment);
     void inject(RecipeInstructionsFragment fragment);
+    void inject(RecipeDetailActivity activity);
 }

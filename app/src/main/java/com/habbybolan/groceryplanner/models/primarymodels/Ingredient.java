@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Ingredient extends OnlineModel {
@@ -16,21 +17,27 @@ public class Ingredient extends OnlineModel {
     @NonNull
     protected String name = "";
     protected FoodType foodType;
+    private Timestamp dateUpdated;
+    private Timestamp dateSynchronized;
+
 
     public final static String INGREDIENT = "ingredient";
 
     public Ingredient(@NonNull long id, Long onlineId, @NonNull String name,
-                      float quantity, Long quantityMeasId, FoodType foodType) {
+                      float quantity, Long quantityMeasId, FoodType foodType, Timestamp dateUpdated, Timestamp dateSynchronized) {
         this.id = id;
         this.onlineId = onlineId;
         this.name = name;
         this.quantity = quantity;
         this.quantityMeasId = quantityMeasId;
         this.foodType = foodType;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
     }
 
     public Ingredient(Ingredient ingredient) {
-        this(ingredient.getId(), ingredient.getOnlineId(), ingredient.getName(), ingredient.getQuantity(), ingredient.getQuantityMeasId(), ingredient.getFoodType());
+        this(ingredient.getId(), ingredient.getOnlineId(), ingredient.getName(), ingredient.getQuantity(),
+                ingredient.getQuantityMeasId(), ingredient.getFoodType(), ingredient.getDateUpdated(), ingredient.getDateSynchronized());
     }
 
     /**
@@ -45,12 +52,19 @@ public class Ingredient extends OnlineModel {
         @NonNull
         private final String name;
         private FoodType foodType;
+        private Timestamp dateUpdated;
+        private Timestamp dateSynchronized;
 
         // for creating an ingredient from the Room database
         public IngredientBuilder(long id, Long onlineId, @NonNull String name) {
             this.name = name;
             this.id = id;
             this.onlineId = onlineId;
+        }
+        // creating an ingredient from room database without online id
+        public IngredientBuilder(long id, @NonNull String name) {
+            this.name = name;
+            this.id = id;
         }
 
         // for creating an ingredient from the web service
@@ -70,6 +84,18 @@ public class Ingredient extends OnlineModel {
             this.foodType = new FoodType(foodType);
             return this;
         }
+        public IngredientBuilder setFoodType(long foodTypeId) {
+            this.foodType = new FoodType(foodTypeId);
+            return this;
+        }
+        public IngredientBuilder setDateUpdated(Timestamp dateUpdated) {
+            this.dateUpdated = dateUpdated;
+            return this;
+        }
+        public IngredientBuilder setDateSynchronized(Timestamp dateSynchronized) {
+            this.dateSynchronized = dateSynchronized;
+            return this;
+        }
 
         public Ingredient build() {
             Ingredient ingredient = new Ingredient();
@@ -80,6 +106,8 @@ public class Ingredient extends OnlineModel {
             ingredient.quantityMeasId = quantityMeasId;
             if (foodType == null) foodType = new FoodType(FoodType.OTHER);
             ingredient.foodType = foodType;
+            ingredient.dateUpdated = dateUpdated;
+            ingredient.dateSynchronized = dateSynchronized;
             return ingredient;
         }
     }
@@ -97,6 +125,8 @@ public class Ingredient extends OnlineModel {
         quantity = in.readFloat();
         quantityMeasId = in.readLong();
         foodType = new FoodType(in.readString());
+        dateSynchronized = (Timestamp) in.readSerializable();
+        dateUpdated = (Timestamp) in.readSerializable();
     }
 
     /**
@@ -115,6 +145,8 @@ public class Ingredient extends OnlineModel {
         dest.writeFloat(quantity);
         dest.writeLong(quantityMeasId);
         dest.writeString(foodType.getType());
+        dest.writeSerializable(dateSynchronized);
+        dest.writeSerializable(dateUpdated);
     }
 
     @Override
@@ -171,6 +203,12 @@ public class Ingredient extends OnlineModel {
     public long getId() {
         return id;
     }
+    public Timestamp getDateUpdated() {
+        return dateUpdated;
+    }
+    public Timestamp getDateSynchronized() {
+        return dateSynchronized;
+    }
 
     public void setId(long id) {
         this.id = id;
@@ -186,5 +224,11 @@ public class Ingredient extends OnlineModel {
     }
     public void setFoodType(String foodType) {
         this.foodType = new FoodType(foodType);
+    }
+    public void setDateUpdated(Timestamp dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+    public void setDateSynchronized(Timestamp dateSynchronized) {
+        this.dateSynchronized = dateSynchronized;
     }
 }

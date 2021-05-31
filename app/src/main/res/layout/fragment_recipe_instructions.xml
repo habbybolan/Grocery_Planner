@@ -31,7 +31,8 @@
                 android:gravity="top"
                 android:inputType="textMultiLine"
                 android:scrollHorizontally="false"
-                android:scrollbars="vertical" />
+                android:scrollbars="vertical"
+                android:background="@android:color/transparent"/>
 
         </LinearLayout>
 

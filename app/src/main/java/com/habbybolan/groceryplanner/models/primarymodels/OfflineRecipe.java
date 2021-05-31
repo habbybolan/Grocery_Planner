@@ -4,20 +4,49 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
+import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
 
-    private Timestamp dateSynchronized;
     private long id;
-    private boolean isUpdated;
+    private Timestamp dateSynchronized;
+    private Timestamp dateUpdated;
+    private Long categoryId;
 
     public final static String RECIPE = "recipe";
 
-    protected OfflineRecipe() {}
+    private OfflineRecipe() {}
+
+    public OfflineRecipe(String name, long id, Long onlineId, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, Long categoryId, String instructions,
+                         Timestamp dateCreated, Timestamp dateSynchronized, List<RecipeTag> recipeTags, List<Ingredient> ingredients, List<Nutrition> nutritionList) {
+        this.name = name;
+        this.id = id;
+        this.onlineId = onlineId;
+        this.isFavorite = isFavorite;
+        this.description = description;
+
+        this.prepTime = prepTime;
+        this.cookTime = cookTime;
+        this.servingSize = servingSize;
+        this.categoryId = categoryId;
+        this.instructions = instructions;
+        this.dateCreated = dateCreated;
+        this.dateSynchronized = dateSynchronized;
+        this.recipeTags = recipeTags;
+        this.ingredients = ingredients;
+        for (Nutrition nutrition : nutritionList) findNutrition(nutrition);
+    }
 
     public OfflineRecipe(RecipeEntity recipeEntity) {
         name = recipeEntity.getName();
@@ -29,33 +58,36 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
         prepTime = recipeEntity.getPrepTime();
         cookTime = recipeEntity.getCookTime();
         servingSize = recipeEntity.getServingSize();
-        calories = new Nutrition(Nutrition.CALORIES, recipeEntity.getCalories(), recipeEntity.getCaloriesType());
-        fat = new Nutrition(Nutrition.FAT, recipeEntity.getFat(), recipeEntity.getFatType());
-        saturatedFat = new Nutrition(Nutrition.SATURATED_FAT, recipeEntity.getSaturatedFat(), recipeEntity.getSaturatedFatType());
-        carbohydrates = new Nutrition(Nutrition.CARBOHYDRATES, recipeEntity.getCarbohydrates(), recipeEntity.getCarbohydratesType());
-        fiber = new Nutrition(Nutrition.FIBRE, recipeEntity.getFiber(), recipeEntity.getFiberType());
-        sugar = new Nutrition(Nutrition.SUGAR, recipeEntity.getSugar(), recipeEntity.getSugarType());
-        protein = new Nutrition(Nutrition.PROTEIN, recipeEntity.getProtein(), recipeEntity.getProteinType());
         categoryId = recipeEntity.getRecipeCategoryId();
         instructions = recipeEntity.getInstructions();
         dateCreated = recipeEntity.getDateCreated();
         dateSynchronized = recipeEntity.getDateSynchronized();
-        isUpdated = recipeEntity.getIsUpdated();
     }
 
     public OfflineRecipe(Parcel in) {
         super(in);
         dateSynchronized = (Timestamp) in.readSerializable();
-        isUpdated = in.readInt() == 1;
+        dateUpdated = (Timestamp) in.readSerializable();
         id = in.readLong();
+        if (in.readByte() == 0) {
+            categoryId = null;
+        } else {
+            categoryId = in.readLong();
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeSerializable(dateSynchronized);
-        dest.writeInt(isUpdated ? 1 : 0);
+        dest.writeSerializable(dateUpdated);
         dest.writeLong(id);
+        if (categoryId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(categoryId);
+        }
     }
 
     /**
@@ -63,31 +95,33 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
      */
     public static class RecipeBuilder implements RecipeBuilderInterface<RecipeBuilder> {
 
-        protected String name;
-        protected long id;
-        protected Long onlineId;
+        private String name;
+        private long id;
+        private Long onlineId;
 
-        protected String description;
-        protected int prepTime;
-        protected int cookTime;
-        protected int servingSize;
+        private String description;
+        private int prepTime;
+        private int cookTime;
+        private int servingSize;
 
-        protected Nutrition calories;
-        protected Nutrition fat;
-        protected Nutrition saturatedFat;
-        protected Nutrition carbohydrates;
-        protected Nutrition fiber;
-        protected Nutrition sugar;
-        protected Nutrition protein;
+        private Nutrition calories;
+        private Nutrition fat;
+        private Nutrition saturatedFat;
+        private Nutrition carbohydrates;
+        private Nutrition fiber;
+        private Nutrition sugar;
+        private Nutrition protein;
 
-        protected Timestamp dateCreated;
-        protected Timestamp dateSynchronized;
+        private Timestamp dateCreated;
+        private Timestamp dateSynchronized;
 
-        protected Long categoryId;
-        protected String instructions;
+        private Long categoryId;
+        private String instructions;
 
-        protected int likes;
-        protected boolean isUpdated;
+        private int likes;
+        private Timestamp dateUpdated;
+        private List<RecipeTag> recipeTags = new ArrayList<>();
+        private List<Ingredient> ingredients = new ArrayList<>();
 
         public RecipeBuilder(@NonNull String name) {
             this.name = name;
@@ -101,8 +135,8 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
             this.onlineId = onlineId;
             return this;
         }
-        public RecipeBuilder setIsUpdated(boolean isUpdated) {
-            this.isUpdated = isUpdated;
+        public RecipeBuilder setDateUpdated(Timestamp dateUpdated) {
+            this.dateUpdated = dateUpdated;
             return this;
         }
         @Override
@@ -160,7 +194,6 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
             this.protein = protein;
             return this;
         }
-        @Override
         public RecipeBuilder setCategoryId(Long categoryId) {
             this.categoryId = categoryId;
             return this;
@@ -182,6 +215,18 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
         @Override
         public RecipeBuilder setLikes(int likes) {
             this.likes = likes;
+            return this;
+        }
+
+        @Override
+        public RecipeBuilder setIngredients(List<Ingredient> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
+        @Override
+        public RecipeBuilder setRecipeTags(List<RecipeTag> recipeTags) {
+            this.recipeTags = recipeTags;
             return this;
         }
 
@@ -210,7 +255,9 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
             offlineRecipe.dateCreated = dateCreated;
             offlineRecipe.dateSynchronized = dateSynchronized;
             offlineRecipe.likes = likes;
-            offlineRecipe.isUpdated = isUpdated;
+            offlineRecipe.dateUpdated = dateUpdated;
+            offlineRecipe.ingredients = ingredients;
+            offlineRecipe.recipeTags = recipeTags;
             return offlineRecipe;
         }
     }
@@ -243,53 +290,32 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
     public long getId() {
         return id;
     }
-    public boolean getIsUpdated() {
-        return isUpdated;
+    public Timestamp getDateUpdated() {
+        return dateUpdated;
+    }
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public void setPrepTime(int prepTime) {
-        this.prepTime = prepTime;
-    }
-    public void setCookTime(int cookTime) {
-        this.cookTime = cookTime;
-    }
-    public void setServingSize(int servingSize) {
-        this.servingSize = servingSize;
-    }
-    public void setCalories(Nutrition calories) {
-        this.calories = calories;
-    }
-    public void setFat(Nutrition fat) {
-        this.fat = fat;
-    }
-    public void setSaturatedFat(Nutrition saturatedFat) {
-        this.saturatedFat = saturatedFat;
-    }
-    public void setCarbohydrates(Nutrition carbohydrates) {
-        this.carbohydrates = carbohydrates;
-    }
-    public void setFiber(Nutrition fiber) {
-        this.fiber = fiber;
-    }
-    public void setSugar(Nutrition sugar) {
-        this.sugar = sugar;
-    }
-    public void setProtein(Nutrition protein) {
-        this.protein = protein;
-    }
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-    public void setIsFavorite(boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
-    public void setDateCreated(Timestamp dateCreated) {
-        this.dateCreated = dateCreated;
+
+
+    public static class OnlineRecipeSerializer implements JsonSerializer<OfflineRecipe> {
+
+        @Override
+        public JsonElement serialize(OfflineRecipe src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("id", src.getId());
+            jsonObject.addProperty("onlineId", src.getOnlineId());
+            jsonObject.addProperty("name", src.getName());
+            jsonObject.addProperty("description", src.getDescription());
+            jsonObject.addProperty("prep_time", src.getPrepTime());
+            jsonObject.addProperty("cookTime", src.getCookTime());
+            jsonObject.addProperty("servingSize", src.getServingSize());
+            // todo: finish
+            return null;
+        }
     }
 }

@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
+public class RecipeOverviewPresenterImpl implements RecipeOverviewContract.Presenter {
 
-    private RecipeOverviewInteractor recipeOverviewInteractor;
-    private RecipeOverviewView view;
+    private RecipeOverviewContract.Interactor interactor;
+    private RecipeOverviewContract.OverviewView view;
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
     private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
@@ -89,8 +89,8 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         }
     };
 
-    public RecipeOverviewPresenterImpl(RecipeOverviewInteractor recipeOverviewInteractor) {
-        this.recipeOverviewInteractor = recipeOverviewInteractor;
+    public RecipeOverviewPresenterImpl(RecipeOverviewContract.Interactor interactor) {
+        this.interactor = interactor;
         setRecipeCategoryCallback();
     }
 
@@ -99,8 +99,8 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     private void displayIngredientsWithCheck() {
-        String[] ingredientNames = recipeOverviewInteractor.getArrayOfIngredientNames(loadedIngredientsWithCheck);
-        List<IngredientWithGroceryCheck> ingredients = recipeOverviewInteractor.checkIfAllUnselected(loadedIngredientsWithCheck);
+        String[] ingredientNames = interactor.getArrayOfIngredientNames(loadedIngredientsWithCheck);
+        List<IngredientWithGroceryCheck> ingredients = interactor.checkIfAllUnselected(loadedIngredientsWithCheck);
         view.displayRecipeIngredients(ingredients, ingredientNames, selectedGrocery);
     }
 
@@ -117,7 +117,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void setView(RecipeOverviewView view) {
+    public void setView(RecipeOverviewContract.OverviewView view) {
         this.view = view;
     }
 
@@ -127,23 +127,13 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     }
 
     @Override
-    public void deleteRecipe(OfflineRecipe offlineRecipe) {
-        recipeOverviewInteractor.deleteRecipe(offlineRecipe);
-    }
-
-    @Override
-    public void updateRecipe(OfflineRecipe offlineRecipe) {
-        recipeOverviewInteractor.updateRecipe(offlineRecipe);
-    }
-
-    @Override
     public void loadAllRecipeCategories() {
         // load the recipe categories only if it is not already loading
         if (isCategoriesReady()) {
             view.loadingStarted();
             loadingRecipeCategories = true;
             try {
-                recipeOverviewInteractor.loadAllRecipeCategories(recipeCategoryDbCallback);
+                interactor.loadAllRecipeCategories(recipeCategoryDbCallback);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 view.loadingFailed("failed retrieving data");
@@ -171,7 +161,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     public void displayRecipeCategories() {
         // display recipe categories if all loaded in
         if (isCategoriesReady()) {
-            String[] recipeCategoryNames = recipeOverviewInteractor.getNamedOfRecipeCategories(loadedRecipeCategories);
+            String[] recipeCategoryNames = interactor.getNamedOfRecipeCategories(loadedRecipeCategories);
             view.createCategoriesAlertDialogue(recipeCategoryNames);
         } else {
             // otherwise, recipe categories not loaded in yet
@@ -202,7 +192,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
     public void fetchRecipeCategory(Long categoryId) {
         if (categoryId != null) {
             try {
-                recipeOverviewInteractor.fetchRecipeCategory(currRecipeCategory, categoryId);
+                interactor.fetchRecipeCategory(currRecipeCategory, categoryId);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -221,7 +211,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         try {
             loadingGroceriesRecipeIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesHoldingRecipe(offlineRecipe, groceryRecipeDbCallback);
+            interactor.fetchGroceriesHoldingRecipe(offlineRecipe, groceryRecipeDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeIn = false;
@@ -233,7 +223,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
         try {
             loadingGroceriesRecipeNotIn = true;
             view.loadingStarted();
-            recipeOverviewInteractor.fetchGroceriesNotHoldingRecipe(offlineRecipe, groceryRecipeNotDbCallback);
+            interactor.fetchGroceriesNotHoldingRecipe(offlineRecipe, groceryRecipeNotDbCallback);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
             loadingGroceriesRecipeNotIn = false;
@@ -253,7 +243,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
 
     @Override
     public void updateRecipeIngredientsInGrocery(OfflineRecipe offlineRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
-        recipeOverviewInteractor.updateRecipeIngredientsInGrocery(offlineRecipe, grocery, amount, ingredients);
+        interactor.updateRecipeIngredientsInGrocery(offlineRecipe, grocery, amount, ingredients);
         fetchGroceriesHoldingRecipe(offlineRecipe);
     }
 
@@ -263,7 +253,7 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
             loadingIngredientsWithCheck = true;
             view.loadingStarted();
             selectedGrocery = grocery;
-            recipeOverviewInteractor.fetchRecipeIngredients(offlineRecipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
+            interactor.fetchRecipeIngredients(offlineRecipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             loadingIngredientsWithCheck = false;
@@ -272,19 +262,19 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
 
     @Override
     public String[] getArrayOfGroceryNames(List<Grocery> groceries) {
-        return recipeOverviewInteractor.getArrayOfGroceryNames(groceries);
+        return interactor.getArrayOfGroceryNames(groceries);
     }
 
     @Override
     public void deleteRecipeFromGrocery(OfflineRecipe offlineRecipe, Grocery grocery) {
-        recipeOverviewInteractor.deleteRecipeFromGrocery(offlineRecipe, grocery);
+        interactor.deleteRecipeFromGrocery(offlineRecipe, grocery);
     }
 
     @Override
     public void createRecipeTagList(OfflineRecipe offlineRecipe) {
         try {
             loadingRecipeTags = true;
-            recipeOverviewInteractor.fetchTags(offlineRecipe, recipeTagDbCallback);
+            interactor.fetchTags(offlineRecipe, recipeTagDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             loadingRecipeTags = false;
             view.loadingFailed("Failed to retrieve tags");
@@ -294,15 +284,20 @@ public class RecipeOverviewPresenterImpl implements RecipeOverviewPresenter {
 
     @Override
     public void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag) {
-        recipeOverviewInteractor.deleteRecipeTag(offlineRecipe, recipeTag);
+        interactor.deleteRecipeTag(offlineRecipe, recipeTag);
     }
 
     @Override
     public void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, OfflineRecipe offlineRecipe) {
-        if (recipeOverviewInteractor.addTag(recipeTags, offlineRecipe, title)) {
+        if (interactor.addTag(recipeTags, offlineRecipe, title)) {
             view.updateTagDisplay();
         } else {
             view.loadingFailed("Invalid Recipe tag name");
         }
+    }
+
+    @Override
+    public void updateRecipe(OfflineRecipe offlineRecipe, String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category) {
+        interactor.updateRecipe(offlineRecipe, name, servingSize, cookTime, prepTime, description, category);
     }
 }

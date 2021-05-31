@@ -13,22 +13,17 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeNutritionDetailsBinding;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeNutritionAdapter extends RecyclerView.Adapter<RecipeNutritionAdapter.ViewHolder>{
 
-    // Holds the nutrition values before save button pressed
-    private List<Nutrition> prevNutritionList;
-    // keeps track of the changes in text and stores into its nutrition objects
-    private List<Nutrition> currNutritionList;
-    private PropertyChangedInterface propertyChangedInterface;
+    // Nutrition list
+    private List<Nutrition> nutritionList;
+    private RecipeNutritionContract.NutritionChangedListener listener;
 
-    public RecipeNutritionAdapter(List<Nutrition> prevNutritionList, PropertyChangedInterface propertyChangedInterface) {
-        this.prevNutritionList = prevNutritionList;
-        this.currNutritionList = new ArrayList<>();
-        copyPrevIntoCurr();
-        this.propertyChangedInterface = propertyChangedInterface;
+    public RecipeNutritionAdapter(List<Nutrition> nutritionList, RecipeNutritionContract.NutritionChangedListener listener) {
+        this.nutritionList = nutritionList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -41,13 +36,13 @@ public class RecipeNutritionAdapter extends RecyclerView.Adapter<RecipeNutrition
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Nutrition nutrition = currNutritionList.get(position);
+        Nutrition nutrition = nutritionList.get(position);
         holder.bind(nutrition);
     }
 
     @Override
     public int getItemCount() {
-        return currNutritionList.size();
+        return nutritionList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -67,15 +62,25 @@ public class RecipeNutritionAdapter extends RecyclerView.Adapter<RecipeNutrition
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (s.length() != 0) {
-                        currNutritionList.get(getAdapterPosition()).setAmount(Integer.parseInt(s.toString()));
-                        propertyChangedInterface.onPropertyChanged();
-                    }
+                    // value either added or changed
+                    int amount = s.toString().length() == 0 ? 0 : Integer.parseInt(s.toString());
+                    Nutrition nutrition = nutritionList.get(getAdapterPosition());
+                    nutrition.setAmount(amount);
+                    listener.nutritionAmountChanged(nutrition);
                 }
             });
 
+            binding.btnRemoveNutrition.setOnClickListener(l -> {
+                Nutrition nutrition = nutritionList.get(getAdapterPosition());
+                nutrition.setAmount(0);
+                nutrition.setMeasurementId(null);
+                listener.nutritionAmountChanged(nutrition);
+                notifyItemChanged(getAdapterPosition());
+            });
+
             binding.recipeNutritionType.setOnClickListener(l -> {
-                propertyChangedInterface.onRecipeTypeSelected(currNutritionList.get(getAdapterPosition()), getAdapterPosition(), binding.recipeNutritionType);
+                Nutrition nutrition = nutritionList.get(getAdapterPosition());
+                listener.onRecipeTypeSelected(nutrition, binding.recipeNutritionType);
             });
         }
 
@@ -89,26 +94,7 @@ public class RecipeNutritionAdapter extends RecyclerView.Adapter<RecipeNutrition
         }
     }
 
-    /**
-     * Deep copy the PrevNutritionList into CurrNutritionList
-     */
-    private void copyPrevIntoCurr() {
-        currNutritionList.clear();
-        for (Nutrition nutrition : prevNutritionList) {
-            currNutritionList.add(nutrition.clone());
-        }
-    }
-
-    public void saveChanges() {
-        prevNutritionList.clear();
-        prevNutritionList.addAll(currNutritionList);
-    }
-    public void cancelChanges() {
-        copyPrevIntoCurr();
-        notifyDataSetChanged();
-    }
-
     public List<Nutrition> getCurrNutritionList() {
-        return currNutritionList;
+        return nutritionList;
     }
 }

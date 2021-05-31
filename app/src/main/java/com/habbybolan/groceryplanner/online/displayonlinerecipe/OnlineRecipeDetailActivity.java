@@ -33,6 +33,7 @@ public class OnlineRecipeDetailActivity extends RecipeDetailsAbstractActivity im
         }
         RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
+        setFragments();
     }
 
     @Override

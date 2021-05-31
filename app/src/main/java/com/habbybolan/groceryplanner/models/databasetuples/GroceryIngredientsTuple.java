@@ -16,8 +16,8 @@ public class GroceryIngredientsTuple {
     public float quantity;
     @ColumnInfo(name = "quantityMeasId")
     public Long quantityMeasId;
-    @ColumnInfo(name = "food_type")
-    public String foodType;
+    @ColumnInfo(name = "food_type_id")
+    public long foodTypeId;
     @ColumnInfo(name = "is_checked")
     public boolean isChecked;
 }

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.recipe;
+package com.habbybolan.groceryplanner.details.recipe.recipedetailsactivity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -15,9 +15,13 @@ import com.habbybolan.groceryplanner.details.recipe.recipeingredients.RecipeIngr
 import com.habbybolan.groceryplanner.details.recipe.recipeinstructions.RecipeInstructionsFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipenutrition.RecipeNutritionFragment;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.RecipeOverviewFragment;
+import com.habbybolan.groceryplanner.di.GroceryApp;
+import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
+
+import javax.inject.Inject;
 
 public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
                                 implements IngredientEditFragment.IngredientEditListener,
@@ -25,7 +29,8 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
                                             RecipeInstructionsFragment.RecipeStepListener,
                                             RecipeOverviewFragment.RecipeOverviewListener,
                                             RecipeNutritionFragment.RecipeNutritionListener,
-                                            IngredientAddFragment.IngredientAddListener {
+                                            IngredientAddFragment.IngredientAddListener,
+                                            RecipeDetailsContract.DetailsView {
 
     private OfflineRecipe offlineRecipe;
     private ActivityRecipeDetailBinding binding;
@@ -38,15 +43,21 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
     private final String EDIT_TAG = "edit_tag";
     private final String ADD_TAG = "add_tag";
 
+    @Inject
+    RecipeDetailsContract.Presenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((GroceryApp) getApplication()).getAppComponent().recipeDetailSubComponent(new RecipeDetailModule()).inject(this);
+        presenter.setView(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_detail);
         Bundle extras = getIntent().getExtras();
         // get the bundled Ingredients to display in the fragment if any exist.
         if (extras != null) {
-            if (extras.containsKey(OfflineRecipe.RECIPE))
-                offlineRecipe = extras.getParcelable(OfflineRecipe.RECIPE);
+            if (extras.containsKey(OfflineRecipe.RECIPE)) {
+                presenter.loadFullRecipe(extras.getLong(OfflineRecipe.RECIPE));
+            }
         }
         RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
@@ -91,6 +102,7 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
 
     @Override
     public void onRecipeDeleted() {
+        // todo: delete recipe from offline database
         goBackToRecipeList();
     }
 
@@ -176,5 +188,11 @@ public class RecipeDetailActivity extends RecipeDetailsAbstractActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void showRecipe(OfflineRecipe offlineRecipe) {
+        this.offlineRecipe = offlineRecipe;
+        setFragments();
     }
 }

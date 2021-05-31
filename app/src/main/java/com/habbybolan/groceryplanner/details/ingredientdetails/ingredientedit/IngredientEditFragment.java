@@ -36,7 +36,7 @@ import javax.inject.Inject;
  * Deals with editing an existing Ingredient, or adding a new Ingredient.
  * Ingredient can be apart of an IngredientHolder, or viewed separately through the IngredientListFragment.
  */
-public class IngredientEditFragment extends Fragment implements IngredientEditView {
+public class IngredientEditFragment extends Fragment implements IngredientEditContract.IngredientEditView {
 
     private FragmentIngredientEditBinding binding;
     private IngredientEditListener ingredientEditListener;
@@ -48,7 +48,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     private CustomToolbar customToolbar;
 
     @Inject
-    IngredientEditPresenter ingredientEditPresenter;
+    IngredientEditContract.Presenter presenter;
 
     public IngredientEditFragment() {}
 
@@ -117,7 +117,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        ingredientEditPresenter.setView(this);
+        presenter.setView(this);
         if (getArguments() != null) {
             if (getArguments().containsKey(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER))
                 ingredientHolder = getArguments().getParcelable(OfflineIngredientHolder.OFFLINE_INGREDIENT_HOLDER);
@@ -241,47 +241,22 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      * If any changed were made, save the changes to the local database by updating/adding the Ingredient.
      */
     private void saveChangedToLocal() {
-        // if the Ingredient values were changed, then check if the values were valid
+        // retrieve the values from the Views
         String name = binding.editTxtName.getText().toString();
         String quantity = binding.editTxtQuantity.getText().toString();
         String quantityType = binding.txtQuantityType.getText().toString();
-
-        // if the values were valid, then save the new user created Ingredient
-        if (Ingredient.isValidName(name)) {
-
-            if (hasIngredientHolder())
-                setEditTextIntoIngredient(name, quantity, quantityType, adapter.getSelectedFoodType());
-            else
-                setEditTextIntoIngredient(name, adapter.getSelectedFoodType());
-            ingredientEditPresenter.updateIngredient(ingredientHolder, ingredient);
-            onEditSaved();
-        } else {
-            onSavingFailed("Not a valid Ingredient");
-        }
+        // update/Insert the Ingredient
+        presenter.updateIngredient(ingredientHolder, name, quantity, quantityType, adapter.getSelectedFoodType(), ingredient.getId());
     }
 
-    /**
-     * Set the values of the saved Ingredient with an ingredient holder.
-     * @param name          name for the Ingredient
-     * @param quantity      quantity for the Ingredient
-     * @param quantityType  quantityType for the Ingredient
-     */
-    private void setEditTextIntoIngredient(String name, String quantity, String quantityType, String foodType) {
-        ingredient.setName(name);
-        if (!quantity.equals("")) ingredient.setQuantity(Float.parseFloat(quantity));
-        else ingredient.setQuantity(0);
-        if (!quantityType.equals(""))
-            ingredient.setQuantityMeasId(Nutrition.getMeasurementId(quantityType));
-        ingredient.setFoodType(foodType);
+    @Override
+    public void saveSuccessful() {
+        onEditSaved();
     }
 
-    /**
-     * Set the values of the saved Ingredient with no ingredient holder.
-     * @param name          name for the Ingredient
-     */
-    private void setEditTextIntoIngredient(String name, String foodType) {
-        ingredient.setName(name);
-        ingredient.setFoodType(foodType);
+    @Override
+    public void saveFailed(String message) {
+        onSavingFailed(message);
     }
 
     /**
@@ -301,13 +276,6 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
         public void afterTextChanged(Editable s) {}
     };
 
-    // delete the relationship between the IngredientHolder and the Ingredient
-    private void deleteIngredient() {
-        ingredientEditPresenter.deleteRelationship(ingredientHolder, ingredient);
-        ingredientEditPresenter.destroy();
-        ingredientEditListener.leaveIngredientEdit();
-    }
-
     @Override
     public void loadingStarted() {
         Toast.makeText(getContext(), "loading started", Toast.LENGTH_SHORT).show();
@@ -323,7 +291,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditVi
      */
     private void onEditSaved() {
         Toast.makeText(getContext(), "Changes saved locally", Toast.LENGTH_SHORT).show();
-        ingredientEditPresenter.destroy();
+        presenter.destroy();
         ingredientEditListener.leaveIngredientEdit();
     }
 

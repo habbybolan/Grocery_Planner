@@ -2,17 +2,20 @@ package com.habbybolan.groceryplanner.details.recipe.recipeinstructions;
 
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
-public class RecipeInstructionsPresenterImpl implements RecipeInstructionsPresenter {
+import javax.inject.Inject;
 
-    private RecipeInstructionsInteractor recipeInstructionsInteractor;
-    private RecipeInstructionsView view;
+public class RecipeInstructionsPresenterImpl implements RecipeInstructionsContract.Presenter {
 
-    public RecipeInstructionsPresenterImpl(RecipeInstructionsInteractor recipeInstructionsInteractor) {
-        this.recipeInstructionsInteractor = recipeInstructionsInteractor;
+    private RecipeInstructionsContract.Interactor interactor;
+    private RecipeInstructionsContract.RecipeInstructionsView view;
+
+    @Inject
+    public RecipeInstructionsPresenterImpl(RecipeInstructionsContract.Interactor interactor) {
+        this.interactor = interactor;
     }
 
     @Override
-    public void setView(RecipeInstructionsView view) {
+    public void setView(RecipeInstructionsContract.RecipeInstructionsView view) {
         this.view = view;
     }
 
@@ -23,13 +26,7 @@ public class RecipeInstructionsPresenterImpl implements RecipeInstructionsPresen
 
     @Override
     public void updateRecipe(OfflineRecipe offlineRecipe) {
-        recipeInstructionsInteractor.updateRecipe(offlineRecipe);
-    }
-
-
-    @Override
-    public void deleteRecipe(OfflineRecipe offlineRecipe) {
-        recipeInstructionsInteractor.deleteRecipe(offlineRecipe);
+        interactor.updateRecipe(offlineRecipe);
     }
 
     private boolean isViewAttached() {

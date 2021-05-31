@@ -16,9 +16,9 @@ import java.util.List;
 public class RecipeGroceriesAdapter extends RecyclerView.Adapter<RecipeGroceriesAdapter.ViewHolder> {
 
     private List<GroceryRecipe> groceries;
-    private RecipeOverviewView view;
+    private RecipeOverviewContract.OverviewView view;
 
-    public RecipeGroceriesAdapter(List<GroceryRecipe> groceries, RecipeOverviewView view) {
+    public RecipeGroceriesAdapter(List<GroceryRecipe> groceries, RecipeOverviewContract.OverviewView view) {
         this.groceries = groceries;
         this.view = view;
     }

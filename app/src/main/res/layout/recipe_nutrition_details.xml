@@ -38,6 +38,15 @@
             android:layout_marginStart="@dimen/margin_start_info"
             android:inputType="number"/>
 
+        <Button
+            android:id="@+id/btn_remove_nutrition"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_toEndOf="@id/recipe_nutrition_amount"
+            android:layout_below="@id/recipe_nutrition_tag"
+            android:gravity="center"
+            android:text="-"/>
+
         <TextView
             android:id="@+id/recipe_nutrition_type_tag"
             android:layout_width="wrap_content"

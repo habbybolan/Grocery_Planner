@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
@@ -14,41 +15,61 @@ import java.util.List;
  * Sql commands dealing with Ingredient queries.
  */
 @Dao
-public interface IngredientDao {
+public abstract class IngredientDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    long insertIngredient(IngredientEntity ingredientEntity);
-
-    @Query("SELECT * FROM IngredientEntity WHERE ingredientName=:name")
-    IngredientEntity getIngredient(String name);
+    public abstract long insertIngredient(IngredientEntity ingredientEntity);
 
     @Update
-    void updateIngredient(IngredientEntity ingredientEntity);
+    public abstract void updateIngredient(IngredientEntity ingredientEntity);
+
+    /**
+     * Updates the ingredient if the id != 0 or the name already exists as an ingredient. Nothing to update.
+     * Otherwise, it's a new Ingredient, so insert it.
+     * @param ingredientEntity  Ingredient to insert or update
+     */
+    @Transaction
+    public void insertUpdateIngredient(IngredientEntity ingredientEntity) {
+        // if no explicit id set, check if that ingredient already exists
+        if (ingredientEntity.getIngredientId() == 0) {
+            long id = hasIngredientName(ingredientEntity.getIngredientName());
+            // if not 0, then the ingredient already exists
+            if (id == 0) {
+                insertIngredient(ingredientEntity);
+            }
+        }
+    }
+
+    @Query("SELECT ingredientName FROM IngredientEntity WHERE ingredientName = :name LIMIT 1")
+    public abstract long hasIngredientName(String name);
+
+    @Query("SELECT * FROM IngredientEntity WHERE ingredientName=:name")
+    public abstract IngredientEntity getIngredient(String name);
 
     @Query("DELETE FROM IngredientEntity WHERE ingredientId IN (:ingredientIds)")
-    void deleteIngredient(List<Long> ingredientIds);
+    public abstract void deleteIngredient(List<Long> ingredientIds);
 
     @Query("DELETE FROM RecipeIngredientBridge WHERE ingredientId IN (:ingredientIds)")
-    void deleteIngredientsFromRecipeIngredientBridge(List<Long> ingredientIds);
+    public abstract void deleteIngredientsFromRecipeIngredientBridge(List<Long> ingredientIds);
 
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE ingredientId IN (:ingredientIds)")
-    void deleteIngredientsFromGroceryRecipeIngredientEntity(List<Long> ingredientIds);
+    public abstract void deleteIngredientsFromGroceryRecipeIngredientEntity(List<Long> ingredientIds);
 
     @Query("DELETE FROM GroceryIngredientEntity WHERE ingredientId IN (:ingredientIds)")
-    void deleteIngredientsFromGroceryIngredientEntity(List<Long> ingredientIds);
+    public abstract void deleteIngredientsFromGroceryIngredientEntity(List<Long> ingredientIds);
 
     @Query("DELETE FROM GroceryIngredientBridge WHERE ingredientId IN (:ingredientIds)")
-    void deleteIngredientsFromGroceryIngredientBridge(List<Long> ingredientIds);
+    public abstract void deleteIngredientsFromGroceryIngredientBridge(List<Long> ingredientIds);
 
     @Query("SELECT * FROM IngredientEntity")
-    List<IngredientEntity> getIngredients();
+    public abstract List<IngredientEntity> getIngredients();
 
     @Query("SELECT * FROM IngredientEntity ORDER BY ingredientName ASC")
-    List<IngredientEntity> getIngredientsSortAlphabeticalAsc();
+    public abstract List<IngredientEntity> getIngredientsSortAlphabeticalAsc();
 
     @Query("SELECT * FROM IngredientEntity ORDER BY ingredientName DESC")
-    List<IngredientEntity> getIngredientsSortAlphabeticalDesc();
+    public abstract List<IngredientEntity> getIngredientsSortAlphabeticalDesc();
 
     @Query("SELECT * FROM IngredientEntity WHERE ingredientName LIKE :ingredientSearch")
-    List<IngredientEntity> searchIngredients(String ingredientSearch);
+    public abstract List<IngredientEntity> searchIngredients(String ingredientSearch);
 }

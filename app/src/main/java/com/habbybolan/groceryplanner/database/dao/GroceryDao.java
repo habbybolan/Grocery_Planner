@@ -99,9 +99,9 @@ public interface GroceryDao {
             "USING (groceryId)")
     List<GroceryRecipeIngredientTuple> getRecipeGroceryIngredients(long groceryId);*/
 
-    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type, is_checked, quantity, quantity_meas_id AS quantityMeasId" +
+    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantity_meas_id AS quantityMeasId" +
             "       FROM " +
-            "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type, " +
+            "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type_id, " +
             "           GIE.quantity, GIE.quantity_meas_id" +
             "           FROM IngredientEntity i " +
             "           JOIN GroceryIngredientEntity GIE " +
@@ -109,14 +109,13 @@ public interface GroceryDao {
             "           WHERE GIE.groceryId = :groceryId)" +
             "       JOIN " +
             "           (SELECT groceryId, ingredientId, is_checked FROM GroceryIngredientBridge GIB WHERE groceryId = :groceryId) " +
-            "       USING (groceryId, ingredientId) ")
-    List<GroceryIngredientsTuple> getGroceryIngredients(long groceryId);
+            "       USING (groceryId, ingredientId) ") List<GroceryIngredientsTuple> getGroceryIngredients(long groceryId);
 
     @Query("SELECT recipeId, onlineRecipeId, groceryId, onlineGroceryId, recipeName, ingredientId, onlineIngredientId, ingredientName, amount," +
-            " food_type, quantity, quantityMeasId, is_checked, amount " +
+            " food_type_id, quantity, quantityMeasId, is_checked, amount " +
             "       FROM " +
                         /* Get ingredient values */
-            "           (SELECT ingredientId, onlineIngredientId, ingredientName, food_type FROM IngredientEntity) " +
+            "           (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id FROM IngredientEntity) " +
             "           JOIN" +
                         /* Get is_checked */
             "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantityMeasId, is_checked " +
@@ -188,9 +187,9 @@ public interface GroceryDao {
     @Query("SELECT * FROM GroceryEntity WHERE name like :grocerySearch")
     List<GroceryEntity> searchGroceries(String grocerySearch);
 
-    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type, is_checked, quantity, quantityMeasId " +
+    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantityMeasId " +
             "       FROM " +
-            "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type, " +
+            "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type_id, " +
             "           GIE.quantity, GIE.quantity_meas_id AS quantityMeasId" +
             "           FROM IngredientEntity i " +
             "           JOIN GroceryIngredientEntity GIE " +
@@ -202,10 +201,10 @@ public interface GroceryDao {
     List<GroceryIngredientsTuple> searchGroceryIngredients(long groceryId, String ingredientSearch);
 
     @Query("SELECT recipeId, onlineRecipeId, groceryId, onlineGroceryId, recipeName, ingredientId, ingredientName, amount, " +
-            " food_type, quantity, quantityMeasId, is_checked, amount " +
+            " food_type_id, quantity, quantityMeasId, is_checked, amount " +
             "       FROM " +
             /* Get ingredient values */
-            "           (SELECT ingredientId, ingredientName, food_type FROM IngredientEntity WHERE ingredientName LIKE :ingredientSearch) " +
+            "           (SELECT ingredientId, ingredientName, food_type_id FROM IngredientEntity WHERE ingredientName LIKE :ingredientSearch) " +
             "           JOIN" +
             /* Get is_checked */
             "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantityMeasId, is_checked " +

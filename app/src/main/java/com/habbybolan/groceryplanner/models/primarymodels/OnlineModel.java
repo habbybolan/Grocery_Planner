@@ -3,6 +3,10 @@ package com.habbybolan.groceryplanner.models.primarymodels;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * For models that have an equivalent object on the online database, creating a connection to that online
+ * object by storing the online primary key.
+ */
 public abstract class OnlineModel implements Parcelable {
 
     protected Long onlineId;

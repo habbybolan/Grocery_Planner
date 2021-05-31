@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +36,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecipeOverviewFragment extends Fragment implements RecipeOverviewView {
+public class RecipeOverviewFragment extends Fragment implements RecipeOverviewContract.OverviewView {
 
     @Inject
-    RecipeOverviewPresenter recipeOverviewPresenter;
+    RecipeOverviewContract.Presenter presenter;
     private FragmentRecipeOverviewBinding binding;
     private RecipeOverviewListener recipeOverviewListener;
     private CustomToolbar customToolbar;
@@ -73,12 +75,35 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_overview, container, false);
-        recipeOverviewPresenter.setView(this);
-        recipeOverviewPresenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+        presenter.setView(this);
+        presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
         setToolbar();
         setRV();
         setTagClicker();
         return binding.getRoot();
+    }
+
+    /**
+     * Add a text watcher for when user changes serving size, cook time, prep time, recipe name, and description.
+     * Calls the new value to be saved by saving the OfflineRecipe into room database.
+     */
+    private void setEditTextListeners() {
+        // text watcher to save the new value
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                saveRecipe();
+            }
+        };
+        binding.recipeOverviewServingSize.addTextChangedListener(textWatcher);
+        binding.recipeOverviewName.addTextChangedListener(textWatcher);
+        binding.recipeOverviewCookTime.addTextChangedListener(textWatcher);
+        binding.recipeOverviewPrepTime.addTextChangedListener(textWatcher);
+        binding.recipeOverviewDescription.addTextChangedListener(textWatcher);
     }
 
     /**
@@ -89,17 +114,17 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
         groceriesAdapter = new RecipeGroceriesAdapter(groceriesHoldingRecipe, this);
         rvGroceries.setAdapter(groceriesAdapter);
-        recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+        presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
 
         tagRV = new RecipeTagRecyclerView(recipeTags, this, binding.recipeOverviewRvTags, getContext());
-        recipeOverviewPresenter.createRecipeTagList(recipeOverviewListener.getOfflineRecipe());
+        presenter.createRecipeTagList(recipeOverviewListener.getOfflineRecipe());
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeOverviewPresenter.loadAllRecipeCategories();
-        recipeOverviewPresenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
+        presenter.loadAllRecipeCategories();
+        presenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
         initLayout();
     }
 
@@ -109,36 +134,23 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     private void setTagClicker() {
         binding.recipeOverviewBtnAddTag.setOnClickListener(l -> {
             String tagTitle = binding.recipeOverviewTag.getText().toString();
-            recipeOverviewPresenter.checkAddingRecipeTag(tagTitle, recipeTags, recipeOverviewListener.getOfflineRecipe());
+            presenter.checkAddingRecipeTag(tagTitle, recipeTags, recipeOverviewListener.getOfflineRecipe());
         });
     }
 
     /**
-     * Saves the recipe changes.
+     * Saves the recipe changes, values directly inside RecipeEntity.
      */
     private void saveRecipe() {
-        // update name
-        recipeOverviewListener.getOfflineRecipe().setName(binding.recipeOverviewName.getText().toString());
-        // update serving size
-        recipeOverviewListener.getOfflineRecipe().setServingSize(Integer.parseInt(binding.recipeOverviewServingSize.getText().toString()));
-        // update RecipeCategory if selected one
-        if (selectedRecipeCategory != null) {
-            recipeOverviewListener.getOfflineRecipe().setCategoryId(selectedRecipeCategory.getId());
-        } else {
-            // otherwise, the 'No Category' was selected
-            recipeOverviewListener.getOfflineRecipe().setCategoryId(null);
-        }
-        recipeOverviewPresenter.updateRecipe(recipeOverviewListener.getOfflineRecipe());
-    }
+        String name = binding.recipeOverviewName.getText().toString();
+        String servingSize = binding.recipeOverviewServingSize.getText().toString();
+        String cookTime = binding.recipeOverviewCookTime.getText().toString();
+        String prepTime = binding.recipeOverviewPrepTime.getText().toString();
+        String description = binding.recipeOverviewDescription.getText().toString();
 
-    /**
-     * Cancels the recipe changes.
-     */
-    private void cancelRecipeChanges() {
-        setDisplayToCurrentRecipe();
-        selectedRecipeCategory = null;
+        // update the offline recipe
+        presenter.updateRecipe(recipeOverviewListener.getOfflineRecipe(), name, servingSize, cookTime, prepTime, description, selectedRecipeCategory);
     }
-
 
     private void setToolbar() {
         customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.overview_title), getLayoutInflater(), binding.toolbarContainer, getContext())
@@ -148,18 +160,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                         deleteRecipe();
                     }
                 }, "Recipe")
-                .addSaveIcon(new CustomToolbar.SaveCallback() {
-                    @Override
-                    public void saveClicked() {
-                        saveRecipe();
-                    }
-                })
-                .addCancelIcon(new CustomToolbar.CancelCallback() {
-                    @Override
-                    public void cancelClicked() {
-                        cancelRecipeChanges();
-                    }
-                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,10 +173,8 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
      * Delete the Recipe and leave the fragment
      */
     private void deleteRecipe() {
-        recipeOverviewPresenter.deleteRecipe(recipeOverviewListener.getOfflineRecipe());
         recipeOverviewListener.onRecipeDeleted();
     }
-
 
     /**
      * Initiate necessary onClicks and general data.
@@ -187,13 +185,16 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         // clicker for selecting category to display all categories
         binding.recipeOverviewCategory.setOnClickListener(v -> {
             // display the recipe categories if they are loaded in
-            recipeOverviewPresenter.displayRecipeCategories();
+            presenter.displayRecipeCategories();
         });
 
         // clicker for opening the Grocery list of Groceries that don't contain the recipe
         binding.btnRecipeOverviewAddToGrocery.setOnClickListener(l -> {
-            recipeOverviewPresenter.displayGroceriesNotHoldingRecipe();
+            presenter.displayGroceriesNotHoldingRecipe();
         });
+
+        // set the text listeners once the initial view values are set
+        setEditTextListeners();
     }
 
     /**
@@ -207,8 +208,13 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
             binding.setCategoryName(Category.NO_CATEGORY);
         else
             // otherwise, fetch the categoryId and display it
-            recipeOverviewPresenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
+            presenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
+
+        // set serving size, prep time, cook time, and description
         binding.setServingSize(String.valueOf(recipeOverviewListener.getOfflineRecipe().getServingSize()));
+        binding.setCookTime(String.valueOf(recipeOverviewListener.getOfflineRecipe().getCookTime()));
+        binding.setPrepTime(String.valueOf(recipeOverviewListener.getOfflineRecipe().getPrepTime()));
+        binding.setDescription(recipeOverviewListener.getOfflineRecipe().getDescription());
     }
 
     @Override
@@ -217,7 +223,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
         builder.setItems(categoryNames, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                selectedRecipeCategory = recipeOverviewPresenter.getRecipeCategory(which);
+                selectedRecipeCategory = presenter.getRecipeCategory(which);
                 binding.setCategoryName(categoryNames[which]);
             }
         });
@@ -264,11 +270,11 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                     public void onClick(DialogInterface dialog, int id) {
                         try {
                             // update the recipe ingredients inside the grocery
-                            recipeOverviewPresenter.updateRecipeIngredientsInGrocery(recipeOverviewListener.getOfflineRecipe(), grocery, 1, ingredients);
+                            presenter.updateRecipeIngredientsInGrocery(recipeOverviewListener.getOfflineRecipe(), grocery, 1, ingredients);
                         } finally {
                             // update the stored values holding the the groceries holding and not holding the recipe
-                            recipeOverviewPresenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
-                            recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+                            presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+                            presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
                         }
                     }
                 })
@@ -276,11 +282,11 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            recipeOverviewPresenter.deleteRecipeFromGrocery(recipeOverviewListener.getOfflineRecipe(), grocery);
+                            presenter.deleteRecipeFromGrocery(recipeOverviewListener.getOfflineRecipe(), grocery);
                         } finally {
                             // update the stored values holding the the groceries holding and not holding the recipe
-                            recipeOverviewPresenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
-                            recipeOverviewPresenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+                            presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+                            presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
                         }
                     }
                 })
@@ -317,7 +323,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     public void displayGroceriesNotHoldingRecipe(List<Grocery> groceries) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         //DialogueListBinding dialogBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialogue_list, binding.recipeOverviewContainer, false);
-        final String[] groceryNames = recipeOverviewPresenter.getArrayOfGroceryNames(groceries);
+        final String[] groceryNames = presenter.getArrayOfGroceryNames(groceries);
         // builder.setView(dialogBinding.getRoot())
         builder.setTitle("Grocery to add recipe to")
                 // Add action buttons
@@ -325,7 +331,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // todo: could pre-load recipe ingredients, then directly display them
-                        recipeOverviewPresenter.fetchRecipeIngredients(recipeOverviewListener.getOfflineRecipe(), groceries.get(which), true);
+                        presenter.fetchRecipeIngredients(recipeOverviewListener.getOfflineRecipe(), groceries.get(which), true);
                     }
                 });
         AlertDialog dialog = builder.create();
@@ -344,7 +350,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
     @Override
     public void displayRecipeIngredientsInGrocery(Grocery grocery) {
         // get the ingredients from a recipe that was added to the grocery list
-        recipeOverviewPresenter.fetchRecipeIngredients(recipeOverviewListener.getOfflineRecipe(), grocery, false);
+        presenter.fetchRecipeIngredients(recipeOverviewListener.getOfflineRecipe(), grocery, false);
     }
 
     @Override
@@ -362,7 +368,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewVi
 
     @Override
     public void onDeleteRecipeTag(RecipeTag recipeTag) {
-        recipeOverviewPresenter.deleteRecipeTag(recipeOverviewListener.getOfflineRecipe(), recipeTag);
+        presenter.deleteRecipeTag(recipeOverviewListener.getOfflineRecipe(), recipeTag);
     }
 
 

@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeListBinding;
-import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.recipedetailsactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment;
 import com.habbybolan.groceryplanner.listing.recipelist.recipecategorylist.RecipeCategoryFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -76,8 +76,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
      */
     public void onRecipeItemClicked(OfflineRecipe offlineRecipe) {
         Intent intent = new Intent(this, RecipeDetailActivity.class);
-        intent.putExtra(OfflineRecipe.RECIPE, offlineRecipe);
-        if (recipeCategory != null) intent.putExtra(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
+        intent.putExtra(OfflineRecipe.RECIPE, offlineRecipe.getId());
         startActivityForResult(intent, RETURNED_FROM_RECIPE_DETAILS);
     }
 

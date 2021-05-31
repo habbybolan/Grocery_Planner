@@ -22,33 +22,64 @@ public class FoodType {
     public static final String OILS = "oils";
     public static final String OTHER = "other";
 
+    public static final int FRUITS_ID = 0;
+    public static final int VEGETABLES_ID = 1;
+    public static final int DAIRY_ID = 2;
+    public static final int PROTEIN_ID = 3;
+    public static final int GRAINS_ID = 4;
+    public static final int OILS_ID = 5;
+    public static final int OTHER_ID = 6;
+
     public FoodType(String type) {
         this.type = type;
         imageResource = getImageResource(type);
+    }
+    public FoodType(long id) {
+        this.type = getFoodTypeString(id);
+        imageResource = getImageResource(type);
+    }
+
+    public String getFoodTypeString(long id) {
+        switch ((int) id) {
+            case FRUITS_ID:
+                return FRUITS;
+            case VEGETABLES_ID:
+                return VEGETABLES;
+            case GRAINS_ID:
+                return GRAINS;
+            case PROTEIN_ID:
+                return PROTEIN;
+            case DAIRY_ID:
+                return DAIRY;
+            case OILS_ID:
+                return OILS;
+            default:
+                return OTHER;
+        }
     }
 
     private int getImageResource(String type) {
         switch (type) {
             case FRUITS:
-                id = 0;
+                id = FRUITS_ID;
                 return R.drawable.fruits;
             case VEGETABLES:
-                id = 1;
+                id = VEGETABLES_ID;
                 return R.drawable.vegeatables;
             case GRAINS:
-                id = 2;
+                id = GRAINS_ID;
                 return R.drawable.grains;
             case PROTEIN:
-                id = 3;
+                id = PROTEIN_ID;
                 return R.drawable.protein;
             case DAIRY:
-                id = 4;
+                id = DAIRY_ID;
                 return R.drawable.dairy;
             case OILS:
-                id = 5;
+                id = OILS_ID;
                 return R.drawable.oils;
             default:
-                id = 6;
+                id = OTHER_ID;
                 return R.drawable.other;
         }
     }

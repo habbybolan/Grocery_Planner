@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeDetailBinding;
-import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.recipedetailsactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
@@ -22,9 +22,11 @@ import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredient> {
+public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredient> implements RecipeIngredientsContract.IngredientsView{
 
     private RecipeDetailListener recipeDetailListener;
     private FragmentRecipeDetailBinding binding;
@@ -32,7 +34,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     private SortType sortType = new SortType();
 
     @Inject
-    RecipeIngredientsPresenter recipeIngredientsPresenter;
+    RecipeIngredientsContract.Presenter presenter;
 
     public RecipeIngredientsFragment() {}
 
@@ -70,14 +72,14 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
-                        recipeIngredientsPresenter.searchIngredients(recipeDetailListener.getOfflineRecipe(), search);
+                        presenter.searchIngredients(recipeDetailListener.getOfflineRecipe(), search);
                     }
                 })
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
-                        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
+                        presenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
                     }
                 }, SortType.SORT_LIST_ALPHABETICAL)
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
@@ -98,13 +100,11 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeIngredientsPresenter.setView(this);
+        presenter.setView(this);
         if (getArguments() != null && getArguments().containsKey(Ingredient.INGREDIENT)) {
              listItems = getArguments().getParcelableArrayList(Ingredient.INGREDIENT);
-        } else {
-            // retrieve ingredients associated with recipe
-            recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
         }
+        presenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
     }
 
     /**
@@ -126,12 +126,7 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
     }
 
     private void deleteRecipe() {
-        recipeIngredientsPresenter.deleteRecipe(recipeDetailListener.getOfflineRecipe());
         recipeDetailListener.onRecipeDeleted();
-    }
-
-    public void reloadList() {
-        recipeIngredientsPresenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
     }
 
     @Override
@@ -142,12 +137,22 @@ public class RecipeIngredientsFragment extends NonCategoryListFragment<Ingredien
 
     @Override
     public void deleteSelectedItems() {
-        recipeIngredientsPresenter.deleteIngredients(recipeDetailListener.getOfflineRecipe(), listItemsChecked);
+        presenter.deleteIngredients(recipeDetailListener.getOfflineRecipe(), listItemsChecked);
     }
 
     @Override
     public SortType getSortType() {
         return sortType;
+    }
+
+    @Override
+    public void onListFetched(List<Ingredient> ingredients) {
+        recipeDetailListener.getOfflineRecipe().setIngredients(ingredients);
+        super.showList(ingredients);
+    }
+
+    public void reloadList() {
+        presenter.createIngredientList(recipeDetailListener.getOfflineRecipe());
     }
 
     /**

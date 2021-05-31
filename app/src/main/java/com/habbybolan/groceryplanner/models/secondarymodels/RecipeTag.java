@@ -11,6 +11,7 @@ import com.google.gson.JsonParseException;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineModel;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 
 public class RecipeTag extends OnlineModel implements Parcelable {
 
@@ -18,11 +19,15 @@ public class RecipeTag extends OnlineModel implements Parcelable {
 
     private long id;
     private String title;
+    private Timestamp dateUpdated;
+    private Timestamp dateSynchronized;
 
-    public RecipeTag(long id, long onlineId, String title) {
+    public RecipeTag(long id, Long onlineId, String title, Timestamp dateUpdated, Timestamp dateSynchronized) {
         this.onlineId = onlineId;
         this.id = id;
         this.title = title;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
     }
 
     public RecipeTag(long onlineId, String title) {
@@ -45,6 +50,8 @@ public class RecipeTag extends OnlineModel implements Parcelable {
         super(in);
         id = in.readLong();
         title = in.readString();
+        dateSynchronized = (Timestamp) in.readSerializable();
+        dateUpdated = (Timestamp) in.readSerializable();
     }
 
     /**
@@ -133,6 +140,8 @@ public class RecipeTag extends OnlineModel implements Parcelable {
         super.writeToParcel(dest, flags);
         dest.writeLong(id);
         dest.writeString(title);
+        dest.writeSerializable(dateSynchronized);
+        dest.writeSerializable(dateUpdated);
     }
 
     @Override
@@ -159,5 +168,18 @@ public class RecipeTag extends OnlineModel implements Parcelable {
             JsonObject jsonObject = json.getAsJsonObject();
             return new RecipeTag(jsonObject.get("recipe_tag_id").getAsLong(), jsonObject.get("title").getAsString());
         }
+    }
+
+    public Timestamp getDateUpdated() {
+        return dateUpdated;
+    }
+    public Timestamp getDateSynchronized() {
+        return dateSynchronized;
+    }
+    public void setDateUpdated(Timestamp dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+    public void setDateSynchronized(Timestamp dateSynchronized) {
+        this.dateSynchronized = dateSynchronized;
     }
 }

@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
@@ -9,10 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresenter {
+import javax.inject.Inject;
 
-    private RecipeIngredientsInteractor recipeIngredientsInteractor;
-    private ListViewInterface view;
+public class RecipeIngredientsPresenterImpl implements RecipeIngredientsContract.Presenter {
+
+    private RecipeIngredientsContract.Interactor interactor;
+    private RecipeIngredientsContract.IngredientsView view;
 
     // true if the ingredients are being loaded
     private boolean loadingIngredients = false;
@@ -29,12 +30,13 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
         }
     };
 
-    public RecipeIngredientsPresenterImpl(RecipeIngredientsInteractor recipeIngredientsInteractor) {
-        this.recipeIngredientsInteractor = recipeIngredientsInteractor;
+    @Inject
+    public RecipeIngredientsPresenterImpl(RecipeIngredientsContract.Interactor interactor) {
+        this.interactor = interactor;
     }
 
     @Override
-    public void setView(ListViewInterface view) {
+    public void setView(RecipeIngredientsContract.IngredientsView view) {
         this.view = view;
     }
 
@@ -49,19 +51,14 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
     }
 
     @Override
-    public void deleteRecipe(OfflineRecipe offlineRecipe) {
-        recipeIngredientsInteractor.deleteRecipe(offlineRecipe);
-    }
-
-    @Override
     public void deleteIngredient(OfflineRecipe offlineRecipe, Ingredient ingredient) {
-        recipeIngredientsInteractor.deleteIngredient(offlineRecipe, ingredient);
+        interactor.deleteIngredient(offlineRecipe, ingredient);
         createIngredientList(offlineRecipe);
     }
 
     @Override
     public void deleteIngredients(OfflineRecipe offlineRecipe, List<Ingredient> ingredients) {
-        recipeIngredientsInteractor.deleteIngredients(offlineRecipe, ingredients);
+        interactor.deleteIngredients(offlineRecipe, ingredients);
         createIngredientList(offlineRecipe);
     }
 
@@ -87,7 +84,7 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            recipeIngredientsInteractor.fetchIngredients(offlineRecipe, view.getSortType(), ingredientDbCallback);
+            interactor.fetchIngredients(offlineRecipe, view.getSortType(), ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("failed to delete Ingredients");
@@ -100,7 +97,7 @@ public class RecipeIngredientsPresenterImpl implements RecipeIngredientsPresente
         try {
             loadingIngredients = true;
             view.loadingStarted();
-            recipeIngredientsInteractor.searchIngredients(offlineRecipe, ingredientSearch, ingredientDbCallback);
+            interactor.searchIngredients(offlineRecipe, ingredientSearch, ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingIngredients = false;

@@ -44,6 +44,7 @@ public class OnlineRecipeDetailsEditActivity extends RecipeDetailsAbstractActivi
         }
         RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
+        setFragments();
     }
 
     @Override

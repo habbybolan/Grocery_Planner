@@ -3,17 +3,18 @@ package com.habbybolan.groceryplanner.database;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.DbSingleCallback;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
+import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -72,23 +73,27 @@ public interface DatabaseAccess {
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
-    void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated);
+    void addRecipe(OfflineRecipe offlineRecipe);
     void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<OfflineRecipe> offlineRecipes);
     void updateRecipe(OfflineRecipe offlineRecipe);
-    void fetchRecipe(ObservableField<OfflineRecipe> recipeObserver, long recipeId) throws ExecutionException, InterruptedException;
+    void fetchRecipe(long recipeId, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 
     void addRecipeTag(long recipeId, String title);
     void addRecipeTags(long recipeId, List<String> titles);
     void fetchRecipeTags(long recipeId, DbCallback<RecipeTag> recipeTags) throws ExecutionException, InterruptedException;
-    void deleteRecipeTag(long recipeId, long tagId);
+    void deleteRecipeTagFromBridge(long recipeId, RecipeTag recipeTag);
 
     void deleteRecipeCategory(long categoryId);
     void deleteRecipeCategories(List<Long> categoryIds);
     void fetchRecipeCategories(DbCallback<RecipeCategory> callback, SortType sortType) throws ExecutionException, InterruptedException;
     void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long recipeCategoryId) throws ExecutionException, InterruptedException;
     void addRecipeCategory(RecipeCategory recipeCategory);
+
+    void deleteNutrition(long recipeId, long nutritionId);
+    void addNutrition(long recipeId, Nutrition nutrition);
+
 
     /**
      * Insert an ingredient into a grocery list

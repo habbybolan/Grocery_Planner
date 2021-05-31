@@ -65,7 +65,6 @@ public abstract class RecipeDetailsAbstractActivity extends AppCompatActivity {
      */
     protected void setViews(BottomNavigationView view, RecipeDetailsFragmentsBinding fragmentsBinding) {
         this.fragmentsBinding = fragmentsBinding;
-        setFragments();
         setBottomNavigation(view);
     }
 

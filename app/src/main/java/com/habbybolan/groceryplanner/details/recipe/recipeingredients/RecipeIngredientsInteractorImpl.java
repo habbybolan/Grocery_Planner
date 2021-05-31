@@ -2,7 +2,6 @@ package com.habbybolan.groceryplanner.details.recipe.recipeingredients;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -11,10 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeIngredientsInteractorImpl extends RecipeDetailsInteractorImpl implements RecipeIngredientsInteractor {
+import javax.inject.Inject;
 
+public class RecipeIngredientsInteractorImpl implements RecipeIngredientsContract.Interactor {
+
+    private DatabaseAccess databaseAccess;
+
+    @Inject
     public RecipeIngredientsInteractorImpl(DatabaseAccess databaseAccess) {
-        super(databaseAccess);
+        this.databaseAccess = databaseAccess;
     }
 
     @Override

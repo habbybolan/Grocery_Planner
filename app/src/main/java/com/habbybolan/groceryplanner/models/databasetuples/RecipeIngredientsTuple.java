@@ -2,6 +2,8 @@ package com.habbybolan.groceryplanner.models.databasetuples;
 
 import androidx.room.ColumnInfo;
 
+import java.sql.Timestamp;
+
 /**
  * Room tuple to display an Ingredient and the recipe it belongs to.
  */
@@ -17,10 +19,14 @@ public class RecipeIngredientsTuple {
     public Long onlineIngredientId;
     @ColumnInfo(name = "ingredientName")
     public String ingredientName;
-    @ColumnInfo(name = "food_type")
-    public String foodType;
+    @ColumnInfo(name = "food_type_id")
+    public long foodTypeId;
     @ColumnInfo(name = "quantity")
     public float quantity;
     @ColumnInfo(name = "quantityMeasId")
     public Long quantityMeasId;
+    @ColumnInfo(name = "date_synchronized", index = true)
+    public Timestamp dateSynchronized;
+    @ColumnInfo(name = "date_updated", index = true)
+    public Timestamp dateUpdated;
 }

@@ -4,8 +4,9 @@ package com.habbybolan.groceryplanner.database.entities;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import java.sql.Timestamp;
 
 @Entity(primaryKeys = {"recipeId", "ingredientId"}, foreignKeys = {
         @ForeignKey(entity = RecipeEntity.class,
@@ -29,19 +30,25 @@ public class  RecipeIngredientBridge {
     public float quantity;
     @ColumnInfo(name="quantity_meas_id", index = true)
     public Long quantityMeasId;
+    @ColumnInfo(name = "date_synchronized", index = true)
+    public Timestamp dateSynchronized;
+    @ColumnInfo(name = "date_updated", index = true)
+    public Timestamp dateUpdated;
 
+    public RecipeIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        this.recipeId = recipeId;
+        this.ingredientId = ingredientId;
+        this.quantity = quantity;
+        this.quantityMeasId = quantityMeasId;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
+    }
+
+    @Ignore
     public RecipeIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId) {
         this.recipeId = recipeId;
         this.ingredientId = ingredientId;
         this.quantity = quantity;
         this.quantityMeasId = quantityMeasId;
     }
-
-    public RecipeIngredientBridge(long recipeId, Ingredient ingredient) {
-        this.recipeId = recipeId;
-        ingredientId = ingredient.getId();
-        quantity = ingredient.getQuantity();
-        quantityMeasId = ingredient.getQuantityMeasId();
-    }
-
 }

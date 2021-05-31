@@ -4,7 +4,6 @@ import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.recipe.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -15,10 +14,12 @@ import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl implements RecipeOverviewInteractor {
+public class RecipeOverviewInteractorImpl implements RecipeOverviewContract.Interactor {
+
+    private DatabaseAccess databaseAccess;
 
     public RecipeOverviewInteractorImpl(DatabaseAccess databaseAccess) {
-        super(databaseAccess);
+        this.databaseAccess = databaseAccess;
     }
 
     @Override
@@ -143,6 +144,23 @@ public class RecipeOverviewInteractorImpl extends RecipeDetailsInteractorImpl im
 
     @Override
     public void deleteRecipeTag(OfflineRecipe offlineRecipe, RecipeTag recipeTag) {
-        databaseAccess.deleteRecipeTag(offlineRecipe.getId(), recipeTag.getId());
+        databaseAccess.deleteRecipeTagFromBridge(offlineRecipe.getId(), recipeTag);
     }
+
+    @Override
+    public void updateRecipe(OfflineRecipe offlineRecipe, String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category) {
+        offlineRecipe.setName(name);
+        offlineRecipe.setServingSize(servingSize.length() > 0 ? Integer.parseInt(servingSize) : 0);
+        offlineRecipe.setCookTime(cookTime.length() > 0 ? Integer.parseInt(cookTime) : 0);
+        offlineRecipe.setPrepTime(prepTime.length() > 0 ? Integer.parseInt(prepTime) : 0);
+        offlineRecipe.setDescription(description);
+        if (category != null) {
+            offlineRecipe.setCategoryId(category.getId());
+        } else {
+            // otherwise, the 'No Category' was selected
+            offlineRecipe.setCategoryId(null);
+        }
+        databaseAccess.updateRecipe(offlineRecipe);
+    }
+
 }

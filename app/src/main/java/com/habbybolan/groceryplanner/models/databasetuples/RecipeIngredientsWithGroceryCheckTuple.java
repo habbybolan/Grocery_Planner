@@ -10,14 +10,13 @@ public class RecipeIngredientsWithGroceryCheckTuple {
 
     @ColumnInfo(name = "groceryId")
     public long groceryId;
-
     @ColumnInfo(name = "ingredientId")
     public long ingredientId;
     public Long onlineIngredientId;
     @ColumnInfo(name = "ingredientName")
     public String ingredientName;
-    @ColumnInfo(name = "food_type")
-    public String foodType;
+    @ColumnInfo(name = "food_type_id")
+    public long foodTypeId;
     @ColumnInfo(name = "quantity")
     public float quantity;
     @ColumnInfo(name = "quantityMeasId")

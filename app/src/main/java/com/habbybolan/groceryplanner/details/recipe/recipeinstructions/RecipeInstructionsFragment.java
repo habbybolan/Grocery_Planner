@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsBinding;
-import com.habbybolan.groceryplanner.details.recipe.RecipeDetailActivity;
+import com.habbybolan.groceryplanner.details.recipe.recipedetailsactivity.RecipeDetailActivity;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -20,10 +20,10 @@ import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeInstructionsFragment extends Fragment implements RecipeInstructionsView {
+public class RecipeInstructionsFragment extends Fragment implements RecipeInstructionsContract.RecipeInstructionsView{
 
     @Inject
-    RecipeInstructionsPresenter recipeInstructionsPresenter;
+    RecipeInstructionsContract.Presenter presenter;
 
     private FragmentRecipeInstructionsBinding binding;
     private RecipeStepListener recipeStepListener;
@@ -66,7 +66,7 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
     private void saveInstructions() {
         String instructions = binding.editTxtInstructions.getText().toString();
         recipeStepListener.getOfflineRecipe().setInstructions(instructions);
-        recipeInstructionsPresenter.updateRecipe(recipeStepListener.getOfflineRecipe());
+        presenter.updateRecipe(recipeStepListener.getOfflineRecipe());
     }
 
     /**
@@ -90,12 +90,6 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
                         saveInstructions();
                     }
                 })
-                .addCancelIcon(new CustomToolbar.CancelCallback() {
-                    @Override
-                    public void cancelClicked() {
-                        cancelInstructionChanges();
-                    }
-                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,14 +102,13 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeInstructionsPresenter.setView(this);
+        presenter.setView(this);
     }
 
     /**
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        recipeInstructionsPresenter.deleteRecipe(recipeStepListener.getOfflineRecipe());
         recipeStepListener.onRecipeDeleted();
     }
 

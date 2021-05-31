@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -25,10 +26,10 @@ import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeNutritionFragment extends Fragment implements RecipeNutritionView {
+public class RecipeNutritionFragment extends Fragment implements RecipeNutritionContract.NutritionView {
 
     @Inject
-    RecipeNutritionPresenter recipeNutritionPresenter;
+    RecipeNutritionContract.Presenter presenter;
     private FragmentRecipeNutritionBinding binding;
     private RecipeNutritionListener recipeNutritionListener;
     private CustomToolbar customToolbar;
@@ -58,44 +59,35 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
     }
 
     private void setList() {
-        adapter = new RecipeNutritionAdapter(recipeNutritionListener.getOfflineRecipe().getNutritionList(), new PropertyChangedInterface() {
+        adapter = new RecipeNutritionAdapter(recipeNutritionListener.getOfflineRecipe().getNutritionList(), new RecipeNutritionContract.NutritionChangedListener() {
+
             @Override
-            public void onPropertyChanged() {
-                // todo: remove this if not hiding/showing save/cancel buttons...
+            public void nutritionAmountChanged(Nutrition nutrition) {
+                presenter.nutritionAmountChanged(recipeNutritionListener.getOfflineRecipe(), nutrition);
             }
 
             @Override
-            public void onRecipeTypeSelected(Nutrition nutrition, int position, TextView v) {
+            public void onRecipeTypeSelected(@NonNull Nutrition nutrition, TextView v) {
                 PopupMenu popupMenu = new PopupMenu(getContext(), v);
                 MeasurementType.createMeasurementTypeMenu(popupMenu);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     String type = item.getTitle().toString();
                     nutrition.setMeasurementId(Nutrition.getMeasurementId(type));
                     v.setText(type);
+                    presenter.nutritionMeasurementChanged(recipeNutritionListener.getOfflineRecipe(), nutrition);
                     return true;
                 });
                 popupMenu.show();
+            }
+
+            @Override
+            public void invalidAction(String message) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
         RecyclerView rv = binding.recipeNutritionList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
-    }
-
-    /**
-     * Save the nutrition changes to the Recipe.
-     */
-    private void saveNutrition() {
-        recipeNutritionListener.getOfflineRecipe().updateNutrition(adapter.getCurrNutritionList());
-        recipeNutritionPresenter.updateRecipe(recipeNutritionListener.getOfflineRecipe());
-        adapter.saveChanges();
-    }
-
-    /**
-     * Cancel the nutrition changes to the recipe.
-     */
-    private void cancelNutritionChanges() {
-        adapter.cancelChanges();
     }
 
     private void setToolbar() {
@@ -106,18 +98,6 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
                         deleteRecipe();
                     }
                 }, "Recipe")
-                .addSaveIcon(new CustomToolbar.SaveCallback() {
-                    @Override
-                    public void saveClicked() {
-                        saveNutrition();
-                    }
-                })
-                .addCancelIcon(new CustomToolbar.CancelCallback() {
-                    @Override
-                    public void cancelClicked() {
-                        cancelNutritionChanges();
-                    }
-                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +111,6 @@ public class RecipeNutritionFragment extends Fragment implements RecipeNutrition
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
-        recipeNutritionPresenter.deleteRecipe(recipeNutritionListener.getOfflineRecipe());
         recipeNutritionListener.onRecipeDeleted();
     }
 

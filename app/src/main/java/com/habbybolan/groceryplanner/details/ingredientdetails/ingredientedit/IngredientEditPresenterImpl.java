@@ -3,17 +3,20 @@ package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
-public class IngredientEditPresenterImpl implements IngredientEditPresenter {
+import javax.inject.Inject;
 
-    private IngredientEditInteractor ingredientEditInteractor;
-    private IngredientEditView view;
+public class IngredientEditPresenterImpl implements IngredientEditContract.Presenter {
 
-    public IngredientEditPresenterImpl(IngredientEditInteractor ingredientEditInteractor) {
-        this.ingredientEditInteractor = ingredientEditInteractor;
+    private IngredientEditContract.Interactor interactor;
+    private IngredientEditContract.IngredientEditView view;
+
+    @Inject
+    public IngredientEditPresenterImpl(IngredientEditContract.Interactor interactor) {
+        this.interactor = interactor;
     }
 
     @Override
-    public void setView(IngredientEditView view) {
+    public void setView(IngredientEditContract.IngredientEditView view) {
         this.view = view;
     }
 
@@ -23,22 +26,15 @@ public class IngredientEditPresenterImpl implements IngredientEditPresenter {
     }
 
     @Override
-    public void updateIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
-        ingredientEditInteractor.updateIngredient(ingredientHolder, ingredient);
-    }
-
-    @Override
     public void deleteIngredient(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
-        ingredientEditInteractor.deleteIngredient(ingredientHolder, ingredient);
+        interactor.deleteIngredient(ingredientHolder, ingredient);
     }
 
     @Override
-    public boolean isNewIngredient(Ingredient ingredient) {
-        return ingredientEditInteractor.isNewIngredient(ingredient);
-    }
-
-    @Override
-    public void deleteRelationship(OfflineIngredientHolder ingredientHolder, Ingredient ingredient) {
-        ingredientEditInteractor.deleteRelationship(ingredientHolder, ingredient);
+    public void updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId) {
+        if (interactor.updateIngredient(ingredientHolder, name, quantity, quantityType, foodType, ingredientId))
+            view.saveSuccessful();
+         else
+             view.saveFailed("Invalid Ingredient");
     }
 }

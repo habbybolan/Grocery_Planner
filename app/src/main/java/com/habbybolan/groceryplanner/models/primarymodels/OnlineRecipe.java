@@ -21,8 +21,6 @@ import java.util.List;
 public class OnlineRecipe extends Recipe {
 
     private Timestamp dateUpdated;
-    private List<RecipeTag> recipeTags = new ArrayList<>();
-    private List<Ingredient> ingredients = new ArrayList<>();
 
     private OnlineRecipe() {
         super();
@@ -31,46 +29,39 @@ public class OnlineRecipe extends Recipe {
     public OnlineRecipe(Parcel in) {
         super(in);
         dateUpdated = (Timestamp) in.readSerializable();
-        in.readList(recipeTags, RecipeTag.class.getClassLoader());
-        in.readList(ingredients, Ingredient.class.getClassLoader());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeSerializable(dateUpdated);
-        dest.writeList(recipeTags);
-        dest.writeList(ingredients);
     }
 
     public static class OnlineRecipeBuilder implements RecipeBuilderInterface<OnlineRecipeBuilder> {
 
-        protected String name;
-        protected long onlineId;
+        private String name;
+        private long onlineId;
 
-        protected String description;
-        protected int prepTime;
-        protected int cookTime;
-        protected int servingSize;
+        private String description;
+        private int prepTime;
+        private int cookTime;
+        private int servingSize;
 
-        protected Nutrition calories;
-        protected Nutrition fat;
-        protected Nutrition saturatedFat;
-        protected Nutrition carbohydrates;
-        protected Nutrition fiber;
-        protected Nutrition sugar;
-        protected Nutrition protein;
+        private Nutrition calories;
+        private Nutrition fat;
+        private Nutrition saturatedFat;
+        private Nutrition carbohydrates;
+        private Nutrition fiber;
+        private Nutrition sugar;
+        private Nutrition protein;
 
-        protected Timestamp dateCreated;
+        private Timestamp dateCreated;
         private Timestamp dateUpdated;
-
-        protected Long categoryId;
-        protected String instructions;
-
-        protected int likes;
+        private String instructions;
+        private int likes;
 
         private List<RecipeTag> recipeTags = new ArrayList<>();
-        private List<Ingredient> ingredient = new ArrayList<>();
+        private List<Ingredient> ingredients = new ArrayList<>();
 
         public OnlineRecipeBuilder(@NonNull String name) {
             this.name = name;
@@ -81,9 +72,14 @@ public class OnlineRecipe extends Recipe {
             return this;
         }
 
-        public OnlineRecipeBuilder setIngredients(List<Ingredient> ingredient) {
-            this.ingredient = ingredient;
+        public OnlineRecipeBuilder setIngredients(List<Ingredient> ingredients) {
+            this.ingredients = ingredients;
             return this;
+        }
+
+        @Override
+        public OnlineRecipeBuilder setRecipeTags(List<RecipeTag> recipeTags) {
+            return null;
         }
 
         public OnlineRecipeBuilder setOnlineId(Long onlineId) {
@@ -150,11 +146,6 @@ public class OnlineRecipe extends Recipe {
             return this;
         }
         @Override
-        public OnlineRecipeBuilder setCategoryId(Long categoryId) {
-            this.categoryId = categoryId;
-            return this;
-        }
-        @Override
         public OnlineRecipeBuilder setInstructions(String instructions) {
             this.instructions = instructions;
             return this;
@@ -187,7 +178,6 @@ public class OnlineRecipe extends Recipe {
             onlineRecipe.fiber = fiber;
             onlineRecipe.sugar = sugar;
             onlineRecipe.protein = protein;
-            onlineRecipe.categoryId = categoryId;
             onlineRecipe.instructions = instructions;
 
             onlineRecipe.dateCreated = dateCreated;
@@ -195,7 +185,7 @@ public class OnlineRecipe extends Recipe {
             onlineRecipe.likes = likes;
 
             onlineRecipe.recipeTags = recipeTags;
-            onlineRecipe.ingredients = ingredient;
+            onlineRecipe.ingredients = ingredients;
             return onlineRecipe;
         }
     }
@@ -316,7 +306,7 @@ public class OnlineRecipe extends Recipe {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonObject json = jsonArray.get(i).getAsJsonObject();
                 if (json.get("id").getAsLong() == nutritionId) {
-                    Nutrition nutrition = new Nutrition(nutritionId, json.get("amount").getAsInt(), json.get("measurement_id").getAsLong());
+                    Nutrition nutrition = new Nutrition(nutritionId, json.get("amount").getAsInt(), json.get("measurement_id").getAsLong(), null, null);
                     // remove json object from array
                     jsonArray.remove(i);
                     return nutrition;

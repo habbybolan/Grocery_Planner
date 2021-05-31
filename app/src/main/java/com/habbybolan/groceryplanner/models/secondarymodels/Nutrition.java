@@ -2,6 +2,8 @@ package com.habbybolan.groceryplanner.models.secondarymodels;
 
 import android.os.Parcel;
 
+import java.sql.Timestamp;
+
 /**
  * Models Nutritional values of Recipes and Ingredients.
  */
@@ -26,6 +28,18 @@ public class Nutrition extends MeasurementType {
     private String name;
     // Amount of the nutrition value
     private int amount;
+    private Timestamp dateUpdated;
+    private Timestamp dateSynchronized;
+
+    private boolean isAddedToRecipe = true;
+
+    public Nutrition(String name, int amount, @measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        super(measurementId);
+        this.name = name;
+        this.amount = amount;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
+    }
 
     public Nutrition(String name, int amount, @measurementIds Long measurementId) {
         super(measurementId);
@@ -33,9 +47,20 @@ public class Nutrition extends MeasurementType {
         this.amount = amount;
     }
 
-    public Nutrition(long nutritionId, int amount, @measurementIds Long measurementId) {
+    public Nutrition(String name, int amount, @measurementIds Long measurementId, boolean isAddedToRecipe, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        super(measurementId);
+        this.name = name;
+        this.amount = amount;
+        this.isAddedToRecipe = isAddedToRecipe;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
+    }
+
+    public Nutrition(long nutritionId, int amount, @measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
         super(measurementId);
         this.amount = amount;
+        this.dateUpdated = dateUpdated;
+        this.dateSynchronized = dateSynchronized;
         switch ((int) nutritionId) {
             case (int) CALORIES_ID:
                 name = CALORIES;
@@ -67,6 +92,8 @@ public class Nutrition extends MeasurementType {
         super(in);
         name = in.readString();
         amount = in.readInt();
+        dateSynchronized = (Timestamp) in.readSerializable();
+        dateUpdated = (Timestamp) in.readSerializable();
     }
 
     public static final Creator<Nutrition> CREATOR = new Creator<Nutrition>() {
@@ -83,7 +110,7 @@ public class Nutrition extends MeasurementType {
 
     @Override
     public Nutrition clone() {
-        return new Nutrition(name, amount, measurementId);
+        return new Nutrition(name, amount, measurementId, dateUpdated, dateSynchronized);
     }
 
     @Override
@@ -91,18 +118,37 @@ public class Nutrition extends MeasurementType {
         super.writeToParcel(dest, flags);
         dest.writeString(name);
         dest.writeInt(amount);
+        dest.writeSerializable(dateSynchronized);
+        dest.writeSerializable(dateUpdated);
     }
 
     public String getName() {
         return name;
     }
-
     public int getAmount() {
         return amount;
+    }
+    public boolean getIsAddedToRecipe() {
+        return isAddedToRecipe;
+    }
+    public Timestamp getDateUpdated() {
+        return dateUpdated;
+    }
+    public Timestamp getDateSynchronized() {
+        return dateSynchronized;
     }
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+    public void setIsAddedToRecipe(boolean isAddedToRecipe) {
+        this.isAddedToRecipe = isAddedToRecipe;
+    }
+    public void setDateUpdated(Timestamp dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+    public void setDateSynchronized(Timestamp dateSynchronized) {
+        this.dateSynchronized = dateSynchronized;
     }
 
     @Override
@@ -128,5 +174,21 @@ public class Nutrition extends MeasurementType {
         }
     }
 
-
+    public static long getIdFromFrom(String name) {
+        switch (name) {
+            case CALORIES:
+                return CALORIES_ID;
+            case FAT:
+                return FAT_ID;
+            case SATURATED_FAT:
+                return SATURATED_FAT_ID;
+            case CARBOHYDRATES:
+                return CARBOHYDRATES_ID;
+            case FIBRE:
+                return FIBER_ID;
+            case SUGAR:
+                return SUGAR_ID;
+            default: return PROTEIN_ID;
+        }
+    }
 }

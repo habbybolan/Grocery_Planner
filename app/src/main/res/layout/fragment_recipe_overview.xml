@@ -15,6 +15,15 @@
         <variable
             name="servingSize"
             type="String" />
+        <variable
+            name="cookTime"
+            type="String" />
+        <variable
+            name="prepTime"
+            type="String" />
+        <variable
+            name="description"
+            type="String" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -33,10 +42,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".details.offlineRecipe.recipeoverview.RecipeOverviewFragment">
+                tools:context=".details.offlineRecipe.recipeoverview.RecipeOverviewFragment"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/recipe_overview_name_tag"
@@ -44,63 +54,56 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="Name"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginStart="@dimen/margin_start_info" />
 
                 <EditText
                     android:id="@+id/recipe_overview_name"
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="wrap_content"
                     android:text="@{name}"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name_tag" />
+                    android:layout_marginStart="@dimen/margin_start_info" />
 
                 <TextView
                     android:id="@+id/recipe_overview_tag_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_info"
-                    android:text="Label"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_name" />
+                    android:text="Label" />
 
-                <EditText
-                    android:id="@+id/recipe_overview_tag"
-                    android:layout_width="@dimen/edit_txt_width"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:maxLength="10"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_tag_tag" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <ImageButton
-                    android:id="@+id/recipe_overview_btn_add_tag"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@android:drawable/ic_input_add"
-                    android:background="@android:color/transparent"
-                    app:layout_constraintBottom_toBottomOf="@+id/recipe_overview_tag"
-                    app:layout_constraintStart_toEndOf="@+id/recipe_overview_tag"
-                    app:layout_constraintTop_toTopOf="@+id/recipe_overview_tag" />
+                    <EditText
+                        android:id="@+id/recipe_overview_tag"
+                        android:layout_width="@dimen/edit_txt_width"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_start_info"
+                        android:maxLength="10" />
+
+                    <ImageButton
+                        android:id="@+id/recipe_overview_btn_add_tag"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_input_add"
+                        android:background="@android:color/transparent"
+                        android:layout_toEndOf="@id/recipe_overview_tag"/>
+
+                </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recipe_overview_rv_tags"
                     android:layout_width="@dimen/edit_txt_width"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_tag" />
+                    android:layout_marginStart="@dimen/margin_start_info" />
 
                 <TextView
                     android:id="@+id/recipe_overview_category_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_info"
-                    android:text="Category"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_rv_tags" />
+                    android:layout_marginTop="10dp"
+                    android:text="Category" />
 
                 <TextView
                     android:id="@+id/recipe_overview_category"
@@ -108,8 +111,6 @@
                     android:layout_height="40dp"
                     android:text="@{categoryName}"
                     android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category_tag"
                     android:textColor="?attr/editTextColor"
                     android:background="?attr/editTextBackground" />
 
@@ -118,9 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_info"
-                    android:text="Serving Size"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_category" />
+                    android:text="Serving Size" />
 
                 <EditText
                     android:id="@+id/recipe_overview_serving_size"
@@ -129,27 +128,69 @@
                     android:layout_marginStart="@dimen/margin_start_info"
                     android:inputType="number"
                     android:text="@{servingSize}"
+                    android:textColor="?attr/editTextColor" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_cook_time_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="Cook Time" />
+
+                <EditText
+                    android:id="@+id/recipe_overview_cook_time"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:inputType="number"
+                    android:text="@{cookTime}"
+                    android:textColor="?attr/editTextColor" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_prep_time_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="Prep Time" />
+
+                <EditText
+                    android:id="@+id/recipe_overview_prep_time"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:inputType="number"
+                    android:text="@{prepTime}"
+                    android:textColor="?attr/editTextColor" />
+
+                <TextView
+                    android:id="@+id/recipe_overview_description_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="Description" />
+
+                <EditText
+                    android:id="@+id/recipe_overview_description"
+                    android:layout_width="@dimen/edit_txt_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_info"
+                    android:text="@{description}"
                     android:textColor="?attr/editTextColor"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_serving_size_tag" />
+                    android:background="@android:color/transparent"/>
 
                 <TextView
                     android:id="@+id/recipe_overview_grocery_tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_info"
-                    android:text="Groceries"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_serving_size" />
+                    android:text="Groceries" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_recipe_overview_groceries"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recipe_overview_grocery_tag" />
+                    android:layout_marginStart="@dimen/margin_start_info" />
 
                 <ImageButton
                     android:id="@+id/btn_recipe_overview_add_to_grocery"
@@ -157,11 +198,9 @@
                     android:layout_height="50dp"
                     android:layout_marginStart="@dimen/margin_start_info"
                     android:background="@android:color/transparent"
-                    android:src="@android:drawable/ic_input_add"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rv_recipe_overview_groceries"/>
+                    android:src="@android:drawable/ic_input_add" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
