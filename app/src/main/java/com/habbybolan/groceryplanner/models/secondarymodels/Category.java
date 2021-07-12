@@ -1,5 +1,8 @@
 package com.habbybolan.groceryplanner.models.secondarymodels;
 
+/**
+ * Parent class for Category model classes.
+ */
 public class Category {
 
     public static final String NO_CATEGORY = "No Category";

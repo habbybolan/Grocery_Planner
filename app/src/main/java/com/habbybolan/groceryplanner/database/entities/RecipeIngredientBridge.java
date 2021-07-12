@@ -34,14 +34,18 @@ public class  RecipeIngredientBridge {
     public Timestamp dateSynchronized;
     @ColumnInfo(name = "date_updated", index = true)
     public Timestamp dateUpdated;
+    @ColumnInfo(name = "is_deleted")
+    public boolean isDeleted;
 
-    public RecipeIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId, Timestamp dateUpdated, Timestamp dateSynchronized) {
+    public RecipeIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId,
+                                  Timestamp dateUpdated, Timestamp dateSynchronized, boolean isDeleted) {
         this.recipeId = recipeId;
         this.ingredientId = ingredientId;
         this.quantity = quantity;
         this.quantityMeasId = quantityMeasId;
         this.dateUpdated = dateUpdated;
         this.dateSynchronized = dateSynchronized;
+        this.isDeleted = isDeleted;
     }
 
     @Ignore

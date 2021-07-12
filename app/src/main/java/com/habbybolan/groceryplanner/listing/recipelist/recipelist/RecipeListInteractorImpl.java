@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeListInteractorImpl implements RecipeListInteractor{
+public class RecipeListInteractorImpl implements RecipeListContract.Interactor{
 
     private DatabaseAccess databaseAccess;
 
@@ -21,12 +21,11 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
 
     @Override
     public void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
-        // find the recipes associated with the id if there is any
-        if (recipeCategory != null)
+        // find the recipes associated with the category id if there is any
+        if (recipeCategory != null) {
             databaseAccess.fetchRecipes(recipeCategory.getId(), sortType, callback);
-        // otherwise, no category selected, get all recipes
-        else
-            databaseAccess.fetchRecipes(null, sortType, callback);
+            // otherwise, no category selected, get all
+        } else databaseAccess.fetchRecipes(null, sortType, callback);
     }
 
     @Override
@@ -42,8 +41,8 @@ public class RecipeListInteractorImpl implements RecipeListInteractor{
     }
 
     @Override
-    public void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated) {
-        offlineRecipe.setDateCreated(dateCreated);
+    public void addRecipe(OfflineRecipe offlineRecipe) {
+        offlineRecipe.setDateCreated(new Timestamp(System.currentTimeMillis()/1000));
         databaseAccess.addRecipe(offlineRecipe);
     }
 

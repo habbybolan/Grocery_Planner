@@ -85,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
                 } else if (id == R.id.my_grocery_list) {
                     gotoGroceryList();
                     return true;
-                } else if (id == R.id.my_ingredients) {
-                    gotoIngredients();
-                    return true;
                 } else {
                     return false;
                 }

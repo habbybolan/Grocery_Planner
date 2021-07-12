@@ -80,7 +80,37 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewCo
         setToolbar();
         setRV();
         setTagClicker();
+        initClickers();
+        setDisplayToCurrentRecipe();
         return binding.getRoot();
+    }
+
+    /**
+     * Set up the RecyclerView for displaying Groceries holding the current Recipe
+     * Set up RecyclerView for displaying the tags added to the recipe
+     */
+    private void setRV() {
+        RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
+        groceriesAdapter = new RecipeGroceriesAdapter(groceriesHoldingRecipe, this);
+        rvGroceries.setAdapter(groceriesAdapter);
+        presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
+
+        tagRV = new RecipeTagRecyclerView(recipeTags, this, binding.recipeOverviewRvTags, getContext());
+        presenter.createRecipeTagList(recipeOverviewListener.getOfflineRecipe());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        // set up the view for view methods to be accessed from the presenter
+        presenter.loadAllRecipeCategories();
+        presenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // set the text listeners once the initial view values are set
+        setEditTextListeners();
     }
 
     /**
@@ -104,28 +134,6 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewCo
         binding.recipeOverviewCookTime.addTextChangedListener(textWatcher);
         binding.recipeOverviewPrepTime.addTextChangedListener(textWatcher);
         binding.recipeOverviewDescription.addTextChangedListener(textWatcher);
-    }
-
-    /**
-     * Set up the RecyclerView for displaying Groceries holding the current Recipe
-     * Set up RecyclerView for displaying the tags added to the recipe
-     */
-    private void setRV() {
-        RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
-        groceriesAdapter = new RecipeGroceriesAdapter(groceriesHoldingRecipe, this);
-        rvGroceries.setAdapter(groceriesAdapter);
-        presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getOfflineRecipe());
-
-        tagRV = new RecipeTagRecyclerView(recipeTags, this, binding.recipeOverviewRvTags, getContext());
-        presenter.createRecipeTagList(recipeOverviewListener.getOfflineRecipe());
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // set up the view for view methods to be accessed from the presenter
-        presenter.loadAllRecipeCategories();
-        presenter.fetchRecipeCategory(recipeOverviewListener.getOfflineRecipe().getCategoryId());
-        initLayout();
     }
 
     /**
@@ -179,9 +187,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewCo
     /**
      * Initiate necessary onClicks and general data.
      */
-    private void initLayout() {
-        setDisplayToCurrentRecipe();
-
+    private void initClickers() {
         // clicker for selecting category to display all categories
         binding.recipeOverviewCategory.setOnClickListener(v -> {
             // display the recipe categories if they are loaded in
@@ -192,13 +198,10 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewCo
         binding.btnRecipeOverviewAddToGrocery.setOnClickListener(l -> {
             presenter.displayGroceriesNotHoldingRecipe();
         });
-
-        // set the text listeners once the initial view values are set
-        setEditTextListeners();
     }
 
     /**
-     * Sets the display to the current recipe's values, resetting any value that might be set manually by the user.
+     * Sets the display to the current recipe's values.
      */
     private void setDisplayToCurrentRecipe() {
         binding.setName(recipeOverviewListener.getOfflineRecipe().getName());
@@ -225,6 +228,7 @@ public class RecipeOverviewFragment extends Fragment implements RecipeOverviewCo
             public void onClick(DialogInterface dialog, int which) {
                 selectedRecipeCategory = presenter.getRecipeCategory(which);
                 binding.setCategoryName(categoryNames[which]);
+                saveRecipe();
             }
         });
         builder.show();

@@ -23,8 +23,8 @@ public class RecipeFilterPresenterImpl implements RecipeFilterContract.Presenter
         }
 
         @Override
-        public void onFailure(int responseCode) {
-            view.loadingFailed("Error " + responseCode);
+        public void onFailure(int responseCode, String message) {
+            view.loadingFailed(responseCode + ": " + message);
         }
     };
 

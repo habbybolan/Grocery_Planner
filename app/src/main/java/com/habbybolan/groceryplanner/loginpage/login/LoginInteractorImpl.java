@@ -3,35 +3,54 @@ package com.habbybolan.groceryplanner.loginpage.login;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.databinding.ObservableField;
-
+import com.google.gson.JsonObject;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUp;
-
-import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
+import com.habbybolan.groceryplanner.http.RestWebService;
+import com.habbybolan.groceryplanner.models.webmodels.Login;
 
 import javax.inject.Inject;
 
-public class LoginInteractorImpl implements LoginInteractor {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    private HttpLoginSignUp httpRequest;
+public class LoginInteractorImpl implements LoginContract.LoginInteractor {
+
+    private RestWebService restWebService;
     private Context context;
 
     @Inject
-    public LoginInteractorImpl(HttpLoginSignUp httpRequest, Context context) {
-        this.httpRequest = httpRequest;
+    public LoginInteractorImpl(RestWebService restWebService, Context context) {
+        this.restWebService = restWebService;
         this.context = context;
     }
 
     @Override
-    public void login(String username, String password, ObservableField<JSONObject> loginResponse) {
-        try {
-            httpRequest.loginUser(username, password, loginResponse);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+    public void login(String username, String password, LoginContract.LoginWebServiceCallback callback) {
+        if (username.isEmpty() || password.isEmpty()) {
+            callback.onFailure(500, "empty username or password");
+            return;
         }
+        Call<JsonObject> call = restWebService.login(new Login(username, password));
+        call.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                // if successful login, then save token and signal login successful
+                if (response.isSuccessful()) {
+                    JsonObject json = response.body();
+                    saveTokenToPreferences(json.get("token").toString());
+                    callback.onResponse();
+                    // otherwise, signal failed login
+                } else {
+                    callback.onFailure(response.code(), response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                callback.onFailure(404, "");
+            }
+        });
     }
 
     @Override

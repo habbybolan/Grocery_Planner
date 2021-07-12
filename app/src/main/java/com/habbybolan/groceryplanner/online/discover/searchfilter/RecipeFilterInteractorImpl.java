@@ -46,12 +46,12 @@ public class RecipeFilterInteractorImpl implements RecipeFilterContract.Discover
                 if (response.isSuccessful())
                     callback.onResponse(response.body());
                 else
-                    callback.onFailure(response.code());
+                    callback.onFailure(response.code(), response.message());
             }
 
             @Override
             public void onFailure(Call<List<RecipeTag>> call, Throwable t) {
-                callback.onFailure(404);
+                callback.onFailure(404, "");
             }
         });
     }

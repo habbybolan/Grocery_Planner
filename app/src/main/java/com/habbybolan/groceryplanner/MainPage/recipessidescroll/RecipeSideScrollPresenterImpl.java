@@ -23,8 +23,8 @@ public class RecipeSideScrollPresenterImpl implements RecipeSideScrollPresenter 
         }
 
         @Override
-        public void onFailure(int responseCode) {
-            view.loadingFailed("Error "  + responseCode);
+        public void onFailure(int responseCode, String message) {
+            view.loadingFailed(responseCode + ": " + message);
         }
     };
 

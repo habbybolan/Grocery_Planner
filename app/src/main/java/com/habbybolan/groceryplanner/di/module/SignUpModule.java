@@ -2,10 +2,9 @@ package com.habbybolan.groceryplanner.di.module;
 
 import android.content.Context;
 
-import com.habbybolan.groceryplanner.http.requests.HttpLoginSignUp;
-import com.habbybolan.groceryplanner.loginpage.signup.SignUpInteractor;
+import com.habbybolan.groceryplanner.http.RestWebService;
+import com.habbybolan.groceryplanner.loginpage.signup.SignUpContract;
 import com.habbybolan.groceryplanner.loginpage.signup.SignUpInteractorImpl;
-import com.habbybolan.groceryplanner.loginpage.signup.SignUpPresenter;
 import com.habbybolan.groceryplanner.loginpage.signup.SignUpPresenterImpl;
 
 import dagger.Module;
@@ -15,12 +14,12 @@ import dagger.Provides;
 public class SignUpModule {
 
     @Provides
-    SignUpPresenter provideSignUpPresenter(SignUpInteractor signUpInteractor) {
+    SignUpContract.SignUpPresenter provideSignUpPresenter(SignUpContract.SignUpInteractor signUpInteractor) {
         return new SignUpPresenterImpl(signUpInteractor);
     }
 
     @Provides
-    SignUpInteractor provideSignUpInteractor(HttpLoginSignUp httpRequest, Context context) {
-        return new SignUpInteractorImpl(httpRequest, context);
+    SignUpContract.SignUpInteractor provideSignUpInteractor(RestWebService restWebService, Context context) {
+        return new SignUpInteractorImpl(restWebService, context);
     }
 }

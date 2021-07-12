@@ -1,65 +1,31 @@
 package com.habbybolan.groceryplanner.loginpage.login;
 
-import androidx.databinding.Observable;
-import androidx.databinding.ObservableField;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import javax.inject.Inject;
 
-public class LoginPresenterImpl implements LoginPresenter {
+public class LoginPresenterImpl implements LoginContract.LoginPresenter {
 
-    private LoginInteractor interactor;
-    private LoginView view;
-    private ObservableField<JSONObject> loginResponse = new ObservableField<>();
+    private LoginContract.LoginInteractor interactor;
+    private LoginContract.LoginView view;
+    private LoginContract.LoginWebServiceCallback loginResponse = new LoginContract.LoginWebServiceCallback() {
+        @Override
+        public void onResponse() {
+            view.loginSuccessful();
+        }
+
+        @Override
+        public void onFailure(int responseCode, String message) {
+            view.loginUnSuccessful(responseCode + ": " + message);
+        }
+    };
 
     @Inject
-    public LoginPresenterImpl(LoginInteractor interactor) {
+    public LoginPresenterImpl(LoginContract.LoginInteractor interactor) {
         this.interactor = interactor;
-        setLoginCallback();
-    }
-
-    /**
-     * Sets up the observable callback for the web service response from logging in.
-     */
-    private void setLoginCallback() {
-        loginResponse.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                loginResponse();
-            }
-        });
-    }
-
-    /**
-     * Check if the login was successful and send back to view.
-     */
-    private void loginResponse() {
-        JSONObject response = loginResponse.get();
-        try {
-            if (response.has("code")) {
-                switch (response.getInt("code")) {
-                    case 200:
-                        interactor.saveTokenToPreferences(response.getString("token"));
-                        view.loginSuccessful();
-                        break;
-                    case 401:
-                        view.loginUnSuccessful("Incorrect login credentials");
-                        break;
-                    default:
-                        view.loginUnSuccessful("Something went wrong");
-                        break;
-                }
-            }
-        } catch (JSONException e) {
-            view.loadingFailed("Something went wrong");
-        }
     }
 
 
     @Override
-    public void setView(LoginView view) {
+    public void setView(LoginContract.LoginView view) {
         this.view = view;
     }
 

@@ -4,15 +4,15 @@ import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeListPresenterImpl implements RecipeListPresenter {
+public class RecipeListPresenterImpl implements RecipeListContract.Presenter {
 
-    private RecipeListView view;
-    private RecipeListInteractor recipeListInteractor;
+    private RecipeListContract.View view;
+    private RecipeListContract.State state;
+    private RecipeListContract.Interactor interactor;
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
@@ -40,53 +40,69 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         }
     };
 
-    public RecipeListPresenterImpl(RecipeListInteractor recipeListInteractor) {
-        this.recipeListInteractor = recipeListInteractor;
+    public RecipeListPresenterImpl(RecipeListContract.Interactor interactor) {
+        this.interactor = interactor;
     }
 
 
     @Override
     public void destroy() {
         view = null;
+        state = null;
     }
 
     @Override
     public void deleteRecipe(OfflineRecipe offlineRecipe) {
-        recipeListInteractor.deleteRecipe(offlineRecipe);
+        interactor.deleteRecipe(offlineRecipe);
         createRecipeList();
     }
 
     @Override
     public void deleteRecipes(List<OfflineRecipe> offlineRecipes) {
-        recipeListInteractor.deleteRecipes(offlineRecipes);
+        interactor.deleteRecipes(offlineRecipes);
         createRecipeList();
     }
 
     @Override
-    public void addRecipe(OfflineRecipe offlineRecipe, Timestamp dateCreated) {
-        recipeListInteractor.addRecipe(offlineRecipe, dateCreated);
-        createRecipeList();
+    public void addRecipe(OfflineRecipe offlineRecipe) {
+        try {
+            interactor.addRecipe(offlineRecipe);
+        } finally {
+            // make sure execution of createRecipeList() occurs after adding to the database.
+            createRecipeList();
+        }
     }
 
     @Override
     public void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipes, RecipeCategory category) {
-        recipeListInteractor.addRecipesToCategory(offlineRecipes, category);
+        interactor.addRecipesToCategory(offlineRecipes, category);
         createRecipeList();
     }
 
     @Override
     public void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes) {
-        recipeListInteractor.removeRecipesFromCategory(offlineRecipes);
+        interactor.removeRecipesFromCategory(offlineRecipes);
         createRecipeList();
     }
 
     private boolean isViewAttached() {
-        return view != null;
+        if (view == null) throw new IllegalStateException("View is not attached");
+        return true;
+    }
+
+    private boolean isStateAttached() {
+        if (state == null) throw new IllegalStateException("State object is not attached");
+        return true;
     }
 
     @Override
-    public void setView(RecipeListView view) {
+    public void setView(RecipeListContract.View view) {
         this.view = view;
+    }
+
+    @Override
+    public void setState(RecipeListContract.State state) {
+        this.state = state;
     }
 
     @Override
@@ -94,7 +110,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             view.loadingStarted();
             loadingRecipes = true;
-            recipeListInteractor.fetchRecipes(view.getRecipeCategory(), view.getSortType(), recipeDbCallback);
+            if (isViewAttached() && isStateAttached()) interactor.fetchRecipes(state.getRecipeCategory(), view.getSortType(), recipeDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -106,6 +122,9 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         return !loadingRecipes;
     }
 
+    /**
+     * Check if view exists, and display loaded recipes.
+     */
     private void displayRecipes() {
         if (isViewAttached() && isRecipesReady())
             view.showList(loadedOfflineRecipes);
@@ -116,7 +135,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             loadingRecipeCategories = true;
             view.loadingStarted();
-            recipeListInteractor.fetchCategories(recipeCategoryDbCallback);
+            interactor.fetchCategories(recipeCategoryDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
@@ -140,7 +159,7 @@ public class RecipeListPresenterImpl implements RecipeListPresenter {
         try {
             loadingRecipes = true;
             view.loadingStarted();
-            recipeListInteractor.searchRecipes(view.getRecipeCategory(), recipeSearch, recipeDbCallback);
+            if (isViewAttached() && isStateAttached()) interactor.searchRecipes(state.getRecipeCategory(), recipeSearch, recipeDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             loadingRecipes = false;

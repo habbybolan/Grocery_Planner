@@ -1,64 +1,30 @@
 package com.habbybolan.groceryplanner.loginpage.signup;
 
-import androidx.databinding.Observable;
-import androidx.databinding.ObservableField;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import javax.inject.Inject;
 
-public class SignUpPresenterImpl implements SignUpPresenter {
+public class SignUpPresenterImpl implements SignUpContract.SignUpPresenter {
 
-    private SignUpView view;
-    private SignUpInteractor interactor;
-    private ObservableField<JSONObject> signUpResponse = new ObservableField<>();
+    private SignUpContract.SignUpView view;
+    private SignUpContract.SignUpInteractor interactor;
+    private SignUpContract.SignUpWebServiceCallback signUpResponse = new SignUpContract.SignUpWebServiceCallback() {
+        @Override
+        public void onResponse() {
+            view.signUpSuccessful();
+        }
+
+        @Override
+        public void onFailure(int responseCode, String message) {
+            view.signUpUnSuccessful(responseCode + ": " + message);
+        }
+    };
 
     @Inject
-    public SignUpPresenterImpl(SignUpInteractor interactor) {
+    public SignUpPresenterImpl(SignUpContract.SignUpInteractor interactor) {
         this.interactor = interactor;
-        setObserver();
-    }
-
-    /**
-     * Sets up the observer callback on value change.
-     */
-    private void setObserver() {
-        signUpResponse.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                signUpResponse();
-            }
-        });
-    }
-
-    /**
-     * Deals with the response from the web service for signing up
-     */
-    private void signUpResponse() {
-        JSONObject response = signUpResponse.get();
-        try {
-            if (response.has("code")) {
-                switch (response.getInt("code")) {
-                    case 200:
-                        interactor.saveTokenToPreferences(response.getString("token"));
-                        view.signUpSuccessful();
-                        break;
-                    case 401:
-                        view.signUpUnSuccessful("Invalid username, email, or password");
-                        break;
-                    default:
-                        view.signUpUnSuccessful("Something went wrong");
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            view.signUpUnSuccessful("Something went wrong");
-        }
     }
 
     @Override
-    public void setView(SignUpView view) {
+    public void setView(SignUpContract.SignUpView view) {
         this.view = view;
     }
 

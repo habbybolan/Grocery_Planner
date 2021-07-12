@@ -87,31 +87,46 @@ public abstract class LocalDatabase extends RoomDatabase {
                 super.onCreate(db);
 
                 // Trigger to update date_updated on RecipeEntity update
-                db.execSQL("CREATE TRIGGER recipe_update_trigger AFTER UPDATE " +
+                db.execSQL("CREATE TRIGGER recipe_update_trigger BEFORE UPDATE " +
                         "       ON RecipeEntity" +
                         "       BEGIN" +
-                        "           UPDATE RecipeEntity SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
+                        "           UPDATE RecipeEntity SET " +
+                        "               date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
+                        "               is_deleted = false" +
+                        "           WHERE recipeId = NEW.recipeId; " +
+                        "       END; ");
+                // Trigger to set date_created on recipe
+                db.execSQL("CREATE TRIGGER recipe_insert_trigger AFTER INSERT " +
+                        "       ON RecipeEntity" +
+                        "       BEGIN" +
+                        "           UPDATE RecipeEntity SET " +
+                        "               date_created=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
                         "           WHERE recipeId = NEW.recipeId; " +
                         "       END; ");
                 // Trigger to update date_updated on RecipeTagBridge update
-                db.execSQL("CREATE TRIGGER recipe_tag_update_trigger AFTER INSERT " +
+                db.execSQL("CREATE TRIGGER recipe_tag_update_trigger BEFORE INSERT " +
                         "       ON RecipeTagBridge" +
                         "       BEGIN" +
-                        "           UPDATE RecipeTagBridge SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
+                        "           UPDATE RecipeTagBridge SET " +
+                        "               date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
+                        "               is_deleted = false" +
                         "           WHERE recipeId = NEW.recipeId AND tagId = New.tagId; " +
                         "       END; ");
                 // Trigger to update date_updated on RecipeNutritionBridge update
-                db.execSQL("CREATE TRIGGER nutrition_update_trigger AFTER UPDATE " +
+                db.execSQL("CREATE TRIGGER nutrition_update_trigger BEFORE UPDATE " +
                         "       ON RecipeNutritionBridge" +
                         "       BEGIN" +
-                        "           UPDATE RecipeNutritionBridge SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
+                        "           UPDATE RecipeNutritionBridge SET " +
+                        "               date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
+                        "               is_deleted = false" +
                         "           WHERE recipe_id = NEW.recipe_id AND nutrition_id = New.nutrition_id; " +
                         "       END; ");
                 // Trigger to update date_updated on RecipeIngredientBridge update
-                db.execSQL("CREATE TRIGGER recipe_ingredient_update_trigger AFTER UPDATE " +
+                db.execSQL("CREATE TRIGGER recipe_ingredient_update_trigger BEFORE UPDATE " +
                         "       ON RecipeIngredientBridge" +
                         "       BEGIN" +
-                        "           UPDATE RecipeIngredientBridge SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
+                        "           UPDATE RecipeIngredientBridge SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
+                        "           is_deleted = false" +
                         "           WHERE recipeId = NEW.recipeId AND ingredientId = New.ingredientId; " +
                         "       END; ");
 

@@ -23,7 +23,6 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
@@ -31,21 +30,23 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> implements RecipeListView {
+public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> implements RecipeListContract.View {
 
     @Inject
-    RecipeListPresenter recipeListPresenter;
+    RecipeListContract.Presenter presenter;
 
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
     private CustomToolbar customToolbar;
     private SortType sortType = new SortType();
-    private RecipeCategory recipeCategory;
+    private RecipeListState recipeListState;
+
+    private int offset = 0;
+    private int size = 10;
 
     public RecipeListFragment() {}
 
@@ -70,6 +71,10 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
         super.onCreate(savedInstanceState);
         ((GroceryApp) getActivity().getApplication()).getAppComponent().recipeListSubComponent(new RecipeListModule()).inject(this);
         setHasOptionsMenu(true);
+        // get the recipe category to save in state model if it exists
+        RecipeCategory recipeCategory = savedInstanceState != null ? savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY) : null;
+        recipeListState = new RecipeListState(recipeCategory, offset, size);
+        presenter.setState(recipeListState);
     }
 
     @Override
@@ -94,14 +99,14 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
-                        recipeListPresenter.searchRecipes(search);
+                        presenter.searchRecipes(search);
                     }
                 })
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
-                        recipeListPresenter.createRecipeList();
+                        presenter.createRecipeList();
                     }
                 }, SortType.SORT_LIST_MOST)
                 .allowClickTitle(new CustomToolbar.TitleSelectCallback() {
@@ -123,16 +128,15 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         // set up the view for view methods to be accessed from the presenter
-        recipeListPresenter.setView(this);
-        recipeListPresenter.fetchCategories();
-        if (savedInstanceState != null) {
-            recipeCategory = savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY);
+        presenter.setView(this);
+        presenter.fetchCategories();
+        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList(OfflineRecipe.RECIPE) != null) {
             // pull saved recipe list from bundled save
             listItems = savedInstanceState.getParcelableArrayList(OfflineRecipe.RECIPE);
             adapter.notifyDataSetChanged();
         } else {
             // otherwise, pull the list from database and display it.
-            recipeListPresenter.createRecipeList();
+            presenter.createRecipeList();
         }
     }
 
@@ -178,9 +182,9 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
      */
     private void createRecipe(String recipeName) {
         OfflineRecipe.RecipeBuilder recipeBuilder = new OfflineRecipe.RecipeBuilder(recipeName);
-        RecipeCategory recipeCategory = ((RecipeListActivity) getActivity()).getRecipeCategory();
-        if (recipeCategory != null) recipeBuilder.setCategoryId(recipeCategory.getId());
-        recipeListPresenter.addRecipe(recipeBuilder.build(), new Timestamp(System.currentTimeMillis()/1000));
+        // todo: should category id be set here?
+        //recipeBuilder.setCategoryId(recipeCategory.getId());
+        presenter.addRecipe(recipeBuilder.build());
     }
 
     /**
@@ -188,7 +192,7 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
      * Reloads the list of loaded Recipe Categories.
      */
     public void onCategoryListChanged() {
-        recipeListPresenter.fetchCategories();
+        presenter.fetchCategories();
     }
 
     @Override
@@ -203,7 +207,7 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
 
     @Override
     public void deleteSelectedItems() {
-        recipeListPresenter.deleteRecipes(listItemsChecked);
+        presenter.deleteRecipes(listItemsChecked);
     }
 
     @Override
@@ -215,17 +219,17 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
     @Override
     protected void addSelectedItemsToCategory(Category category) {
         RecipeCategory recipeCategory = (RecipeCategory) category;
-        recipeListPresenter.addRecipesToCategory(listItemsChecked, recipeCategory);
+        presenter.addRecipesToCategory(listItemsChecked, recipeCategory);
     }
 
     @Override
     protected void removeSelectedItemsFromCategory() {
-        recipeListPresenter.removeRecipesFromCategory(listItemsChecked);
+        presenter.removeRecipesFromCategory(listItemsChecked);
     }
 
     @Override
     protected ArrayList<RecipeCategory> getCategories() {
-        return recipeListPresenter.getLoadedRecipeCategories();
+        return presenter.getLoadedRecipeCategories();
     }
 
     @Override
@@ -233,14 +237,9 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
         return sortType;
     }
 
-    @Override
-    public RecipeCategory getRecipeCategory() {
-        return recipeCategory;
-    }
-
-    public void setList(RecipeCategory recipeCategory) {
-        this.recipeCategory = recipeCategory;
-        recipeListPresenter.createRecipeList();
+    public void resetList(RecipeCategory recipeCategory) {
+        recipeListState = new RecipeListState(recipeCategory);
+        presenter.createRecipeList();
     }
 
     public interface RecipeListListener extends ItemListener<OfflineRecipe> {

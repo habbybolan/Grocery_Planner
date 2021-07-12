@@ -43,10 +43,6 @@
             android:id="@+id/my_grocery_list"
             android:icon="@android:drawable/presence_video_online"
             android:title="My Grocery List" />
-        <item
-            android:id="@+id/my_ingredients"
-            android:icon="@android:drawable/presence_video_online"
-            android:title="My Ingredients" />
 
     </group>
 

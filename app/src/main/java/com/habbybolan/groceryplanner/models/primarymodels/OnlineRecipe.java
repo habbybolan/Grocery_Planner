@@ -242,7 +242,7 @@ public class OnlineRecipe extends Recipe {
                     .setPrepTime(jsonObject.has("prep_time") ? -1 :jsonObject.get("prep_time").getAsInt())
                     .setCookTime(jsonObject.has("cook_time") ? -1 : jsonObject.get("cook_time").getAsInt())
                     .setServingSize(jsonObject.has("serving_size") ? -1 : jsonObject.get("serving_size").getAsInt())
-                    // nutrition
+                    // nutrition6
                     .setCalories(getNutritionFromJSON(jsonNutritionArray, Nutrition.CALORIES_ID))
                     .setFat(getNutritionFromJSON(jsonNutritionArray, Nutrition.FAT_ID))
                     .setSaturatedFat(getNutritionFromJSON(jsonNutritionArray, Nutrition.SATURATED_FAT_ID))
@@ -290,7 +290,8 @@ public class OnlineRecipe extends Recipe {
         private List<RecipeTag> getTagsFromJSON(JsonArray jsonArray) {
             List<RecipeTag> recipeTags = new ArrayList<>();
             for (int i = 0; i < jsonArray.size(); i++) {
-                recipeTags.add(new RecipeTag(jsonArray.get(i).getAsString()));
+                JsonObject json = jsonArray.get(i).getAsJsonObject();
+                recipeTags.add(new RecipeTag(json.get("id").getAsLong(), json.get("title").getAsString()));
             }
             return recipeTags;
         }

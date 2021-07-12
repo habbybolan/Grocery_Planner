@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 
+/**
+ * Category model that holds recipes.
+ */
 public class RecipeCategory extends Category implements Parcelable{
 
     public static String RECIPE_CATEGORY = "recipe_category";

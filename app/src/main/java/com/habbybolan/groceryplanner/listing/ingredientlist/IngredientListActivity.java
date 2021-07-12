@@ -12,6 +12,10 @@ import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.In
 import com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist.IngredientListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
+/**
+ * !!! SET TO POSSIBLY DELETE !!!
+ */
+
 public class IngredientListActivity extends AppCompatActivity implements IngredientListFragment.IngredientListListener, IngredientEditFragment.IngredientEditListener {
 
     private ActivityIngredientListBinding binding;

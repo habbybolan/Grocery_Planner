@@ -2,6 +2,8 @@ package com.habbybolan.groceryplanner.details.recipe.recipeinstructions;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,8 +58,26 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_instructions, container, false);
         setToolbar();
+        onTextChange();
         binding.editTxtInstructions.setText(recipeStepListener.getOfflineRecipe().getInstructions());
         return binding.getRoot();
+    }
+
+    /**
+     * Listen for when instructions text changes, and save the changes to the database
+     */
+    private void onTextChange() {
+        binding.editTxtInstructions.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                saveInstructions();
+            }
+        });
     }
 
     /**
@@ -69,13 +89,6 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
         presenter.updateRecipe(recipeStepListener.getOfflineRecipe());
     }
 
-    /**
-     * Cancel the instruction changes.
-     */
-    private void cancelInstructionChanges() {
-        binding.editTxtInstructions.setText(recipeStepListener.getOfflineRecipe().getInstructions());
-    }
-
     private void setToolbar() {
         customToolbar = new CustomToolbar.CustomToolbarBuilder(getString(R.string.instructions_title), getLayoutInflater(), binding.toolbarContainer, getContext())
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
@@ -84,12 +97,6 @@ public class RecipeInstructionsFragment extends Fragment implements RecipeInstru
                         deleteRecipe();
                     }
                 }, "Recipe")
-                .addSaveIcon(new CustomToolbar.SaveCallback() {
-                    @Override
-                    public void saveClicked() {
-                        saveInstructions();
-                    }
-                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -7,17 +7,6 @@ import androidx.databinding.BindingAdapter;
 public class BindingAdapters {
 
     /**
-     * Adapter for displaying the step number of the String recipe step.
-     * @param textView      The view to display the step
-     * @param stepNumber    The position of the step in the list of steps
-     */
-    @BindingAdapter(value = {"stepNumber"})
-    public static void stepNumber(TextView textView, int stepNumber) {
-        String text = stepNumber + ":";
-        textView.setText(text);
-    }
-
-    /**
      * Adapter for displaying the object to delete text inside the delete popup.
      * @param textView          The view to hold the text
      * @param objectToDelete    The name of the item to delete

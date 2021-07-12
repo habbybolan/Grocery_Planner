@@ -37,12 +37,12 @@ public class RecipeSideScrollInteractorImpl implements RecipeSideScrollInteracto
                     public void onResponse(Call<List<OnlineRecipe>> call, Response<List<OnlineRecipe>> response) {
                         if (response.isSuccessful())
                             callback.onResponse(response.body());
-                        else callback.onFailure(response.code());
+                        else callback.onFailure(response.code(), response.message());
                     }
 
                     @Override
                     public void onFailure(Call<List<OnlineRecipe>> call, Throwable t) {
-                        callback.onFailure(404);
+                        callback.onFailure(404, "");
                     }
                 });
 
@@ -57,12 +57,12 @@ public class RecipeSideScrollInteractorImpl implements RecipeSideScrollInteracto
                     public void onResponse(Call<List<OnlineRecipe>> call, Response<List<OnlineRecipe>> response) {
                         if (response.isSuccessful())
                             callback.onResponse(response.body());
-                        else callback.onFailure(response.code());
+                        else callback.onFailure(response.code(), response.message());
                     }
 
                     @Override
                     public void onFailure(Call<List<OnlineRecipe>> call, Throwable t) {
-                        callback.onFailure(404);
+                        callback.onFailure(404, "");
                     }
                 });
                 break;

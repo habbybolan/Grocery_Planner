@@ -42,8 +42,12 @@ public class RecipeEntity {
     private Timestamp dateSynchronized;
     @ColumnInfo(name = "date_updated", index = true)
     private Timestamp dateUpdated;
+    @ColumnInfo(name = "is_deleted")
+    private boolean isDeleted;
 
-    public RecipeEntity(long recipeId, Long onlineRecipeId, String name, boolean isFavorite, String description, int prepTime, int cookTime, int servingSize, Long recipeCategoryId, String instructions, Timestamp dateCreated, Timestamp dateSynchronized, Timestamp dateUpdated) {
+    public RecipeEntity(long recipeId, Long onlineRecipeId, String name, boolean isFavorite, String description,
+                        int prepTime, int cookTime, int servingSize, Long recipeCategoryId, String instructions,
+                        Timestamp dateCreated, Timestamp dateSynchronized, Timestamp dateUpdated, boolean isDeleted) {
         this.recipeId = recipeId;
         this.onlineRecipeId = onlineRecipeId;
         this.name = name;
@@ -57,6 +61,7 @@ public class RecipeEntity {
         this.dateCreated = dateCreated;
         this.dateSynchronized = dateSynchronized;
         this.dateUpdated = dateUpdated;
+        this.isDeleted = isDeleted;
     }
 
     public RecipeEntity(OfflineRecipe offlineRecipe) {
@@ -90,7 +95,6 @@ public class RecipeEntity {
     public boolean getIsFavorite() {
         return isFavorite;
     }
-
     public String getDescription() {
         return description;
     }
@@ -117,6 +121,9 @@ public class RecipeEntity {
     }
     public Timestamp getDateUpdated() {
         return dateUpdated;
+    }
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 
     public static String getNameColumn() {

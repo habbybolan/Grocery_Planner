@@ -19,10 +19,10 @@ import com.habbybolan.groceryplanner.di.module.SignUpModule;
 
 import javax.inject.Inject;
 
-public class SignUpFragment extends Fragment implements SignUpView{
+public class SignUpFragment extends Fragment implements SignUpContract.SignUpView {
 
     @Inject
-    SignUpPresenter presenter;
+    SignUpContract.SignUpPresenter presenter;
     private FragmentSignUpBinding binding;
     private SignUpListener listener;
 
@@ -96,12 +96,13 @@ public class SignUpFragment extends Fragment implements SignUpView{
 
     @Override
     public void signUpSuccessful() {
+        Toast.makeText(getContext(), "Signup successful", Toast.LENGTH_SHORT).show();
         listener.gotoLoginScreen();
     }
 
     @Override
     public void signUpUnSuccessful(String message) {
-        // todo: Sign up unsuccessful, display failure to sign up
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**

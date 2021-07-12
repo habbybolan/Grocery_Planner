@@ -55,7 +55,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_TAG);
         if (recipeListFragment != null) {
             recipeListFragment.attachListener(recipeListListener);
-            recipeListFragment.setList(recipeCategory);
+            recipeListFragment.resetList(recipeCategory);
         }
         RecipeCategoryFragment recipeCategoryFragment = (RecipeCategoryFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_CATEGORY_TAG);
         if (recipeCategoryFragment != null) recipeCategoryFragment.attachListener(recipeCategoryListener);
@@ -86,7 +86,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         // if returning from RecipeDetailActivity, reload the recipe and category list to represent any changes that may have occurred
         if (requestCode == RETURNED_FROM_RECIPE_DETAILS) {
             RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.RECIPE_LIST_TAG));
-            if (recipeListFragment != null) recipeListFragment.setList(recipeCategory);
+            if (recipeListFragment != null) recipeListFragment.resetList(recipeCategory);
             RecipeCategoryFragment recipeCategoryFragment = (RecipeCategoryFragment) getSupportFragmentManager().findFragmentByTag(getResources().getString(R.string.RECIPE_CATEGORY_TAG));
             if (recipeCategoryFragment != null) recipeCategoryFragment.resetList();
         }
@@ -102,7 +102,7 @@ public class RecipeListActivity extends AppCompatActivity {//RecipeListFragment.
         RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().findFragmentByTag(RECIPE_LIST_TAG);
         if (recipeListFragment != null) {
             binding.recipeListContainer.setVisibility(View.VISIBLE);
-            recipeListFragment.setList(recipeCategory);
+            recipeListFragment.resetList(recipeCategory);
         }
     }
 

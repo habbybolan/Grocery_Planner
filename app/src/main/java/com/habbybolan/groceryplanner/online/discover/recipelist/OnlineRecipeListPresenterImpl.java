@@ -24,9 +24,9 @@ public class OnlineRecipeListPresenterImpl implements OnlineRecipeListContract.P
         }
 
         @Override
-        public void onFailure(int responseCode) {
+        public void onFailure(int responseCode, String message) {
             isLoadingRecipes = false;
-            view.loadingFailed("Failed to retrieve filtered recipes");
+            view.loadingFailed(responseCode + ": " + message);
         }
     };
 

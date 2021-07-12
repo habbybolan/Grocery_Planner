@@ -18,13 +18,13 @@ import com.habbybolan.groceryplanner.di.module.SignUpModule;
 
 import javax.inject.Inject;
 
-public class LoginFragment extends Fragment implements LoginView {
+public class LoginFragment extends Fragment implements LoginContract.LoginView {
 
     private FragmentLoginBinding binding;
     private LoginListener loginListener;
 
     @Inject
-    LoginPresenter presenter;
+    LoginContract.LoginPresenter presenter;
 
     public LoginFragment() {}
 

@@ -16,7 +16,6 @@ import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeNutritionBridge;
-import com.habbybolan.groceryplanner.database.entities.RecipeTagBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
 import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
@@ -496,9 +495,9 @@ public class DatabaseAccessImpl implements DatabaseAccess {
             try {
                 recipeTableLock.lock();
                 if (recipeTag.getId() != 0) {
-                    recipeDao.deleteRecipeTagBridge(new RecipeTagBridge(recipeId, recipeTag.getId()));
+                    recipeDao.deleteFlagRecipeTagBridge(recipeId, recipeTag.getId());
                 } else {
-                    recipeDao.deleteRecipeTagBridgeByTitle(recipeId, recipeTag.getTitle());
+                    recipeDao.deleteFlagRecipeTagBridgeByTitle(recipeId, recipeTag.getTitle());
                 }
             } finally {
                 recipeTableLock.unlock();
@@ -598,7 +597,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
-                recipeDao.deleteNutrition(new RecipeNutritionBridge(recipeId, nutritionId, 0, 0L));
+                recipeDao.deleteFlagNutritionBridge(recipeId, nutritionId);
             } finally {
                 recipeTableLock.unlock();
             }
@@ -753,7 +752,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 recipeTableLock.lock();
                 ingredientTableLock.lock();
 
-                recipeDao.deleteIngredientsFromRecipeIngredientBridge(recipeId, ingredientIds);
+                recipeDao.deleteFlagIngredientsFromRecipeIngredientBridge(recipeId, ingredientIds);
                 recipeDao.deleteRecipeIngredientsFromGroceryRecipeIngredientEntity(recipeId, ingredientIds);
                 groceryDao.deleteIngredientsNotInGroceryAnymore();
             } finally {

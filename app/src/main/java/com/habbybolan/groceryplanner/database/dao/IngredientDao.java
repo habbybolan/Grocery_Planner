@@ -49,18 +49,6 @@ public abstract class IngredientDao {
     @Query("DELETE FROM IngredientEntity WHERE ingredientId IN (:ingredientIds)")
     public abstract void deleteIngredient(List<Long> ingredientIds);
 
-    @Query("DELETE FROM RecipeIngredientBridge WHERE ingredientId IN (:ingredientIds)")
-    public abstract void deleteIngredientsFromRecipeIngredientBridge(List<Long> ingredientIds);
-
-    @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE ingredientId IN (:ingredientIds)")
-    public abstract void deleteIngredientsFromGroceryRecipeIngredientEntity(List<Long> ingredientIds);
-
-    @Query("DELETE FROM GroceryIngredientEntity WHERE ingredientId IN (:ingredientIds)")
-    public abstract void deleteIngredientsFromGroceryIngredientEntity(List<Long> ingredientIds);
-
-    @Query("DELETE FROM GroceryIngredientBridge WHERE ingredientId IN (:ingredientIds)")
-    public abstract void deleteIngredientsFromGroceryIngredientBridge(List<Long> ingredientIds);
-
     @Query("SELECT * FROM IngredientEntity")
     public abstract List<IngredientEntity> getIngredients();
 
