@@ -10,7 +10,7 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityGroceryListBinding;
 import com.habbybolan.groceryplanner.details.grocerydetails.GroceryIngredientsActivity;
 import com.habbybolan.groceryplanner.listing.grocerylist.grocerylist.GroceryListFragment;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.MyRecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 
 public class GroceryListActivity extends AppCompatActivity implements GroceryListFragment.GroceryListListener {
@@ -26,7 +26,7 @@ public class GroceryListActivity extends AppCompatActivity implements GroceryLis
 
     @Override
     public void gotoRecipeList() {
-        Intent intent = new Intent(this, RecipeListActivity.class);
+        Intent intent = new Intent(this, MyRecipeListActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.anim_slide_enter_from_left, R.anim.anim_slide_exit_to_right);
     }

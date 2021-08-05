@@ -1,6 +1,7 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
@@ -8,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeListPresenterImpl implements RecipeListContract.Presenter {
+public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter {
 
-    private RecipeListContract.View view;
-    private RecipeListContract.State state;
-    private RecipeListContract.Interactor interactor;
+    private MyRecipeListContract.View view;
+    private RecipeListState state;
+    private MyRecipeListContract.Interactor interactor;
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
@@ -40,10 +41,9 @@ public class RecipeListPresenterImpl implements RecipeListContract.Presenter {
         }
     };
 
-    public RecipeListPresenterImpl(RecipeListContract.Interactor interactor) {
+    public MyRecipeListPresenterImpl(MyRecipeListContract.Interactor interactor) {
         this.interactor = interactor;
     }
-
 
     @Override
     public void destroy() {
@@ -96,12 +96,12 @@ public class RecipeListPresenterImpl implements RecipeListContract.Presenter {
     }
 
     @Override
-    public void setView(RecipeListContract.View view) {
+    public void setView(MyRecipeListContract.View view) {
         this.view = view;
     }
 
     @Override
-    public void setState(RecipeListContract.State state) {
+    public void setState(RecipeListState state) {
         this.state = state;
     }
 

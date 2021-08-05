@@ -19,10 +19,10 @@ import java.util.List;
 
 public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
 
-    private long id;
-    private Timestamp dateSynchronized;
-    private Timestamp dateUpdated;
-    private Long categoryId;
+    protected long id;
+    protected Timestamp dateSynchronized;
+    protected Timestamp dateUpdated;
+    protected Long categoryId;
 
     public final static String RECIPE = "recipe";
 
@@ -62,6 +62,25 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
         instructions = recipeEntity.getInstructions();
         dateCreated = recipeEntity.getDateCreated();
         dateSynchronized = recipeEntity.getDateSynchronized();
+    }
+
+    public OfflineRecipe(OfflineRecipe offlineRecipe, List<Nutrition> nutritionList) {
+        this.name = offlineRecipe.name;
+        this.id = offlineRecipe.id;
+        this.onlineId = offlineRecipe.onlineId;
+        this.isFavorite = offlineRecipe.isFavorite;
+        this.description = offlineRecipe.description;
+
+        this.prepTime = offlineRecipe.prepTime;
+        this.cookTime = offlineRecipe.cookTime;
+        this.servingSize = offlineRecipe.servingSize;
+        this.categoryId = offlineRecipe.categoryId;
+        this.instructions = offlineRecipe.instructions;
+        this.dateCreated = offlineRecipe.dateCreated;
+        this.dateSynchronized = offlineRecipe.dateSynchronized;
+        this.recipeTags = offlineRecipe.recipeTags;
+        this.ingredients = offlineRecipe.ingredients;
+        for (Nutrition nutrition : nutritionList) findNutrition(nutrition);
     }
 
     public OfflineRecipe(Parcel in) {
@@ -208,10 +227,12 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
             this.dateCreated = dateCreated;
             return this;
         }
+
         public RecipeBuilder setDateSynchronized(Timestamp dateSynchronized) {
             this.dateSynchronized = dateSynchronized;
             return this;
         }
+
         @Override
         public RecipeBuilder setLikes(int likes) {
             this.likes = likes;

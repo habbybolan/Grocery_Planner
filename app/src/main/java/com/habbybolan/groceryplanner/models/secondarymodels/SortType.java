@@ -13,7 +13,7 @@ public class SortType {
     private int sortKey;
 
     public SortType() {
-        sortKey = SORT_NONE;
+        sortKey = SORT_ALPHABETICAL_ASC;
     }
 
     public SortType(@SortMethods int sortKey) {
@@ -21,15 +21,13 @@ public class SortType {
     }
 
     @Retention(SOURCE)
-    @IntDef({SORT_NONE, SORT_ALPHABETICAL_ASC, SORT_ALPHABETICAL_DEC, SORT_DATE_NEW, SORT_DATE_OLD, SORT_RELEVANT})
+    @IntDef({SORT_ALPHABETICAL_ASC, SORT_ALPHABETICAL_DEC, SORT_DATE_NEW, SORT_DATE_OLD, SORT_RELEVANT})
     public @interface SortMethods {}
 
     public void setSortType(@SortMethods int sortKey) {
         this.sortKey = sortKey;
     }
 
-    public final static int SORT_NONE = 0;
-    public final static String SORT_NONE_TITLE = "None";
     public final static int SORT_ALPHABETICAL_ASC = 1;
     public final static String SORT_ALPHABETICAL_ASC_TITLE = "Ascending";
     public final static int SORT_ALPHABETICAL_DEC = 2;
@@ -50,18 +48,18 @@ public class SortType {
     }
 
     private static String[] allSortTypes() {
-        return new String[]{SortType.SORT_NONE_TITLE, SortType.SORT_ALPHABETICAL_ASC_TITLE,
+        return new String[]{SortType.SORT_ALPHABETICAL_ASC_TITLE,
                 SortType.SORT_ALPHABETICAL_DEC_TITLE, SortType.SORT_DATE_NEW_TITLE, SortType.SORT_DATE_OLD_TITLE,
                 SortType.SORT_RELEVANT_TITLE};
     }
 
     private static String[] mostSortTypes() {
-        return new String[]{SortType.SORT_NONE_TITLE, SortType.SORT_ALPHABETICAL_ASC_TITLE,
+        return new String[]{SortType.SORT_ALPHABETICAL_ASC_TITLE,
                 SortType.SORT_ALPHABETICAL_DEC_TITLE, SortType.SORT_DATE_NEW_TITLE, SortType.SORT_DATE_OLD_TITLE};
     }
 
     private static String[] alphabeticalSortTypes() {
-        return new String[]{SortType.SORT_NONE_TITLE, SortType.SORT_ALPHABETICAL_ASC_TITLE,
+        return new String[]{SortType.SORT_ALPHABETICAL_ASC_TITLE,
                 SortType.SORT_ALPHABETICAL_DEC_TITLE};
     }
 
@@ -93,7 +91,7 @@ public class SortType {
             case SORT_RELEVANT_TITLE:
                 return SORT_RELEVANT;
             default:
-                return SORT_NONE;
+                throw new IllegalStateException(title + " is not a valid sort type");
         }
     }
 
@@ -110,7 +108,7 @@ public class SortType {
             case SORT_RELEVANT:
                 return SORT_RELEVANT_TITLE;
             default:
-                return SORT_NONE_TITLE;
+                throw new IllegalStateException(sortKey + " is not a valid sort key");
         }
     }
 }

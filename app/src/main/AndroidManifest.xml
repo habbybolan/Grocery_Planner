@@ -13,10 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
+        <activity android:name=".listing.recipelist.likedrecipelist.LikedRecipeListActivity"></activity>
         <activity
             android:name=".online.myrecipes.MyRecipesActivity"
             android:label="@string/title_activity_my_recipes"
-            android:theme="@style/MyMaterialTheme.NoActionBar"/>
+            android:theme="@style/MyMaterialTheme.NoActionBar" />
         <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditActivity" />
         <activity android:name=".online.savedrecipes.SavedRecipesActivity" />
         <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivity" />
@@ -38,7 +39,7 @@
             android:name=".details.recipe.recipedetailsactivity.RecipeDetailActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
-            android:name=".listing.recipelist.RecipeListActivity"
+            android:name=".listing.recipelist.myrecipelist.MyRecipeListActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".details.grocerydetails.GroceryIngredientsActivity"

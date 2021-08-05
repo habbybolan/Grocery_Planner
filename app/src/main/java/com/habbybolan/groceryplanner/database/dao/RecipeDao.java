@@ -10,6 +10,7 @@ import androidx.room.Update;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryRecipeBridge;
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.entities.MyRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
@@ -21,6 +22,7 @@ import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTupl
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryCheckTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeNutritionTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
+import com.habbybolan.groceryplanner.models.primarymodels.AccessLevel;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -41,16 +43,20 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0")
     public abstract  List<RecipeEntity> getAllRecipes();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 ORDER BY name ASC")
+    private final String MyRecipeFetch = "SELECT * FROM MyRecipeEntity" +
+                                   "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0)" +
+                                   "   USING (recipeId)";
+
+    @Query(MyRecipeFetch + " ORDER BY name ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalAsc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 ORDER BY name DESC")
+    @Query(MyRecipeFetch + " ORDER BY name DESC")
     public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalDesc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 ORDER BY date_created DESC")
+    @Query(MyRecipeFetch + " ORDER BY date_created DESC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateDesc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 ORDER BY date_created ASC")
+    @Query(MyRecipeFetch + " ORDER BY date_created ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateAsc();
 
     @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId")
@@ -67,6 +73,8 @@ public abstract class RecipeDao {
 
     @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId ORDER BY date_created ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateAsc(long categoryId);
+
+
 
     @Query("SELECT * FROM RecipeCategoryEntity")
     public abstract  List<RecipeCategoryEntity> getAllRecipeCategories();
@@ -225,7 +233,17 @@ public abstract class RecipeDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertRecipe(RecipeEntity recipeEntity);
+    public abstract long insertRecipe(RecipeEntity recipeEntity);
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    public abstract void insertMyRecipe(MyRecipeEntity myRecipeEntity);
+
+    @Transaction
+    public void insertNewMyRecipe(RecipeEntity recipeEntity) {
+        long id = insertRecipe(recipeEntity);
+        MyRecipeEntity myRecipeEntity = new MyRecipeEntity(id, AccessLevel.ADMIN_ID);
+        insertMyRecipe(myRecipeEntity);
+    }
 
     @Update
     public abstract void updateRecipe(RecipeEntity recipeEntity);
@@ -360,7 +378,6 @@ public abstract class RecipeDao {
             "   WHERE recipeId = :recipeId AND" +
             "   tagId IN (SELECT tagId FROM RecipeTagEntity WHERE title = :title)")
     public abstract void deleteFlagRecipeTagBridgeByTitle(long recipeId, String title);
-
 
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
     public abstract void deleteRecipeIngredientsFromGroceryRecipeIngredientEntity(long recipeId, List<Long> ingredientIds);

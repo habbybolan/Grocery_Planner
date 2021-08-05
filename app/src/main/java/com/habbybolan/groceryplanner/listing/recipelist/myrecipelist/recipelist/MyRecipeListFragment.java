@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,6 +23,7 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
 import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListStateImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
@@ -34,24 +35,26 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> implements RecipeListContract.View {
+/**
+ * Displays all Recipes created and associated with the user.
+ */
+public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> implements MyRecipeListContract.View {
 
     @Inject
-    RecipeListContract.Presenter presenter;
+    MyRecipeListContract.Presenter presenter;
 
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
     private CustomToolbar customToolbar;
-    private SortType sortType = new SortType();
-    private RecipeListState recipeListState;
+    private RecipeListStateImpl state;
 
     private int offset = 0;
     private int size = 10;
 
-    public RecipeListFragment() {}
+    public MyRecipeListFragment() {}
 
-    public RecipeListFragment newInstance(RecipeCategory recipeCategory) {
-        RecipeListFragment fragment = new RecipeListFragment();
+    public MyRecipeListFragment newInstance(RecipeCategory recipeCategory) {
+        MyRecipeListFragment fragment = new MyRecipeListFragment();
         Bundle args = new Bundle();
         args.putParcelable(RecipeCategory.RECIPE_CATEGORY, recipeCategory);
         return fragment;
@@ -73,8 +76,8 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
         setHasOptionsMenu(true);
         // get the recipe category to save in state model if it exists
         RecipeCategory recipeCategory = savedInstanceState != null ? savedInstanceState.getParcelable(RecipeCategory.RECIPE_CATEGORY) : null;
-        recipeListState = new RecipeListState(recipeCategory, offset, size);
-        presenter.setState(recipeListState);
+        state = new RecipeListStateImpl(recipeCategory, new SortType(), offset, size);
+        presenter.setState(state);
     }
 
     @Override
@@ -105,7 +108,7 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
-                        sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
+                        state.setSortType(SortType.getSortTypeFromTitle(sortMethod));
                         presenter.createRecipeList();
                     }
                 }, SortType.SORT_LIST_MOST)
@@ -144,7 +147,7 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
      * Initiate the Recycler View to display list of recipes and button clickers.
      */
     private void initLayout() {
-        adapter = new RecipeListAdapter(listItems, this);
+        adapter = new MyRecipeListAdapter(listItems, this);
         RecyclerView rv = binding.recipeList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
@@ -234,11 +237,11 @@ public class RecipeListFragment extends CategoryListFragment<OfflineRecipe> impl
 
     @Override
     public SortType getSortType() {
-        return sortType;
+        return state.getSortType();
     }
 
     public void resetList(RecipeCategory recipeCategory) {
-        recipeListState = new RecipeListState(recipeCategory);
+        state = new RecipeListStateImpl(recipeCategory);
         presenter.createRecipeList();
     }
 

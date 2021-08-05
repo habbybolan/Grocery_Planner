@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeDao;
+import com.habbybolan.groceryplanner.database.entities.AccessLevelEntity;
 import com.habbybolan.groceryplanner.database.entities.FoodTypeEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryIngredientBridge;
@@ -19,6 +20,8 @@ import com.habbybolan.groceryplanner.database.entities.GroceryIngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryRecipeBridge;
 import com.habbybolan.groceryplanner.database.entities.GroceryRecipeIngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.entities.LikedRecipeEntity;
+import com.habbybolan.groceryplanner.database.entities.MyRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.NutritionEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
@@ -27,6 +30,7 @@ import com.habbybolan.groceryplanner.database.entities.RecipeNutritionBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
 import com.habbybolan.groceryplanner.database.entities.UnitOfMeasurementEntity;
+import com.habbybolan.groceryplanner.models.primarymodels.AccessLevel;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -35,7 +39,8 @@ import java.sql.Timestamp;
 
 @androidx.room.Database(entities = {GroceryEntity.class, IngredientEntity.class, GroceryIngredientBridge.class, RecipeEntity.class, RecipeIngredientBridge.class,
         RecipeCategoryEntity.class, GroceryRecipeBridge.class, GroceryRecipeIngredientEntity.class, GroceryIngredientEntity.class, RecipeTagEntity.class,
-        RecipeTagBridge.class, UnitOfMeasurementEntity.class, RecipeNutritionBridge.class, NutritionEntity.class, FoodTypeEntity.class},
+        RecipeTagBridge.class, UnitOfMeasurementEntity.class, RecipeNutritionBridge.class, NutritionEntity.class, FoodTypeEntity.class, MyRecipeEntity.class,
+        LikedRecipeEntity.class, AccessLevelEntity.class},
         exportSchema = false, version = 1)
 @TypeConverters({LocalDatabase.Converters.class})
 public abstract class LocalDatabase extends RoomDatabase {
@@ -74,11 +79,15 @@ public abstract class LocalDatabase extends RoomDatabase {
         final String foodTypeId = "food_type_id";
         final String foodTypeName = "name";
 
+        final String accessLevelTable = "AccessLevelEntity";
+        final String accessLevelId = "id";
+        final String accessLevelTitle = "title";
+
         return new RoomDatabase.Callback() {
 
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db){
-                // prevent recursion
+                // prevent recursion so trigger doesn't infinitely trigger
                 db.execSQL("PRAGMA recursive_triggers = OFF;");
             }
 
@@ -322,6 +331,29 @@ public abstract class LocalDatabase extends RoomDatabase {
                 cvOther.put(foodTypeId, FoodType.OTHER_ID);
                 cvOther.put(foodTypeName, FoodType.OTHER);
                 db.insert(foodTypeTable, SQLiteDatabase.CONFLICT_IGNORE, cvOther);
+
+                // Access Level
+
+                // read-only
+                ContentValues cvReadOnly = new ContentValues(2);
+                cvReadOnly.put(accessLevelId, AccessLevel.READ_ONLY_ID);
+                cvReadOnly.put(accessLevelTitle, AccessLevel.READ_ONLY_TITLE);
+                db.insert(accessLevelTable, SQLiteDatabase.CONFLICT_IGNORE, cvReadOnly);
+                // edit
+                ContentValues cvEdit = new ContentValues(2);
+                cvEdit.put(accessLevelId, AccessLevel.EDIT_ID);
+                cvEdit.put(accessLevelTitle, AccessLevel.EDIT_TITLE);
+                db.insert(accessLevelTable, SQLiteDatabase.CONFLICT_IGNORE, cvEdit);
+                // user-control
+                ContentValues cvUserControl = new ContentValues(2);
+                cvUserControl.put(accessLevelId, AccessLevel.USER_CONTROL_ID);
+                cvUserControl.put(accessLevelTitle, AccessLevel.USER_CONTROL_TITLE);
+                db.insert(accessLevelTable, SQLiteDatabase.CONFLICT_IGNORE, cvUserControl);
+                // admin
+                ContentValues cvAdmin = new ContentValues(2);
+                cvAdmin.put(accessLevelId, AccessLevel.ADMIN_ID);
+                cvAdmin.put(accessLevelTitle, AccessLevel.ADMIN_TITLE);
+                db.insert(accessLevelTable, SQLiteDatabase.CONFLICT_IGNORE, cvAdmin);
             }
         };
     }

@@ -313,7 +313,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
-                recipeDao.insertRecipe(new RecipeEntity(offlineRecipe));
+                recipeDao.insertNewMyRecipe(new RecipeEntity(offlineRecipe));
             } finally {
                 recipeTableLock.unlock();
             }

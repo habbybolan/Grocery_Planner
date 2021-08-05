@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".listing.recipelist.RecipeListActivity">
+    tools:context=".listing.recipelist.myrecipelist.MyRecipeListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
 
                 <fragment
                     android:id="@+id/fragment_recipe_list"
-                    android:name="com.habbybolan.groceryplanner.listing.recipelist.recipelist.RecipeListFragment"
+                    android:name="com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist.MyRecipeListFragment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:layout="@layout/fragment_recipe_list"

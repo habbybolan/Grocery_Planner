@@ -200,7 +200,6 @@ public class RecipeCategoryFragment extends NonCategoryListFragment<RecipeCatego
 
     public interface RecipeCategoryListener extends ItemListener<RecipeCategory> {
 
-        void gotoGroceryList();
         void gotoRecipeListUnCategorized();
         void gotoRecipeCategories();
         void onCategoryListChange();

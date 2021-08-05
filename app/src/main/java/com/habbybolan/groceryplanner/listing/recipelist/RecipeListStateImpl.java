@@ -1,30 +1,37 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist;
 
 import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeListState implements RecipeListContract.State {
+/**
+ * Representation of the recipe list state and retrieved values
+ */
+public class RecipeListStateImpl implements RecipeListState {
 
     private List<Recipe> recipes = new ArrayList<>();
     // Recipe category selected by user.
     private final RecipeCategory recipeCategory;
+    // Sorting type for the recipe list
+    private SortType sortType;
     // List offset for recipes to display.
     private int offset = 0;
     // Number of recipes to display past offset.
     private int size = 10;
 
     /** Constructor for state with specific size and offset */
-    public RecipeListState(RecipeCategory recipeCategory, int offset, int size) {
+    public RecipeListStateImpl(RecipeCategory recipeCategory, SortType sortType, int offset, int size) {
         this.recipeCategory = recipeCategory;
+        this.sortType = sortType;
         this.offset = offset;
         this.size = size;
     }
 
     /** Constructor for state with default size and offset. */
-    public RecipeListState(RecipeCategory recipeCategory) {
+    public RecipeListStateImpl(RecipeCategory recipeCategory) {
         this.recipeCategory = recipeCategory;
     }
 
@@ -61,6 +68,13 @@ public class RecipeListState implements RecipeListContract.State {
     }
     public int getSize() {
         return size;
+    }
+    public SortType getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(int sortTypeKey) {
+        this.sortType.setSortType(sortTypeKey);
     }
 
     @Override

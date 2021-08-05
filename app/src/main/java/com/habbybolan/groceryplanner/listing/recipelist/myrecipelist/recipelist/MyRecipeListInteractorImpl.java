@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeListInteractorImpl implements RecipeListContract.Interactor{
+public class MyRecipeListInteractorImpl implements MyRecipeListContract.Interactor{
 
     private DatabaseAccess databaseAccess;
 
-    public RecipeListInteractorImpl(DatabaseAccess databaseAccess) {
+    public MyRecipeListInteractorImpl(DatabaseAccess databaseAccess) {
         this.databaseAccess = databaseAccess;
     }
 

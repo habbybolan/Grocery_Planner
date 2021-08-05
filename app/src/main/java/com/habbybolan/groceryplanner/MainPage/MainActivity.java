@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityMainBinding;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.MyRecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.online.discover.DiscoverActivity;
@@ -33,9 +33,7 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
 
     private final String FRAGMENT_SNIPPET_TAG = "snippet_tag";
 
-    private DrawerLayout dl;
     private ActionBarDrawerToggle t;
-    private NavigationView nv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +53,13 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
     }
 
     private void setNavigationDrawer() {
-        dl = (DrawerLayout) binding.mainActivityDrawer;
+        DrawerLayout dl = (DrawerLayout) binding.mainActivityDrawer;
         t = new ActionBarDrawerToggle(this, dl, R.string.open, R.string.close);
 
         dl.addDrawerListener(t);
         t.syncState();
 
-        nv = (NavigationView) binding.mainActivityNavigation;
+        NavigationView nv = (NavigationView) binding.mainActivityNavigation;
         nv.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
 
     /** Sends the activity to RecipeListActivity. */
     private void gotoOfflineRecipeList() {
-        Intent intent = new Intent(this, RecipeListActivity.class);
+        Intent intent = new Intent(this, MyRecipeListActivity.class);
         startActivity(intent);
     }
 

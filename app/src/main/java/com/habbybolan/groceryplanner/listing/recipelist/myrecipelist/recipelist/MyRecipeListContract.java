@@ -1,9 +1,9 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
@@ -11,41 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public interface RecipeListContract {
-
-    interface State {
-
-        /**
-         * Change the offset to represent going to next page.
-         */
-        List<Recipe> gotoNextPage() throws IllegalStateException;
-
-        /**
-         * @return  true if not at the end of the list and can display more on another page.
-         */
-        boolean canGotoNextPage();
-
-        /**
-         * Change the offset to represent going back to the previous page.
-         */
-        List<Recipe> gotoPreviousPage() throws IllegalStateException;
-
-        /**
-         * @return  True if user can go back a page, false otherwise.
-         */
-        boolean canGotoPreviousPage();
-
-        /**
-         * Sets the Recipe list.
-         * @param recipes   List of recipes to store.
-         */
-        void setRecipeList(List<Recipe> recipes);
-
-        int getOffset();
-        int getSize();
-        RecipeCategory getRecipeCategory();
-        List<Recipe> getRecipes();
-    }
+public interface MyRecipeListContract {
 
     interface Presenter {
 
@@ -58,7 +24,7 @@ public interface RecipeListContract {
         void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes);
 
         void setView(View view);
-        void setState(State state);
+        void setState(RecipeListState state);
         void createRecipeList();
 
         void fetchCategories() ;
@@ -97,6 +63,5 @@ public interface RecipeListContract {
         void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     }
 
-    interface View extends ListViewInterface<OfflineRecipe> {
-    }
+    interface View extends ListViewInterface<OfflineRecipe> {}
 }

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.listing.recipelist.recipelist;
+package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,22 +15,22 @@ import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.List;
 
-public class RecipeListAdapter extends ListAdapter<RecipeListAdapter.ViewHolder, OfflineRecipe> {
+public class MyRecipeListAdapter extends ListAdapter<MyRecipeListAdapter.ViewHolder, OfflineRecipe> {
 
-    public RecipeListAdapter(List<OfflineRecipe> offlineRecipes, ListViewInterface view) {
+    public MyRecipeListAdapter(List<OfflineRecipe> offlineRecipes, ListViewInterface view) {
         super(view, offlineRecipes);
     }
 
     @NonNull
     @Override
-    public RecipeListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyRecipeListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         RecipeListDetailsBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.recipe_list_details, parent, false);
-        return new RecipeListAdapter.ViewHolder(binding);
+        return new MyRecipeListAdapter.ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyRecipeListAdapter.ViewHolder holder, int position) {
         OfflineRecipe offlineRecipe = items.get(position);
         holder.bind(offlineRecipe);
     }
