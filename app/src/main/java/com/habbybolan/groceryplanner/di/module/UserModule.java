@@ -1,7 +1,5 @@
 package com.habbybolan.groceryplanner.di.module;
 
-import android.app.Application;
-
 import com.habbybolan.groceryplanner.models.primarymodels.User;
 
 import javax.inject.Singleton;
@@ -17,8 +15,8 @@ public class UserModule {
 
     private User user;
 
-    public UserModule(Application application) {
-        user = new User(application);
+    public UserModule() {
+        user = new User();
     }
 
     @Singleton

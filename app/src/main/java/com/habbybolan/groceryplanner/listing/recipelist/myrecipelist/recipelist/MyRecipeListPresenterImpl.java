@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.DbSingleCallback;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
@@ -41,6 +42,15 @@ public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter
         }
     };
 
+    // callback for adding a new recipe
+    private DbSingleCallback<OfflineRecipe> recipeAddDbCallback = new DbSingleCallback<OfflineRecipe>() {
+        @Override
+        public void onResponse(OfflineRecipe response) {
+            loadedOfflineRecipes.add(response);
+            view.onRecipeAdded(response);
+        }
+    };
+
     public MyRecipeListPresenterImpl(MyRecipeListContract.Interactor interactor) {
         this.interactor = interactor;
     }
@@ -66,10 +76,12 @@ public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter
     @Override
     public void addRecipe(OfflineRecipe offlineRecipe) {
         try {
-            interactor.addRecipe(offlineRecipe);
-        } finally {
-            // make sure execution of createRecipeList() occurs after adding to the database.
-            createRecipeList();
+            loadingRecipes = true;
+            interactor.addRecipe(offlineRecipe, recipeAddDbCallback);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            view.loadingFailed("Failed to add recipe");
+            loadingRecipes = false;
         }
     }
 

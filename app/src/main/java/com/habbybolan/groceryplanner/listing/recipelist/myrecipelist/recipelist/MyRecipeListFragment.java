@@ -245,6 +245,13 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
         presenter.createRecipeList();
     }
 
+    @Override
+    public void onRecipeAdded(OfflineRecipe recipe) {
+        listItems.add(recipe);
+        MyRecipeListAdapter myAdapter = (MyRecipeListAdapter) adapter;
+        myAdapter.onRecipeAdded();
+    }
+
     public interface RecipeListListener extends ItemListener<OfflineRecipe> {
 
         void gotoRecipeListUnCategorized();

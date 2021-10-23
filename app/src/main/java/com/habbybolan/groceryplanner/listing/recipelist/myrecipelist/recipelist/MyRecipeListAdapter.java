@@ -65,4 +65,8 @@ public class MyRecipeListAdapter extends ListAdapter<MyRecipeListAdapter.ViewHol
                 binding.setRecipeCategory(String.valueOf(offlineRecipe.getCategoryId()));
         }
     }
+
+    public void onRecipeAdded() {
+        notifyItemInserted(items.size()-1);
+    }
 }

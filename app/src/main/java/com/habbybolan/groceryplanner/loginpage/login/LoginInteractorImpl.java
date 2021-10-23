@@ -3,9 +3,9 @@ package com.habbybolan.groceryplanner.loginpage.login;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.JsonObject;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.http.RestWebService;
+import com.habbybolan.groceryplanner.models.primarymodels.User;
 import com.habbybolan.groceryplanner.models.webmodels.Login;
 
 import javax.inject.Inject;
@@ -18,11 +18,13 @@ public class LoginInteractorImpl implements LoginContract.LoginInteractor {
 
     private RestWebService restWebService;
     private Context context;
+    private User user;
 
     @Inject
-    public LoginInteractorImpl(RestWebService restWebService, Context context) {
+    public LoginInteractorImpl(RestWebService restWebService, User user, Context context) {
         this.restWebService = restWebService;
         this.context = context;
+        this.user = user;
     }
 
     @Override
@@ -31,14 +33,17 @@ public class LoginInteractorImpl implements LoginContract.LoginInteractor {
             callback.onFailure(500, "empty username or password");
             return;
         }
-        Call<JsonObject> call = restWebService.login(new Login(username, password));
-        call.enqueue(new Callback<JsonObject>() {
+        Call<User> call = restWebService.login(new Login(username, password));
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 // if successful login, then save token and signal login successful
                 if (response.isSuccessful()) {
-                    JsonObject json = response.body();
-                    saveTokenToPreferences(json.get("token").toString());
+                    User userResponse = response.body();
+                    // save the token in preferences
+                    saveTokenToPreferences(userResponse.getToken());
+                    // save the retrieved user into the globally available User object
+                    user.copyUser(userResponse);
                     callback.onResponse();
                     // otherwise, signal failed login
                 } else {
@@ -47,7 +52,7 @@ public class LoginInteractorImpl implements LoginContract.LoginInteractor {
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 callback.onFailure(404, "");
             }
         });

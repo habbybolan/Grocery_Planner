@@ -33,6 +33,7 @@ public class RecipeListStateImpl implements RecipeListState {
     /** Constructor for state with default size and offset. */
     public RecipeListStateImpl(RecipeCategory recipeCategory) {
         this.recipeCategory = recipeCategory;
+        this.sortType = new SortType();
     }
 
     public List<Recipe> gotoNextPage() {

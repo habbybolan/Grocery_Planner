@@ -73,7 +73,7 @@ public interface DatabaseAccess {
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
-    void addRecipe(OfflineRecipe offlineRecipe);
+    void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<OfflineRecipe> offlineRecipes);

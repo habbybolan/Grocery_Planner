@@ -239,10 +239,11 @@ public abstract class RecipeDao {
     public abstract void insertMyRecipe(MyRecipeEntity myRecipeEntity);
 
     @Transaction
-    public void insertNewMyRecipe(RecipeEntity recipeEntity) {
+    public long insertNewMyRecipe(RecipeEntity recipeEntity) {
         long id = insertRecipe(recipeEntity);
         MyRecipeEntity myRecipeEntity = new MyRecipeEntity(id, AccessLevel.ADMIN_ID);
         insertMyRecipe(myRecipeEntity);
+        return id;
     }
 
     @Update

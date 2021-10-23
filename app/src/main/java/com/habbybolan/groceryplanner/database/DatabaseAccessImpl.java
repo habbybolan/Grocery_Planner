@@ -309,17 +309,20 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void addRecipe(OfflineRecipe offlineRecipe) {
-        Runnable task = () -> {
+    public void addRecipe(OfflineRecipe recipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<OfflineRecipe> task = () -> {
             try {
                 recipeTableLock.lock();
-                recipeDao.insertNewMyRecipe(new RecipeEntity(offlineRecipe));
+                long id = recipeDao.insertNewMyRecipe(new RecipeEntity(recipe));
+                return new OfflineRecipe.RecipeBuilder(recipe.getName()).setId(id).build();
             } finally {
                 recipeTableLock.unlock();
             }
         };
-        Thread thread = new Thread(task);
-        thread.start();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<OfflineRecipe> futureTask = executorService.submit(task);
+        callback.onResponse(futureTask.get());
     }
 
     @Override
@@ -341,6 +344,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         // execute database access with Callable
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Future<List<RecipeEntity>> futureTask = executorService.submit(task);
+
         List<OfflineRecipe> offlineRecipes = new ArrayList<>();
         List<RecipeEntity> recipeEntities = futureTask.get();
         for (RecipeEntity recipeEntity : recipeEntities) {

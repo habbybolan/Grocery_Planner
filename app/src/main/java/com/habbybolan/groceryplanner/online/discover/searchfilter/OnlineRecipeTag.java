@@ -7,6 +7,8 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 /**
  * RecipeTags that hold an extra value for use in Discovering new recipes.
  * RecipeTag is either a pure RecipeTag search or a RecipeTag and recipe search.
+ * If pure RecipeTag, title will only be searched against tags.
+ * If RecipeTag and Recipe name, title will be searched against tags and recipe names.
  */
 public class OnlineRecipeTag extends RecipeTag {
 

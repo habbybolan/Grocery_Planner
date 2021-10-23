@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.http;
 
-import com.google.gson.JsonObject;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.User;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.webmodels.Login;
 import com.habbybolan.groceryplanner.models.webmodels.Signup;
@@ -45,7 +45,7 @@ public interface RestWebService {
                                               @Query("sort") String sort, @Query("tagSearch") String tagSearch);
 
     @POST("/api/login")
-    Call<JsonObject> login(@Body Login login);
+    Call<User> login(@Body Login login);
 
     @POST("/api/signup")
     Call<Void> signUp(@Body Signup signup);

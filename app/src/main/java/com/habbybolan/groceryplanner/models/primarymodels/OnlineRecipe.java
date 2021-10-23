@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
+import com.habbybolan.groceryplanner.models.secondarymodels.TimeModel;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -237,8 +238,8 @@ public class OnlineRecipe extends Recipe {
                     .setLikes(jsonObject.get("likes").getAsInt())
                     .setInstructions(jsonObject.get("instructions").getAsString())
                     .setDescription(jsonObject.get("description").getAsString())
-                    .setDateCreated(getTimeStamp(jsonObject.get("date_added").getAsString()))
-                    .setDateUpdated(jsonObject.has("date_updated") ? getTimeStamp(jsonObject.get("date_added").getAsString()) : null)
+                    .setDateCreated(TimeModel.getTimeStamp(jsonObject.get("date_added").getAsString()))
+                    .setDateUpdated(jsonObject.has("date_updated") ? TimeModel.getTimeStamp(jsonObject.get("date_added").getAsString()) : null)
                     .setPrepTime(jsonObject.has("prep_time") ? -1 :jsonObject.get("prep_time").getAsInt())
                     .setCookTime(jsonObject.has("cook_time") ? -1 : jsonObject.get("cook_time").getAsInt())
                     .setServingSize(jsonObject.has("serving_size") ? -1 : jsonObject.get("serving_size").getAsInt())
@@ -274,17 +275,6 @@ public class OnlineRecipe extends Recipe {
                 ingredients.add(ingredient);
             }
             return ingredients;
-        }
-
-        /**
-         * Converts the mssql datetime2 string into proper format for TimeStamp and return the created timestamp.
-         * @param datetime2String   String date of DateTime2
-         * @return                  The TimeStamp date
-         */
-        private Timestamp getTimeStamp(String datetime2String) {
-            // todo: does this work in every case?
-            String timeStampString = datetime2String.replace('T', ' ');
-            return Timestamp.valueOf(timeStampString);
         }
 
         private List<RecipeTag> getTagsFromJSON(JsonArray jsonArray) {

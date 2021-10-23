@@ -19,7 +19,7 @@ public class GroceryApp extends Application {
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .roomModule(new RoomModule(this))
-                .userModule(new UserModule(this))
+                .userModule(new UserModule())
                 .build();
     }
 

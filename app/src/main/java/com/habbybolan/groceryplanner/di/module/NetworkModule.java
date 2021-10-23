@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.habbybolan.groceryplanner.http.RequestInterceptor;
 import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.User;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.concurrent.TimeUnit;
@@ -54,6 +55,12 @@ public class NetworkModule {
                 .create();
     }
 
+    Gson getUserGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(User.class, new User.UserDeserializer())
+                .create();
+    }
+
     @Singleton
     @Provides
     Retrofit retrofit(OkHttpClient okHttpClient) {
@@ -62,6 +69,7 @@ public class NetworkModule {
                 .baseUrl(REST_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(getRecipeGson()))
                 .addConverterFactory(GsonConverterFactory.create(getRecipeTagGson()))
+                .addConverterFactory(GsonConverterFactory.create(getUserGson()))
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .client(okHttpClient)
                 .build();

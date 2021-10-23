@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
 import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.DbSingleCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -42,7 +43,7 @@ public interface MyRecipeListContract {
         void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
         void deleteRecipe(OfflineRecipe offlineRecipe);
         void deleteRecipes(List<OfflineRecipe> offlineRecipes);
-        void addRecipe(OfflineRecipe offlineRecipe);
+        void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
         void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipes, RecipeCategory category);
         void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes);
 
@@ -63,5 +64,7 @@ public interface MyRecipeListContract {
         void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     }
 
-    interface View extends ListViewInterface<OfflineRecipe> {}
+    interface View extends ListViewInterface<OfflineRecipe> {
+        void onRecipeAdded(OfflineRecipe recipe);
+    }
 }

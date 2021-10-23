@@ -53,6 +53,7 @@
 
                 <EditText
                     android:id="@+id/edit_txt_recipe_search"
+                    android:hint="Recipe name"
                     android:layout_width="275dp"
                     android:layout_height="wrap_content"/>
 
@@ -78,6 +79,7 @@
 
                 <EditText
                     android:id="@+id/edit_txt_tag_search"
+                    android:hint="Recipe tag name"
                     android:layout_width="175dp"
                     android:layout_height="wrap_content"/>
 

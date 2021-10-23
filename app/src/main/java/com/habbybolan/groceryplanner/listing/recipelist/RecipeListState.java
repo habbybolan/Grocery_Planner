@@ -5,6 +5,9 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.List;
 
+/**
+ * Holds the current page state to know which page user is currently on.
+ */
 public interface RecipeListState {
 
     /**
