@@ -30,18 +30,50 @@ public class AccessLevel {
     public static final String ADMIN_TITLE = "admin";
 
     private int id;
-    private String accessLevel;
+    private String title;
 
-    public AccessLevel(@AccessLevelId int id, @AccessLevelTitle String accessLevel) {
+    public AccessLevel(@AccessLevelId int id) {
         this.id = id;
-        this.accessLevel = accessLevel;
+        setTitleFromId();
+    }
+
+    public AccessLevel(@AccessLevelTitle String title) {
+        this.title = title;
+        setAccessIdFromTitle();
+    }
+
+    private void setTitleFromId() {
+        switch (id) {
+            case READ_ONLY_ID:
+                title = READ_ONLY_TITLE;
+            case EDIT_ID:
+                title = EDIT_TITLE;
+            case USER_CONTROL_ID:
+                title = USER_CONTROL_TITLE;
+            case ADMIN_ID:
+                title = ADMIN_TITLE;
+        }
+    }
+
+    private void setAccessIdFromTitle() {
+        if (title.isEmpty()) throw new IllegalArgumentException("Title needs to be set");
+        switch (title) {
+            case READ_ONLY_TITLE:
+                id = READ_ONLY_ID;
+            case EDIT_TITLE:
+                id = EDIT_ID;
+            case USER_CONTROL_TITLE:
+                id = USER_CONTROL_ID;
+            case ADMIN_TITLE:
+                id = ADMIN_ID;
+        }
     }
 
     public int getId() {
         return id;
     }
 
-    public String getAccessLevel() {
-        return accessLevel;
+    public String getTitle() {
+        return title;
     }
 }

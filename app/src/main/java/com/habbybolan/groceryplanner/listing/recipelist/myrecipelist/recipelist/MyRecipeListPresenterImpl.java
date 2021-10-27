@@ -46,7 +46,6 @@ public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter
     private DbSingleCallback<OfflineRecipe> recipeAddDbCallback = new DbSingleCallback<OfflineRecipe>() {
         @Override
         public void onResponse(OfflineRecipe response) {
-            loadedOfflineRecipes.add(response);
             view.onRecipeAdded(response);
         }
     };

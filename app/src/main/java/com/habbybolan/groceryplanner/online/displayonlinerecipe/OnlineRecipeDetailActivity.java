@@ -11,7 +11,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.ingredients.OnlineRecipeIngredientsFragment;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.nutrition.OnlineRecipeNutritionFragment;
-import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
+import com.habbybolan.groceryplanner.details.RecipeDetailsAbstractActivity;
 
 public class OnlineRecipeDetailActivity extends RecipeDetailsAbstractActivity implements OnlineRecipeContract.OnlineRecipeListener {
 

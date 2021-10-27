@@ -25,4 +25,7 @@ public class MyRecipeEntity {
     @ColumnInfo(index = true)
     public long recipeId;
     public long accessLevelId;
+    // todo: implement date synchronized when implementing synchronization
+    //@ColumnInfo(name = "date_synchronized", index = true)
+    //private Timestamp dateSynchronized;
 }

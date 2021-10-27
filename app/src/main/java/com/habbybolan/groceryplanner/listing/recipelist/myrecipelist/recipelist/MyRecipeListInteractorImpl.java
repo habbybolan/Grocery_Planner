@@ -24,9 +24,9 @@ public class MyRecipeListInteractorImpl implements MyRecipeListContract.Interact
     public void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         // find the recipes associated with the category id if there is any
         if (recipeCategory != null) {
-            databaseAccess.fetchRecipes(recipeCategory.getId(), sortType, callback);
+            databaseAccess.fetchMyRecipes(recipeCategory.getId(), sortType, callback);
             // otherwise, no category selected, get all
-        } else databaseAccess.fetchRecipes(null, sortType, callback);
+        } else databaseAccess.fetchMyRecipes(null, sortType, callback);
     }
 
     @Override

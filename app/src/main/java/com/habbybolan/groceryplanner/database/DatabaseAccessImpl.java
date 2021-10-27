@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeNutritionBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
-import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
+import com.habbybolan.groceryplanner.details.myrecipe.overview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.combinedmodels.RecipeWithIngredient;
@@ -29,6 +29,7 @@ import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWith
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -309,12 +310,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void addRecipe(OfflineRecipe recipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+    public void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         Callable<OfflineRecipe> task = () -> {
             try {
                 recipeTableLock.lock();
-                long id = recipeDao.insertNewMyRecipe(new RecipeEntity(recipe));
-                return new OfflineRecipe.RecipeBuilder(recipe.getName()).setId(id).build();
+                long id = recipeDao.insertNewMyRecipe(new RecipeEntity(offlineRecipe));
+                return new OfflineRecipe.RecipeBuilder(offlineRecipe.getName()).setId(id).build();
             } finally {
                 recipeTableLock.unlock();
             }
@@ -326,7 +327,7 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+    public void fetchMyRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         Callable<List<RecipeEntity>> task = () -> {
             try {
                 recipeTableLock.lock();
@@ -423,11 +424,11 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void updateRecipe(OfflineRecipe offlineRecipe) {
+    public void updateMyRecipe(MyRecipe myRecipe) {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
-                recipeDao.updateRecipe(new RecipeEntity(offlineRecipe));
+                recipeDao.updateRecipe(new RecipeEntity(myRecipe));
             } finally {
                 recipeTableLock.unlock();
             }
@@ -437,18 +438,18 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void fetchRecipe(long recipeId, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
-        Callable<OfflineRecipe> task = () -> {
+    public void fetchFullMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<MyRecipe> task = () -> {
             try {
                 recipeTableLock.lock();
-                return recipeDao.getFullRecipe(recipeId);
+                return recipeDao.getFullMyRecipe(recipeId);
             } finally {
                 recipeTableLock.unlock();
             }
         };
         // execute database access with Callable
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<OfflineRecipe> futureTask = executorService.submit(task);
+        Future<MyRecipe> futureTask = executorService.submit(task);
         callback.onResponse(futureTask.get());
     }
 

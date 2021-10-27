@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"/>
 
         <EditText
-            android:id="@+id/edit_txt_instructions"
+            android:id="@+id/text_instructions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

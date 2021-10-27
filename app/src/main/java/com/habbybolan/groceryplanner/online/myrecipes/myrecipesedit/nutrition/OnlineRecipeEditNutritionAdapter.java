@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.RecipeNutritionDetailsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeNutritionDetailsEditBinding;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class OnlineRecipeEditNutritionAdapter extends RecyclerView.Adapter<Onlin
     @Override
     public OnlineRecipeEditNutritionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        RecipeNutritionDetailsBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.recipe_nutrition_details, parent, false);
+        RecipeNutritionDetailsEditBinding binding = DataBindingUtil.inflate(layoutInflater, R.layout.recipe_nutrition_details_edit, parent, false);
         return new ViewHolder(binding);
     }
 
@@ -44,8 +44,8 @@ public class OnlineRecipeEditNutritionAdapter extends RecyclerView.Adapter<Onlin
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private RecipeNutritionDetailsBinding binding;
-        public ViewHolder(RecipeNutritionDetailsBinding binding) {
+        private RecipeNutritionDetailsEditBinding binding;
+        public ViewHolder(RecipeNutritionDetailsEditBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

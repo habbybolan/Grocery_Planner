@@ -17,6 +17,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents all recipes stores offline, including User's own recipes, recipes they've been added to, and liked recipes.
+ */
 public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
 
     protected long id;
@@ -64,7 +67,7 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
         dateSynchronized = recipeEntity.getDateSynchronized();
     }
 
-    public OfflineRecipe(OfflineRecipe offlineRecipe, List<Nutrition> nutritionList) {
+    public OfflineRecipe(OfflineRecipe offlineRecipe) {
         this.name = offlineRecipe.name;
         this.id = offlineRecipe.id;
         this.onlineId = offlineRecipe.onlineId;
@@ -78,9 +81,11 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
         this.instructions = offlineRecipe.instructions;
         this.dateCreated = offlineRecipe.dateCreated;
         this.dateSynchronized = offlineRecipe.dateSynchronized;
+        this.dateUpdated = offlineRecipe.dateUpdated;
         this.recipeTags = offlineRecipe.recipeTags;
         this.ingredients = offlineRecipe.ingredients;
-        for (Nutrition nutrition : nutritionList) findNutrition(nutrition);
+
+        for (Nutrition nutrition : offlineRecipe.getNutritionList()) findNutrition(nutrition);
     }
 
     public OfflineRecipe(Parcel in) {

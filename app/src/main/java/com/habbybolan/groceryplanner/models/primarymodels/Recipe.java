@@ -276,6 +276,14 @@ public abstract class Recipe extends IngredientHolder implements Parcelable {
         return likes;
     }
 
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public List<RecipeTag> getRecipeTags() {
+        return recipeTags;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }

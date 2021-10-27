@@ -36,7 +36,7 @@
             android:name=".MainPage.MainActivity"
             android:parentActivityName=".listing.grocerylist.GroceryListActivity" />
         <activity
-            android:name=".details.recipe.recipedetailsactivity.RecipeDetailActivity"
+            android:name=".details.myrecipe.detailsactivity.RecipeIngredientsActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.recipelist.myrecipelist.MyRecipeListActivity"

@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.nutrition.On
 import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.nutrition.OnlineRecipeNutritionContract;
 import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewContract;
 import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewFragment;
-import com.habbybolan.groceryplanner.ui.recipedetailsabstracts.RecipeDetailsAbstractActivity;
+import com.habbybolan.groceryplanner.details.RecipeDetailsAbstractActivity;
 
 public class OnlineRecipeDetailsEditActivity extends RecipeDetailsAbstractActivity implements
         OnlineRecipeEditOverviewContract.OverviewListener,

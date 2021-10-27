@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".details.myrecipe.overview.readonly.RecipeOverviewReadOnlyFragment">
+    <data>
+        <variable
+            name="name"
+            type="String" />
+        <variable
+            name="label"
+            type="String" />
+        <variable
+            name="categoryName"
+            type="String" />
+        <variable
+            name="servingSize"
+            type="String" />
+        <variable
+            name="cookTime"
+            type="String" />
+        <variable
+            name="prepTime"
+            type="String" />
+        <variable
+            name="description"
+            type="String" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/toolbar_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:text="@{name}"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:text="@{categoryName}"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recipe_overview_rv_tags"
+                android:layout_width="@dimen/edit_txt_width"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_info" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/prep_title"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:text="Prep"/>
+
+                    <TextView
+                        android:id="@+id/prep_value"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/prep_title"
+                        android:text="@{prepTime}"
+                        android:textAlignment="center"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/cook_title"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:text="Cook"/>
+
+                    <TextView
+                        android:id="@+id/cook_value"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/cook_title"
+                        android:text="@{cookTime}"
+                        android:textAlignment="center"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/serving_title"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textAlignment="center"
+                        android:text="Prep"/>
+
+                    <TextView
+                        android:id="@+id/serving_value"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/serving_title"
+                        android:text="@{servingSize}"
+                        android:textAlignment="center"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@{description}"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_recipe_overview_groceries"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_info" />
+
+        </LinearLayout>
+
+
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>
+

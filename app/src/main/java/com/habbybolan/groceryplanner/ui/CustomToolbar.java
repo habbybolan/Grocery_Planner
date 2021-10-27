@@ -30,11 +30,14 @@ public class CustomToolbar {
 
     private static final int MAIN_MENU_GROUP_ID = 1;
 
-    private static final int SEARCH_ICON_ID = 0;
-    private static final int DELETE_ICON_ID = 1;
-    private static final int SORT_ICON_ID = 2;
-    private static final int SAVE_ICON_ID = 3;
-    private static final int CANCEL_ICON_ID = 4;
+    private enum icons {
+        SEARCH_ICON_ID,
+        DELETE_ICON_ID,
+        SORT_ICON_ID,
+        SAVE_ICON_ID,
+        CANCEL_ICON_ID,
+        SWAP_ICON_ID
+    }
 
     private CustomToolbarBinding toolbarBinding;
 
@@ -54,6 +57,9 @@ public class CustomToolbar {
 
     private CancelCallback cancelCallback;
     private boolean hasCancelIcon;
+
+    private SwapCallback swapCallback;
+    private boolean hasSwapIcon;
 
     private int numIcons;
     private String toolbarTitle;
@@ -88,6 +94,9 @@ public class CustomToolbar {
 
         private CancelCallback cancelCallback;
         private boolean hasCancelIcon = false;
+
+        private SwapCallback swapCallback;
+        private boolean hasSwapIcon = false;
 
         private TitleSelectCallback titleSelectCallback;
         private String[] titleMethods;
@@ -134,6 +143,12 @@ public class CustomToolbar {
             return this;
         }
 
+        public CustomToolbarBuilder addSwapIcon(SwapCallback swapCallback) {
+            hasSwapIcon = true;
+            this.swapCallback = swapCallback;
+            return this;
+        }
+
         public CustomToolbarBuilder allowClickTitle(TitleSelectCallback titleSelectCallback, String[] titleMethods) {
             canSelectTitle = true;
             this.titleSelectCallback = titleSelectCallback;
@@ -146,25 +161,30 @@ public class CustomToolbar {
 
             customToolbar.hasSearchIcon = hasSearchIcon;
             customToolbar.searchCallback = searchCallback;
-            if (hasSearchIcon) addIconToToolbar(SEARCH_ICON_ID, "Search", android.R.drawable.ic_menu_search);
+            if (hasSearchIcon) addIconToToolbar(icons.SEARCH_ICON_ID.ordinal(), "Search", android.R.drawable.ic_menu_search);
 
             customToolbar.hasDeleteIcon = hasDeleteIcon;
             customToolbar.itemToDelete = itemToDelete;
             customToolbar.deleteCallback = deleteCallback;
-            if (hasDeleteIcon) addIconToToolbar(DELETE_ICON_ID, "Delete", android.R.drawable.ic_menu_delete);
+            if (hasDeleteIcon) addIconToToolbar(icons.DELETE_ICON_ID.ordinal(), "Delete", android.R.drawable.ic_menu_delete);
 
             customToolbar.sortCallback = sortCallback;
             customToolbar.sortMethods = sortMethods;
             customToolbar.hasSortIcon = hasSortIcon;
-            if (hasSortIcon) addIconToToolbar(SORT_ICON_ID, "Sort", android.R.drawable.ic_menu_sort_by_size);
+            if (hasSortIcon) addIconToToolbar(icons.SORT_ICON_ID.ordinal(), "Sort", android.R.drawable.ic_menu_sort_by_size);
 
             customToolbar.saveCallback = saveCallback;
             customToolbar.hasSaveIcon = hasSaveIcon;
-            if (hasSaveIcon) addIconToToolbar(SAVE_ICON_ID, "Save", android.R.drawable.ic_menu_save);
+            if (hasSaveIcon) addIconToToolbar(icons.SAVE_ICON_ID.ordinal(), "Save", android.R.drawable.ic_menu_save);
 
             customToolbar.cancelCallback = cancelCallback;
             customToolbar.hasCancelIcon = hasCancelIcon;
-            if (hasCancelIcon) addIconToToolbar(CANCEL_ICON_ID, "Cancel", android.R.drawable.ic_menu_close_clear_cancel);
+            if (hasCancelIcon) addIconToToolbar(icons.CANCEL_ICON_ID.ordinal(), "Cancel", android.R.drawable.ic_menu_close_clear_cancel);
+
+            customToolbar.swapCallback = swapCallback;
+            customToolbar.hasSwapIcon = hasSwapIcon;
+            // todo: find a better icon for swap
+            if (hasSwapIcon) addIconToToolbar(icons.SWAP_ICON_ID.ordinal(), "Swap", android.R.drawable.ic_menu_share);
 
             customToolbar.canSelectTitle = canSelectTitle;
             customToolbar.titleSelectCallback = titleSelectCallback;
@@ -185,29 +205,34 @@ public class CustomToolbar {
             Menu menu = toolbarBinding.customToolbar.getMenu();
 
             if (hasSearchIcon) {
-                menu.findItem(SEARCH_ICON_ID).setOnMenuItemClickListener(l -> {
+                menu.findItem(icons.SEARCH_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     searchClicker(menu);
                     return true;
                 });
             }
             if (hasDeleteIcon)
-                menu.findItem(DELETE_ICON_ID).setOnMenuItemClickListener(l -> {
+                menu.findItem(icons.DELETE_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     checkDeletePopup();
                     return true;
                 });
             if (hasSortIcon)
-                menu.findItem(SORT_ICON_ID).setOnMenuItemClickListener(l -> {
+                menu.findItem(icons.SORT_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     showSortPopup(toolbarBinding.customToolbar);
                     return true;
                 });
             if (hasSaveIcon)
-                menu.findItem(SAVE_ICON_ID).setOnMenuItemClickListener(l -> {
+                menu.findItem(icons.SAVE_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     saveCallback.saveClicked();
                     return true;
                 });
             if (hasCancelIcon)
-                menu.findItem(CANCEL_ICON_ID).setOnMenuItemClickListener(l -> {
+                menu.findItem(icons.CANCEL_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     cancelCallback.cancelClicked();
+                    return true;
+                });
+            if (hasSwapIcon)
+                menu.findItem(icons.SWAP_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
+                    swapCallback.swapClicked();
                     return true;
                 });
 
@@ -355,6 +380,9 @@ public class CustomToolbar {
     }
     public interface CancelCallback {
         void cancelClicked();
+    }
+    public interface SwapCallback {
+        void swapClicked();
     }
     public interface TitleSelectCallback {
         void selectTitle(int pos);

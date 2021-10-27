@@ -4,11 +4,12 @@ import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.DbSingleCallback;
-import com.habbybolan.groceryplanner.details.recipe.recipeoverview.IngredientWithGroceryCheck;
+import com.habbybolan.groceryplanner.details.myrecipe.overview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
@@ -73,12 +74,14 @@ public interface DatabaseAccess {
 
     void deleteRecipe(Long recipeId);
     void deleteRecipes(List<Long> recipeIds);
+
+    // adds a new recipe
     void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
-    void fetchRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchMyRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<OfflineRecipe> offlineRecipes);
-    void updateRecipe(OfflineRecipe offlineRecipe);
-    void fetchRecipe(long recipeId, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void updateMyRecipe(MyRecipe myRecipe);
+    void fetchFullMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException;
 
     void addRecipeTag(long recipeId, String title);
     void addRecipeTags(long recipeId, List<String> titles);

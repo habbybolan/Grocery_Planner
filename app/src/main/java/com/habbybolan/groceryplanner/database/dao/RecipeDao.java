@@ -24,6 +24,7 @@ import com.habbybolan.groceryplanner.models.databasetuples.RecipeNutritionTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.AccessLevel;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
@@ -47,31 +48,40 @@ public abstract class RecipeDao {
                                    "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0)" +
                                    "   USING (recipeId)";
 
-    @Query(MyRecipeFetch + " ORDER BY name ASC")
+    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY name ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalAsc();
 
-    @Query(MyRecipeFetch + " ORDER BY name DESC")
+    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY name DESC")
     public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalDesc();
 
-    @Query(MyRecipeFetch + " ORDER BY date_created DESC")
+    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY date_created DESC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateDesc();
 
-    @Query(MyRecipeFetch + " ORDER BY date_created ASC")
+    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY date_created ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateAsc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId")
+    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
+            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)")
     public abstract List<RecipeEntity> getAllRecipes(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId ORDER BY name ASC")
+    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
+            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+            "ORDER BY name ASC")
     public abstract List<RecipeEntity> getAllRecipesSortAlphabeticalAsc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId ORDER BY name DESC")
+    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
+            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+            "ORDER BY name DESC")
     public abstract List<RecipeEntity> getAllRecipesSortAlphabeticalDesc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId ORDER BY date_created DESC")
+    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
+            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+            "ORDER BY date_created DESC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateDesc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId ORDER BY date_created ASC")
+    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
+            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+            "ORDER BY date_created ASC")
     public abstract  List<RecipeEntity> getAllRecipesSortDateAsc(long categoryId);
 
 
@@ -92,20 +102,25 @@ public abstract class RecipeDao {
     public abstract List<RecipeEntity> getAllUnCategorizedRecipes();
 
     @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipeId = :recipeId")
-    public abstract RecipeEntity getRecipe(long recipeId);
+    abstract RecipeEntity getRecipe(long recipeId);
+
+    @Query("SELECT * FROM MyRecipeEntity WHERE recipeId = :recipeId")
+    abstract MyRecipeEntity getMyRecipe(long recipeId);
 
     @Transaction
-    public OfflineRecipe getFullRecipe(long recipeId) {
+    public MyRecipe getFullMyRecipe(long recipeId) {
         RecipeEntity recipeEntity = getRecipe(recipeId);
+        MyRecipeEntity myRecipeEntity = getMyRecipe(recipeId);
         List<RecipeIngredientsTuple> ingredientsTuple = getRecipeIngredients(recipeId);
         List<RecipeTagTuple> recipeTagTuples = getRecipeTags(recipeId);
         List<RecipeNutritionTuple> nutritionTuples = getRecipeNutrition(recipeId);
         List<Nutrition> nutritionList = new ArrayList<>();
         for (RecipeNutritionTuple tuple : nutritionTuples)
             nutritionList.add(new Nutrition(tuple.nutritionId, tuple.amount, tuple.unitOfMeasurementId, tuple.dateUpdated, tuple.dateSynchronized));
-        return new OfflineRecipe(recipeEntity.getName(), recipeEntity.getRecipeId(), recipeEntity.getOnlineRecipeId(), recipeEntity.getIsFavorite(), recipeEntity.getDescription(),
+        OfflineRecipe offlineRecipe = new OfflineRecipe(recipeEntity.getName(), recipeEntity.getRecipeId(), recipeEntity.getOnlineRecipeId(), recipeEntity.getIsFavorite(), recipeEntity.getDescription(),
                 recipeEntity.getPrepTime(), recipeEntity.getCookTime(), recipeEntity.getServingSize(), recipeEntity.getRecipeCategoryId(), recipeEntity.getInstructions(), recipeEntity.getDateCreated(),
                 recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
+        return new MyRecipe(offlineRecipe, new AccessLevel((int) myRecipeEntity.accessLevelId));
     }
 
     @Query("SELECT nutrition_id, amount, unit_of_measurement_id, date_updated, date_synchronized " +
@@ -233,14 +248,14 @@ public abstract class RecipeDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long insertRecipe(RecipeEntity recipeEntity);
+    public abstract long insertMyRecipe(RecipeEntity recipeEntity);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertMyRecipe(MyRecipeEntity myRecipeEntity);
 
     @Transaction
     public long insertNewMyRecipe(RecipeEntity recipeEntity) {
-        long id = insertRecipe(recipeEntity);
+        long id = insertMyRecipe(recipeEntity);
         MyRecipeEntity myRecipeEntity = new MyRecipeEntity(id, AccessLevel.ADMIN_ID);
         insertMyRecipe(myRecipeEntity);
         return id;
@@ -294,23 +309,29 @@ public abstract class RecipeDao {
     @Transaction
     public void insertUpdateIngredientsIntoRecipe(List<Ingredient> ingredients, long recipeId, IngredientDao ingredientDao) {
         for (Ingredient ingredient : ingredients) {
-            IngredientEntity entity = new IngredientEntity(ingredient);
-            // if id = 0, then look if an ingredient of that name exists, otherwise create a new Ingredient
-            if (entity.getIngredientId() == 0) {
-                long id = hasIngredientName(entity.getIngredientName());
+            IngredientEntity ingredientEntity = new IngredientEntity(ingredient);
+            // if id = 0 then ingredient doesn't exist, so look if an ingredient of that name exists, otherwise create a new Ingredient
+            if (ingredientEntity.getIngredientId() == 0) {
+                long id = hasIngredientName(ingredientEntity.getIngredientName());
                 // if 0, then ingredient doesn't exist. Insert it and retrieve id.
                 if (id == 0) {
-                    id = ingredientDao.insertIngredient(entity);
+                    id = ingredientDao.insertIngredient(ingredientEntity);
                 }
-                entity.setIngredientId(id);
+                ingredientEntity.setIngredientId(id);
+                // otherwise, update the ingredient
+            } else {
+                ingredientDao.updateIngredient(ingredientEntity);
             }
-            insertIngredientBridge(new RecipeIngredientBridge(recipeId, entity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId()));
-            updateIngredientBridge(recipeId, entity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId());
+            long id = insertIngredientBridge(new RecipeIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId()));
+            // if ingredient recipe relationship exists, update it
+            if (id != -1) {
+                updateIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId());
+            }
         }
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertIngredientBridge(RecipeIngredientBridge recipeIngredientBridge);
+    public abstract long insertIngredientBridge(RecipeIngredientBridge recipeIngredientBridge);
 
     @Query("Update RecipeIngredientBridge SET" +
             "   quantity = :quantity," +
