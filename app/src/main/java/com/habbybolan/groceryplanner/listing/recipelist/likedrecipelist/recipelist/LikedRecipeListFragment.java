@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,8 +14,8 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentLikedRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
-import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
-import com.habbybolan.groceryplanner.listfragments.ListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListStateImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
@@ -29,7 +30,7 @@ import javax.inject.Inject;
 /**
  * Displays all recipes that the user has liked.
  */
-public class LikedRecipeListFragment extends CategoryListFragment<OfflineRecipe> implements LikedRecipeListContract.View {
+public class LikedRecipeListFragment extends RecipeListFragment implements LikedRecipeListContract.View {
 
     @Inject
     LikedRecipeListContract.Presenter presenter;
@@ -38,7 +39,7 @@ public class LikedRecipeListFragment extends CategoryListFragment<OfflineRecipe>
     private FragmentLikedRecipeListBinding binding;
     private CustomToolbar customToolbar;
     private SortType sortType = new SortType();
-    private RecipeListStateImpl state;
+    private RecipeListState<OfflineRecipe> state;
 
     private int offset = 0;
     private int size = 10;
@@ -73,6 +74,21 @@ public class LikedRecipeListFragment extends CategoryListFragment<OfflineRecipe>
         initLayout();
         setToolbar();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        // set up the view for view methods to be accessed from the presenter
+        presenter.setView(this);
+        presenter.fetchCategories();
+        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList(OfflineRecipe.RECIPE) != null) {
+            // pull saved recipe list from bundled save
+            listItems = savedInstanceState.getParcelableArrayList(OfflineRecipe.RECIPE);
+            adapter.notifyDataSetChanged();
+        } else {
+            // otherwise, pull the list from database and display it.
+            presenter.createRecipeList();
+        }
     }
 
     private void setToolbar() {
@@ -140,9 +156,27 @@ public class LikedRecipeListFragment extends CategoryListFragment<OfflineRecipe>
         return state.getSortType();
     }
 
-    public interface RecipeListListener extends ListFragment.ItemListener<OfflineRecipe> {
+    @Override
+    public void resetList(RecipeCategory recipeCategory) {
+        state.setRecipeCategory(recipeCategory);
+        presenter.createRecipeList();
+    }
 
-        void gotoRecipeListUnCategorized();
-        void gotoRecipeCategories();
+    /**
+     * Called from activity when the recipe category list changed.
+     * Reloads the list of loaded Recipe Categories.
+     */
+    @Override
+    public void onCategoryListChanged() {
+        presenter.fetchCategories();
+    }
+
+    /**
+     * manually set listeners due to activity {@link com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity} using the same interface twice.
+     * @param recipeListListener    Listener to set
+     */
+    public void attachListener(RecipeListListener recipeListListener) {
+        this.recipeListListener = recipeListListener;
+        itemListener = recipeListListener;
     }
 }

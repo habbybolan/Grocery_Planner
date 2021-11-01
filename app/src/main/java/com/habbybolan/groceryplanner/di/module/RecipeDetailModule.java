@@ -1,29 +1,30 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.myrecipe.detailsactivity.RecipeDetailsContract;
-import com.habbybolan.groceryplanner.details.myrecipe.detailsactivity.RecipeDetailsInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.detailsactivity.RecipeDetailsPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.ingredients.RecipeIngredientsContract;
-import com.habbybolan.groceryplanner.details.myrecipe.ingredients.RecipeIngredientsInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.ingredients.edit.RecipeIngredientsEditInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.ingredients.edit.RecipeIngredientsEditPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.ingredients.readonly.RecipeIngredientsReadOnlyPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.instructions.RecipeInstructionsContract;
-import com.habbybolan.groceryplanner.details.myrecipe.instructions.RecipeInstructionsInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.instructions.edit.RecipeInstructionsEditInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.instructions.edit.RecipeInstructionsEditPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.instructions.readonly.RecipeInstructionsReadOnlyPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.nutrition.RecipeNutritionContract;
-import com.habbybolan.groceryplanner.details.myrecipe.nutrition.RecipeNutritionInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.nutrition.edit.RecipeNutritionInteractorEditImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.nutrition.edit.RecipeNutritionPresenterEditImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.nutrition.readonly.RecipeNutritionPresenterReadOnlyImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.RecipeOverviewContract;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.RecipeOverviewInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.edit.RecipeOverviewEditInteractorImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.edit.RecipeOverviewEditPresenterImpl;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.readonly.RecipeOverviewReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsMyRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.edit.RecipeInstructionsEditInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.edit.RecipeInstructionsEditPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit.RecipeNutritionInteractorEditImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit.RecipeNutritionPresenterEditImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionPresenterReadOnlyImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewReadOnlyPresenterImpl;
 import com.habbybolan.groceryplanner.http.RestWebService;
 
 import dagger.Module;
@@ -108,10 +109,14 @@ public class RecipeDetailModule {
         return new RecipeInstructionsReadOnlyPresenterImpl(interactor);
     }
 
+    @Provides
+    RecipeDetailsContract.PresenterMyRecipe provideRecipeDetailLikedRecipePresenter(RecipeDetailsContract.Interactor interactor) {
+        return new DetailsMyRecipePresenterImpl(interactor);
+    }
 
     @Provides
-    RecipeDetailsContract.Presenter provideRecipeDetailPresenter(RecipeDetailsContract.Interactor interactor) {
-        return new RecipeDetailsPresenterImpl(interactor);
+    RecipeDetailsContract.PresenterLikedRecipe provideRecipeDetailMyRecipePresenter(RecipeDetailsContract.Interactor interactor) {
+        return new DetailsLikedRecipePresenterImpl(interactor);
     }
 
     @Provides

@@ -14,7 +14,7 @@ import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListContract;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListFragment;
-import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditActivity;
+import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditEditActivity;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import java.util.Objects;
@@ -55,7 +55,7 @@ public class MyRecipesActivity extends AppCompatActivity implements OnlineRecipe
 
     @Override
     public void onRecipeClicked(OnlineRecipe onlineRecipe) {
-        Intent intent = new Intent(this, OnlineRecipeDetailsEditActivity.class);
+        Intent intent = new Intent(this, OnlineRecipeDetailsEditEditActivity.class);
         intent.putExtra(OfflineRecipe.RECIPE, onlineRecipe);
         startActivity(intent);
     }

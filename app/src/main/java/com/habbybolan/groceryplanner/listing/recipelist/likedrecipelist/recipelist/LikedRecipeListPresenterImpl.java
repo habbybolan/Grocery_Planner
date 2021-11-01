@@ -12,12 +12,11 @@ import java.util.concurrent.ExecutionException;
 public class LikedRecipeListPresenterImpl implements LikedRecipeListContract.Presenter {
 
     private LikedRecipeListContract.View view;
-    private RecipeListState state;
+    private RecipeListState<OfflineRecipe> state;
     private LikedRecipeListContract.Interactor interactor;
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
-    private List<OfflineRecipe> loadedOfflineRecipes = new ArrayList<>();
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
     private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
@@ -34,8 +33,7 @@ public class LikedRecipeListPresenterImpl implements LikedRecipeListContract.Pre
     private DbCallback<OfflineRecipe> recipeDbCallback = new DbCallback<OfflineRecipe>() {
         @Override
         public void onResponse(List<OfflineRecipe> response) {
-            loadedOfflineRecipes.clear();
-            loadedOfflineRecipes.addAll(response);
+            state.setRecipeList(response);
             loadingRecipes = false;
             displayRecipes();
         }
@@ -118,7 +116,7 @@ public class LikedRecipeListPresenterImpl implements LikedRecipeListContract.Pre
      */
     private void displayRecipes() {
         if (isViewAttached() && isRecipesReady())
-            view.showList(loadedOfflineRecipes);
+            view.showList(state.getRecipes());
     }
 
     @Override

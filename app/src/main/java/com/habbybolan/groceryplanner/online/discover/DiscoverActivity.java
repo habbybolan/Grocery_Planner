@@ -16,7 +16,7 @@ import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeList
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListFragment;
 import com.habbybolan.groceryplanner.online.discover.searchfilter.OnlineRecipeTag;
 import com.habbybolan.groceryplanner.online.discover.searchfilter.RecipeFilterFragment;
-import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivity;
+import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivityEdit;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class DiscoverActivity extends AppCompatActivity implements RecipeFilterF
 
     @Override
     public void onRecipeClicked(OnlineRecipe onlineRecipe) {
-        Intent intent = new Intent(this, OnlineRecipeDetailActivity.class);
+        Intent intent = new Intent(this, OnlineRecipeDetailActivityEdit.class);
         intent.putExtra(OfflineRecipe.RECIPE, onlineRecipe);
         startActivity(intent);
     }

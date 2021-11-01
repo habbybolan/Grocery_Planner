@@ -4,11 +4,12 @@ import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.DbSingleCallback;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.IngredientWithGroceryCheck;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -78,10 +79,12 @@ public interface DatabaseAccess {
     // adds a new recipe
     void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     void fetchMyRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchLikedRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
     void updateRecipes(ArrayList<OfflineRecipe> offlineRecipes);
-    void updateMyRecipe(MyRecipe myRecipe);
+    void updateRecipe(OfflineRecipe recipe);
     void fetchFullMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException;
+    void fetchFullLikedRecipe(long recipeId, DbSingleCallback<LikedRecipe> callback) throws ExecutionException, InterruptedException;
 
     void addRecipeTag(long recipeId, String title);
     void addRecipeTags(long recipeId, List<String> titles);
@@ -196,19 +199,34 @@ public interface DatabaseAccess {
     void searchGroceryIngredients(long groceryId, String ingredientSearch, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException;
 
     /**
-     * Search for any recipe with the recipeSearch name.
+     * Search for a MyRecipe with the recipeSearch name.
      * @param recipeSearch  recipe name to search
      * @param callback    callback to update the Recipes retrieved
      */
-    void searchRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void searchMyRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
-     * Search for any recipe inside the category with the recipeSearch name.
+     * Search for a LikedRecipe with the recipeSearch name.
+     * @param recipeSearch  recipe name to search
+     * @param callback    callback to update the Recipes retrieved
+     */
+    void searchLikedRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for a MyRecipe inside the category with the recipeSearch name.
      * @param categoryId        id of the recipe category
      * @param recipeSearch      recipe name to search
      *  @param callback         callback to update the Recipes in a category retrieved
      */
-    void searchRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void searchMyRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Search for a LikedRecipe inside the category with the recipeSearch name.
+     * @param categoryId        id of the recipe category
+     * @param recipeSearch      recipe name to search
+     *  @param callback         callback to update the Recipes in a category retrieved
+     */
+    void searchLikedRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Search for any recipe category with the recipeSearch name.

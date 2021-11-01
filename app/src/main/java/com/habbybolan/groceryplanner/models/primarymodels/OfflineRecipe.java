@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents all recipes stores offline, including User's own recipes, recipes they've been added to, and liked recipes.
+ * Represents all recipes stored offline, including User's own recipes, recipes they've been added to, and liked recipes.
  */
 public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
 

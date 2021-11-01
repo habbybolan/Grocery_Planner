@@ -13,12 +13,12 @@ import java.util.concurrent.ExecutionException;
 public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter {
 
     private MyRecipeListContract.View view;
-    private RecipeListState state;
+    private RecipeListState<OfflineRecipe> state;
     private MyRecipeListContract.Interactor interactor;
 
     // true of the recipes are being loaded in
     private boolean loadingRecipes = false;
-    private List<OfflineRecipe> loadedOfflineRecipes = new ArrayList<>();
+
     // true if the recipe categories are being loaded
     private boolean loadingRecipeCategories = false;
     private List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
@@ -35,8 +35,7 @@ public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter
     private DbCallback<OfflineRecipe> recipeDbCallback = new DbCallback<OfflineRecipe>() {
         @Override
         public void onResponse(List<OfflineRecipe> response) {
-            loadedOfflineRecipes.clear();
-            loadedOfflineRecipes.addAll(response);
+            state.setRecipeList(response);
             loadingRecipes = false;
             displayRecipes();
         }
@@ -138,7 +137,7 @@ public class MyRecipeListPresenterImpl implements MyRecipeListContract.Presenter
      */
     private void displayRecipes() {
         if (isViewAttached() && isRecipesReady())
-            view.showList(loadedOfflineRecipes);
+            view.showList(state.getRecipes());
     }
 
     @Override

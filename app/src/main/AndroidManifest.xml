@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.habbybolan.groceryplanner">
+    package="com.habbybolan.groceryplanner" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,20 +12,23 @@
         android:networkSecurityConfig="@xml/server_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
-        <activity android:name=".listing.recipelist.likedrecipelist.LikedRecipeListActivity"></activity>
+        android:theme="@style/MyMaterialTheme" >
+        <activity
+            android:name=".details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeActivity"
+            android:exported="false" />
+        <activity android:name=".listing.recipelist.likedrecipelist.LikedRecipeListActivity" />
         <activity
             android:name=".online.myrecipes.MyRecipesActivity"
             android:label="@string/title_activity_my_recipes"
             android:theme="@style/MyMaterialTheme.NoActionBar" />
-        <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditActivity" />
+        <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditEditActivity" />
         <activity android:name=".online.savedrecipes.SavedRecipesActivity" />
-        <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivity" />
+        <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivityEdit" />
         <activity
             android:name=".online.discover.DiscoverActivity"
             android:label="@string/title_activity_discover" />
         <activity android:name=".listing.ingredientlist.IngredientListActivity" />
-        <activity android:name=".loginpage.LoginActivity">
+        <activity android:name=".loginpage.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +39,7 @@
             android:name=".MainPage.MainActivity"
             android:parentActivityName=".listing.grocerylist.GroceryListActivity" />
         <activity
-            android:name=".details.myrecipe.detailsactivity.RecipeIngredientsActivity"
+            android:name=".details.offlinerecipes.detailsactivity.RecipeDetailsRecipeActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.recipelist.myrecipelist.MyRecipeListActivity"

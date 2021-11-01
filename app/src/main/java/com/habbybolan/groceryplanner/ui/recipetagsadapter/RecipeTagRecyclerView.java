@@ -9,6 +9,10 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.List;
 
+/**
+ * Abstracts the creation of {@link RecipeTagAdapter}.
+ * Creates either an editable list, or a read-only list of RecipeTags.
+ */
 public class RecipeTagRecyclerView {
 
     private RecipeTagAdapter adapter;

@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.listing.recipelist;
 
-import com.habbybolan.groceryplanner.models.primarymodels.Recipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
@@ -10,11 +10,11 @@ import java.util.List;
 /**
  * Representation of the recipe list state and retrieved values
  */
-public class RecipeListStateImpl implements RecipeListState {
+public class RecipeListStateImpl<T extends OfflineRecipe> implements RecipeListState<T> {
 
-    private List<Recipe> recipes = new ArrayList<>();
+    private List<T> recipes = new ArrayList<>();
     // Recipe category selected by user.
-    private final RecipeCategory recipeCategory;
+    private RecipeCategory recipeCategory;
     // Sorting type for the recipe list
     private SortType sortType;
     // List offset for recipes to display.
@@ -36,7 +36,7 @@ public class RecipeListStateImpl implements RecipeListState {
         this.sortType = new SortType();
     }
 
-    public List<Recipe> gotoNextPage() {
+    public List<T> gotoNextPage() {
         if (!canGotoNextPage()) throw new IllegalStateException("Call only if it's possible to go to next page.");
         offset += size;
         return getRecipes();
@@ -48,7 +48,7 @@ public class RecipeListStateImpl implements RecipeListState {
     }
 
     @Override
-    public List<Recipe> gotoPreviousPage() {
+    public List<T> gotoPreviousPage() {
         if (!canGotoPreviousPage()) throw new IllegalStateException("Call only if it's possible to go to previous page.");
         offset -= size;
         return getRecipes();
@@ -60,20 +60,24 @@ public class RecipeListStateImpl implements RecipeListState {
     }
 
     @Override
-    public void setRecipeList(List<Recipe> recipes) {
-        // todo;
+    public void setRecipeList(List<T> recipes) {
+        this.recipes.clear();
+        this.recipes.addAll(recipes);
     }
 
+    @Override
     public int getOffset() {
         return offset;
     }
+    @Override
     public int getSize() {
         return size;
     }
+    @Override
     public SortType getSortType() {
         return sortType;
     }
-
+    @Override
     public void setSortType(int sortTypeKey) {
         this.sortType.setSortType(sortTypeKey);
     }
@@ -84,10 +88,25 @@ public class RecipeListStateImpl implements RecipeListState {
     }
 
     @Override
-    public List<Recipe> getRecipes() {
-        if (recipes.size() >= offset + size - 1)
+    public void setRecipeCategory(RecipeCategory recipeCategory) {
+        this.recipeCategory = recipeCategory;
+        resetOffset();
+    }
+
+    private void resetOffset() {
+        offset = 0;
+    }
+
+    @Override
+    public List<T> getRecipes() {
+        return recipes;
+        /*if (recipes.isEmpty()) return recipes;
+
+        // if there are enough recipe to fit on next page
+        if (recipes.size() >= offset + size)
             return recipes.subList(offset, offset+size - 1);
         else
-            return recipes.subList(offset, recipes.size()-1);
+            // otherwise, display the remaining lists
+            return recipes.subList(offset, recipes.size()-1);*/
     }
 }

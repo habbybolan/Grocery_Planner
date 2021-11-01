@@ -36,9 +36,13 @@
     <group
         android:id="@+id/group_offline">
         <item
-            android:id="@+id/my_offline_recipes"
+            android:id="@+id/my_recipes"
             android:icon="@android:drawable/presence_video_online"
-            android:title="My Offline Recipes" />
+            android:title="My Recipes" />
+        <item
+            android:id="@+id/liked_recipes"
+            android:icon="@android:drawable/presence_video_online"
+            android:title="Liked Recipes" />
         <item
             android:id="@+id/my_grocery_list"
             android:icon="@android:drawable/presence_video_online"

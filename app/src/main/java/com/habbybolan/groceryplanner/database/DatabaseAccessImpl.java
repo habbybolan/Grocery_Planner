@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeNutritionBridge;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
-import com.habbybolan.groceryplanner.details.myrecipe.overview.IngredientWithGroceryCheck;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.combinedmodels.RecipeWithIngredient;
@@ -29,6 +29,7 @@ import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWith
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
@@ -333,9 +334,9 @@ public class DatabaseAccessImpl implements DatabaseAccess {
                 recipeTableLock.lock();
                 recipeCategoryLock.lock();
                 if (recipeCategoryId == null) {
-                    return getRecipeWithoutCategory(sortType);
+                    return getMyRecipeWithoutCategory(sortType);
                 } else {
-                    return getRecipeWithCategory(recipeCategoryId, sortType);
+                    return getMyRecipeWithCategory(recipeCategoryId, sortType);
                 }
             } finally {
                 recipeCategoryLock.unlock();
@@ -354,35 +355,87 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         callback.onResponse(offlineRecipes);
     }
 
-    private List<RecipeEntity> getRecipeWithoutCategory(SortType sortType) {
+    private List<RecipeEntity> getMyRecipeWithoutCategory(SortType sortType) {
         switch (sortType.getSortKey()) {
             case SortType.SORT_ALPHABETICAL_ASC:
-                return recipeDao.getAllRecipesSortAlphabeticalAsc();
+                return recipeDao.getMyRecipesSortAlphabeticalAsc();
             case SortType.SORT_ALPHABETICAL_DEC:
-                return recipeDao.getAllRecipesSortAlphabeticalDesc();
+                return recipeDao.getMyRecipesSortAlphabeticalDesc();
             case SortType.SORT_DATE_NEW:
-                return recipeDao.getAllRecipesSortDateDesc();
-            case SortType.SORT_DATE_OLD:
-                return recipeDao.getAllRecipesSortDateAsc();
+                return recipeDao.getMyRecipesSortDateDesc();
             default:
-                // SORT_NONE, get unorganized list
-                return recipeDao.getAllRecipes();
+                // SORT_DATE_OLD, get unorganized list
+                return recipeDao.getMyRecipesSortDateAsc();
         }
     }
 
-    private List<RecipeEntity> getRecipeWithCategory(Long recipeCategoryId, SortType sortType) {
+    private List<RecipeEntity> getMyRecipeWithCategory(Long recipeCategoryId, SortType sortType) {
         switch (sortType.getSortKey()) {
             case SortType.SORT_ALPHABETICAL_ASC:
-                return recipeDao.getAllRecipesSortAlphabeticalAsc(recipeCategoryId);
+                return recipeDao.getMyRecipesSortAlphabeticalAsc(recipeCategoryId);
             case SortType.SORT_ALPHABETICAL_DEC:
-                return recipeDao.getAllRecipesSortAlphabeticalDesc(recipeCategoryId);
+                return recipeDao.getMyRecipesSortAlphabeticalDesc(recipeCategoryId);
             case SortType.SORT_DATE_NEW:
-                return recipeDao.getAllRecipesSortDateDesc(recipeCategoryId);
-            case SortType.SORT_DATE_OLD:
-                return recipeDao.getAllRecipesSortDateAsc(recipeCategoryId);
+                return recipeDao.getMyRecipesSortDateDesc(recipeCategoryId);
             default:
-                // SORT_NONE, get unorganized list
-                return recipeDao.getAllRecipes(recipeCategoryId);
+                // SORT_DATE_OLD, get unorganized list
+                return recipeDao.getMyRecipesSortDateAsc(recipeCategoryId);
+        }
+    }
+
+    @Override
+    public void fetchLikedRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<List<RecipeEntity>> task = () -> {
+            try {
+                recipeTableLock.lock();
+                recipeCategoryLock.lock();
+                if (recipeCategoryId == null) {
+                    return getLikedRecipeWithoutCategory(sortType);
+                } else {
+                    return getLikedRecipeWithCategory(recipeCategoryId, sortType);
+                }
+            } finally {
+                recipeCategoryLock.unlock();
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<RecipeEntity>> futureTask = executorService.submit(task);
+
+        List<OfflineRecipe> offlineRecipes = new ArrayList<>();
+        List<RecipeEntity> recipeEntities = futureTask.get();
+        for (RecipeEntity recipeEntity : recipeEntities) {
+            offlineRecipes.add(new OfflineRecipe(recipeEntity));
+        }
+        callback.onResponse(offlineRecipes);
+    }
+
+    private List<RecipeEntity> getLikedRecipeWithoutCategory(SortType sortType) {
+        switch (sortType.getSortKey()) {
+            case SortType.SORT_ALPHABETICAL_ASC:
+                return recipeDao.getLikedRecipesSortAlphabeticalAsc();
+            case SortType.SORT_ALPHABETICAL_DEC:
+                return recipeDao.getLikedRecipesSortAlphabeticalDesc();
+            case SortType.SORT_DATE_NEW:
+                return recipeDao.getLikedRecipesSortDateDesc();
+            default:
+                // SORT_DATE_OLD, get unorganized list
+                return recipeDao.getLikedRecipesSortDateAsc();
+        }
+    }
+
+    private List<RecipeEntity> getLikedRecipeWithCategory(Long recipeCategoryId, SortType sortType) {
+        switch (sortType.getSortKey()) {
+            case SortType.SORT_ALPHABETICAL_ASC:
+                return recipeDao.getLikedRecipesSortAlphabeticalAsc(recipeCategoryId);
+            case SortType.SORT_ALPHABETICAL_DEC:
+                return recipeDao.getLikedRecipesSortAlphabeticalDesc(recipeCategoryId);
+            case SortType.SORT_DATE_NEW:
+                return recipeDao.getLikedRecipesSortDateDesc(recipeCategoryId);
+            default:
+                // SORT_DATE_OLD, get unorganized list
+                return recipeDao.getLikedRecipesSortDateAsc(recipeCategoryId);
         }
     }
 
@@ -424,11 +477,11 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void updateMyRecipe(MyRecipe myRecipe) {
+    public void updateRecipe(OfflineRecipe recipe) {
         Runnable task = () -> {
             try {
                 recipeTableLock.lock();
-                recipeDao.updateRecipe(new RecipeEntity(myRecipe));
+                recipeDao.updateRecipe(new RecipeEntity(recipe));
             } finally {
                 recipeTableLock.unlock();
             }
@@ -450,6 +503,22 @@ public class DatabaseAccessImpl implements DatabaseAccess {
         // execute database access with Callable
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Future<MyRecipe> futureTask = executorService.submit(task);
+        callback.onResponse(futureTask.get());
+    }
+
+    @Override
+    public void fetchFullLikedRecipe(long recipeId, DbSingleCallback<LikedRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<LikedRecipe> task = () -> {
+            try {
+                recipeTableLock.lock();
+                return recipeDao.getFullLikedRecipe(recipeId);
+            } finally {
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<LikedRecipe> futureTask = executorService.submit(task);
         callback.onResponse(futureTask.get());
     }
 
@@ -1106,12 +1175,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void searchRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+    public void searchMyRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         Callable<List<OfflineRecipe>> task = () -> {
             try {
                 recipeTableLock.lock();
 
-                List<RecipeEntity> recipeEntities = recipeDao.searchRecipes("%" + recipeSearch + "%");
+                List<RecipeEntity> recipeEntities = recipeDao.searchMyRecipes("%" + recipeSearch + "%");
                 List<OfflineRecipe> offlineRecipes = new ArrayList<>();
                 for (RecipeEntity recipeEntity : recipeEntities) offlineRecipes.add(new OfflineRecipe(recipeEntity));
                 return offlineRecipes;
@@ -1126,12 +1195,52 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void searchRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+    public void searchLikedRecipes(String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         Callable<List<OfflineRecipe>> task = () -> {
             try {
                 recipeTableLock.lock();
 
-                List<RecipeEntity> recipeEntities = recipeDao.searchRecipesInCategory(categoryId, "%" + recipeSearch + "%");
+                List<RecipeEntity> recipeEntities = recipeDao.searchLikedRecipes("%" + recipeSearch + "%");
+                List<OfflineRecipe> offlineRecipes = new ArrayList<>();
+                for (RecipeEntity recipeEntity : recipeEntities) offlineRecipes.add(new OfflineRecipe(recipeEntity));
+                return offlineRecipes;
+            } finally {
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<OfflineRecipe>> futureTask = executorService.submit(task);
+        callback.onResponse(futureTask.get());
+    }
+
+    @Override
+    public void searchMyRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<List<OfflineRecipe>> task = () -> {
+            try {
+                recipeTableLock.lock();
+
+                List<RecipeEntity> recipeEntities = recipeDao.searchMyRecipesInCategory(categoryId, "%" + recipeSearch + "%");
+                List<OfflineRecipe> offlineRecipes = new ArrayList<>();
+                for (RecipeEntity recipeEntity : recipeEntities) offlineRecipes.add(new OfflineRecipe(recipeEntity));
+                return offlineRecipes;
+            } finally {
+                recipeTableLock.unlock();
+            }
+        };
+        // execute database access with Callable
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<List<OfflineRecipe>> futureTask = executorService.submit(task);
+        callback.onResponse(futureTask.get());
+    }
+
+    @Override
+    public void searchLikedRecipesInCategory(long categoryId, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
+        Callable<List<OfflineRecipe>> task = () -> {
+            try {
+                recipeTableLock.lock();
+
+                List<RecipeEntity> recipeEntities = recipeDao.searchLikedRecipesInCategory(categoryId, "%" + recipeSearch + "%");
                 List<OfflineRecipe> offlineRecipes = new ArrayList<>();
                 for (RecipeEntity recipeEntity : recipeEntities) offlineRecipes.add(new OfflineRecipe(recipeEntity));
                 return offlineRecipes;

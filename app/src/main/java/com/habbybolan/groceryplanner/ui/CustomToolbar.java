@@ -41,6 +41,8 @@ public class CustomToolbar {
 
     private CustomToolbarBinding toolbarBinding;
 
+    // TODO: Remove fields if not needed
+
     private SearchCallback searchCallback;
     private boolean hasSearchIcon;
 
@@ -102,6 +104,7 @@ public class CustomToolbar {
         private String[] titleMethods;
         private boolean canSelectTitle = false;
 
+        // TODO: pass context for LayoutInflater instead of actual LayoutInflater. Shouldn't use it directly.
         public CustomToolbarBuilder(String toolbarTitle, LayoutInflater inflater, @Nullable ViewGroup container, Context context) {
             this.toolbarTitle = toolbarTitle;
             this.context = context;

@@ -2,7 +2,7 @@ package com.habbybolan.groceryplanner.listing.recipelist.likedrecipelist.recipel
 
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListContract;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -13,26 +13,11 @@ import java.util.concurrent.ExecutionException;
 
 public interface LikedRecipeListContract {
 
-    interface Presenter {
-        void destroy();
+    interface Presenter extends RecipeListContract.Presenter {
         void unlikeRecipe(OfflineRecipe offlineRecipe);
         void unlikeRecipes(List<OfflineRecipe> offlineRecipes);
 
-        void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipe, RecipeCategory category);
-        void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes);
-
         void setView(View view);
-        void setState(RecipeListState state);
-        void createRecipeList();
-
-        void fetchCategories() ;
-        ArrayList<RecipeCategory> getLoadedRecipeCategories();
-
-        /**
-         * Search for the recipes with name recipeSearch.
-         * @param recipeSearch   recipe to search for
-         */
-        void searchRecipes(String recipeSearch);
 
     }
 
@@ -59,9 +44,8 @@ public interface LikedRecipeListContract {
          * @param callback      callback to update the list of recipes showing
          */
         void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
-
-
     }
 
-    interface View extends ListViewInterface<OfflineRecipe> {}
+    interface View extends ListViewInterface<OfflineRecipe> {
+    }
 }

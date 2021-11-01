@@ -3,7 +3,7 @@ package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist
 import com.habbybolan.groceryplanner.DbCallback;
 import com.habbybolan.groceryplanner.DbSingleCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
-import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListContract;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
@@ -14,28 +14,13 @@ import java.util.concurrent.ExecutionException;
 
 public interface MyRecipeListContract {
 
-    interface Presenter {
+    interface Presenter extends RecipeListContract.Presenter {
 
-        void destroy();
         void deleteRecipe(OfflineRecipe offlineRecipe);
         void deleteRecipes(List<OfflineRecipe> offlineRecipes);
         void addRecipe(OfflineRecipe offlineRecipe);
 
-        void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipe, RecipeCategory category);
-        void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes);
-
         void setView(View view);
-        void setState(RecipeListState state);
-        void createRecipeList();
-
-        void fetchCategories() ;
-        ArrayList<RecipeCategory> getLoadedRecipeCategories();
-
-        /**
-         * Search for the recipes with name recipeSearch.
-         * @param recipeSearch   recipe to search for
-         */
-        void searchRecipes(String recipeSearch);
     }
 
     interface Interactor {

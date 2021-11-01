@@ -10,6 +10,7 @@ import androidx.room.Update;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryRecipeBridge;
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.entities.LikedRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.MyRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
@@ -24,6 +25,7 @@ import com.habbybolan.groceryplanner.models.databasetuples.RecipeNutritionTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.AccessLevel;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
@@ -42,47 +44,103 @@ public abstract class RecipeDao {
      */
 
     @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0")
-    public abstract  List<RecipeEntity> getAllRecipes();
+    public abstract  List<RecipeEntity> getAllMyRecipes();
 
-    private final String MyRecipeFetch = "SELECT * FROM MyRecipeEntity" +
-                                   "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0)" +
-                                   "   USING (recipeId)";
+    private final String myRecipeFetch = "SELECT * FROM MyRecipeEntity" +
+                                       "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0)" +
+                                       "   USING (recipeId) ";
 
-    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY name ASC")
-    public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalAsc();
+    private final String likedRecipeFetch = "SELECT * FROM LikedRecipeEntity" +
+                                        "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0)" +
+                                        "   USING (recipeId) ";
 
-    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY name DESC")
-    public abstract  List<RecipeEntity> getAllRecipesSortAlphabeticalDesc();
+    @Query(myRecipeFetch + "ORDER BY name ASC")
+    public abstract  List<RecipeEntity> getMyRecipesSortAlphabeticalAsc();
 
-    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY date_created DESC")
-    public abstract  List<RecipeEntity> getAllRecipesSortDateDesc();
+    @Query(likedRecipeFetch + "ORDER BY name ASC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortAlphabeticalAsc();
 
-    @Query(MyRecipeFetch + "WHERE EXISTS (SELECT recipeId FROM MyRecipeEntity) ORDER BY date_created ASC")
-    public abstract  List<RecipeEntity> getAllRecipesSortDateAsc();
+    @Query(myRecipeFetch + "ORDER BY name DESC")
+    public abstract  List<RecipeEntity> getMyRecipesSortAlphabeticalDesc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
-            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)")
-    public abstract List<RecipeEntity> getAllRecipes(long categoryId);
+    @Query(likedRecipeFetch + "ORDER BY name DESC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortAlphabeticalDesc();
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
-            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+    @Query(myRecipeFetch + "ORDER BY date_created DESC")
+    public abstract  List<RecipeEntity> getMyRecipesSortDateDesc();
+
+    @Query(likedRecipeFetch + "ORDER BY date_created DESC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortDateDesc();
+
+    @Query(myRecipeFetch + "ORDER BY date_created ASC")
+    public abstract  List<RecipeEntity> getMyRecipesSortDateAsc();
+
+    @Query(likedRecipeFetch + "ORDER BY date_created ASC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortDateAsc();
+
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
             "ORDER BY name ASC")
-    public abstract List<RecipeEntity> getAllRecipesSortAlphabeticalAsc(long categoryId);
+    public abstract List<RecipeEntity> getMyRecipesSortAlphabeticalAsc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
-            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
+            "ORDER BY name ASC")
+    public abstract List<RecipeEntity> getLikedRecipesSortAlphabeticalAsc(long categoryId);
+
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
             "ORDER BY name DESC")
-    public abstract List<RecipeEntity> getAllRecipesSortAlphabeticalDesc(long categoryId);
+    public abstract List<RecipeEntity> getMyRecipesSortAlphabeticalDesc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
-            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
+            "ORDER BY name DESC")
+    public abstract List<RecipeEntity> getLikedRecipesSortAlphabeticalDesc(long categoryId);
+
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
             "ORDER BY date_created DESC")
-    public abstract  List<RecipeEntity> getAllRecipesSortDateDesc(long categoryId);
+    public abstract  List<RecipeEntity> getMyRecipesSortDateDesc(long categoryId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND recipe_category_id = :categoryId " +
-            "AND EXISTS (SELECT recipeId FROM MyRecipeEntity)" +
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
+            "ORDER BY date_created DESC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortDateDesc(long categoryId);
+
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
             "ORDER BY date_created ASC")
-    public abstract  List<RecipeEntity> getAllRecipesSortDateAsc(long categoryId);
+    public abstract  List<RecipeEntity> getMyRecipesSortDateAsc(long categoryId);
+
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity " +
+            "       WHERE is_deleted = 0 " +
+            "       AND recipe_category_id = :categoryId)" +
+            "   USING (recipeId)" +
+            "ORDER BY date_created ASC")
+    public abstract  List<RecipeEntity> getLikedRecipesSortDateAsc(long categoryId);
 
 
 
@@ -121,6 +179,26 @@ public abstract class RecipeDao {
                 recipeEntity.getPrepTime(), recipeEntity.getCookTime(), recipeEntity.getServingSize(), recipeEntity.getRecipeCategoryId(), recipeEntity.getInstructions(), recipeEntity.getDateCreated(),
                 recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
         return new MyRecipe(offlineRecipe, new AccessLevel((int) myRecipeEntity.accessLevelId));
+    }
+
+    @Query("SELECT * FROM LikedRecipeEntity WHERE recipeId = :recipeId")
+    abstract LikedRecipeEntity getLikedRecipe(long recipeId);
+
+    @Transaction
+    public LikedRecipe getFullLikedRecipe(long recipeId) {
+        RecipeEntity recipeEntity = getRecipe(recipeId);
+        // TODO: use more liked recipe values when added
+        LikedRecipeEntity likedRecipeEntity = getLikedRecipe(recipeId);
+        List<RecipeIngredientsTuple> ingredientsTuple = getRecipeIngredients(recipeId);
+        List<RecipeTagTuple> recipeTagTuples = getRecipeTags(recipeId);
+        List<RecipeNutritionTuple> nutritionTuples = getRecipeNutrition(recipeId);
+        List<Nutrition> nutritionList = new ArrayList<>();
+        for (RecipeNutritionTuple tuple : nutritionTuples)
+            nutritionList.add(new Nutrition(tuple.nutritionId, tuple.amount, tuple.unitOfMeasurementId, tuple.dateUpdated, tuple.dateSynchronized));
+        OfflineRecipe offlineRecipe = new OfflineRecipe(recipeEntity.getName(), recipeEntity.getRecipeId(), recipeEntity.getOnlineRecipeId(), recipeEntity.getIsFavorite(), recipeEntity.getDescription(),
+                recipeEntity.getPrepTime(), recipeEntity.getCookTime(), recipeEntity.getServingSize(), recipeEntity.getRecipeCategoryId(), recipeEntity.getInstructions(), recipeEntity.getDateCreated(),
+                recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
+        return new LikedRecipe(offlineRecipe);
     }
 
     @Query("SELECT nutrition_id, amount, unit_of_measurement_id, date_updated, date_synchronized " +
@@ -221,14 +299,28 @@ public abstract class RecipeDao {
             "   USING  (tagId)")
     public abstract List<RecipeTagTuple> getRecipeTags(long recipeId);
 
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch")
-    public abstract List<RecipeEntity> searchRecipes(String recipeSearch);
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch)" +
+            "USING (recipeId)")
+    public abstract List<RecipeEntity> searchMyRecipes(String recipeSearch);
+
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch)" +
+            "USING (recipeId)")
+    public abstract List<RecipeEntity> searchLikedRecipes(String recipeSearch);
+
+    @Query("SELECT * FROM MyRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch AND recipe_category_id = :categoryId)" +
+            "USING (recipeId)")
+    public abstract List<RecipeEntity> searchMyRecipesInCategory(long categoryId, String recipeSearch);
+
+    @Query("SELECT * FROM LikedRecipeEntity" +
+            "   INNER JOIN (SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch AND recipe_category_id = :categoryId)" +
+            "USING (recipeId)")
+    public abstract List<RecipeEntity> searchLikedRecipesInCategory(long categoryId, String recipeSearch);
 
     @Query("SELECT * FROM RecipeCategoryEntity WHERE name like :categorySearch")
     public abstract List<RecipeCategoryEntity> searchRecipeCategories(String categorySearch);
-
-    @Query("SELECT * FROM RecipeEntity WHERE is_deleted = 0 AND name like :recipeSearch AND recipe_category_id = :categoryId")
-    public abstract List<RecipeEntity> searchRecipesInCategory(long categoryId, String recipeSearch);
 
     @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
             "   quantity, quantityMeasId, food_type_id, RIB.date_updated, RIB.date_synchronized " +

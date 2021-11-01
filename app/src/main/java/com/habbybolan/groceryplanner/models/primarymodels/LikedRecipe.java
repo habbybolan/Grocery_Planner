@@ -5,6 +5,8 @@ package com.habbybolan.groceryplanner.models.primarymodels;
  */
 public class LikedRecipe extends OfflineRecipe {
 
+    // TODO: add more values (likes, user, etc)
+
     public LikedRecipe(OfflineRecipe offlineRecipe) {
         super(offlineRecipe);
     }

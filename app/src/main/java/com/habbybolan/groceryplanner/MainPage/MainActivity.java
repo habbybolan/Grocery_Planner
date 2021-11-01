@@ -17,11 +17,12 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityMainBinding;
 import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
+import com.habbybolan.groceryplanner.listing.recipelist.likedrecipelist.LikedRecipeListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.MyRecipeListActivity;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.online.discover.DiscoverActivity;
-import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivity;
+import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivityEdit;
 import com.habbybolan.groceryplanner.online.myrecipes.MyRecipesActivity;
 import com.habbybolan.groceryplanner.online.savedrecipes.SavedRecipesActivity;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
@@ -77,8 +78,11 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
                 } else if (id == R.id.saved_recipes) {
                     gotoSavedRecipesList();
                     return true;
-                } else if (id == R.id.my_offline_recipes) {
-                    gotoOfflineRecipeList();
+                } else if (id == R.id.my_recipes) {
+                    gotoMyRecipeList();
+                    return true;
+                } else if (id == R.id.liked_recipes) {
+                    gotoLikedRecipeList();
                     return true;
                 } else if (id == R.id.my_grocery_list) {
                     gotoGroceryList();
@@ -152,8 +156,13 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
     }
 
     /** Sends the activity to RecipeListActivity. */
-    private void gotoOfflineRecipeList() {
+    private void gotoMyRecipeList() {
         Intent intent = new Intent(this, MyRecipeListActivity.class);
+        startActivity(intent);
+    }
+
+    private void gotoLikedRecipeList() {
+        Intent intent = new Intent(this, LikedRecipeListActivity.class);
         startActivity(intent);
     }
 
@@ -165,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
 
     @Override
     public void onRecipeSelected(OnlineRecipe recipe) {
-        Intent intent = new Intent(this, OnlineRecipeDetailActivity.class);
+        Intent intent = new Intent(this, OnlineRecipeDetailActivityEdit.class);
         intent.putExtra(OfflineRecipe.RECIPE, recipe);
         startActivity(intent);
     }

@@ -22,7 +22,8 @@ import com.habbybolan.groceryplanner.databinding.CreatePopupDetailsBinding;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeListBinding;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeListModule;
-import com.habbybolan.groceryplanner.listfragments.CategoryListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListFragment;
+import com.habbybolan.groceryplanner.listing.recipelist.RecipeListState;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListStateImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -38,7 +39,7 @@ import javax.inject.Inject;
 /**
  * Displays all Recipes created and associated with the user.
  */
-public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> implements MyRecipeListContract.View {
+public class MyRecipeListFragment extends RecipeListFragment implements MyRecipeListContract.View {
 
     @Inject
     MyRecipeListContract.Presenter presenter;
@@ -46,10 +47,10 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
     private RecipeListListener recipeListListener;
     private FragmentRecipeListBinding binding;
     private CustomToolbar customToolbar;
-    private RecipeListStateImpl state;
+    private RecipeListState<OfflineRecipe> state;
 
-    private int offset = 0;
-    private int size = 10;
+    private final int offset = 0;
+    private final int size = 10;
 
     public MyRecipeListFragment() {}
 
@@ -61,8 +62,8 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
     }
 
     /**
-     * Listeners implemented explicitly inside RecipeListActivity. Manually attach listener.
-     * @param recipeListListener     Implemented listener from RecipeListActivity
+     * manually set listeners due to activity {@link com.habbybolan.groceryplanner.listing.recipelist.RecipeListActivity} using the same interface twice.
+     * @param recipeListListener    Listener to set
      */
     public void attachListener(RecipeListListener recipeListListener) {
         this.recipeListListener = recipeListListener;
@@ -194,18 +195,9 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
      * Called from activity when the recipe category list changed.
      * Reloads the list of loaded Recipe Categories.
      */
+    @Override
     public void onCategoryListChanged() {
         presenter.fetchCategories();
-    }
-
-    @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -241,7 +233,7 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
     }
 
     public void resetList(RecipeCategory recipeCategory) {
-        state = new RecipeListStateImpl(recipeCategory);
+        state.setRecipeCategory(recipeCategory);
         presenter.createRecipeList();
     }
 
@@ -250,11 +242,5 @@ public class MyRecipeListFragment extends CategoryListFragment<OfflineRecipe> im
         listItems.add(recipe);
         MyRecipeListAdapter myAdapter = (MyRecipeListAdapter) adapter;
         myAdapter.onRecipeAdded();
-    }
-
-    public interface RecipeListListener extends ItemListener<OfflineRecipe> {
-
-        void gotoRecipeListUnCategorized();
-        void gotoRecipeCategories();
     }
 }

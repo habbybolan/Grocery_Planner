@@ -78,8 +78,8 @@ public class MyRecipeListInteractorImpl implements MyRecipeListContract.Interact
     @Override
     public void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         if (recipeCategory == null)
-            databaseAccess.searchRecipes(recipeSearch, callback);
+            databaseAccess.searchMyRecipes(recipeSearch, callback);
         else
-            databaseAccess.searchRecipesInCategory(recipeCategory.getId(), recipeSearch, callback);
+            databaseAccess.searchMyRecipesInCategory(recipeCategory.getId(), recipeSearch, callback);
     }
 }

@@ -30,9 +30,10 @@ public abstract class ListFragment<T> extends Fragment implements ListViewInterf
     private String listenerErrorMessage = "Must attach listener to ListFragment with attachListener(Context context)";
 
     /**
-     * Attaches the listener of methods implemented inside Activity
+     * Attaches the listener of methods implemented inside Activity.
+     * Only use if activity implements the listener of the child fragment.
      */
-    protected void attachListener(Context context) {
+    public void attachListener(Context context) {
         itemListener = (ItemListener<T>) context;
     }
 

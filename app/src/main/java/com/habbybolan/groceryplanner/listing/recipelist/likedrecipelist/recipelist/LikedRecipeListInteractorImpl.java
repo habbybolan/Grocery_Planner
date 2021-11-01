@@ -20,7 +20,11 @@ public class LikedRecipeListInteractorImpl implements LikedRecipeListContract.In
 
     @Override
     public void fetchRecipes(RecipeCategory recipeCategory, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
-        // todo:
+        // find the recipes associated with the category id if there is any
+        if (recipeCategory != null) {
+            databaseAccess.fetchLikedRecipes(recipeCategory.getId(), sortType, callback);
+            // otherwise, no category selected, get all
+        } else databaseAccess.fetchLikedRecipes(null, sortType, callback);
     }
 
     @Override
@@ -35,27 +39,37 @@ public class LikedRecipeListInteractorImpl implements LikedRecipeListContract.In
 
     @Override
     public void addRecipesToCategory(ArrayList<OfflineRecipe> offlineRecipes, RecipeCategory category) {
-        // todo:
+        for (OfflineRecipe offlineRecipe : offlineRecipes) {
+            offlineRecipe.setCategoryId(category.getId());
+        }
+        databaseAccess.updateRecipes(offlineRecipes);
     }
 
     @Override
     public void removeRecipesFromCategory(ArrayList<OfflineRecipe> offlineRecipes) {
-        // todo:
+        for (OfflineRecipe offlineRecipe : offlineRecipes) {
+            offlineRecipe.setCategoryId(null);
+        }
+        databaseAccess.updateRecipes(offlineRecipes);
     }
 
     @Override
     public Long getCategoryId(RecipeCategory recipeCategory) {
-        // todo:
-        return null;
+        return recipeCategory == null ? null : recipeCategory.getId();
     }
 
     @Override
     public void fetchCategories(DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException {
-        // todo:
+        SortType sortType = new SortType();
+        sortType.setSortType(SortType.SORT_ALPHABETICAL_ASC);
+        databaseAccess.fetchRecipeCategories(callback, sortType);
     }
 
     @Override
     public void searchRecipes(RecipeCategory recipeCategory, String recipeSearch, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
-        // todo:
+        if (recipeCategory == null)
+            databaseAccess.searchLikedRecipes(recipeSearch, callback);
+        else
+            databaseAccess.searchLikedRecipesInCategory(recipeCategory.getId(), recipeSearch, callback);
     }
 }

@@ -14,7 +14,10 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
 import java.util.List;
 
-public class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.ViewHolder> {
+/**
+ * Creates a list of RecipeTags that is either editable or read-only.
+ */
+class RecipeTagAdapter extends RecyclerView.Adapter<RecipeTagAdapter.ViewHolder> {
 
     private List<RecipeTag> recipeTags;
     private RecipeTagsView view;
