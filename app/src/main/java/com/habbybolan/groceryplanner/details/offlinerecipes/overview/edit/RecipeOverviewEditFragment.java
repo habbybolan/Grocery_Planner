@@ -9,30 +9,23 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewEditBinding;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeGroceriesAdapter;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListFragment;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
-import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 import com.habbybolan.groceryplanner.ui.recipetagsadapter.RecipeTagRecyclerView;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,15 +39,8 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     private CustomToolbar customToolbar;
     private RecipeCategory selectedRecipeCategory;
 
-    private RecipeGroceriesAdapter groceriesAdapter;
-
     private RecipeTagRecyclerView tagRV;
     public RecipeOverviewEditFragment() {}
-
-    public static RecipeOverviewEditFragment getInstance() {
-        RecipeOverviewEditFragment fragment = new RecipeOverviewEditFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,25 +61,26 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_overview_edit, container, false);
         presenter.setView(this);
-        presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getRecipe());
         setToolbar();
         setRV();
         setTagClicker();
         initClickers();
         setDisplayToCurrentRecipe();
+        setRecipeGroceryFragment();
         return binding.getRoot();
     }
 
+    private void setRecipeGroceryFragment() {
+        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(binding.recipesGroceryContainer.getId(), RecipeGroceryFragment).commit();
+    }
+
     /**
-     * Set up the RecyclerView for displaying Groceries holding the current Recipe
      * Set up RecyclerView for displaying the tags added to the recipe
      */
     private void setRV() {
-        RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
-        groceriesAdapter = new RecipeGroceriesAdapter(presenter.getLoadedGroceriesHoldingRecipe(), this);
-        rvGroceries.setAdapter(groceriesAdapter);
-        presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
-
         tagRV = new RecipeTagRecyclerView(recipeOverviewListener.getRecipe().getRecipeTags(), this, binding.recipeOverviewRvTags, getContext());
     }
 
@@ -197,11 +184,6 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
             // display the recipe categories if they are loaded in
             presenter.displayRecipeCategories();
         });
-
-        // clicker for opening the Grocery list of Groceries that don't contain the recipe
-        binding.btnRecipeOverviewAddToGrocery.setOnClickListener(l -> {
-            presenter.displayGroceriesNotHoldingRecipe();
-        });
     }
 
     /**
@@ -245,121 +227,6 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     }
 
     @Override
-    public void displayGroceriesHoldingRecipe() {
-        groceriesAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void displayRecipeIngredients(List<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Set the dialog title
-        builder.setTitle("Select Ingredients to add to Grocery")
-                // Specify the list array, the items to be selected by default (null for none),
-                // and the listener through which to receive callbacks when items are selected
-                .setMultiChoiceItems(ingredientNames, null,
-                        new DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which,
-                                                boolean isChecked) {
-                                if (isChecked) {
-                                    // If the user checked the item, set ingredient as selected
-                                    ingredients.get(which).setIsInGrocery(true);
-                                } else {
-                                    // Else, set ingredient as not selected
-                                    ingredients.get(which).setIsInGrocery(false);
-                                }
-                            }
-                        })
-                // Set the action buttons
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        try {
-                            // update the recipe ingredients inside the grocery
-                            presenter.updateRecipeIngredientsInGrocery(recipeOverviewListener.getRecipe(), grocery, 1, ingredients);
-                        } finally {
-                            // update the stored values holding the the groceries holding and not holding the recipe
-                            presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getRecipe());
-                            presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
-                        }
-                    }
-                })
-                .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            presenter.deleteRecipeFromGrocery(recipeOverviewListener.getRecipe(), grocery);
-                        } finally {
-                            // update the stored values holding the the groceries holding and not holding the recipe
-                            presenter.fetchGroceriesNotHoldingRecipe(recipeOverviewListener.getRecipe());
-                            presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // do nothing
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-
-        // set the pre-selection of the items
-        for (int i = 0; i < ingredients.size(); i++) {
-            dialog.getListView().setItemChecked(i, ingredients.get(i).getIsInGrocery());
-        }
-
-        // set positions and sizes of the bottom dialog buttons
-        Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        btnPositive.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
-        Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        btnNegative.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
-        Button btnNeutral = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        btnNeutral.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
-        layoutParams.weight = 10;
-        btnPositive.setLayoutParams(layoutParams);
-        btnNegative.setLayoutParams(layoutParams);
-        btnNeutral.setLayoutParams(layoutParams);
-    }
-
-    @Override
-    public void displayGroceriesNotHoldingRecipe(List<Grocery> groceries) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        //DialogueListBinding dialogBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialogue_list, binding.recipeOverviewContainer, false);
-        final String[] groceryNames = presenter.getArrayOfGroceryNames(groceries);
-        // builder.setView(dialogBinding.getRoot())
-        builder.setTitle("Grocery to add recipe to")
-                // Add action buttons
-                .setItems(groceryNames, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // todo: could pre-load recipe ingredients, then directly display them
-                        presenter.fetchRecipeIngredients(recipeOverviewListener.getRecipe(), groceries.get(which), true);
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-        Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        btnPositive.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
-        Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        btnNegative.setBackgroundColor(getContext().getResources().getColor(R.color.colorRedAccentMedium));
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
-        layoutParams.weight = 10;
-        btnPositive.setLayoutParams(layoutParams);
-        btnNegative.setLayoutParams(layoutParams);
-    }
-
-    @Override
-    public void onGroceryHoldingRecipeClicked(Grocery grocery) {
-        // get the ingredients from a recipe that was added to the grocery list
-        presenter.fetchRecipeIngredients(recipeOverviewListener.getRecipe(), grocery, false);
-    }
-
-    @Override
     public void displayRecipeTags() {
         tagRV.updateDisplay();
     }
@@ -374,7 +241,6 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     public void onDeleteRecipeTag(RecipeTag recipeTag) {
         presenter.deleteRecipeTag(recipeOverviewListener.getRecipe(), recipeTag);
     }
-
 
     @Override
     public void loadingStarted() {

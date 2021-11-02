@@ -9,20 +9,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeGroceriesDetailsBinding;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListContract;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 
 import java.util.List;
 
 /**
  * Displays the Grocery lists that currently hold this recipe.
- * @param <T> View to hold method for calling the container fragment
  */
-public class RecipeGroceriesAdapter<T extends RecipeOverviewContract.OverviewView> extends RecyclerView.Adapter<RecipeGroceriesAdapter.ViewHolder> {
+public class RecipeGroceriesAdapter extends RecyclerView.Adapter<RecipeGroceriesAdapter.ViewHolder> {
 
     private List<GroceryRecipe> groceries;
-    private RecipeOverviewContract.OverviewView view;
+    private AddRecipeToGroceryListContract.View view;
 
-    public RecipeGroceriesAdapter(List<GroceryRecipe> groceries, RecipeOverviewContract.OverviewView view) {
+    public RecipeGroceriesAdapter(List<GroceryRecipe> groceries, AddRecipeToGroceryListContract.View view) {
         this.groceries = groceries;
         this.view = view;
     }

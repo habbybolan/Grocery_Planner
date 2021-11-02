@@ -24,6 +24,9 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverv
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListContract;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListPresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewReadOnlyPresenterImpl;
 import com.habbybolan.groceryplanner.http.RestWebService;
 
@@ -108,6 +111,19 @@ public class RecipeDetailModule {
     RecipeInstructionsContract.PresenterReadOnly provideRecipeInstructionsReadOnlyPresenter( RecipeInstructionsContract.Interactor interactor) {
         return new RecipeInstructionsReadOnlyPresenterImpl(interactor);
     }
+
+
+
+    @Provides
+    AddRecipeToGroceryListContract.Presenter provideAddRecipeToGroceryListPresenter(AddRecipeToGroceryListContract.Interactor interactor) {
+        return new AddRecipeToGroceryListPresenterImpl(interactor);
+    }
+
+    @Provides
+    AddRecipeToGroceryListContract.Interactor provideAddRecipeToGroceryListInteractor(DatabaseAccess databaseAccess) {
+        return new AddRecipeToGroceryListInteractorImpl(databaseAccess);
+    }
+
 
     @Provides
     RecipeDetailsContract.PresenterMyRecipe provideRecipeDetailLikedRecipePresenter(RecipeDetailsContract.Interactor interactor) {

@@ -3,9 +3,6 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 import androidx.databinding.Observable;
 import androidx.databinding.ObservableField;
 
-import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
@@ -28,21 +25,6 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
     protected boolean loadingRecipeCategories = false;
     // all loaded recipe categories stored offline
     protected List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
-
-    protected boolean loadingGroceriesRecipeIn = false;
-    // all grocery lists where the recipe has been added to
-    protected List<GroceryRecipe> loadedGroceriesHoldingRecipe = new ArrayList<>();
-
-    // callback for retrieving groceries holding current recipe
-    private DbCallback<GroceryRecipe> groceryRecipeDbCallback = new DbCallback<GroceryRecipe>() {
-        @Override
-        public void onResponse(List<GroceryRecipe> response) {
-            loadedGroceriesHoldingRecipe.clear();
-            loadedGroceriesHoldingRecipe.addAll(response);
-            loadingGroceriesRecipeIn = false;
-            displayGroceriesHoldingRecipe();
-        }
-    };
 
     @Override
     public void destroy() {
@@ -91,28 +73,7 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
         view.displayRecipeCategory(currRecipeCategory.get());
     }
 
-    @Override
-    public void fetchGroceriesHoldingRecipe(OfflineRecipe recipe) {
-        try {
-            loadingGroceriesRecipeIn = true;
-            view.loadingStarted();
-            interactor.fetchGroceriesHoldingRecipe(recipe, groceryRecipeDbCallback);
-        } catch (ExecutionException | InterruptedException e){
-            e.printStackTrace();
-            loadingGroceriesRecipeIn = false;
-        }
-    }
-
     private void displayRecipeTags() {
         view.displayRecipeTags();
-    }
-
-    @Override
-    public List<GroceryRecipe> getLoadedGroceriesHoldingRecipe() {
-        return loadedGroceriesHoldingRecipe;
-    }
-
-    private void displayGroceriesHoldingRecipe() {
-        view.displayGroceriesHoldingRecipe();
     }
 }

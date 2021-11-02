@@ -8,13 +8,11 @@ import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewReadOnlyBinding;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeGroceriesAdapter;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
-import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListFragment;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
@@ -33,8 +31,6 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
 
     protected T recipeOverviewListener;
 
-    private RecipeGroceriesAdapter groceriesAdapter;
-
     protected CustomToolbar customToolbar;
     private RecipeTagRecyclerView tagRV;
     protected FragmentRecipeOverviewReadOnlyBinding binding;
@@ -48,23 +44,23 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
         setToolbar();
         setRV();
         setDisplayToCurrentRecipe();
+        setRecipeGroceryFragment();
         return binding.getRoot();
     }
 
     /**
-     * Set up the RecyclerView for displaying Groceries holding the current Recipe
      * Set up RecyclerView for displaying the tags added to the recipe
      */
     private void setRV() {
-        RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
-        groceriesAdapter = new RecipeGroceriesAdapter(presenter.getLoadedGroceriesHoldingRecipe(), this);
-        rvGroceries.setAdapter(groceriesAdapter);
-        presenter.fetchGroceriesHoldingRecipe(recipeOverviewListener.getRecipe());
-
         tagRV = new RecipeTagRecyclerView(recipeOverviewListener.getRecipe().getRecipeTags(), binding.recipeOverviewRvTags, getContext());
     }
 
-
+    private void setRecipeGroceryFragment() {
+        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance();
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(binding.recipesGroceryContainer.getId(), RecipeGroceryFragment).commit();
+    }
 
     /**
      * Sets the display to the current recipe's values.
@@ -96,10 +92,6 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void displayGroceriesHoldingRecipe() {
-        groceriesAdapter.notifyDataSetChanged();
-    }
 
     @Override
     public void displayRecipeCategory(RecipeCategory recipeCategory) {
@@ -109,12 +101,6 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
     @Override
     public void displayRecipeTags() {
         tagRV.updateDisplay();
-    }
-
-    @Override
-    public void onGroceryHoldingRecipeClicked(Grocery grocery) {
-        // todo: should ingredients added to grocery be shown?
-        //      todo: possibly message notifying that edit mode must be enabled to select and modify grocery list
     }
 
     protected abstract void setToolbar();

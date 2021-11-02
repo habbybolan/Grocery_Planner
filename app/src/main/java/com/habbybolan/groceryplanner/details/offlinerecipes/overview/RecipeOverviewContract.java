@@ -3,8 +3,6 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
-import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -33,14 +31,6 @@ public interface RecipeOverviewContract {
          * @param categoryId    The Id of the category to display
          */
         void fetchRecipeCategory(Long categoryId);
-
-        /**
-         * Fetch the Groceries that are holding the recipe.
-         * @param recipe    The recipe begin contained by the Grocery object
-         */
-        void fetchGroceriesHoldingRecipe(OfflineRecipe recipe);
-
-        List<GroceryRecipe> getLoadedGroceriesHoldingRecipe();
     }
 
     interface PresenterEdit extends Presenter<OverviewEditView> {
@@ -60,48 +50,6 @@ public interface RecipeOverviewContract {
          * Called display recipe categories if possible
          */
         void displayRecipeCategories();
-
-        /**
-         * Fetch the Groceries that are not holding the recipe.
-         * @param myRecipe    The recipe not contained by the Grocery object
-         */
-        void fetchGroceriesNotHoldingRecipe(OfflineRecipe myRecipe);
-
-        /**
-         * Called to display the Groceries not holding the Recipe
-         */
-        void displayGroceriesNotHoldingRecipe();
-
-        /**
-         * Adds the recipe to the grocery list.
-         * @param myRecipe        Recipe to add to grocery
-         * @param grocery       grocery to hold the recipe
-         * @param amount        The number of times to add the Recipe to the grocery
-         * @param ingredients   recipe ingredients to add or remove from the grocery list
-         */
-        void updateRecipeIngredientsInGrocery(OfflineRecipe myRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
-
-        /**
-         * Fetches the recipe ingredients where the recipe is not part of the selected grocery list.
-         * @param myRecipe            The recipe to add/change inside the grocery list
-         * @param grocery           The grocery list to hold/is holding the recipe ingredients
-         * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
-         */
-        void fetchRecipeIngredients(OfflineRecipe myRecipe, Grocery grocery, boolean isNotInGrocery);
-
-        /**
-         * Returns an Array of all the Grocery names in groceries
-         * @param groceries The list to extract the String names from
-         * @return          Array of names of the groceries
-         */
-        String[] getArrayOfGroceryNames(List<Grocery> groceries);
-
-        /**
-         * Delete All the recipe ingredients from the grocery
-         * @param myRecipe    Recipe to delete from grocery
-         * @param grocery   Grocery holding recipe and its ingredients to delete
-         */
-        void deleteRecipeFromGrocery(OfflineRecipe myRecipe, Grocery grocery);
 
         /**
          * Delete the tag from the recipe
@@ -131,25 +79,11 @@ public interface RecipeOverviewContract {
     interface Interactor {
 
         void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long categoryId) throws ExecutionException, InterruptedException;
-
-        /**
-         * Fetch the Groceries that are holding the recipe.
-         * @param recipe            The recipe begin contained by the Grocery object
-         * @param callback          callback to update the Groceries with the amount of the recipe fetched
-         */
-        void fetchGroceriesHoldingRecipe(OfflineRecipe recipe, DbCallback<GroceryRecipe> callback) throws ExecutionException, InterruptedException;
     }
 
     interface InteractorEdit extends Interactor {
 
         void loadAllRecipeCategories(DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException;
-
-        /**
-         * Returns an Array of all the Grocery names in groceries
-         * @param groceries The list to extract the String names from
-         * @return          Array of names of the groceries
-         */
-        String[] getArrayOfGroceryNames(List<Grocery> groceries);
 
         /**
          * Converts the list of RecipeCategory to an array of their names
@@ -158,53 +92,6 @@ public interface RecipeOverviewContract {
          */
         String[] getNamedOfRecipeCategories(List<RecipeCategory> recipeCategories);
 
-        /**
-         * Select all ingredients if all unselected, otherwise do nothing.
-         * Used for when a recipe is being added to a grocery, all ingredients should be selected at first.
-         * @param ingredients   Ingredients holding a isInGrocery value
-         * @return              Fully checked ingredients list, or an unchanged list
-         */
-        List<IngredientWithGroceryCheck> checkIfAllUnselected(List<IngredientWithGroceryCheck> ingredients);
-
-        /**
-         * Fetch the Groceries that are not holding the recipe.
-         * @param myRecipe    The recipe not contained by the Grocery object
-         * @param callback  callback to update the Groceries not holding the recipe
-         */
-        void fetchGroceriesNotHoldingRecipe(OfflineRecipe myRecipe, DbCallback<Grocery> callback) throws ExecutionException, InterruptedException;
-
-        /**
-         * Adds the recipe to the grocery list.
-         * @param myRecipe            Recipe to add to grocery
-         * @param grocery           grocery to hold the recipe
-         * @param amount            The number of times to add the Recipe to the grocery
-         * @param recipeIngredients recipe ingredients to add or remove from the grocery list
-         */
-        void updateRecipeIngredientsInGrocery(OfflineRecipe myRecipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> recipeIngredients);
-
-        /**
-         * Get an array of the ingredient names.
-         * @param ingredients   Ingredients with the names
-         * @return              Array of ingredient names
-         */
-        String[] getArrayOfIngredientNames(List<IngredientWithGroceryCheck> ingredients);
-
-        /**
-         * Fetches the recipe ingredients that will be or are already added to a grocery list through the recipe.
-         * @param myRecipe            The recipe to add/change inside the grocery list
-         * @param grocery           The grocery list to hold/is holding the recipe ingredients
-         * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
-         * @param callback          Callback to update the recipe ingredients to with a check value to show
-         *                          if it is added to the grocery list.
-         */
-        void fetchRecipeIngredients(OfflineRecipe myRecipe, Grocery grocery, boolean isNotInGrocery, DbCallback<IngredientWithGroceryCheck> callback) throws ExecutionException, InterruptedException;
-
-        /**
-         * Delete All the recipe ingredients from the grocery
-         * @param myRecipe    Recipe to delete from grocery
-         * @param grocery   Grocery holding recipe and its ingredients to delete
-         */
-        void deleteRecipeFromGrocery(OfflineRecipe myRecipe, Grocery grocery);
 
         /**
          * Adds a tag to the recipe.
@@ -241,11 +128,6 @@ public interface RecipeOverviewContract {
         void loadingFailed(String message);
 
         /**
-         * Displays the Groceries that are holding the current Recipe.
-         */
-        void displayGroceriesHoldingRecipe();
-
-        /**
          * Displays the current RecipeCategory in the fragment
          * @param recipeCategory    RecipeCategory's name to display
          */
@@ -255,12 +137,6 @@ public interface RecipeOverviewContract {
          * Display the recipe tags.
          */
         void displayRecipeTags();
-
-        /**
-         * Display the ingredients that are added and not added to the Grocery list through the current Recipe.
-         * @param grocery   The Grocery holding the ingredients
-         */
-        void onGroceryHoldingRecipeClicked(Grocery grocery);
     }
 
     interface OverviewEditView extends OverviewView, RecipeTagsView {
@@ -270,20 +146,6 @@ public interface RecipeOverviewContract {
          * @param categoryNames The Array of category names to display
          */
         void createCategoriesAlertDialogue(String[] categoryNames);
-
-        /**
-         * Displays ingredients, checked if they will be added /  already added to Grocery list
-         * @param ingredients       ArrayList of ingredients objects that can be selected
-         * @param ingredientNames   Array of Ingredient names to display in list.
-         * @param grocery           Grocery list to add the recipe ingredients to
-         */
-        void displayRecipeIngredients(List<IngredientWithGroceryCheck> ingredients, String[] ingredientNames, Grocery grocery);
-
-        /**
-         * Displays the Groceries not holding the recipes inside a Dialog.
-         * @param groceries Groceries to display not holding the recipe
-         */
-        void displayGroceriesNotHoldingRecipe(List<Grocery> groceries);
 
         /**
          * Update the changes to the RecipeTag list.

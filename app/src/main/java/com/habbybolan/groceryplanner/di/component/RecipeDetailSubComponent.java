@@ -12,6 +12,7 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit.Recip
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionLikedRecipeFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionMyRecipeFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditFragment;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewLikedRecipeFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewMyRecipeFragment;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
@@ -42,4 +43,7 @@ public interface RecipeDetailSubComponent {
     void inject(RecipeDetailsRecipeActivity activity);
 
     void inject(RecipeDetailsLikedRecipeActivity recipeDetailsLikedRecipeActivity);
+
+    void inject(AddRecipeToGroceryListFragment addRecipeToGroceryListFragment);
+
 }

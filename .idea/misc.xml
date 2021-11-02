@@ -12,7 +12,10 @@
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/activity_recipe_details_liked_recipe.xml" value="0.34103260869565216" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/activity_recipe_details_read_only_abstract.xml" value="0.34103260869565216" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/activity_recipe_list.xml" value="0.3473731884057971" />
+        <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/activity_saved_recipes.xml" value="0.34375" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/custom_toolbar.xml" value="0.3496376811594203" />
+        <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/fragment_add_recipe_to_grocery_list.xml" value="0.3233695652173913" />
+        <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/fragment_online_recipe_edit_ingredients.xml" value="0.34375" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/fragment_recipe_detail.xml" value="0.3392210144927536" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/fragment_recipe_filter.xml" value="0.36666666666666664" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/fragment_recipe_ingredients_read_only.xml" value="0.3392210144927536" />
@@ -29,6 +32,7 @@
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/ingredient_list_details.xml" value="0.3392210144927536" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/navigation_header.xml" value="0.35054347826086957" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/recipe_details_fragments.xml" value="0.3473731884057971" />
+        <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/recipe_groceries_details.xml" value="0.35597826086956524" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/recipe_ingredients_details_read_only.xml" value="0.3392210144927536" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/recipe_nutrition_details.xml" value="0.3392210144927536" />
         <entry key="..\:/Programming projects/androidProjects/GroceryPlanner/app/src/main/res/layout/recipe_nutrition_details_edit.xml" value="0.17831813576494426" />

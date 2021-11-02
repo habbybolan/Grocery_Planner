@@ -178,27 +178,10 @@
                     android:textColor="?attr/editTextColor"
                     android:background="@android:color/transparent"/>
 
-                <TextView
-                    android:id="@+id/recipe_overview_grocery_tag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    android:text="Groceries" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_recipe_overview_groceries"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                <FrameLayout
+                    android:id="@+id/recipes_grocery_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_start_info" />
-
-                <ImageButton
-                    android:id="@+id/btn_recipe_overview_add_to_grocery"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="@dimen/margin_start_info"
-                    android:background="@android:color/transparent"
-                    android:src="@android:drawable/ic_input_add" />
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 

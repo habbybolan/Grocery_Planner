@@ -4,9 +4,6 @@ import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListContract;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListInteractorImpl;
 import com.habbybolan.groceryplanner.online.discover.recipelist.OnlineRecipeListPresenterImpl;
-import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewContract;
-import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewInteractorImpl;
-import com.habbybolan.groceryplanner.online.myrecipes.myrecipesedit.overview.OnlineRecipeEditOverviewPresenterImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -22,15 +19,5 @@ public class OnlineRecipeModule {
     @Provides
     OnlineRecipeListContract.Interactor provideOnlineRecipeListInteractor(RestWebService restWebService) {
         return new OnlineRecipeListInteractorImpl(restWebService);
-    }
-
-    @Provides
-    OnlineRecipeEditOverviewContract.Presenter provideOnlineRecipeEditPresenter(OnlineRecipeEditOverviewContract.Interactor interactor) {
-        return new OnlineRecipeEditOverviewPresenterImpl(interactor);
-    }
-
-    @Provides
-    OnlineRecipeEditOverviewContract.Interactor provideOnlineRecipeEditInteractor() {
-        return new OnlineRecipeEditOverviewInteractorImpl();
     }
 }

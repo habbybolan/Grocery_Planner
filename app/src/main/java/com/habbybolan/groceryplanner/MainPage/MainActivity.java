@@ -19,12 +19,10 @@ import com.habbybolan.groceryplanner.listing.grocerylist.GroceryListActivity;
 import com.habbybolan.groceryplanner.listing.ingredientlist.IngredientListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.likedrecipelist.LikedRecipeListActivity;
 import com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.MyRecipeListActivity;
-import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.online.discover.DiscoverActivity;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.OnlineRecipeDetailActivityEdit;
-import com.habbybolan.groceryplanner.online.myrecipes.MyRecipesActivity;
-import com.habbybolan.groceryplanner.online.savedrecipes.SavedRecipesActivity;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 public class MainActivity extends AppCompatActivity implements RecipeSideScrollFragment.RecipeSideScrollListener {
@@ -71,12 +69,6 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
                     return true;
                 } else if (id == R.id.discover_recipes) {
                     gotoDiscoverRecipe();
-                    return true;
-                } else if (id == R.id.my_online_recipes) {
-                    gotoMyRecipesList();
-                    return true;
-                } else if (id == R.id.saved_recipes) {
-                    gotoSavedRecipesList();
                     return true;
                 } else if (id == R.id.my_recipes) {
                     gotoMyRecipeList();
@@ -129,18 +121,6 @@ public class MainActivity extends AppCompatActivity implements RecipeSideScrollF
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container_trending_year_recipe_side_scroll, trendingYearScroll)
                 .commit();
-    }
-
-    /** Sends the activity to MyRecipesActivity */
-    private void gotoMyRecipesList() {
-        Intent intent = new Intent(this, MyRecipesActivity.class);
-        startActivity(intent);
-    }
-
-    /** Sends the activity to SavedRecipesActivity */
-    private void gotoSavedRecipesList() {
-        Intent intent = new Intent(this, SavedRecipesActivity.class);
-        startActivity(intent);
     }
 
     /** Sends the activity to the DiscoverActivity. */
