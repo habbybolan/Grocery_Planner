@@ -112,6 +112,7 @@ public interface RecipeIngredientsContract {
 
     interface RecipeIngredientsMyRecipeListener extends RecipeIngredientsListener{
         void onSwapViewIngredients();
+        void onSync();
     }
 
     interface RecipeIngredientsLikedRecipeListener extends RecipeIngredientsListener{

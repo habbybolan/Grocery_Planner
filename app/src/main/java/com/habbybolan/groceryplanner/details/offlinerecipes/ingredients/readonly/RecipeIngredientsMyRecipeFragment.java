@@ -52,6 +52,12 @@ public class RecipeIngredientsMyRecipeFragment extends RecipeIngredientsReadOnly
                         recipeIngredientsListener.onSwapViewIngredients();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeIngredientsListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -36,39 +36,11 @@ public class CustomToolbar {
         SORT_ICON_ID,
         SAVE_ICON_ID,
         CANCEL_ICON_ID,
-        SWAP_ICON_ID
+        SWAP_ICON_ID,
+        SYNC_ICON_ID
     }
 
     private CustomToolbarBinding toolbarBinding;
-
-    // TODO: Remove fields if not needed
-
-    private SearchCallback searchCallback;
-    private boolean hasSearchIcon;
-
-    private DeleteCallback deleteCallback;
-    private String itemToDelete;
-    private boolean hasDeleteIcon;
-
-    private String[] sortMethods;
-    private SortCallback sortCallback;
-    private boolean hasSortIcon;
-
-    private SaveCallback saveCallback;
-    private boolean hasSaveIcon;
-
-    private CancelCallback cancelCallback;
-    private boolean hasCancelIcon;
-
-    private SwapCallback swapCallback;
-    private boolean hasSwapIcon;
-
-    private int numIcons;
-    private String toolbarTitle;
-
-    private TitleSelectCallback titleSelectCallback;
-    private String[] titleMethods;
-    private boolean canSelectTitle;
 
     private CustomToolbar() {}
 
@@ -99,6 +71,9 @@ public class CustomToolbar {
 
         private SwapCallback swapCallback;
         private boolean hasSwapIcon = false;
+
+        private SyncCallback syncCallback;
+        private boolean hasSyncIcon = false;
 
         private TitleSelectCallback titleSelectCallback;
         private String[] titleMethods;
@@ -152,6 +127,12 @@ public class CustomToolbar {
             return this;
         }
 
+        public CustomToolbarBuilder addSyncIcon(SyncCallback syncCallback) {
+            hasSyncIcon = true;
+            this.syncCallback = syncCallback;
+            return this;
+        }
+
         public CustomToolbarBuilder allowClickTitle(TitleSelectCallback titleSelectCallback, String[] titleMethods) {
             canSelectTitle = true;
             this.titleSelectCallback = titleSelectCallback;
@@ -162,82 +143,66 @@ public class CustomToolbar {
         public CustomToolbar build() {
             CustomToolbar customToolbar = new CustomToolbar();
 
-            customToolbar.hasSearchIcon = hasSearchIcon;
-            customToolbar.searchCallback = searchCallback;
-            if (hasSearchIcon) addIconToToolbar(icons.SEARCH_ICON_ID.ordinal(), "Search", android.R.drawable.ic_menu_search);
-
-            customToolbar.hasDeleteIcon = hasDeleteIcon;
-            customToolbar.itemToDelete = itemToDelete;
-            customToolbar.deleteCallback = deleteCallback;
-            if (hasDeleteIcon) addIconToToolbar(icons.DELETE_ICON_ID.ordinal(), "Delete", android.R.drawable.ic_menu_delete);
-
-            customToolbar.sortCallback = sortCallback;
-            customToolbar.sortMethods = sortMethods;
-            customToolbar.hasSortIcon = hasSortIcon;
-            if (hasSortIcon) addIconToToolbar(icons.SORT_ICON_ID.ordinal(), "Sort", android.R.drawable.ic_menu_sort_by_size);
-
-            customToolbar.saveCallback = saveCallback;
-            customToolbar.hasSaveIcon = hasSaveIcon;
-            if (hasSaveIcon) addIconToToolbar(icons.SAVE_ICON_ID.ordinal(), "Save", android.R.drawable.ic_menu_save);
-
-            customToolbar.cancelCallback = cancelCallback;
-            customToolbar.hasCancelIcon = hasCancelIcon;
-            if (hasCancelIcon) addIconToToolbar(icons.CANCEL_ICON_ID.ordinal(), "Cancel", android.R.drawable.ic_menu_close_clear_cancel);
-
-            customToolbar.swapCallback = swapCallback;
-            customToolbar.hasSwapIcon = hasSwapIcon;
-            // todo: find a better icon for swap
-            if (hasSwapIcon) addIconToToolbar(icons.SWAP_ICON_ID.ordinal(), "Swap", android.R.drawable.ic_menu_share);
-
-            customToolbar.canSelectTitle = canSelectTitle;
-            customToolbar.titleSelectCallback = titleSelectCallback;
-            customToolbar.titleMethods = titleMethods;
-
-            customToolbar.numIcons = numIcons;
-
-            customToolbar.toolbarTitle = toolbarTitle;
             toolbarBinding.setTitle(toolbarTitle);
-
             customToolbar.toolbarBinding = toolbarBinding;
-            setMenuClickers();
+            setMenuClickersAndIcons();
 
             return customToolbar;
         }
 
-        private void setMenuClickers() {
+        private void setMenuClickersAndIcons() {
             Menu menu = toolbarBinding.customToolbar.getMenu();
 
             if (hasSearchIcon) {
+                addIconToToolbar(icons.SEARCH_ICON_ID.ordinal(), "Search", android.R.drawable.ic_menu_search);
                 menu.findItem(icons.SEARCH_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     searchClicker(menu);
                     return true;
                 });
             }
-            if (hasDeleteIcon)
+            if (hasDeleteIcon) {
+                addIconToToolbar(icons.DELETE_ICON_ID.ordinal(), "Delete", android.R.drawable.ic_menu_delete);
                 menu.findItem(icons.DELETE_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     checkDeletePopup();
                     return true;
                 });
-            if (hasSortIcon)
+            }
+            if (hasSortIcon) {
+                addIconToToolbar(icons.SORT_ICON_ID.ordinal(), "Sort", android.R.drawable.ic_menu_sort_by_size);
                 menu.findItem(icons.SORT_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     showSortPopup(toolbarBinding.customToolbar);
                     return true;
                 });
-            if (hasSaveIcon)
+            }
+            if (hasSaveIcon) {
+                addIconToToolbar(icons.SAVE_ICON_ID.ordinal(), "Save", android.R.drawable.ic_menu_save);
                 menu.findItem(icons.SAVE_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     saveCallback.saveClicked();
                     return true;
                 });
-            if (hasCancelIcon)
+            }
+            if (hasCancelIcon) {
+                addIconToToolbar(icons.CANCEL_ICON_ID.ordinal(), "Cancel", android.R.drawable.ic_menu_close_clear_cancel);
                 menu.findItem(icons.CANCEL_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     cancelCallback.cancelClicked();
                     return true;
                 });
-            if (hasSwapIcon)
+            }
+            if (hasSwapIcon) {
+                // todo: find a better icon for swap
+                addIconToToolbar(icons.SWAP_ICON_ID.ordinal(), "Swap", android.R.drawable.ic_menu_share);
                 menu.findItem(icons.SWAP_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
                     swapCallback.swapClicked();
                     return true;
                 });
+            }
+            if (hasSyncIcon) {
+                addIconToToolbar(icons.SYNC_ICON_ID.ordinal(), "SYnc", android.R.drawable.ic_popup_sync);
+                menu.findItem(icons.SYNC_ICON_ID.ordinal()).setOnMenuItemClickListener(l -> {
+                    syncCallback.syncClicked();
+                    return true;
+                });
+            }
 
             if (canSelectTitle)
                 toolbarBinding.toolbarTitle.setOnClickListener(l -> {
@@ -386,6 +351,9 @@ public class CustomToolbar {
     }
     public interface SwapCallback {
         void swapClicked();
+    }
+    public interface SyncCallback {
+        void syncClicked();
     }
     public interface TitleSelectCallback {
         void selectTitle(int pos);

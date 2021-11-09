@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe;
+package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe;
 
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsPresenterImpl;
@@ -8,10 +8,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class DetailsLikedRecipePresenterImpl extends RecipeDetailsPresenterImpl<LikedRecipe> implements RecipeDetailsContract.PresenterLikedRecipe{
+public class DetailsLikedRecipePresenterImpl extends RecipeDetailsPresenterImpl<RecipeDetailsContract.InteractorLikedRecipe, LikedRecipe> implements RecipeDetailsContract.PresenterLikedRecipe{
 
     @Inject
-    public DetailsLikedRecipePresenterImpl(RecipeDetailsContract.Interactor interactor) {
+    public DetailsLikedRecipePresenterImpl(RecipeDetailsContract.InteractorLikedRecipe interactor) {
         super(interactor);
     }
 

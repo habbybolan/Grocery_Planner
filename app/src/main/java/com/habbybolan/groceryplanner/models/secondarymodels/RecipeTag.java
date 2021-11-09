@@ -8,12 +8,13 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.habbybolan.groceryplanner.models.SyncJSON;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineModel;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 
-public class RecipeTag extends OnlineModel implements Parcelable {
+public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
 
     public static final String RECIPE_TAG = "recipe_tag";
 
@@ -160,6 +161,31 @@ public class RecipeTag extends OnlineModel implements Parcelable {
             return new RecipeTag[size];
         }
     };
+
+    @Override
+    public JsonObject createSyncJSON() {
+        return SyncJSON.getIsUpdate(dateUpdated, dateSynchronized) ? createSyncJSONUpdate() : createSyncJSONSync();
+    }
+
+    @Override
+    public JsonObject createSyncJSONUpdate() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        json.addProperty("online_id", onlineId);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
+    }
+
+    @Override
+    public JsonObject createSyncJSONSync() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        json.addProperty("online_id", onlineId);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
+    }
 
     public static class RecipeTagDeserializer implements JsonDeserializer<RecipeTag> {
 

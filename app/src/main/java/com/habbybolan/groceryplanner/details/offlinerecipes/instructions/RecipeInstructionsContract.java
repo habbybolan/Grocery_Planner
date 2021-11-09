@@ -50,6 +50,7 @@ public interface RecipeInstructionsContract {
 
     interface RecipeInstructionsMyRecipeListener extends RecipeInstructionsListener {
         void onSwapViewInstructions();
+        void onSync();
     }
 
     interface RecipeInstructionsLikedRecipeListener extends RecipeInstructionsListener {

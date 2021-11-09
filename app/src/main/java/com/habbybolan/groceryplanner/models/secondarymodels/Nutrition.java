@@ -2,12 +2,15 @@ package com.habbybolan.groceryplanner.models.secondarymodels;
 
 import android.os.Parcel;
 
+import com.google.gson.JsonObject;
+import com.habbybolan.groceryplanner.models.SyncJSON;
+
 import java.sql.Timestamp;
 
 /**
  * Models Nutritional values of Recipes and Ingredients.
  */
-public class Nutrition extends MeasurementType {
+public class Nutrition extends MeasurementType implements SyncJSON {
 
     public static final String CALORIES = "Calories";
     public static final String FAT = "fat";
@@ -190,5 +193,33 @@ public class Nutrition extends MeasurementType {
                 return SUGAR_ID;
             default: return PROTEIN_ID;
         }
+    }
+
+    @Override
+    public JsonObject createSyncJSON() {
+        return SyncJSON.getIsUpdate(dateUpdated, dateSynchronized) ? createSyncJSONUpdate() : createSyncJSONSync();
+    }
+
+    @Override
+    public JsonObject createSyncJSONUpdate() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
+        json.addProperty("id", getIdFromFrom(name));
+        json.addProperty("name", name);
+        json.addProperty("amount", amount);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
+    }
+
+    @Override
+    public JsonObject createSyncJSONSync() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.SYNC.toString());
+        json.addProperty("id", getIdFromFrom(name));
+        json.addProperty("name", name);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
     }
 }

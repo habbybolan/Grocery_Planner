@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.di.component;
 
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeActivity;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsRecipeActivity;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeActivity;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsLikedRecipeFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsMyRecipeFragment;
@@ -40,7 +40,7 @@ public interface RecipeDetailSubComponent {
     void inject(RecipeIngredientsLikedRecipeFragment fragment);
     void inject(RecipeIngredientsMyRecipeFragment fragment);
 
-    void inject(RecipeDetailsRecipeActivity activity);
+    void inject(RecipeDetailsMyRecipeActivity activity);
 
     void inject(RecipeDetailsLikedRecipeActivity recipeDetailsLikedRecipeActivity);
 

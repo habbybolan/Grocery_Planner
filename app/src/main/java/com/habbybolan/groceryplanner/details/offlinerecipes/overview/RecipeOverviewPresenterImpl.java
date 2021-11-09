@@ -56,7 +56,6 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
 
     // set up callback for loading recipeCategories
     private void setRecipeCategoryCallback() {
-
         currRecipeCategory.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
             @Override
             public void onPropertyChanged(Observable sender, int propertyId) {

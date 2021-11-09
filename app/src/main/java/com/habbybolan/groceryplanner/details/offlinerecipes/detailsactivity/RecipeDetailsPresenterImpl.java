@@ -3,9 +3,9 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity;
 import com.habbybolan.groceryplanner.DbSingleCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
-public abstract class RecipeDetailsPresenterImpl<U extends OfflineRecipe> implements RecipeDetailsContract.Presenter<U> {
+public abstract class RecipeDetailsPresenterImpl<T extends RecipeDetailsContract.Interactor, U extends OfflineRecipe> implements RecipeDetailsContract.Presenter<U> {
 
-    protected RecipeDetailsContract.Interactor interactor;
+    protected T interactor;
     private RecipeDetailsContract.DetailsView<U> view;
 
     protected DbSingleCallback<U> callback = new DbSingleCallback<U>() {
@@ -15,7 +15,7 @@ public abstract class RecipeDetailsPresenterImpl<U extends OfflineRecipe> implem
         }
     };
 
-    public RecipeDetailsPresenterImpl(RecipeDetailsContract.Interactor interactor) {
+    public RecipeDetailsPresenterImpl(T interactor) {
         this.interactor = interactor;
     }
 

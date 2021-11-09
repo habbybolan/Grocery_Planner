@@ -4,15 +4,13 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.JsonElement;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
+import com.habbybolan.groceryplanner.models.SyncJSON;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 
-import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 /**
  * Represents all recipes stored offline, including User's own recipes, recipes they've been added to, and liked recipes.
  */
-public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
+public class OfflineRecipe extends Recipe implements OfflineIngredientHolder, SyncJSON {
 
     protected long id;
     protected Timestamp dateSynchronized;
@@ -112,6 +110,74 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
             dest.writeByte((byte) 1);
             dest.writeLong(categoryId);
         }
+    }
+
+    @Override
+    public JsonObject createSyncJSON() {
+        return SyncJSON.getIsUpdate(dateUpdated, dateSynchronized) ? createSyncJSONUpdate() : createSyncJSONSync();
+    }
+
+    @Override
+    public JsonObject createSyncJSONUpdate() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
+        json.addProperty("id", id);
+        json.addProperty("name", name);
+        json.addProperty("online_id", onlineId);
+        json.addProperty("description", description);
+        json.addProperty("prep_time", prepTime);
+        json.addProperty("cook_time", cookTime);
+        json.addProperty("serving_size", servingSize);
+        json.addProperty("instructions", instructions);
+        if (dateCreated != null) json.addProperty("date_created", dateCreated.toString());
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        json.add("ingredients", createSyncJSONIngredients());
+        json.add("tags", createSyncJSONTags());
+        json.add("nutrition", createSyncJSONNutrition());
+        return json;
+    }
+
+    @Override
+    public JsonObject createSyncJSONSync() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
+        json.addProperty("id", id);
+        json.addProperty("name", name);
+        json.addProperty("online_id", onlineId);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        json.add("ingredients", createSyncJSONIngredients());
+        json.add("tags", createSyncJSONTags());
+        json.add("nutrition", createSyncJSONNutrition());
+        return json;
+    }
+
+    private JsonArray createSyncJSONIngredients() {
+        JsonArray json = new JsonArray();
+        for (Ingredient ingredient : ingredients) {
+            JsonObject jsonObject = SyncJSON.getIsUpdate(ingredient.getDateUpdated(), ingredient.getDateSynchronized()) ? ingredient.createSyncJSONUpdate() : ingredient.createSyncJSONSync();
+            json.add(jsonObject);
+        }
+        return json;
+    }
+
+    private JsonArray createSyncJSONNutrition() {
+        JsonArray json = new JsonArray();
+        for (Nutrition nutrition : getNutritionList()) {
+            JsonObject jsonObject = SyncJSON.getIsUpdate(nutrition.getDateUpdated(), nutrition.getDateSynchronized()) ? nutrition.createSyncJSONUpdate() : nutrition.createSyncJSONSync();
+            json.add(jsonObject);
+        }
+        return json;
+    }
+
+    private JsonArray createSyncJSONTags() {
+        JsonArray json = new JsonArray();
+        for (RecipeTag tag : recipeTags) {
+            JsonObject jsonObject = SyncJSON.getIsUpdate(tag.getDateUpdated(), tag.getDateSynchronized()) ? tag.createSyncJSONUpdate() : tag.createSyncJSONSync();
+            json.add(jsonObject);
+        }
+        return json;
     }
 
     /**
@@ -325,23 +391,5 @@ public class OfflineRecipe extends Recipe implements OfflineIngredientHolder  {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
-    }
-
-
-    public static class OnlineRecipeSerializer implements JsonSerializer<OfflineRecipe> {
-
-        @Override
-        public JsonElement serialize(OfflineRecipe src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("id", src.getId());
-            jsonObject.addProperty("onlineId", src.getOnlineId());
-            jsonObject.addProperty("name", src.getName());
-            jsonObject.addProperty("description", src.getDescription());
-            jsonObject.addProperty("prep_time", src.getPrepTime());
-            jsonObject.addProperty("cookTime", src.getCookTime());
-            jsonObject.addProperty("servingSize", src.getServingSize());
-            // todo: finish
-            return null;
-        }
     }
 }

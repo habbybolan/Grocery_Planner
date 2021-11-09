@@ -4,12 +4,14 @@ import android.os.Parcel;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.JsonObject;
+import com.habbybolan.groceryplanner.models.SyncJSON;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Ingredient extends OnlineModel {
+public class Ingredient extends OnlineModel implements SyncJSON {
 
     protected long id;
     protected float quantity;
@@ -38,6 +40,38 @@ public class Ingredient extends OnlineModel {
     public Ingredient(Ingredient ingredient) {
         this(ingredient.getId(), ingredient.getOnlineId(), ingredient.getName(), ingredient.getQuantity(),
                 ingredient.getQuantityMeasId(), ingredient.getFoodType(), ingredient.getDateUpdated(), ingredient.getDateSynchronized());
+    }
+
+    @Override
+    public JsonObject createSyncJSON() {
+        return SyncJSON.getIsUpdate(dateUpdated, dateSynchronized) ? createSyncJSONUpdate() : createSyncJSONSync();
+    }
+
+    @Override
+    public JsonObject createSyncJSONUpdate() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
+        json.addProperty("id", id);
+        json.addProperty("online_id", onlineId);
+        json.addProperty("name", name);
+        json.addProperty("quantity_meas_id", quantityMeasId);
+        json.addProperty("quantity", quantity);
+        json.addProperty("food_type", foodType.getId());
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
+    }
+
+    @Override
+    public JsonObject createSyncJSONSync() {
+        JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.SYNC.toString());
+        json.addProperty("id", id);
+        json.addProperty("online_id", onlineId);
+        json.addProperty("name", name);
+        if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
+        if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
+        return json;
     }
 
     /**

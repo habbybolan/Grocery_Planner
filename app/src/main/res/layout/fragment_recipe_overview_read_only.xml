@@ -77,9 +77,9 @@
                         android:id="@+id/prep_title"
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:text="Prep"
                         android:textAlignment="center"
-                        android:text="Prep"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/prep_value"
@@ -121,9 +121,9 @@
                         android:id="@+id/serving_title"
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:text="Servings"
                         android:textAlignment="center"
-                        android:text="Prep"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/serving_value"

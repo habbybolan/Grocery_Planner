@@ -17,12 +17,6 @@
             android:name=".details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeActivity"
             android:exported="false" />
         <activity android:name=".listing.recipelist.likedrecipelist.LikedRecipeListActivity" />
-        <activity
-            android:name=".online.myrecipes.MyRecipesActivity"
-            android:label="@string/title_activity_my_recipes"
-            android:theme="@style/MyMaterialTheme.NoActionBar" />
-        <activity android:name=".online.myrecipes.myrecipesedit.OnlineRecipeDetailsEditEditActivity" />
-        <activity android:name=".online.savedrecipes.SavedRecipesActivity" />
         <activity android:name=".online.displayonlinerecipe.OnlineRecipeDetailActivityEdit" />
         <activity
             android:name=".online.discover.DiscoverActivity"
@@ -39,7 +33,7 @@
             android:name=".MainPage.MainActivity"
             android:parentActivityName=".listing.grocerylist.GroceryListActivity" />
         <activity
-            android:name=".details.offlinerecipes.detailsactivity.RecipeDetailsRecipeActivity"
+            android:name=".details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeActivity"
             android:parentActivityName=".MainPage.MainActivity" />
         <activity
             android:name=".listing.recipelist.myrecipelist.MyRecipeListActivity"

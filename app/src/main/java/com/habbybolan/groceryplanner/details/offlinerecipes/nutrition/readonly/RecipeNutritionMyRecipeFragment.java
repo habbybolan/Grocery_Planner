@@ -13,7 +13,7 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-public class RecipeNutritionMyRecipeFragment extends RecipeNutritionReadOnlyFragment<RecipeNutritionContract.RecipeNutritionRecipeListener> {
+public class RecipeNutritionMyRecipeFragment extends RecipeNutritionReadOnlyFragment<RecipeNutritionContract.RecipeNutritionMyRecipeListener> {
 
     public RecipeNutritionMyRecipeFragment() {}
 
@@ -26,7 +26,7 @@ public class RecipeNutritionMyRecipeFragment extends RecipeNutritionReadOnlyFrag
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        recipeNutritionListener = (RecipeNutritionRecipeListener) context;
+        recipeNutritionListener = (RecipeNutritionMyRecipeListener) context;
     }
 
     protected void setToolbar() {
@@ -35,6 +35,12 @@ public class RecipeNutritionMyRecipeFragment extends RecipeNutritionReadOnlyFrag
                     @Override
                     public void swapClicked() {
                         recipeNutritionListener.onSwapViewNutrition();
+                    }
+                })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeNutritionListener.onSync();
                     }
                 })
                 .build();
@@ -46,6 +52,6 @@ public class RecipeNutritionMyRecipeFragment extends RecipeNutritionReadOnlyFrag
         });
     }
 
-    public interface RecipeNutritionRecipeListener extends RecipeNutritionContract.RecipeNutritionRecipeListener {
+    public interface RecipeNutritionMyRecipeListener extends RecipeNutritionContract.RecipeNutritionMyRecipeListener {
     }
 }

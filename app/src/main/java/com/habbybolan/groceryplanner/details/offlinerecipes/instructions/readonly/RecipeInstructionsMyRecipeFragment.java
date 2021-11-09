@@ -36,6 +36,12 @@ public class RecipeInstructionsMyRecipeFragment extends RecipeInstructionsReadOn
                         recipeInstructionsListener.onSwapViewInstructions();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeInstructionsListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override

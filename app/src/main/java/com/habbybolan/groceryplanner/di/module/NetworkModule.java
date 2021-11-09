@@ -1,9 +1,12 @@
 package com.habbybolan.groceryplanner.di.module;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.habbybolan.groceryplanner.http.RequestInterceptor;
 import com.habbybolan.groceryplanner.http.RestWebService;
+import com.habbybolan.groceryplanner.models.lists.MyRecipeList;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.User;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -30,8 +33,8 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    Interceptor requestInterceptor(RequestInterceptor interceptor) {
-        return interceptor;
+    Interceptor requestInterceptor(Context application) {
+        return new RequestInterceptor(application);
     }
 
     @Provides
@@ -46,6 +49,12 @@ public class NetworkModule {
     Gson getRecipeGson() {
         return new GsonBuilder()
                 .registerTypeAdapter(OnlineRecipe.class, new OnlineRecipe.OnlineRecipeDeserialize())
+                .create();
+    }
+
+    Gson setRecipeListGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(MyRecipeList.class, new MyRecipeList.MyRecipeListSerializer())
                 .create();
     }
 
@@ -67,6 +76,7 @@ public class NetworkModule {
         return new Retrofit
                 .Builder()
                 .baseUrl(REST_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(setRecipeListGson()))
                 .addConverterFactory(GsonConverterFactory.create(getRecipeGson()))
                 .addConverterFactory(GsonConverterFactory.create(getRecipeTagGson()))
                 .addConverterFactory(GsonConverterFactory.create(getUserGson()))

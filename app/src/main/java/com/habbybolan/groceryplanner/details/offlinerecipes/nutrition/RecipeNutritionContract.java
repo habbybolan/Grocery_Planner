@@ -69,8 +69,9 @@ public interface RecipeNutritionContract {
         OfflineRecipe getRecipe();
     }
 
-    interface RecipeNutritionRecipeListener extends RecipeNutritionListener {
+    interface RecipeNutritionMyRecipeListener extends RecipeNutritionListener {
         void onSwapViewNutrition();
+        void onSync();
     }
 
     interface RecipeNutritionLikedRecipeListener extends RecipeNutritionListener {

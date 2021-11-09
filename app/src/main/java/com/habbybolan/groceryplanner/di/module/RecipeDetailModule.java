@@ -1,10 +1,11 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsLikedRecipePresenterImpl;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsMyRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.DetailsLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsMyRecipePresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditInteractorImpl;
@@ -126,17 +127,22 @@ public class RecipeDetailModule {
 
 
     @Provides
-    RecipeDetailsContract.PresenterMyRecipe provideRecipeDetailLikedRecipePresenter(RecipeDetailsContract.Interactor interactor) {
+    RecipeDetailsContract.PresenterMyRecipe provideRecipeDetailMyRecipePresenter(RecipeDetailsContract.InteractorMyRecipe interactor) {
         return new DetailsMyRecipePresenterImpl(interactor);
     }
 
     @Provides
-    RecipeDetailsContract.PresenterLikedRecipe provideRecipeDetailMyRecipePresenter(RecipeDetailsContract.Interactor interactor) {
+    RecipeDetailsContract.PresenterLikedRecipe provideRecipeDetailLikedRecipePresenter(RecipeDetailsContract.InteractorLikedRecipe interactor) {
         return new DetailsLikedRecipePresenterImpl(interactor);
     }
 
     @Provides
-    RecipeDetailsContract.Interactor provideRecipeDetailInteractor(DatabaseAccess databaseAccess, RestWebService restWebService) {
-        return new RecipeDetailsInteractorImpl(databaseAccess, restWebService);
+    RecipeDetailsContract.InteractorMyRecipe provideMyRecipeDetailInteractor(DatabaseAccess databaseAccess, RestWebService restWebService) {
+        return new RecipeDetailsMyRecipeInteractorImpl(databaseAccess, restWebService);
+    }
+
+    @Provides
+    RecipeDetailsContract.InteractorLikedRecipe provideLikedRecipeDetailInteractor(DatabaseAccess databaseAccess, RestWebService restWebService) {
+        return new RecipeDetailsLikedRecipeInteractorImpl(databaseAccess, restWebService);
     }
 }

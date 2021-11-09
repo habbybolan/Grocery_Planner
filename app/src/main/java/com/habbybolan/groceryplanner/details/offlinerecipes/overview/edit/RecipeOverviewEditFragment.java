@@ -35,7 +35,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     RecipeOverviewContract.PresenterEdit presenter;
 
     private FragmentRecipeOverviewEditBinding binding;
-    private RecipeOverviewListener recipeOverviewListener;
+    private RecipeOverviewMyListener recipeOverviewListener;
     private CustomToolbar customToolbar;
     private RecipeCategory selectedRecipeCategory;
 
@@ -52,7 +52,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        recipeOverviewListener = (RecipeOverviewListener) context;
+        recipeOverviewListener = (RecipeOverviewMyListener) context;
     }
 
     @Override
@@ -159,6 +159,12 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
                         recipeOverviewListener.onSwapViewOverview();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeOverviewListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +258,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public interface RecipeOverviewListener extends RecipeOverviewContract.RecipeOverviewRecipeListener {
+    public interface RecipeOverviewMyListener extends RecipeOverviewContract.RecipeOverviewMyRecipeListener {
         void onRecipeDeleted();
     }
 }

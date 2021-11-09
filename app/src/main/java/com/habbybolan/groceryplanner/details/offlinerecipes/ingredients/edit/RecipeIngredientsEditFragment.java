@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeIngredientsEditBinding;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsRecipeActivity;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeActivity;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
@@ -92,6 +92,12 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
                         recipeIngredientsListener.onSwapViewIngredients();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeIngredientsListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +158,7 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
     }
 
     /**
-     * Listener interface implemented by {@link RecipeDetailsRecipeActivity}
+     * Listener interface implemented by {@link RecipeDetailsMyRecipeActivity}
      */
     public interface RecipeIngredientsListener extends RecipeIngredientsContract.RecipeIngredientsMyRecipeListener, ItemListener<Ingredient> {
 

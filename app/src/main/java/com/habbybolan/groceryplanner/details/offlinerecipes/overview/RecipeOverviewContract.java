@@ -157,8 +157,9 @@ public interface RecipeOverviewContract {
         OfflineRecipe getRecipe();
     }
 
-    interface RecipeOverviewRecipeListener extends RecipeOverviewListener{
+    interface RecipeOverviewMyRecipeListener extends RecipeOverviewListener{
         void onSwapViewOverview();
+        void onSync();
     }
 
     interface RecipeOverviewLikedRecipeListener extends RecipeOverviewListener {

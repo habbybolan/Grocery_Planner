@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsEditBinding;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsRecipeActivity;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeActivity;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
@@ -103,6 +103,12 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
                         recipeStepListener.onSwapViewInstructions();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeStepListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +132,7 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
     }
 
     /**
-     * Listener interface implemented by {@link RecipeDetailsRecipeActivity}
+     * Listener interface implemented by {@link RecipeDetailsMyRecipeActivity}
      */
     public interface RecipeStepListener extends RecipeInstructionsContract.RecipeInstructionsMyRecipeListener {
         void onRecipeDeleted();

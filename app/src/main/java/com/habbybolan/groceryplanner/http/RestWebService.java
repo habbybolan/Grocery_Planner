@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.http;
 
+import com.google.gson.JsonObject;
+import com.habbybolan.groceryplanner.models.lists.MyRecipeList;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.User;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -12,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -43,6 +46,9 @@ public interface RestWebService {
     @GET("/api/recipes/tags")
     Call<List<RecipeTag>> listSearchedRecipeTags(@Query("offset") int offset, @Query("size") int size,
                                               @Query("sort") String sort, @Query("tagSearch") String tagSearch);
+
+    @PUT("/api/recipes/sync")
+    Call<JsonObject> syncedMyRecipes(@Body MyRecipeList myRecipeList);
 
     @POST("/api/login")
     Call<User> login(@Body Login login);

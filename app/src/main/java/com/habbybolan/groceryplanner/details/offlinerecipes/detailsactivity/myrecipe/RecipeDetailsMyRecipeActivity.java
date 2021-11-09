@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity;
+package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.RecipeDetailsEditAbstractActivity;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsMyRecipeFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.edit.RecipeInstructionsEditFragment;
@@ -31,23 +32,23 @@ import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import javax.inject.Inject;
 
-public class RecipeDetailsRecipeActivity extends RecipeDetailsEditAbstractActivity
+public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActivity
         <RecipeOverviewMyRecipeFragment,
                 RecipeNutritionMyRecipeFragment,
                 RecipeInstructionsMyRecipeFragment,
                 RecipeIngredientsMyRecipeFragment,
                 MyRecipe>
-                                implements RecipeOverviewEditFragment.RecipeOverviewListener,
-                                            RecipeOverviewMyRecipeFragment.RecipeOverviewListener,
-                                            IngredientEditFragment.IngredientEditListener,
-                                            RecipeIngredientsEditFragment.RecipeIngredientsListener,
-                                            RecipeIngredientsMyRecipeFragment.RecipeIngredientsListener,
-                                            RecipeInstructionsEditFragment.RecipeStepListener,
-                                            RecipeInstructionsMyRecipeFragment.RecipeInstructionsListener,
-                                            RecipeNutritionEditFragment.RecipeNutritionListener,
-        RecipeNutritionMyRecipeFragment.RecipeNutritionRecipeListener,
-                                            IngredientAddFragment.IngredientAddListener,
-        RecipeDetailsContract.DetailsView<MyRecipe> {
+        implements RecipeOverviewEditFragment.RecipeOverviewMyListener,
+                    RecipeOverviewMyRecipeFragment.RecipeOverviewMyListener,
+                    IngredientEditFragment.IngredientEditListener,
+                    RecipeIngredientsEditFragment.RecipeIngredientsListener,
+                    RecipeIngredientsMyRecipeFragment.RecipeIngredientsListener,
+                    RecipeInstructionsEditFragment.RecipeStepListener,
+                    RecipeInstructionsMyRecipeFragment.RecipeInstructionsListener,
+        RecipeNutritionEditFragment.RecipeNutritionMyListener,
+        RecipeNutritionMyRecipeFragment.RecipeNutritionMyRecipeListener,
+                    IngredientAddFragment.IngredientAddListener,
+                    RecipeDetailsContract.DetailsView<MyRecipe> {
 
     private ActivityRecipeDetailBinding binding;
 
@@ -125,6 +126,11 @@ public class RecipeDetailsRecipeActivity extends RecipeDetailsEditAbstractActivi
     @Override
     public void onSwapViewOverview() {
         swapViewOverview();
+    }
+
+    @Override
+    public void onSync() {
+        presenter.onSync(recipe);
     }
 
     /**

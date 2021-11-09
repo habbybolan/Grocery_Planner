@@ -18,17 +18,41 @@ public interface RecipeDetailsContract {
 
     interface PresenterLikedRecipe extends Presenter<LikedRecipe> {}
 
-    interface PresenterMyRecipe extends Presenter<MyRecipe> {}
-
-    interface Interactor {
+    interface PresenterMyRecipe extends Presenter<MyRecipe> {
 
         /**
-         * Retrieve the full recipe from the room database.
+         * Send to Interactor to sync myRecipe.
+         * @param myRecipe  Recipe to sync with online database.
+         */
+        void onSync(MyRecipe myRecipe);
+    }
+
+    interface Interactor {
+    }
+
+    interface InteractorMyRecipe extends Interactor{
+
+        /**
+         * Retrieve the full MyRecipe from the room database.
          * @param recipeId  Id of recipe to retrieve in full
-         * @param callback  Callback to signal the OfflineRecipe is loaded
+         * @param callback  Callback to signal the MyRecipe is loaded
          */
         void fetchMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException;
 
+        /**
+         * Deserialize myRecipe to JSON for sending to online database and syncing.
+         * @param myRecipe  Recipe to deserialize and send to online database for syncing
+         */
+        void onSync(MyRecipe myRecipe);
+    }
+
+    interface InteractorLikedRecipe extends Interactor {
+
+        /**
+         * Retrieve the full LikedRecipe from the room database.
+         * @param recipeId  Id of recipe to retrieve in full
+         * @param callback  Callback to signal the LikedRecipe is loaded
+         */
         void fetchLikedRecipe(long recipeId, DbSingleCallback<LikedRecipe> callback) throws ExecutionException, InterruptedException;
     }
 

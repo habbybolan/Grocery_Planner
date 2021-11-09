@@ -8,10 +8,10 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class DetailsMyRecipePresenterImpl extends RecipeDetailsPresenterImpl<MyRecipe> implements RecipeDetailsContract.PresenterMyRecipe{
+public class DetailsMyRecipePresenterImpl extends RecipeDetailsPresenterImpl<RecipeDetailsContract.InteractorMyRecipe, MyRecipe> implements RecipeDetailsContract.PresenterMyRecipe{
 
     @Inject
-    public DetailsMyRecipePresenterImpl(RecipeDetailsContract.Interactor interactor) {
+    public DetailsMyRecipePresenterImpl(RecipeDetailsContract.InteractorMyRecipe interactor) {
         super(interactor);
     }
 
@@ -22,5 +22,10 @@ public class DetailsMyRecipePresenterImpl extends RecipeDetailsPresenterImpl<MyR
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onSync(MyRecipe myRecipe) {
+        interactor.onSync(myRecipe);
     }
 }

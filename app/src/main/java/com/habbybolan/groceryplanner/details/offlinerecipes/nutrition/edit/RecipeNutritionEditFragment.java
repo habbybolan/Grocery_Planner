@@ -31,7 +31,7 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
     @Inject
     RecipeNutritionContract.PresenterEdit presenter;
     private FragmentRecipeNutritionBinding binding;
-    private RecipeNutritionListener recipeNutritionListener;
+    private RecipeNutritionMyListener recipeNutritionListener;
     private CustomToolbar customToolbar;
     private RecipeNutritionEditAdapter adapter;
 
@@ -105,6 +105,12 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
                         recipeNutritionListener.onSwapViewNutrition();
                     }
                 })
+                .addSyncIcon(new CustomToolbar.SyncCallback() {
+                    @Override
+                    public void syncClicked() {
+                        recipeNutritionListener.onSync();
+                    }
+                })
                 .build();
         customToolbar.getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,10 +130,10 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        recipeNutritionListener = (RecipeNutritionListener) context;
+        recipeNutritionListener = (RecipeNutritionMyListener) context;
     }
 
-    public interface RecipeNutritionListener extends RecipeNutritionContract.RecipeNutritionRecipeListener {
+    public interface RecipeNutritionMyListener extends RecipeNutritionContract.RecipeNutritionMyRecipeListener {
         void onRecipeDeleted();
     }
 }
