@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class Recipe extends IngredientHolder implements Parcelable {
 
     protected boolean isFavorite;
-    protected String description;
+    protected String description = "";
     protected int prepTime = -1;
     protected int cookTime = -1;
     protected int servingSize = -1;
@@ -26,14 +26,17 @@ public abstract class Recipe extends IngredientHolder implements Parcelable {
     protected Nutrition fiber;
     protected Nutrition sugar;
     protected Nutrition protein;
-    protected String instructions;
+    protected String instructions = "";
     protected Timestamp dateCreated;
     protected int likes;
 
     protected List<RecipeTag> recipeTags = new ArrayList<>();
     protected List<Ingredient> ingredients = new ArrayList<>();
 
-    public Recipe() {}
+    public Recipe() {
+        // set up so no nutritional value is null
+        for (Nutrition nutrition : getAllNutritionList()) findNutrition(nutrition);
+    }
 
     public Recipe(Parcel in) {
         super(in);
@@ -177,13 +180,21 @@ public abstract class Recipe extends IngredientHolder implements Parcelable {
     public static List<Ingredient> convertTuplesToIngredients(List<RecipeIngredientsTuple> ingredientsTuple) {
         List<Ingredient> ingredients = new ArrayList<>();
         for (RecipeIngredientsTuple tuple : ingredientsTuple) {
-            ingredients.add(new Ingredient.IngredientBuilder(tuple.ingredientName).setFoodType(tuple.foodTypeId).setQuantity(tuple.quantity).setQuantityMeasId(tuple.quantityMeasId).build());
+            ingredients.add(new Ingredient.IngredientBuilder(tuple.ingredientId, tuple.onlineIngredientId, tuple.ingredientName)
+                    .setFoodType(tuple.foodTypeId)
+                    .setQuantity(tuple.quantity)
+                    .setQuantityMeasId(tuple.quantityMeasId)
+                    .setDateSynchronized(tuple.dateSynchronized)
+                    .setDateUpdated(tuple.dateUpdated)
+                    .build());
         }
         return ingredients;
     }
 
-    public List<Nutrition> getNutritionList() {
-        // create a list oif the Nutrition, in order of their ids
+    /** Gets all nutrition objects, regardless of it being null or having null values
+     * @return  All nutritional objects
+     */
+    public List<Nutrition> getAllNutritionList() {
         List<Nutrition> nutritionList = new ArrayList<>();
         nutritionList.add(calories != null ? calories : new Nutrition(Nutrition.CALORIES, 0, null));
         nutritionList.add(fat != null ? fat : new Nutrition(Nutrition.FAT, 0, null));
@@ -195,32 +206,20 @@ public abstract class Recipe extends IngredientHolder implements Parcelable {
         return nutritionList;
     }
 
-    public void removeNutrition(Nutrition nutrition) {
-        switch (nutrition.getName()) {
-            case Nutrition.CALORIES:
-                calories = null;
-                break;
-            case Nutrition.FAT:
-                fat = null;
-                break;
-            case Nutrition.SATURATED_FAT:
-                saturatedFat = null;
-                break;
-            case Nutrition.FIBRE:
-                fiber = null;
-                break;
-            case Nutrition.PROTEIN:
-                protein = null;
-                break;
-            case Nutrition.SUGAR:
-                sugar = null;
-                break;
-            case Nutrition.CARBOHYDRATES:
-                carbohydrates = null;
-                break;
-            default:
-                throw new IllegalArgumentException(nutrition.getName() + " doesn't exists as a nutrition.");
-        }
+    /**
+     * Gets the nutritions that have specified values.
+     * @return  The nutritional values with a valid ID
+     */
+    public List<Nutrition> getNutritionList() {
+        List<Nutrition> nutritionList = new ArrayList<>();
+        if (calories != null && calories.getMeasurementType().getMeasurementId() != null) nutritionList.add(calories);
+        if (fat != null && fat.getMeasurementType().getMeasurementId() != null)nutritionList.add(fat);
+        if (saturatedFat != null && saturatedFat.getMeasurementType().getMeasurementId() != null) nutritionList.add(saturatedFat);
+        if (carbohydrates != null && carbohydrates.getMeasurementType().getMeasurementId() != null) nutritionList.add(carbohydrates);
+        if (fiber != null && fiber.getMeasurementType().getMeasurementId() != null) nutritionList.add(fiber);
+        if (sugar != null && sugar.getMeasurementType().getMeasurementId() != null) nutritionList.add(sugar);
+        if (protein != null && protein.getMeasurementType().getMeasurementId() != null) nutritionList.add(protein);
+        return nutritionList;
     }
 
     public void setRecipeTags(List<RecipeTag> recipeTags) {

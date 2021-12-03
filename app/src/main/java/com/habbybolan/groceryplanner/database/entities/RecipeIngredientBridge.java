@@ -55,4 +55,17 @@ public class  RecipeIngredientBridge {
         this.quantity = quantity;
         this.quantityMeasId = quantityMeasId;
     }
+
+    public void setDateSynchronized(Timestamp date) {
+        this.dateSynchronized = date;
+    }
+    public void setDateUpdated(Timestamp date) {
+        this.dateUpdated = date;
+    }
+    public void setIngredientId(long id) {
+        this.ingredientId = id;
+    }
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

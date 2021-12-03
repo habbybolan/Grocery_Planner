@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.listing.ingredientlist.ingredientlist;
 
-import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;

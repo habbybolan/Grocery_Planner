@@ -21,8 +21,6 @@ import java.util.List;
 
 public class OnlineRecipe extends Recipe {
 
-    private Timestamp dateUpdated;
-
     private OnlineRecipe() {
         super();
     }
@@ -214,10 +212,6 @@ public class OnlineRecipe extends Recipe {
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    public Timestamp getDateUpdated() {
-        return dateUpdated;
     }
 
     public static class OnlineRecipeDeserialize implements JsonDeserializer<OnlineRecipe>{

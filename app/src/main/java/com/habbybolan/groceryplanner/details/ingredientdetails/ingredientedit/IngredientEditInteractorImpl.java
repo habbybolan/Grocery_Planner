@@ -1,9 +1,10 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
-import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
+import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 
 import java.util.ArrayList;
 
@@ -45,8 +46,13 @@ public class IngredientEditInteractorImpl implements IngredientEditContract.Inte
                         add(ingredient);
                     }});
             } else {
-                databaseAccess.addIngredient(ingredient);
-            }
+                databaseAccess.addIngredient(ingredient, new DbSingleCallback<Ingredient>() {
+                    @Override
+                    public void onResponse(Ingredient response) {
+                        // TODO: MOVE THIS CALLBACK TO THE PRESENTER
+                    }
+                });
+        }
             return true;
         } else
             return false;
@@ -64,7 +70,7 @@ public class IngredientEditInteractorImpl implements IngredientEditContract.Inte
         if (!quantity.equals("")) ingredient.setQuantity(Float.parseFloat(quantity));
         else ingredient.setQuantity(0);
         if (!quantityType.equals(""))
-            ingredient.setQuantityMeasId(Nutrition.getMeasurementId(quantityType));
+            ingredient.setQuantityMeasId(MeasurementType.getMeasurementId(quantityType));
         ingredient.setFoodType(foodType);
         ingredient.setId(ingredientId);
         return ingredient;

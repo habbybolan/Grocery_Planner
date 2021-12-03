@@ -11,7 +11,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
+import com.habbybolan.groceryplanner.database.dao.NutritionDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeDao;
+import com.habbybolan.groceryplanner.database.dao.RecipeTagDao;
 import com.habbybolan.groceryplanner.database.entities.AccessLevelEntity;
 import com.habbybolan.groceryplanner.database.entities.FoodTypeEntity;
 import com.habbybolan.groceryplanner.database.entities.GroceryEntity;
@@ -45,9 +47,11 @@ import java.sql.Timestamp;
 @TypeConverters({LocalDatabase.Converters.class})
 public abstract class LocalDatabase extends RoomDatabase {
 
-    public abstract GroceryDao getGroceryIngredientDao();
-    public abstract RecipeDao getRecipeIngredientDao();
+    public abstract GroceryDao getGroceryDao();
+    public abstract RecipeDao getRecipeDao();
     public abstract IngredientDao getIngredientDao();
+    public abstract RecipeTagDao getRecipeTagDao();
+    public abstract NutritionDao getNutritionDao();
 
     public static class Converters {
         @TypeConverter
@@ -87,7 +91,7 @@ public abstract class LocalDatabase extends RoomDatabase {
 
             @Override
             public void onOpen(@NonNull SupportSQLiteDatabase db){
-                // prevent recursion so trigger doesn't infinitely trigger
+                // prevent recursion so triggers don't infinitely trigger
                 db.execSQL("PRAGMA recursive_triggers = OFF;");
             }
 
@@ -96,24 +100,24 @@ public abstract class LocalDatabase extends RoomDatabase {
                 super.onCreate(db);
 
                 // Trigger to set date_created on recipe
-                db.execSQL("CREATE TRIGGER recipe_insert_trigger AFTER INSERT " +
+                /*db.execSQL("CREATE TRIGGER recipe_insert_trigger AFTER INSERT " +
                         "       ON RecipeEntity" +
                         "       BEGIN" +
                         "           UPDATE RecipeEntity SET " +
                         "               date_created=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
                         "           WHERE recipeId = NEW.recipeId; " +
-                        "       END; ");
+                        "       END; ");*/
                 // Trigger to update date_updated on RecipeEntity update
-                db.execSQL("CREATE TRIGGER recipe_update_trigger AFTER UPDATE " +
+                /*db.execSQL("CREATE TRIGGER recipe_update_trigger AFTER UPDATE " +
                         "       ON RecipeEntity" +
                         "       BEGIN" +
                         "           UPDATE RecipeEntity SET " +
                         "               date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
                         "               is_deleted = false" +
                         "           WHERE recipeId = NEW.recipeId; " +
-                        "       END; ");
+                        "       END; ");*/
                 // Trigger to update date_updated on MyRecipeEntity update
-                db.execSQL("CREATE TRIGGER my_recipe_update_trigger AFTER UPDATE " +
+                /*db.execSQL("CREATE TRIGGER my_recipe_update_trigger AFTER UPDATE " +
                         "       ON MyRecipeEntity" +
                         "       BEGIN" +
                         "           UPDATE MyRecipeEntity SET " +
@@ -129,10 +133,10 @@ public abstract class LocalDatabase extends RoomDatabase {
                         "               date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
                         "               is_deleted = false" +
                         "           WHERE id = NEW.id; " +
-                        "       END; ");
+                        "       END; ");*/
 
                 // Trigger to update date_updated on RecipeTagBridge update
-                db.execSQL("CREATE TRIGGER recipe_tag_update_trigger AFTER UPDATE " +
+                /*db.execSQL("CREATE TRIGGER recipe_tag_update_trigger AFTER UPDATE " +
                         "       ON RecipeTagBridge" +
                         "       BEGIN" +
 
@@ -157,7 +161,7 @@ public abstract class LocalDatabase extends RoomDatabase {
                         "           UPDATE RecipeIngredientBridge SET date_updated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')," +
                         "           is_deleted = false" +
                         "           WHERE recipeId = NEW.recipeId AND ingredientId = New.ingredientId; " +
-                        "       END; ");
+                        "       END; ");*/
 
                 // set measurement values
 

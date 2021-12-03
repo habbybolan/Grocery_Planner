@@ -3,6 +3,7 @@ package com.habbybolan.groceryplanner.models.primarymodels;
 import android.os.Parcel;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.habbybolan.groceryplanner.models.SyncJSON;
@@ -19,8 +20,6 @@ public class Ingredient extends OnlineModel implements SyncJSON {
     @NonNull
     protected String name = "";
     protected FoodType foodType;
-    private Timestamp dateUpdated;
-    private Timestamp dateSynchronized;
 
 
     public final static String INGREDIENT = "ingredient";
@@ -126,6 +125,10 @@ public class Ingredient extends OnlineModel implements SyncJSON {
             this.dateUpdated = dateUpdated;
             return this;
         }
+        public IngredientBuilder setOnlineId(Long onlineId) {
+            this.onlineId = onlineId;
+            return this;
+        }
         public IngredientBuilder setDateSynchronized(Timestamp dateSynchronized) {
             this.dateSynchronized = dateSynchronized;
             return this;
@@ -215,6 +218,20 @@ public class Ingredient extends OnlineModel implements SyncJSON {
         return numEmptySpaces < nameText.length();
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        final Ingredient ingredient = (Ingredient) obj;
+        return ingredient.id == id &&
+                ingredient.onlineId.equals(onlineId) &&
+                ingredient.name.equals(name) &&
+                ingredient.quantity == quantity &&
+                ingredient.quantityMeasId.equals(quantityMeasId) &&
+                ingredient.foodType.equals(foodType);
+    }
+
     public boolean hasQuantity() {
         return quantity > 0;
     }
@@ -237,12 +254,6 @@ public class Ingredient extends OnlineModel implements SyncJSON {
     public long getId() {
         return id;
     }
-    public Timestamp getDateUpdated() {
-        return dateUpdated;
-    }
-    public Timestamp getDateSynchronized() {
-        return dateSynchronized;
-    }
 
     public void setId(long id) {
         this.id = id;
@@ -259,10 +270,6 @@ public class Ingredient extends OnlineModel implements SyncJSON {
     public void setFoodType(String foodType) {
         this.foodType = new FoodType(foodType);
     }
-    public void setDateUpdated(Timestamp dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-    public void setDateSynchronized(Timestamp dateSynchronized) {
-        this.dateSynchronized = dateSynchronized;
-    }
+
+
 }

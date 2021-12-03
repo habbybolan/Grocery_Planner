@@ -27,7 +27,6 @@ import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 import com.habbybolan.groceryplanner.models.secondarymodels.FoodType;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
-import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
@@ -173,7 +172,7 @@ public class IngredientEditFragment extends Fragment implements IngredientEditCo
             if (ingredient.getQuantity() != 0)
                 binding.setQuantity(String.valueOf(ingredient.getQuantity()));
             if (ingredient.hasQuantityMeasId())
-                binding.setQuantityType(Nutrition.getMeasurement(ingredient.getQuantityMeasId()));
+                binding.setQuantityType(MeasurementType.getMeasurement(ingredient.getQuantityMeasId()));
         } else {
             hideIngredientHolderViews();
         }

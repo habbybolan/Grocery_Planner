@@ -19,7 +19,7 @@ public class RecipeNutritionInteractorEditImpl extends RecipeNutritionInteractor
         // remove the nutrition from the recipe
         if (nutrition.getIsAddedToRecipe() && nutrition.getAmount() == 0) {
             nutrition.setIsAddedToRecipe(false);
-            databaseAccess.deleteNutrition(recipe.getId(), Nutrition.getIdFromFrom(nutrition.getName()));
+            databaseAccess.deleteNutrition(recipe.getId(), Nutrition.getIdFromName(nutrition.getName()));
         } else {
             nutrition.setIsAddedToRecipe(true);
             databaseAccess.addNutrition(recipe.getId(), nutrition);

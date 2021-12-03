@@ -4,6 +4,10 @@ import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.List;
 
+/**
+ * Interface for ListFragment to only expose certain methods for children classes to use.
+ * @param <T>   Object type to represent in the list
+ */
 public interface ListViewInterface<T> {
 
     boolean isSelectMode();

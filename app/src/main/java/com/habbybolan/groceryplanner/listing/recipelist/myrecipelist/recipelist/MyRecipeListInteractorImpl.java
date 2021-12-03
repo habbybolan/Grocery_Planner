@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
-import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
@@ -44,7 +44,7 @@ public class MyRecipeListInteractorImpl implements MyRecipeListContract.Interact
     @Override
     public void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
         offlineRecipe.setDateCreated(new Timestamp(System.currentTimeMillis()/1000));
-        databaseAccess.addRecipe(offlineRecipe, callback);
+        databaseAccess.insertMyRecipe(offlineRecipe, callback);
     }
 
     @Override

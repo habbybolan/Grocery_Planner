@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.models.primarymodels;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -36,5 +38,14 @@ public class MyRecipe extends OfflineRecipe {
             jsonObject.addProperty("access_level", src.accessLevel.getId());
             return jsonObject;
         }
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        MyRecipe myRecipe = (MyRecipe) obj;
+        return myRecipe.accessLevel.equals(accessLevel) && super.equals(obj);
     }
 }

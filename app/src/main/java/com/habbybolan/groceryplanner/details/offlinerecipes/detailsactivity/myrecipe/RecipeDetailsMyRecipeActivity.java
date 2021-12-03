@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.R;
+import com.habbybolan.groceryplanner.callbacks.SyncCompleteCallback;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
 import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
@@ -130,7 +131,17 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
 
     @Override
     public void onSync() {
-        presenter.onSync(recipe);
+        presenter.onSync(recipe, new SyncCompleteCallback() {
+            @Override
+            public void onSyncComplete() {
+                presenter.loadFullRecipe(recipe.getId());
+            }
+
+            @Override
+            public void onSyncFailed(String message) {
+                // TODO: error message
+            }
+        });
     }
 
     /**

@@ -20,8 +20,6 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
 
     private long id;
     private String title;
-    private Timestamp dateUpdated;
-    private Timestamp dateSynchronized;
 
     public RecipeTag(long id, Long onlineId, String title, Timestamp dateUpdated, Timestamp dateSynchronized) {
         this.onlineId = onlineId;
@@ -36,12 +34,59 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
         this.title = title;
     }
 
+    public RecipeTag(long id, long onlineId, String title) {
+        this.id = id;
+        this.onlineId = onlineId;
+        this.title = title;
+    }
+
     public RecipeTag(String title) {
         this.title = title;
     }
 
+    public static class RecipeTagBuilder {
+        private long id;
+        private Long onlineId;
+        private String title;
+        private Timestamp dateSynchronized;
+        private Timestamp dateUpdated;
+
+        public RecipeTagBuilder(String title) {
+            this.title = title;
+        }
+        public RecipeTagBuilder setId(long id) {
+            this.id = id;
+            return this;
+        }
+        public RecipeTagBuilder setOnlineId(Long onlineId) {
+            this.onlineId = onlineId;
+            return this;
+        }
+        public RecipeTagBuilder setDateSynchronized(Timestamp dateSynchronized) {
+            this.dateSynchronized = dateSynchronized;
+            return this;
+        }
+        public RecipeTagBuilder setDateUpdated(Timestamp dateUpdated) {
+            this.dateUpdated = dateUpdated;
+            return this;
+        }
+        public RecipeTag build() {
+            RecipeTag recipeTag = new RecipeTag(title);
+            recipeTag.id = id;
+            recipeTag.onlineId = onlineId;
+            recipeTag.dateUpdated = dateUpdated;
+            recipeTag.dateSynchronized = dateSynchronized;
+            return recipeTag;
+        }
+
+
+    }
+
     public long getId() {
         return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
     public String getTitle() {
         return title;
@@ -112,20 +157,13 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
     }
 
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-
-        final RecipeTag other = (RecipeTag) obj;
-        if ((this.title == null) ? (other.title != null) : !this.title.equals(other.title)) {
-            return false;
-        }
-
-        return true;
+        if (obj == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+        if (obj == this) return true;
+        final RecipeTag recipeTag = (RecipeTag) obj;
+        return recipeTag.title.equals(title) &&
+                recipeTag.id == id &&
+                recipeTag.onlineId.equals(onlineId);
     }
 
     @Override
@@ -170,8 +208,10 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
     @Override
     public JsonObject createSyncJSONUpdate() {
         JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
         json.addProperty("id", id);
         json.addProperty("online_id", onlineId);
+        json.addProperty("title", title);
         if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
         if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
         return json;
@@ -180,8 +220,10 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
     @Override
     public JsonObject createSyncJSONSync() {
         JsonObject json = new JsonObject();
+        json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.SYNC.toString());
         json.addProperty("id", id);
         json.addProperty("online_id", onlineId);
+        json.addProperty("title", title);
         if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
         if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
         return json;
@@ -196,16 +238,5 @@ public class RecipeTag extends OnlineModel implements Parcelable, SyncJSON {
         }
     }
 
-    public Timestamp getDateUpdated() {
-        return dateUpdated;
-    }
-    public Timestamp getDateSynchronized() {
-        return dateSynchronized;
-    }
-    public void setDateUpdated(Timestamp dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-    public void setDateSynchronized(Timestamp dateSynchronized) {
-        this.dateSynchronized = dateSynchronized;
-    }
+
 }

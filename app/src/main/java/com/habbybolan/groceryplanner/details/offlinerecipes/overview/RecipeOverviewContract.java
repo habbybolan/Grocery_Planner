@@ -2,7 +2,7 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 
 import androidx.databinding.ObservableField;
 
-import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;

@@ -44,4 +44,14 @@ public class RecipeTagBridge {
         this.recipeId = recipeId;
         this.tagId = tagId;
     }
+
+    public void setDateSynchronized(Timestamp date) {
+        this.dateSynchronized = date;
+    }
+    public void setTagId(long tagId) {
+        this.tagId = tagId;
+    }
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

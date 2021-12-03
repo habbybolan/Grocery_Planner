@@ -13,6 +13,9 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * Intercepter that adds extra data to each http request.
+ */
 public class RequestInterceptor implements Interceptor {
 
     private Context application;

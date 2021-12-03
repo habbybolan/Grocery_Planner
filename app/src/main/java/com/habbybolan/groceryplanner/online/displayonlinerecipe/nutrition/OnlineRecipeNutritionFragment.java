@@ -39,7 +39,7 @@ public class OnlineRecipeNutritionFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_online_recipe_nutrition, container, false);
         setToolbar();
-        OnlineRecipeNutritionAdapter adapter = new OnlineRecipeNutritionAdapter(listener.getOnlineRecipe().getNutritionList());
+        OnlineRecipeNutritionAdapter adapter = new OnlineRecipeNutritionAdapter(listener.getOnlineRecipe().getAllNutritionList());
         binding.recipeNutritionList.setAdapter(adapter);
         return binding.getRoot();
     }

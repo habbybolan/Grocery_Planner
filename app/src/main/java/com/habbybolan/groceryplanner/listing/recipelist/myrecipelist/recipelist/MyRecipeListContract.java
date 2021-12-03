@@ -1,7 +1,7 @@
 package com.habbybolan.groceryplanner.listing.recipelist.myrecipelist.recipelist;
 
-import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.listing.recipelist.RecipeListContract;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;

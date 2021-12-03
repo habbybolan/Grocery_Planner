@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity;
 
-import com.habbybolan.groceryplanner.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.SyncCompleteCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -24,7 +25,7 @@ public interface RecipeDetailsContract {
          * Send to Interactor to sync myRecipe.
          * @param myRecipe  Recipe to sync with online database.
          */
-        void onSync(MyRecipe myRecipe);
+        void onSync(MyRecipe myRecipe, SyncCompleteCallback callback);
     }
 
     interface Interactor {
@@ -42,8 +43,9 @@ public interface RecipeDetailsContract {
         /**
          * Deserialize myRecipe to JSON for sending to online database and syncing.
          * @param myRecipe  Recipe to deserialize and send to online database for syncing
+         * @param callback  called when the data send from web service is all applied to offline database
          */
-        void onSync(MyRecipe myRecipe);
+        void onSync(MyRecipe myRecipe, SyncCompleteCallback callback);
     }
 
     interface InteractorLikedRecipe extends Interactor {

@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe;
 
+import com.habbybolan.groceryplanner.callbacks.SyncCompleteCallback;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsPresenterImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
@@ -25,7 +26,7 @@ public class DetailsMyRecipePresenterImpl extends RecipeDetailsPresenterImpl<Rec
     }
 
     @Override
-    public void onSync(MyRecipe myRecipe) {
-        interactor.onSync(myRecipe);
+    public void onSync(MyRecipe myRecipe, SyncCompleteCallback callback) {
+        interactor.onSync(myRecipe, callback);
     }
 }

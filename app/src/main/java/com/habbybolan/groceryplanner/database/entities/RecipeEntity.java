@@ -22,7 +22,7 @@ public class RecipeEntity {
     private Long onlineRecipeId;
     @ColumnInfo(name="name")
     private String name;
-    @ColumnInfo(name="is_favorite")
+    @ColumnInfo(name="is_favorite", defaultValue = "0")
     private boolean isFavorite;
     @ColumnInfo(defaultValue = "")
     private String description;
@@ -42,7 +42,7 @@ public class RecipeEntity {
     private Timestamp dateSynchronized;
     @ColumnInfo(name = "date_updated", index = true)
     private Timestamp dateUpdated;
-    @ColumnInfo(name = "is_deleted")
+    @ColumnInfo(name = "is_deleted", defaultValue = "0")
     private boolean isDeleted;
 
     public RecipeEntity(long recipeId, Long onlineRecipeId, String name, boolean isFavorite, String description,
@@ -52,12 +52,12 @@ public class RecipeEntity {
         this.onlineRecipeId = onlineRecipeId;
         this.name = name;
         this.isFavorite = isFavorite;
-        this.description = description;
+        this.description = description == null ? "" : description;
         this.prepTime = prepTime;
         this.cookTime = cookTime;
         this.servingSize = servingSize;
         this.recipeCategoryId = recipeCategoryId;
-        this.instructions = instructions;
+        this.instructions = instructions == null ? "" : instructions;
         this.dateCreated = dateCreated;
         this.dateSynchronized = dateSynchronized;
         this.dateUpdated = dateUpdated;

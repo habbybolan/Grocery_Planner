@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Deals with some list functionality of the generic list item T.
  * Deals with the selectMode, and selecting list items.
- * @param <T>   The list of the object type
+ * @param <T>   The object type to represent in the list
  */
 public abstract class ListFragment<T> extends Fragment implements ListViewInterface<T> {
 

@@ -54,7 +54,7 @@ public class OnlineRecipeNutritionAdapter extends RecyclerView.Adapter<OnlineRec
             if (nutrition.getAmount() != 0) binding.setNutritionAmount(String.valueOf(nutrition.getAmount()));
             else binding.setNutritionAmount("");
             binding.setNutritionTypeTag(nutrition.getName() + " Type");
-            if (nutrition.getMeasurementId() != null) binding.setNutritionType(nutrition.getMeasurement());
+            if (nutrition.getMeasurementType().getMeasurementId() != null) binding.setNutritionType(nutrition.getMeasurementType().getMeasurement());
             else binding.setNutritionType("");
         }
     }

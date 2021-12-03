@@ -29,7 +29,11 @@ public interface SyncJSON {
     JsonObject createSyncJSONSync();
 
     static boolean getIsUpdate(Timestamp dateUpdated, Timestamp dateSynchronized) {
+        // if no synchronization done, then hasn't been uploaded online
         if (dateSynchronized == null) return true;
+        // if no date updated, then retrieved from online but not yet updated
+        if (dateUpdated == null) return false;
+        // update online if more recently updated than synced, otherwise sync
         return dateUpdated.getTime() > dateSynchronized.getTime();
     }
 
@@ -37,17 +41,19 @@ public interface SyncJSON {
     String Identifier = "identifier";
 
     // Identifier value to send to web service
-    enum OfflineUpdateIdentifier {
+     enum OfflineUpdateIdentifier {
         UPDATE,
         SYNC
     }
 
     // Identifier value to retrieve from web service
     enum OnlineUpdateIdentifier {
-        INSERT,
+        INSERT_ONLINE,
+        INSERT_OFFLINE,
         UPDATE_ONLINE,
         UPDATE_OFFLINE,
-        UP_TO_DATE
+        UP_TO_DATE,
+        FAILED
     }
 
     // Object identifier

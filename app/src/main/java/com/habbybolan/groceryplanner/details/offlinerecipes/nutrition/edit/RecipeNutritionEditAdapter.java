@@ -74,7 +74,7 @@ public class RecipeNutritionEditAdapter extends RecyclerView.Adapter<RecipeNutri
             binding.btnRemoveNutrition.setOnClickListener(l -> {
                 Nutrition nutrition = nutritionList.get(getAdapterPosition());
                 nutrition.setAmount(0);
-                nutrition.setMeasurementId(null);
+                nutrition.setMeasurement(null);
                 listener.nutritionAmountChanged(nutrition);
                 notifyItemChanged(getAdapterPosition());
             });
@@ -90,7 +90,7 @@ public class RecipeNutritionEditAdapter extends RecyclerView.Adapter<RecipeNutri
             if (nutrition.getAmount() != 0) binding.setNutritionAmount(String.valueOf(nutrition.getAmount()));
             else binding.setNutritionAmount("");
             binding.setNutritionTypeTag(nutrition.getName() + " Type");
-            if (nutrition.getMeasurementId() != null) binding.setNutritionType(nutrition.getMeasurement());
+            if (nutrition.getMeasurementType().getMeasurementId() != null) binding.setNutritionType(nutrition.getMeasurementType().getMeasurement());
             else binding.setNutritionType("");
         }
     }

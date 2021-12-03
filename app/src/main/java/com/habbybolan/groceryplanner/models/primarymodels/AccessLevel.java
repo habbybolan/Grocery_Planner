@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.models.primarymodels;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 
 import java.lang.annotation.Retention;
@@ -75,5 +76,14 @@ public class AccessLevel {
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        AccessLevel accessLevel = (AccessLevel) obj;
+        return accessLevel.id == id;
     }
 }

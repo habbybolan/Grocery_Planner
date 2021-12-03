@@ -57,4 +57,11 @@ public class RecipeNutritionBridge {
         this.unitOfMeasurementId = unitOfMeasurementId;
     }
 
+    public void setDateSynchronized(Timestamp dateSynchronized) {
+        this.dateSynchronized = dateSynchronized;
+    }
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
 }

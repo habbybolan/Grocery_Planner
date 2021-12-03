@@ -9,7 +9,9 @@ import com.habbybolan.groceryplanner.database.DatabaseAccessImpl;
 import com.habbybolan.groceryplanner.database.LocalDatabase;
 import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
+import com.habbybolan.groceryplanner.database.dao.NutritionDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeDao;
+import com.habbybolan.groceryplanner.database.dao.RecipeTagDao;
 
 import javax.inject.Singleton;
 
@@ -35,14 +37,26 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    GroceryDao providesGroceryIngredientDao(LocalDatabase localDatabase) {
-        return localDatabase.getGroceryIngredientDao();
+    GroceryDao providesGroceryDao(LocalDatabase localDatabase) {
+        return localDatabase.getGroceryDao();
     }
 
     @Singleton
     @Provides
-    RecipeDao providesRecipeIngredientDao(LocalDatabase localDatabase) {
-        return localDatabase.getRecipeIngredientDao();
+    RecipeDao providesRecipeDao(LocalDatabase localDatabase) {
+        return localDatabase.getRecipeDao();
+    }
+
+    @Singleton
+    @Provides
+    RecipeTagDao providesRecipeTagDao(LocalDatabase localDatabase) {
+        return localDatabase.getRecipeTagDao();
+    }
+
+    @Singleton
+    @Provides
+    NutritionDao providesNutritionDao(LocalDatabase localDatabase) {
+        return localDatabase.getNutritionDao();
     }
 
     @Singleton
@@ -53,8 +67,8 @@ public class RoomModule {
 
     @Singleton
     @Provides
-    DatabaseAccess provideDatabaseAccess(GroceryDao groceryDao, RecipeDao recipeDao, IngredientDao ingredientDao) {
-        return new DatabaseAccessImpl(groceryDao, recipeDao, ingredientDao);
+    DatabaseAccess provideDatabaseAccess(GroceryDao groceryDao, RecipeDao recipeDao, IngredientDao ingredientDao, RecipeTagDao recipeTagDao, NutritionDao nutritionDao) {
+        return new DatabaseAccessImpl(groceryDao, recipeDao, ingredientDao, recipeTagDao, nutritionDao);
     }
 
 }

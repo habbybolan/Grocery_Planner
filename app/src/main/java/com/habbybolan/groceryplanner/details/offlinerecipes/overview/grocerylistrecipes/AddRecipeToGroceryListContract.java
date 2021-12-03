@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes;
 
-import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;

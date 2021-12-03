@@ -60,7 +60,7 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
     }
 
     private void setList() {
-        adapter = new RecipeNutritionEditAdapter(recipeNutritionListener.getRecipe().getNutritionList(), new RecipeNutritionContract.NutritionChangedListener() {
+        adapter = new RecipeNutritionEditAdapter(recipeNutritionListener.getRecipe().getAllNutritionList(), new RecipeNutritionContract.NutritionChangedListener() {
 
             @Override
             public void nutritionAmountChanged(Nutrition nutrition) {
@@ -73,7 +73,7 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
                 MeasurementType.createMeasurementTypeMenu(popupMenu);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     String type = item.getTitle().toString();
-                    nutrition.setMeasurementId(Nutrition.getMeasurementId(type));
+                    nutrition.setMeasurement(MeasurementType.getMeasurementId(type));
                     v.setText(type);
                     presenter.nutritionMeasurementChanged(recipeNutritionListener.getRecipe(), nutrition);
                     return true;

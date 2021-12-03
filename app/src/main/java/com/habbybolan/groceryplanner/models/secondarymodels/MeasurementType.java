@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.models.secondarymodels;
 
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.Menu;
@@ -7,12 +9,11 @@ import android.view.MenuInflater;
 import android.widget.PopupMenu;
 
 import androidx.annotation.LongDef;
+import androidx.annotation.Nullable;
 
 import com.habbybolan.groceryplanner.R;
 
 import java.lang.annotation.Retention;
-
-import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class MeasurementType implements Parcelable {
 
@@ -23,6 +24,7 @@ public class MeasurementType implements Parcelable {
     }
 
     @Retention(SOURCE)
+    @Nullable
     @LongDef({POUND_ID, OUNCE_ID, MILLIGRAM_ID, GRAM_ID, KILOGRAM_ID, TEASPOON_ID, TABLESPOON_ID, GILL_ID,
             CUP_ID, PINT_ID, QUART_ID, GALLON_ID, MILLILITER_ID, LITER_ID, DECILITER_ID,
             MILLIMETER_ID, CENTIMETER_ID, METER_ID, INCH_ID
@@ -98,6 +100,8 @@ public class MeasurementType implements Parcelable {
     public static final String METER_CODE = "m";
     public static final String INCH_CODE = "in";
 
+    public static final Long NULL_ID = null;
+
     protected MeasurementType(Parcel in) {
         measurementId = in.readLong();
         measurementId = measurementId == 0 ? null : measurementId;
@@ -126,11 +130,12 @@ public class MeasurementType implements Parcelable {
     }
 
 
-    public Long getMeasurementId() {
+    public @measurementIds Long getMeasurementId() {
         return measurementId;
     }
 
     public String getMeasurement() {
+        if (measurementId == null) throw new IllegalArgumentException("Cant get measurement type with a null measurementId");
         return getMeasurement(getMeasurementId());
     }
 
@@ -296,5 +301,15 @@ public class MeasurementType implements Parcelable {
         menu.add(CENTIMETER);
         menu.add(METER);
         menu.add(INCH);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        MeasurementType measurementType = (MeasurementType) obj;
+        return (measurementType.measurementId == null && measurementId == null) ||
+                measurementType.measurementId.equals(measurementId);
     }
 }

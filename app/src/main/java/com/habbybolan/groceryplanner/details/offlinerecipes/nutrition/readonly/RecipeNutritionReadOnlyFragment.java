@@ -42,7 +42,7 @@ public abstract class RecipeNutritionReadOnlyFragment<T extends RecipeNutritionC
     }
 
     private void setList() {
-        adapter = new RecipeNutritionReadOnlyAdapter(recipeNutritionListener.getRecipe().getNutritionList());
+        adapter = new RecipeNutritionReadOnlyAdapter(recipeNutritionListener.getRecipe().getAllNutritionList());
         RecyclerView rv = binding.recipeNutritionList;
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);

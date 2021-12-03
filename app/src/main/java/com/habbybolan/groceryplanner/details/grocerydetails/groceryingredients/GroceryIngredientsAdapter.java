@@ -17,7 +17,7 @@ import com.habbybolan.groceryplanner.listfragments.ListAdapter;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.RecipeWithIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
+import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -98,7 +98,7 @@ public class GroceryIngredientsAdapter extends ListAdapter<GroceryIngredientsAda
                 if (ingredient.hasQuantity())
                     binding.setIngredientQuantity(ingredient.getQuantity());
                 if (ingredient.hasQuantityMeasId())
-                    binding.setIngredientQuantityType(Nutrition.getMeasurement(ingredient.getQuantityMeasId()));
+                    binding.setIngredientQuantityType(MeasurementType.getMeasurement(ingredient.getQuantityMeasId()));
                 binding.setImageResource(ingredient.getFoodType().getImageResource());
             } else {
                 binding.iconFoodType.setVisibility(View.GONE);

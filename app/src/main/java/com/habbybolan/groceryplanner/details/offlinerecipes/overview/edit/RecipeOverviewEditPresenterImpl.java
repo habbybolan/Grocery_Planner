@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit;
 
-import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewPresenterImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;

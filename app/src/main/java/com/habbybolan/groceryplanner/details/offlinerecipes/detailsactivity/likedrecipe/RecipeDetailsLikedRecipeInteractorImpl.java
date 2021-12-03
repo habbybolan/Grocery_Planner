@@ -1,18 +1,27 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe;
 
-import com.habbybolan.groceryplanner.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsInteractorImpl;
 import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.sync.SyncRecipeFromResponse;
 
 import java.util.concurrent.ExecutionException;
 
-public class RecipeDetailsLikedRecipeInteractorImpl extends RecipeDetailsInteractorImpl implements RecipeDetailsContract.InteractorLikedRecipe {
+import javax.inject.Inject;
 
+public class RecipeDetailsLikedRecipeInteractorImpl implements RecipeDetailsContract.InteractorLikedRecipe {
+
+    private RestWebService restWebService;
+    private DatabaseAccess databaseAccess;
+    private SyncRecipeFromResponse syncRecipes;
+
+    @Inject
     public RecipeDetailsLikedRecipeInteractorImpl(DatabaseAccess databaseAccess, RestWebService restWebService) {
-        super(databaseAccess, restWebService);
+        syncRecipes = new SyncRecipeFromResponse(databaseAccess);
+        this.databaseAccess = databaseAccess;
+        this.restWebService = restWebService;
     }
 
     @Override

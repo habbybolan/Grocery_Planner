@@ -13,6 +13,7 @@ public class IngredientLocationPresenterImpl implements IngredientLocationPresen
     public IngredientLocationPresenterImpl(IngredientLocationInteractor interactor) {
         this.interactor = interactor;
     }
+
     @Override
     public void deleteDirectRelationship(Grocery grocery, GroceryIngredient ingredient) {
         interactor.deleteDirectRelationship(grocery, ingredient);

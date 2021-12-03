@@ -26,6 +26,10 @@ import com.habbybolan.groceryplanner.databinding.CustomToolbarBinding;
 import com.habbybolan.groceryplanner.databinding.DialogueDeleteBinding;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
+/**
+ * Facilitates all Toolbars created.
+ * Deals with callbacks, design and icons.
+ */
 public class CustomToolbar {
 
     private static final int MAIN_MENU_GROUP_ID = 1;

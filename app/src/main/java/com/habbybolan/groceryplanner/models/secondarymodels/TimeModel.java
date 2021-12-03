@@ -12,6 +12,7 @@ public class TimeModel {
     public static Timestamp getTimeStamp(String datetime2String) {
         // todo: does this work in every case?
         String timeStampString = datetime2String.replace('T', ' ');
+        timeStampString = timeStampString.replace("Z", "");
         return Timestamp.valueOf(timeStampString);
     }
 }

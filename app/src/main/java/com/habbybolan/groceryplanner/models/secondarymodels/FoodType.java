@@ -1,5 +1,7 @@
 package com.habbybolan.groceryplanner.models.secondarymodels;
 
+import androidx.annotation.Nullable;
+
 import com.habbybolan.groceryplanner.R;
 
 import java.util.ArrayList;
@@ -84,6 +86,15 @@ public class FoodType {
         }
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        FoodType foodType = (FoodType) obj;
+        return foodType.id == id;
+    }
+
     /**
      * Creates a list of all possible FoodTypes
      * @return  List of all possible FoodTypes
@@ -110,3 +121,5 @@ public class FoodType {
         return id;
     }
 }
+
+

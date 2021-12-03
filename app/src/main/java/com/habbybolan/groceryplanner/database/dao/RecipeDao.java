@@ -14,22 +14,18 @@ import com.habbybolan.groceryplanner.database.entities.LikedRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.MyRecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeCategoryEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
-import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
-import com.habbybolan.groceryplanner.database.entities.RecipeNutritionBridge;
-import com.habbybolan.groceryplanner.database.entities.RecipeTagBridge;
-import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeGroceriesTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsWithGroceryCheckTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeNutritionTuple;
 import com.habbybolan.groceryplanner.models.databasetuples.RecipeTagTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.AccessLevel;
-import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,8 +138,6 @@ public abstract class RecipeDao {
             "ORDER BY date_created ASC")
     public abstract  List<RecipeEntity> getLikedRecipesSortDateAsc(long categoryId);
 
-
-
     @Query("SELECT * FROM RecipeCategoryEntity")
     public abstract  List<RecipeCategoryEntity> getAllRecipeCategories();
 
@@ -177,7 +171,7 @@ public abstract class RecipeDao {
             nutritionList.add(new Nutrition(tuple.nutritionId, tuple.amount, tuple.unitOfMeasurementId, tuple.dateUpdated, tuple.dateSynchronized));
         OfflineRecipe offlineRecipe = new OfflineRecipe(recipeEntity.getName(), recipeEntity.getRecipeId(), recipeEntity.getOnlineRecipeId(), recipeEntity.getIsFavorite(), recipeEntity.getDescription(),
                 recipeEntity.getPrepTime(), recipeEntity.getCookTime(), recipeEntity.getServingSize(), recipeEntity.getRecipeCategoryId(), recipeEntity.getInstructions(), recipeEntity.getDateCreated(),
-                recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
+                recipeEntity.getDateUpdated(), recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
         return new MyRecipe(offlineRecipe, new AccessLevel((int) myRecipeEntity.accessLevelId));
     }
 
@@ -197,7 +191,7 @@ public abstract class RecipeDao {
             nutritionList.add(new Nutrition(tuple.nutritionId, tuple.amount, tuple.unitOfMeasurementId, tuple.dateUpdated, tuple.dateSynchronized));
         OfflineRecipe offlineRecipe = new OfflineRecipe(recipeEntity.getName(), recipeEntity.getRecipeId(), recipeEntity.getOnlineRecipeId(), recipeEntity.getIsFavorite(), recipeEntity.getDescription(),
                 recipeEntity.getPrepTime(), recipeEntity.getCookTime(), recipeEntity.getServingSize(), recipeEntity.getRecipeCategoryId(), recipeEntity.getInstructions(), recipeEntity.getDateCreated(),
-                recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
+                recipeEntity.getDateUpdated(), recipeEntity.getDateSynchronized(), OfflineRecipe.convertToRecipeTag(recipeTagTuples), OfflineRecipe.convertTuplesToIngredients(ingredientsTuple), nutritionList);
         return new LikedRecipe(offlineRecipe);
     }
 
@@ -252,10 +246,10 @@ public abstract class RecipeDao {
     public abstract List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalDesc(long recipeId);
 
     @Query("SELECT groceryId, ingredientId, ingredientName, " +
-            "quantity, quantityMeasId, food_type_id" +
+            "quantity, quantityMeasId, date_updated, date_synchronized food_type_id" +
             "   FROM " +
             "   (SELECT ingredientId, ingredientName, " +
-            "       quantity, quantityMeasId, food_type_id " +
+            "       quantity, quantityMeasId, date_updated, date_synchronized, food_type_id " +
             "       FROM " +
             "           (SELECT ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
             "               FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) " +
@@ -269,8 +263,6 @@ public abstract class RecipeDao {
             "           WHERE recipeId = :recipeId AND groceryId = :groceryId) " +
             "   USING (ingredientId)")
     public abstract List<RecipeIngredientsWithGroceryCheckTuple> getRecipeIngredientsInGrocery(long recipeId, long groceryId);
-
-
 
     @Query("SELECT * FROM IngredientEntity " +
             "WHERE ingredientId NOT IN " +
@@ -340,21 +332,31 @@ public abstract class RecipeDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long insertMyRecipe(RecipeEntity recipeEntity);
+    public abstract long insertRecipe(RecipeEntity recipeEntity);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertMyRecipe(MyRecipeEntity myRecipeEntity);
 
     @Transaction
     public long insertNewMyRecipe(RecipeEntity recipeEntity) {
-        long id = insertMyRecipe(recipeEntity);
+        long id = insertRecipe(recipeEntity);
         MyRecipeEntity myRecipeEntity = new MyRecipeEntity(id, AccessLevel.ADMIN_ID);
+        updateRecipeDateUpdated(id);
         insertMyRecipe(myRecipeEntity);
         return id;
     }
 
+    @Transaction
+    public void updateRecipe(RecipeEntity recipeEntity) {
+        updateRecipeData(recipeEntity);
+        updateRecipeDateUpdated(recipeEntity.getRecipeId());
+    }
+
     @Update
-    public abstract void updateRecipe(RecipeEntity recipeEntity);
+    abstract void updateRecipeData(RecipeEntity recipeEntity);
+
+    @Query("UPDATE RecipeEntity SET date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE recipeId = :recipeId")
+    abstract void updateRecipeDateUpdated(long recipeId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertRecipeCategory(RecipeCategoryEntity recipeCategoryEntity);
@@ -362,93 +364,9 @@ public abstract class RecipeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertRecipeIntoGrocery(GroceryRecipeBridge groceryRecipeBridge);
 
-    @Transaction
-    public void insertUpdateRecipeTagsIntoBridge(List<RecipeTagEntity> tags, long recipeId) {
-        for (RecipeTagEntity tag : tags) {
-            long tagId = hasTagName(tag.title);
-            // tag exists, so update and set is_updated as false
-            if (tagId != 0) {
-                tag.tagId = tagId;
-                updateTag(tag);
-                // otherwise tag doesn't exist, so insert
-            } else {
-                tagId = insertTag(tag);
-            }
-            // associate the tag with the recipe
-            insertRecipeTagBridge(new RecipeTagBridge(recipeId, tagId));
-        }
-    }
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertRecipeTagBridge(RecipeTagBridge bridge);
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long insertTag(RecipeTagEntity tag);
-
-    @Update
-    public abstract void updateTag(RecipeTagEntity tag);
-
-    @Query("SELECT tagId FROM RecipeTagEntity WHERE title = :name LIMIT 1")
-    public abstract long hasTagName(String name);
-
-    /**
-     * Insert or update the Ingredients into the IngredientEntity table, depending on if it exists yet or not.
-     * Insert the relationship between the Ingredient and recipeId inside the RecipeIngredientBridge Table.
-     * @param ingredients       List of ingredients to insert/update and create the relationship between recipeId and ingredient.
-     * @param recipeId          The id of the recipe to insert the ingredients into
-     * @param ingredientDao     Holds the Dao method for inserting the ingredients into IngredientEntity Table
-     */
-    @Transaction
-    public void insertUpdateIngredientsIntoRecipe(List<Ingredient> ingredients, long recipeId, IngredientDao ingredientDao) {
-        for (Ingredient ingredient : ingredients) {
-            IngredientEntity ingredientEntity = new IngredientEntity(ingredient);
-            // if id = 0 then ingredient doesn't exist, so look if an ingredient of that name exists, otherwise create a new Ingredient
-            if (ingredientEntity.getIngredientId() == 0) {
-                long id = hasIngredientName(ingredientEntity.getIngredientName());
-                // if 0, then ingredient doesn't exist. Insert it and retrieve id.
-                if (id == 0) {
-                    id = ingredientDao.insertIngredient(ingredientEntity);
-                }
-                ingredientEntity.setIngredientId(id);
-                // otherwise, update the ingredient
-            } else {
-                ingredientDao.updateIngredient(ingredientEntity);
-            }
-            long id = insertIngredientBridge(new RecipeIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId()));
-            // if ingredient recipe relationship exists, update it
-            if (id != -1) {
-                updateIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId());
-            }
-        }
-    }
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long insertIngredientBridge(RecipeIngredientBridge recipeIngredientBridge);
-
-    @Query("Update RecipeIngredientBridge SET" +
-            "   quantity = :quantity," +
-            "   quantity_meas_id = :quantityMeasId" +
-            "   WHERE recipeId = :recipeId AND ingredientId = :ingredientId")
-    public abstract void updateIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId);
-
 
     @Query("SELECT ingredientName FROM IngredientEntity WHERE ingredientName = :name LIMIT 1")
     public abstract long hasIngredientName(String name);
-
-    @Transaction
-    public void insertUpdateNutritionBridge(RecipeNutritionBridge bridge) {
-        insertNutritionBridge(bridge);
-        updateNutritionBridge(bridge.recipeId, bridge.nutritionId, bridge.amount, bridge.unitOfMeasurementId);
-    }
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertNutritionBridge(RecipeNutritionBridge bridge);
-
-    @Query("UPDATE RecipeNutritionBridge SET" +
-            "   amount = :amount," +
-            "   unit_of_measurement_id = :unitOfMeasurementId" +
-            "   WHERE recipe_id = :recipeId AND nutrition_id = :nutritionId")
-    public abstract void updateNutritionBridge(long recipeId, long nutritionId, int amount, Long unitOfMeasurementId);
 
     /*
     DELETING
@@ -466,18 +384,21 @@ public abstract class RecipeDao {
         deleteFlagRecipeNutritionBridges(recipeIds);
     }
 
-    @Query("UPDATE RecipeEntity SET is_deleted = 1 WHERE recipeId IN (:recipeIds)")
+    @Query("UPDATE RecipeEntity SET is_deleted = 1, date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
+            "   WHERE recipeId IN (:recipeIds)")
     public abstract void deleteFlagRecipes(List<Long> recipeIds);
 
-    @Query("UPDATE RecipeIngredientBridge SET is_deleted = 1 WHERE recipeId IN (:recipeIds)")
+    @Query("UPDATE RecipeIngredientBridge SET is_deleted = 1, date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') " +
+            "   WHERE recipeId IN (:recipeIds)")
     public abstract void deleteFlagRecipeIngredientBridges(List<Long> recipeIds);
 
-    @Query("UPDATE RecipeTagBridge SET is_deleted = 1 WHERE recipeId IN (:recipeIds)")
+    @Query("UPDATE RecipeTagBridge SET is_deleted = 1, date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') " +
+            "   WHERE recipeId IN (:recipeIds)")
     public abstract void deleteFlagRecipeTagBridges(List<Long> recipeIds);
 
-    @Query("UPDATE RecipeNutritionBridge SET is_deleted = 1 WHERE recipe_id IN (:recipeIds)")
+    @Query("UPDATE RecipeNutritionBridge SET is_deleted = 1, date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') " +
+            "   WHERE recipe_id IN (:recipeIds)")
     public abstract void deleteFlagRecipeNutritionBridges(List<Long> recipeIds);
-
 
     @Query("UPDATE RecipeIngredientBridge SET is_deleted = 1 WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
     public abstract void deleteFlagIngredientsFromRecipeIngredientBridge(long recipeId, List<Long> ingredientIds);
@@ -501,4 +422,54 @@ public abstract class RecipeDao {
 
     @Query("DELETE FROM RecipeCategoryEntity WHERE recipeCategoryId IN (:categoryIds)")
     public abstract void deleteRecipeCategories(List<Long> categoryIds);
+
+    @Transaction
+    public long syncMyRecipeInsert(long onlineId, String name, String description, String instructions, int prepTime, int cookTime, int servingSize,
+                                   Timestamp dateSync, long accessLevel) {
+        syncMyRecipeInsertHelper(onlineId, name, description, instructions, prepTime, cookTime, servingSize, dateSync);
+        long recipeId = getLastInsertedRecipeRow();
+        insertMyRecipe(new MyRecipeEntity(recipeId, accessLevel));
+        return recipeId;
+    }
+
+    @Query("SELECT last_insert_rowid();")
+    abstract long getLastInsertedRecipeRow();
+
+    @Query("INSERT INTO RecipeEntity (onlineRecipeId, name, description, instructions, cook_time, prep_time, serving_size, date_synchronized)" +
+            "   VALUES (:onlineId, :name, :description, :instructions, :cookTime, :prepTime, :servingSize, :dateSync)")
+    abstract void syncMyRecipeInsertHelper(long onlineId, String name, String description, String instructions, int prepTime, int cookTime, int servingSize, Timestamp dateSync);
+
+    @Transaction
+    public void syncMyRecipeUpdate(long recipeId, String name, String description, int prepTime, int cookTime, int servingSize,
+                                   String instructions, Timestamp dateSync, long accessLevel) {
+        syncRecipeUpdate(recipeId, name, description, prepTime, cookTime, servingSize, instructions, dateSync);
+        syncMyRecipeUpdateAccessLevel(recipeId, accessLevel);
+    }
+
+    @Transaction
+    public long syncLikedRecipeInsert(RecipeEntity recipeEntity) {
+        // TODO: inserting liked recipe
+        return 0;
+    }
+
+    @Transaction
+    public void syncLikedRecipeUpdate(long recipeId, String name, String description, int prepTime, int cookTime, int servingSize,
+                                      String instructions, Timestamp dateSync) {
+        syncRecipeUpdate(recipeId, name, description, prepTime, cookTime, servingSize, instructions, dateSync);
+        // TODO: anything else for liked recipe?
+    }
+
+    @Query("UPDATE MyRecipeEntity SET accessLevelId = :accessLevel WHERE recipeId = :recipeId")
+    abstract void syncMyRecipeUpdateAccessLevel(long recipeId, long accessLevel);
+
+    @Query("UPDATE RecipeEntity SET name = :name, description = :description, prep_time = :prepTime, cook_time = :cookTime," +
+            "   serving_size = :servingSize, instructions = :instructions, date_synchronized = :dateSync WHERE recipeId = :recipeId")
+    abstract void syncRecipeUpdate(long recipeId, String name, String description, int prepTime, int cookTime, int servingSize,
+                                          String instructions, Timestamp dateSync);
+
+    @Query("UPDATE RecipeEntity SET date_synchronized = :dateSync, onlineRecipeId = :onlineRecipeId WHERE recipeId = :recipeId")
+    public abstract void syncRecipeInsertedOnline(long recipeId, long onlineRecipeId, Timestamp dateSync);
+
+    @Query("UPDATE RecipeEntity SET date_synchronized = :dateSync WHERE recipeId = :recipeId")
+    public abstract void syncRecipeUpdateDateSync(long recipeId, Timestamp dateSync);
 }

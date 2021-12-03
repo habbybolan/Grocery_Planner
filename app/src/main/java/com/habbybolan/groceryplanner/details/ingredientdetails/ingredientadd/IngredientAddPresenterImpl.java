@@ -1,8 +1,7 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
-import com.habbybolan.groceryplanner.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
-import com.habbybolan.groceryplanner.models.primarymodels.IngredientHolder;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 import java.util.ArrayList;

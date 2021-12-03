@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 
 public class Grocery extends IngredientHolder implements OfflineIngredientHolder {
 
-    private Timestamp dateSynchronized;
     private long id;
 
     public final static String GROCERY = "grocery";
@@ -69,9 +68,6 @@ public class Grocery extends IngredientHolder implements OfflineIngredientHolder
         dest.writeSerializable(dateSynchronized);
     }
 
-    public Timestamp getDateSynchronized() {
-        return dateSynchronized;
-    }
     public long getId() {
         return id;
     }

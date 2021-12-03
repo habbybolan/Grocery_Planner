@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.online.discover.searchfilter;
 
-import com.habbybolan.groceryplanner.WebServiceCallback;
+import com.habbybolan.groceryplanner.callbacks.WebServiceCallback;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 

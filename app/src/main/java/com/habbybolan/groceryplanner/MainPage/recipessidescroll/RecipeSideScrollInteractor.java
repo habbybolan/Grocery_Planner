@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.MainPage.recipessidescroll;
 
-import com.habbybolan.groceryplanner.WebServiceCallback;
+import com.habbybolan.groceryplanner.callbacks.WebServiceCallback;
 import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 
 import java.util.concurrent.ExecutionException;

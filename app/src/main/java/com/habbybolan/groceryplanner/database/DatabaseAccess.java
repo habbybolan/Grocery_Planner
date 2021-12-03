@@ -2,9 +2,13 @@ package com.habbybolan.groceryplanner.database;
 
 import androidx.databinding.ObservableField;
 
-import com.habbybolan.groceryplanner.DbCallback;
-import com.habbybolan.groceryplanner.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
+import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
+import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
+import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
+import com.habbybolan.groceryplanner.models.SyncJSON;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
@@ -17,6 +21,7 @@ import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -77,7 +82,14 @@ public interface DatabaseAccess {
     void deleteRecipes(List<Long> recipeIds);
 
     // adds a new recipe
-    void addRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+    void insertMyRecipe(OfflineRecipe offlineRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Inserts an entire MyRecipe, including ingredients, tags and nutrition
+     * @param myRecipe  Full recipe to insert
+     * @param callback  Called after insert completed, sending back identifying part of the inserted recipe
+     */
+    void insertFullMyRecipe(MyRecipe myRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     void fetchMyRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     void fetchLikedRecipes(Long recipeCategoryId, SortType sortType, DbCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException;
     List<OfflineRecipe> fetchUnCategorizedRecipes() throws ExecutionException, InterruptedException;
@@ -129,7 +141,7 @@ public interface DatabaseAccess {
     void deleteIngredientsFromRecipe(long recipeId, List<Long> ingredientIds);
     void fetchIngredientsFromRecipe(OfflineRecipe offlineRecipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
-    void addIngredient(Ingredient ingredient);
+    void addIngredient(Ingredient ingredient, DbSingleCallback<Ingredient> callback);
 
     /**
      * Fetch all ingredients created.
@@ -249,4 +261,92 @@ public interface DatabaseAccess {
      *  @param callback         callback to update the Ingredients retrieved
      */
     void searchIngredients(String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
+
+    /**
+     * Sync the my recipe data retrieved from the web service by updating offline
+     * @param accessLevelId access level to recipe
+     * @param recipeEntity  Recipe data to update
+     */
+    void syncMyRecipeUpdate(RecipeEntity recipeEntity, long accessLevelId);
+
+    /**
+     * Sync the liked recipe data retrieved from the web service by updating offline
+     * @param recipeEntity  Recipe data to update
+     */
+    void syncLikedRecipeUpdate(RecipeEntity recipeEntity);
+
+    /**
+     * Sync my recipe data retrieved from the web service by inserting offline
+     * @param recipeEntity  My Recipe data to insert
+     * @param accessLevelId access level to recipe
+     * @return              id of newly inserted recipe
+     */
+    long syncMyRecipeInsert(RecipeEntity recipeEntity, long accessLevelId);
+
+    /**
+     * Sync liked recipe data retrieved from the web service by inserting offline
+     * @param recipeEntity  liked Recipe data to insert
+     * @return              id of newly inserted recipe
+     */
+    long syncLikedRecipeInsert(RecipeEntity recipeEntity);
+
+    /**
+     * Update the recipe's date synchronized only.
+     * Called after updating or inserting in online database.
+     * @param recipeId          offline id of recipe
+     * @param dateSync          Date sent from web service on time it was synced
+     * @param onlineRecipeId    Online id of recipe if it was inserted online, null otherwise
+     */
+    void syncRecipeUpdateSynchronized(long recipeId, Long onlineRecipeId, Timestamp dateSync);
+
+    /**
+     * Sync the Ingredient data retrieved from the web service by updating/Inserting based on the identifier.
+     * @param ingredientEntity
+     * @param identifier    Identifies if the recipe will be updated or inserted
+     */
+    void syncIngredientUpdateInsert(IngredientEntity ingredientEntity, long recipeId, long ingredientId,
+                                    float quantity, Long measurementId, Timestamp dateSynchronized, boolean isDeleted, long foodType, SyncJSON.OnlineUpdateIdentifier identifier);
+
+    /**
+     * Update the ingredients date synchronized only.
+     * Called after updating or inserting in online database.
+     * @param recipeId              Offline id of recipe the ingredient is in
+     * @param dateSync              Date sent from web service on time it was synced
+     * @param ingredientId          offline id of ingredient
+     * @param onlineIngredientId    Online id of ingredient if it was inserted, null otherwise
+     */
+    void syncIngredientUpdateSynchronized(long recipeId, long ingredientId, Long onlineIngredientId, Timestamp dateSync);
+
+    /**
+     * Sync the recipe tag data retrieved from the web service by updating/Inserting based on the identifier.
+     * @param recipeTagEntity
+     * @param identifier    Identifies if the tag will be updated or inserted
+     */
+    void syncRecipeTagUpdateInsert(RecipeTagEntity recipeTagEntity, long recipeId, long tagId, Timestamp dateSynchronized, boolean isDeleted, SyncJSON.OnlineUpdateIdentifier identifier);
+
+    /**
+     * Update the tag's date synchronized only.
+     * Called after updating or inserting in online database.
+     * @param recipeId      Offline id of recipe the tag is in
+     * @param dateSync      Date sent from web service on time it was synced
+     * @param tagId         Offline id of tag
+     * @param onlineTagId   Online id of tag if it was inserted, null otherwise
+     */
+    void syncRecipeTagUpdateSynchronized(long recipeId, long tagId, Long onlineTagId, Timestamp dateSync);
+
+    /**
+     * Sync the nutrition data retrieved from the web service by updating/Inserting based on the identifier.
+     * @param identifier    Identifies if the nutrition will be updated or inserted
+     */
+    void syncNutritionUpdateInsert(long recipeId, long nutritionId, int amount, Long measurementId, Timestamp dateSynchronized, boolean isDeleted, SyncJSON.OnlineUpdateIdentifier identifier);
+
+
+    /**
+     * Update the nutrition's date synchronized only.
+     * Called after updating or inserting in online database.
+     * @param recipeId      Offline id of recipe the nutrition is in
+     * @param dateSync      Date sent from web service on time it was synced
+     * @param nutritionId   Offline id of nutrition
+     */
+    void syncNutritionUpdateSynchronized(long recipeId, long nutritionId, Timestamp dateSync);
 }

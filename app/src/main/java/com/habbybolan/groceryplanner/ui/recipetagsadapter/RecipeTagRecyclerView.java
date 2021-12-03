@@ -19,9 +19,11 @@ public class RecipeTagRecyclerView {
     private List<? extends RecipeTag> recipeTags;
 
     /**
-     * Constructor for creating an adapter that allows callback communication.
+     * Constructor for creating an adapter that allows callback communication for an editable list.
      * @param recipeTags    List of recipe tags to display
      * @param view          Callback interface
+     * @param recyclerView  Recycler view to connect the adapter to
+     * @param context       View context for creating a LayoutManager
      */
     public RecipeTagRecyclerView(List<? extends RecipeTag> recipeTags, RecipeTagsView view, RecyclerView recyclerView, Context context) {
         @SuppressWarnings("unchecked")
@@ -34,8 +36,10 @@ public class RecipeTagRecyclerView {
     }
 
     /**
-     * Constructor for creating an adapter with no callback communication
+     * Constructor for creating an adapter with no callback communication for a read-only list.
      * @param recipeTags    List of recipe tags to display
+     * @param recyclerView  Recycler view to connect the adapter to
+     * @param context       View context for creating a LayoutManager
      */
     public RecipeTagRecyclerView(List<RecipeTag> recipeTags, RecyclerView recyclerView, Context context) {
         this.adapter = new RecipeTagAdapter(recipeTags);

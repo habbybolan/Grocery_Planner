@@ -2,15 +2,18 @@ package com.habbybolan.groceryplanner.models.secondarymodels;
 
 import android.os.Parcel;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonObject;
 import com.habbybolan.groceryplanner.models.SyncJSON;
+import com.habbybolan.groceryplanner.models.primarymodels.OnlineModel;
 
 import java.sql.Timestamp;
 
 /**
  * Models Nutritional values of Recipes and Ingredients.
  */
-public class Nutrition extends MeasurementType implements SyncJSON {
+public class Nutrition extends OnlineModel implements SyncJSON {
 
     public static final String CALORIES = "Calories";
     public static final String FAT = "fat";
@@ -31,27 +34,27 @@ public class Nutrition extends MeasurementType implements SyncJSON {
     private String name;
     // Amount of the nutrition value
     private int amount;
-    private Timestamp dateUpdated;
-    private Timestamp dateSynchronized;
+    private MeasurementType measurementType;
 
+    // True if the nutrition is being added to the recipe, false if being deleted
     private boolean isAddedToRecipe = true;
 
-    public Nutrition(String name, int amount, @measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
-        super(measurementId);
+    private Nutrition(String name, int amount, @MeasurementType.measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        measurementType = new MeasurementType(measurementId);
         this.name = name;
         this.amount = amount;
         this.dateUpdated = dateUpdated;
         this.dateSynchronized = dateSynchronized;
     }
 
-    public Nutrition(String name, int amount, @measurementIds Long measurementId) {
-        super(measurementId);
+    public Nutrition(String name, int amount, @MeasurementType.measurementIds Long measurementId) {
+        measurementType = new MeasurementType(measurementId);
         this.name = name;
         this.amount = amount;
     }
 
-    public Nutrition(String name, int amount, @measurementIds Long measurementId, boolean isAddedToRecipe, Timestamp dateUpdated, Timestamp dateSynchronized) {
-        super(measurementId);
+    public Nutrition(String name, int amount, @MeasurementType.measurementIds Long measurementId, boolean isAddedToRecipe, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        measurementType = new MeasurementType(measurementId);
         this.name = name;
         this.amount = amount;
         this.isAddedToRecipe = isAddedToRecipe;
@@ -59,8 +62,8 @@ public class Nutrition extends MeasurementType implements SyncJSON {
         this.dateSynchronized = dateSynchronized;
     }
 
-    public Nutrition(long nutritionId, int amount, @measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
-        super(measurementId);
+    public Nutrition(long nutritionId, int amount, @MeasurementType.measurementIds Long measurementId, Timestamp dateUpdated, Timestamp dateSynchronized) {
+        measurementType = new MeasurementType(measurementId);
         this.amount = amount;
         this.dateUpdated = dateUpdated;
         this.dateSynchronized = dateSynchronized;
@@ -91,6 +94,36 @@ public class Nutrition extends MeasurementType implements SyncJSON {
         }
     }
 
+    public static class NutritionBuilder {
+
+        private String name;
+        private int amount;
+        private Long measurementType;
+        private Timestamp dateSynchronized;
+        private Timestamp dateUpdated;
+
+        public NutritionBuilder(String name, int amount, @MeasurementType.measurementIds Long measurementType) {
+            this.name = name;
+            this.amount = amount;
+            this.measurementType = measurementType;
+        }
+        public NutritionBuilder setDateSynchronized(Timestamp dateSynchronized) {
+            this.dateSynchronized = dateSynchronized;
+            return this;
+        }
+        public NutritionBuilder setDateUpdated(Timestamp dateUpdated) {
+            this.dateUpdated = dateUpdated;
+            return this;
+        }
+        public Nutrition build() {
+            Nutrition nutrition = new Nutrition(name, amount, measurementType);
+            nutrition.setDateSynchronized(dateSynchronized);
+            nutrition.setDateUpdated(dateUpdated);
+            return nutrition;
+        }
+
+    }
+
     protected Nutrition(Parcel in) {
         super(in);
         name = in.readString();
@@ -113,7 +146,7 @@ public class Nutrition extends MeasurementType implements SyncJSON {
 
     @Override
     public Nutrition clone() {
-        return new Nutrition(name, amount, measurementId, dateUpdated, dateSynchronized);
+        return new Nutrition(name, amount, measurementType.getMeasurementId(), dateUpdated, dateSynchronized);
     }
 
     @Override
@@ -134,24 +167,18 @@ public class Nutrition extends MeasurementType implements SyncJSON {
     public boolean getIsAddedToRecipe() {
         return isAddedToRecipe;
     }
-    public Timestamp getDateUpdated() {
-        return dateUpdated;
+    public MeasurementType getMeasurementType() {
+        return measurementType;
     }
-    public Timestamp getDateSynchronized() {
-        return dateSynchronized;
+    public void setMeasurement(Long measurementId) {
+        if (measurementId == null) measurementType = null;
+        else measurementType = new MeasurementType(measurementId);
     }
-
     public void setAmount(int amount) {
         this.amount = amount;
     }
     public void setIsAddedToRecipe(boolean isAddedToRecipe) {
         this.isAddedToRecipe = isAddedToRecipe;
-    }
-    public void setDateUpdated(Timestamp dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-    public void setDateSynchronized(Timestamp dateSynchronized) {
-        this.dateSynchronized = dateSynchronized;
     }
 
     @Override
@@ -177,7 +204,7 @@ public class Nutrition extends MeasurementType implements SyncJSON {
         }
     }
 
-    public static long getIdFromFrom(String name) {
+    public static long getIdFromName(String name) {
         switch (name) {
             case CALORIES:
                 return CALORIES_ID;
@@ -204,9 +231,10 @@ public class Nutrition extends MeasurementType implements SyncJSON {
     public JsonObject createSyncJSONUpdate() {
         JsonObject json = new JsonObject();
         json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.UPDATE.toString());
-        json.addProperty("id", getIdFromFrom(name));
+        json.addProperty("id", getIdFromName(name));
         json.addProperty("name", name);
         json.addProperty("amount", amount);
+        json.addProperty("measurement_id", measurementType.getMeasurementId());
         if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
         if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
         return json;
@@ -216,10 +244,21 @@ public class Nutrition extends MeasurementType implements SyncJSON {
     public JsonObject createSyncJSONSync() {
         JsonObject json = new JsonObject();
         json.addProperty(SyncJSON.UpdateIdentifier, OfflineUpdateIdentifier.SYNC.toString());
-        json.addProperty("id", getIdFromFrom(name));
+        json.addProperty("id", getIdFromName(name));
         json.addProperty("name", name);
         if (dateUpdated != null) json.addProperty("date_updated", dateUpdated.toString());
         if (dateSynchronized != null) json.addProperty("date_synchronized", dateSynchronized.toString());
         return json;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) return false;
+        if (obj == this) return true;
+        if (obj.getClass() != this.getClass()) return false;
+        Nutrition nutrition = (Nutrition) obj;
+        return nutrition.name.equals(name) &&
+                nutrition.amount == amount &&
+                nutrition.measurementType.equals(measurementType);
     }
 }

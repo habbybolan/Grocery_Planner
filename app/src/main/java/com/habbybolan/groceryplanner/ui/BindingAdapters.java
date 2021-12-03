@@ -4,6 +4,9 @@ import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+/**
+ * Binding adapter methods used in layout XML files.
+ */
 public class BindingAdapters {
 
     /**
