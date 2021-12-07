@@ -1,5 +1,8 @@
 package com.habbybolan.groceryplanner.sync;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,11 +15,6 @@ import com.habbybolan.groceryplanner.models.SyncJSON;
 import com.habbybolan.groceryplanner.models.secondarymodels.TimeModel;
 
 import java.sql.Timestamp;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class SyncRecipeFromResponse {
 
@@ -26,23 +24,14 @@ public class SyncRecipeFromResponse {
         this.databaseAccess = databaseAccess;
     }
 
-    public void syncMyRecipes(JsonArray recipeArray, SyncCompleteCallback callback) {
-        Callable task = () -> {
+    public synchronized void syncMyRecipes(JsonArray recipeArray, SyncCompleteCallback callback) {
+        new Thread(() -> {
             for (JsonElement element : recipeArray) {
                 JsonObject recipeObject = element.getAsJsonObject();
                 applySyncedMyRecipe(recipeObject);
             }
-            return null;
-        };
-        try {
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Future futureTask = executorService.submit(task);
-            futureTask.get();
-            callback.onSyncComplete();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            callback.onSyncFailed(e.getMessage());
-        }
+            new Handler(Looper.getMainLooper()).post(() -> callback.onSyncComplete());
+        }).start();
     }
 
     /**

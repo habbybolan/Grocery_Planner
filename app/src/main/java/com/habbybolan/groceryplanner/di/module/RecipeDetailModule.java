@@ -30,6 +30,7 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylist
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListPresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewReadOnlyPresenterImpl;
 import com.habbybolan.groceryplanner.http.RestWebService;
+import com.habbybolan.groceryplanner.sync.SyncRecipeFromResponse;
 
 import dagger.Module;
 import dagger.Provides;
@@ -137,8 +138,8 @@ public class RecipeDetailModule {
     }
 
     @Provides
-    RecipeDetailsContract.InteractorMyRecipe provideMyRecipeDetailInteractor(DatabaseAccess databaseAccess, RestWebService restWebService) {
-        return new RecipeDetailsMyRecipeInteractorImpl(databaseAccess, restWebService);
+    RecipeDetailsContract.InteractorMyRecipe provideMyRecipeDetailInteractor(DatabaseAccess databaseAccess, RestWebService restWebService, SyncRecipeFromResponse syncRecipes) {
+        return new RecipeDetailsMyRecipeInteractorImpl(databaseAccess, restWebService, syncRecipes);
     }
 
     @Provides

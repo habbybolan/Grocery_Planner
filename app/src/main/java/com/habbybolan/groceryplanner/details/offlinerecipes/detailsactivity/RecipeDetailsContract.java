@@ -25,7 +25,7 @@ public interface RecipeDetailsContract {
          * Send to Interactor to sync myRecipe.
          * @param myRecipe  Recipe to sync with online database.
          */
-        void onSync(MyRecipe myRecipe, SyncCompleteCallback callback);
+        void onSyncMyRecipe(MyRecipe myRecipe, SyncCompleteCallback callback);
     }
 
     interface Interactor {
@@ -42,10 +42,10 @@ public interface RecipeDetailsContract {
 
         /**
          * Deserialize myRecipe to JSON for sending to online database and syncing.
-         * @param myRecipe  Recipe to deserialize and send to online database for syncing
+         * @param recipeId  id of recipe to sync
          * @param callback  called when the data send from web service is all applied to offline database
          */
-        void onSync(MyRecipe myRecipe, SyncCompleteCallback callback);
+        void onSyncMyRecipe(long recipeId, SyncCompleteCallback callback);
     }
 
     interface InteractorLikedRecipe extends Interactor {

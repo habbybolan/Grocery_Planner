@@ -6,7 +6,9 @@ import android.os.Looper;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
 import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.dao.GroceryDao;
 import com.habbybolan.groceryplanner.database.dao.IngredientDao;
 import com.habbybolan.groceryplanner.database.dao.NutritionDao;
@@ -246,22 +248,20 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
     @Override
     public synchronized void insertFullMyRecipe(MyRecipe myRecipe, DbSingleCallback<OfflineRecipe> callback) throws ExecutionException, InterruptedException {
-        Callable<OfflineRecipe> task = () -> {
+        new Thread(() -> {
             long recipeId = recipeDao.insertNewMyRecipe(new RecipeEntity(myRecipe));
             ingredientDao.insertUpdateIngredientsIntoRecipe(myRecipe.getIngredients(), recipeId);
             List<RecipeTagEntity> tags = new ArrayList<>();
             for (RecipeTag tag : myRecipe.getRecipeTags()) tags.add(new RecipeTagEntity(0, tag.getOnlineId(), tag.getTitle()));
-            recipeTagDao.insertUpdateRecipeTags(tags, recipeId);
+            recipeTagDao.insertUpdateRecipeTagsIntoRecipe(tags, recipeId);
             for (Nutrition nutrition : myRecipe.getNutritionList()) {
                 nutritionDao.insertUpdateNutritionBridge(new RecipeNutritionBridge(recipeId,
                         Nutrition.getIdFromName(nutrition.getName()), nutrition.getAmount(), nutrition.getMeasurementType().getMeasurementId()));
             }
-            return new OfflineRecipe.RecipeBuilder(myRecipe.getName()).setId(recipeId).build();
-        };
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<OfflineRecipe> futureTask = executorService.submit(task);
-        callback.onResponse(futureTask.get());
+            new Handler(Looper.getMainLooper()).post(() -> {
+                callback.onResponse(new OfflineRecipe.RecipeBuilder(myRecipe.getName()).setId(recipeId).build());
+            });
+        }).start();
     }
 
     @Override
@@ -396,11 +396,10 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
     @Override
     public synchronized void fetchFullMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException {
-        Callable<MyRecipe> task = () -> recipeDao.getFullMyRecipe(recipeId);
-        // execute database access with Callable
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<MyRecipe> futureTask = executorService.submit(task);
-        callback.onResponse(futureTask.get());
+        new Thread(() -> {
+            MyRecipe myRecipe = recipeDao.getFullMyRecipe(recipeId);
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(myRecipe));
+        }).start();
     }
 
     @Override
@@ -413,20 +412,12 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public void addRecipeTag(long recipeId, String title) {
-        addRecipeTags(recipeId, new ArrayList<String>(){{add(title);}});
-    }
-
-    @Override
-    public synchronized void addRecipeTags(long recipeId, List<String> titles) {
-        Runnable task = () -> {
-            List<RecipeTagEntity> tags = new ArrayList<>();
-            for (String title : titles) tags.add(new RecipeTagEntity(0, null, title));
-                recipeTagDao.insertUpdateRecipeTags(tags, recipeId);
-        };
-
-        Thread thread = new Thread(task);
-        thread.start();
+    public void insertTagIntoRecipe(long recipeId, RecipeTag recipeTag, DbSingleCallbackWithFail<RecipeTag> callback) {
+        new Thread(() -> {
+            long tagId = recipeTagDao.insertUpdateTagIntoRecipe(new RecipeTagEntity(recipeTag), recipeId);
+            recipeTag.setId(tagId);
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(recipeTag));
+        }).start();
     }
 
     @Override
@@ -444,13 +435,9 @@ public class DatabaseAccessImpl implements DatabaseAccess {
     }
 
     @Override
-    public synchronized void deleteRecipeTagFromBridge(long recipeId, RecipeTag recipeTag) {
+    public synchronized void deleteRecipeTagFromBridge(long recipeId, long tagId, DbCallbackDelete callback) {
         Runnable task = () -> {
-            if (recipeTag.getId() != 0) {
-                recipeDao.deleteFlagRecipeTagBridge(recipeId, recipeTag.getId());
-            } else {
-                recipeDao.deleteFlagRecipeTagBridgeByTitle(recipeId, recipeTag.getTitle());
-            }
+            recipeTagDao.deleteRecipeTagBridge(recipeId, tagId);
         };
         Thread thread = new Thread(task);
         thread.start();
@@ -553,28 +540,20 @@ public class DatabaseAccessImpl implements DatabaseAccess {
 
     @Override
     public synchronized void addIngredient(Ingredient ingredient, DbSingleCallback<Ingredient> callback) {
-        /*Callable<Ingredient> task = () -> {
-            try {
-                ingredientTableLock.lock();
-                long id = ingredientDao.insertUpdateIngredient(new IngredientEntity(ingredient));
-                ingredient.setId(id);
-                return ingredient;
-            } finally {
-                ingredientTableLock.unlock();
-            }
-        };
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<Ingredient> futureTask = executorService.submit(task);
-        Ingredient insertedIngredient = futureTask.get();
-        callback.onResponse(insertedIngredient);*/
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        Runnable task1 = () -> {
+        new Thread(() -> {
             long id = ingredientDao.insertUpdateIngredient(new IngredientEntity(ingredient));
             ingredient.setId(id);
-            mainHandler.post(() -> callback.onResponse(ingredient));
-        };
-        Thread thread = new Thread(task1);
-        thread.start();
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(ingredient));
+        }).start();
+    }
+
+    @Override
+    public synchronized void addTag(RecipeTag tag, DbSingleCallback<RecipeTag> callback) {
+        new Thread(() -> {
+            long id = recipeTagDao.insertUpdateRecipeTag(new RecipeTagEntity(tag));
+            tag.setId(id);
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResponse(tag));
+        }).start();
     }
 
     @Override

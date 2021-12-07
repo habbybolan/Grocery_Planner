@@ -25,8 +25,8 @@ public class RecipeDetailsMyRecipeInteractorImpl implements RecipeDetailsContrac
     private DatabaseAccess databaseAccess;
 
     @Inject
-    public RecipeDetailsMyRecipeInteractorImpl(DatabaseAccess databaseAccess, RestWebService restWebService) {
-        syncRecipes = new SyncRecipeFromResponse(databaseAccess);
+    public RecipeDetailsMyRecipeInteractorImpl(DatabaseAccess databaseAccess, RestWebService restWebService, SyncRecipeFromResponse syncRecipes) {
+        this.syncRecipes = syncRecipes;
         this.databaseAccess = databaseAccess;
         this.restWebService = restWebService;
     }
@@ -37,19 +37,29 @@ public class RecipeDetailsMyRecipeInteractorImpl implements RecipeDetailsContrac
     }
 
     @Override
-    public void onSync(MyRecipe myRecipe, SyncCompleteCallback callback) {
-        MyRecipeList list = new MyRecipeList.MyRecipeListBuilder().addRecipe(myRecipe).build();
-        Call<JsonElement> call = restWebService.syncMyRecipes(list);
-        call.enqueue(new Callback<JsonElement>() {
-            @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
-                syncRecipes.syncMyRecipes(response.body().getAsJsonArray(), callback);
-            }
+    public void onSyncMyRecipe(long recipeId, SyncCompleteCallback callback) {
+        try {
+            databaseAccess.fetchFullMyRecipe(recipeId, new DbSingleCallback<MyRecipe>() {
+                @Override
+                public void onResponse(MyRecipe response) {
+                    MyRecipeList list = new MyRecipeList.MyRecipeListBuilder().addRecipe(response).build();
+                    Call<JsonElement> call = restWebService.syncMyRecipes(list);
+                    call.enqueue(new Callback<JsonElement>() {
+                        @Override
+                        public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                            syncRecipes.syncMyRecipes(response.body().getAsJsonArray(), callback);
+                        }
 
-            @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
-                callback.onSyncFailed(t.getMessage());
-            }
-        });
+                        @Override
+                        public void onFailure(Call<JsonElement> call, Throwable t) {
+                            callback.onSyncFailed(t.getMessage());
+                        }
+                    });
+                }
+            });
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -108,7 +108,6 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
     }
 
 
-
     @Override
     public void onSwapViewIngredients() {
         swapViewIngredients();
@@ -131,7 +130,7 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
 
     @Override
     public void onSync() {
-        presenter.onSync(recipe, new SyncCompleteCallback() {
+        presenter.onSyncMyRecipe(recipe, new SyncCompleteCallback() {
             @Override
             public void onSyncComplete() {
                 presenter.loadFullRecipe(recipe.getId());

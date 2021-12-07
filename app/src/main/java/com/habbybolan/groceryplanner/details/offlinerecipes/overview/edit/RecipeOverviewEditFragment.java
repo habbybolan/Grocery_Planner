@@ -127,7 +127,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     private void setTagClicker() {
         binding.recipeOverviewBtnAddTag.setOnClickListener(l -> {
             String tagTitle = binding.recipeOverviewTag.getText().toString();
-            presenter.checkAddingRecipeTag(tagTitle, recipeOverviewListener.getRecipe().getRecipeTags(), recipeOverviewListener.getRecipe());
+            presenter.addRecipeTag(tagTitle, recipeOverviewListener.getRecipe());
         });
     }
 

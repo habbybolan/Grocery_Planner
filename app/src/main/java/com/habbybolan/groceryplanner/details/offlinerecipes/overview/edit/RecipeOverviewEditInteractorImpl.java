@@ -1,6 +1,8 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewInteractorImpl;
@@ -38,20 +40,18 @@ public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorIm
     }
 
     @Override
-    public boolean addTag(List<RecipeTag> recipeTags, OfflineRecipe myRecipe, String title) {
+    public void addTag(OfflineRecipe myRecipe, String title, DbSingleCallbackWithFail<RecipeTag> callback) {
         String reformattedTitle = RecipeTag.reformatTagTitle(title);
-        RecipeTag recipeTag = new RecipeTag(reformattedTitle);
-        if (RecipeTag.isTagTitleValid(title) && !recipeTags.contains(recipeTag)) {
-            databaseAccess.addRecipeTag(myRecipe.getId(), reformattedTitle);
-            recipeTags.add(new RecipeTag(reformattedTitle));
-            return true;
+        if (RecipeTag.isTagTitleValid(title)) {
+            databaseAccess.insertTagIntoRecipe(myRecipe.getId(), new RecipeTag(reformattedTitle), callback);
+        } else {
+            callback.onFail("invalid tag name");
         }
-        return false;
     }
 
     @Override
-    public void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag) {
-        databaseAccess.deleteRecipeTagFromBridge(myRecipe.getId(), recipeTag);
+    public void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackDelete callback) {
+        databaseAccess.deleteRecipeTagFromBridge(myRecipe.getId(), recipeTag.getId(), callback);
     }
 
     @Override

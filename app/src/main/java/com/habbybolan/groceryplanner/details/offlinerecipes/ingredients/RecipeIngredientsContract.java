@@ -16,7 +16,7 @@ public interface RecipeIngredientsContract {
         void destroy();
 
         /**
-         * Get all Ingredient objects associated with recipe from the database.
+         * Get all Ingredient objects associated with the recipe from the offline database.
          * @param recipe   The recipe associated with the Ingredients to display
          */
         void createIngredientList(OfflineRecipe recipe);

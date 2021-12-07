@@ -1,6 +1,8 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewPresenterImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
@@ -71,17 +73,32 @@ public class RecipeOverviewEditPresenterImpl extends RecipeOverviewPresenterImpl
 
     @Override
     public void deleteRecipeTag(OfflineRecipe recipe, RecipeTag recipeTag) {
-        interactor.deleteRecipeTag(recipe, recipeTag);
+        interactor.deleteRecipeTag(recipe, recipeTag, new DbCallbackDelete() {
+            @Override
+            public void onSuccess() {
+                recipe.deleteTagByTitle(recipeTag.getTitle());
+            }
+
+            @Override
+            public void onFailure(String message) {
+                view.loadingFailed("failed to delete tag");
+            }
+        });
     }
 
     @Override
-    public void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, OfflineRecipe recipe) {
-        // todo: make this a callable structure
-        if (interactor.addTag(recipeTags, recipe, title)) {
-            view.updateTagDisplay();
-        } else {
-            view.loadingFailed("Invalid Recipe tag name");
-        }
+    public void addRecipeTag(String title, OfflineRecipe recipe) {
+        interactor.addTag(recipe, title, new DbSingleCallbackWithFail<RecipeTag>() {
+            @Override
+            public void onResponse(RecipeTag response) {
+                recipe.getRecipeTags().add(response);
+                view.updateTagDisplay();
+            }
+            @Override
+            public void onFail(String message) {
+                view.loadingFailed("Invalid Recipe tag name");
+            }
+        });
     }
 
     @Override

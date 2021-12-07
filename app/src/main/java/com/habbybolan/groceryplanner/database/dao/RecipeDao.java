@@ -403,16 +403,8 @@ public abstract class RecipeDao {
     @Query("UPDATE RecipeIngredientBridge SET is_deleted = 1 WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
     public abstract void deleteFlagIngredientsFromRecipeIngredientBridge(long recipeId, List<Long> ingredientIds);
 
-    @Query("UPDATE RecipeTagBridge SET is_deleted = 1 WHERE recipeId=:recipeId AND tagId = :tagId")
-    public abstract void deleteFlagRecipeTagBridge(long recipeId, long tagId);
-
     @Query("UPDATE RecipeNutritionBridge SET is_deleted = 1 WHERE recipe_id=:recipeId AND nutrition_id = :nutritionId")
     public abstract void deleteFlagNutritionBridge(long recipeId, long nutritionId);
-
-    @Query("UPDATE RecipeTagBridge SET is_deleted = 1" +
-            "   WHERE recipeId = :recipeId AND" +
-            "   tagId IN (SELECT tagId FROM RecipeTagEntity WHERE title = :title)")
-    public abstract void deleteFlagRecipeTagBridgeByTitle(long recipeId, String title);
 
     @Query("DELETE FROM GroceryRecipeIngredientEntity WHERE recipeId=:recipeId AND ingredientId IN (:ingredientIds)")
     public abstract void deleteRecipeIngredientsFromGroceryRecipeIngredientEntity(long recipeId, List<Long> ingredientIds);

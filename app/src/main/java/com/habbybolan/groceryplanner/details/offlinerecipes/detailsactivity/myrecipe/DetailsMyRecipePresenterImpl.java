@@ -26,7 +26,7 @@ public class DetailsMyRecipePresenterImpl extends RecipeDetailsPresenterImpl<Rec
     }
 
     @Override
-    public void onSync(MyRecipe myRecipe, SyncCompleteCallback callback) {
-        interactor.onSync(myRecipe, callback);
+    public void onSyncMyRecipe(MyRecipe myRecipe, SyncCompleteCallback callback) {
+        interactor.onSyncMyRecipe(myRecipe.getId(), callback);
     }
 }

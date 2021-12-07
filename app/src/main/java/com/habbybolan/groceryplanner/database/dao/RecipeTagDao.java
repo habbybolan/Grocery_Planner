@@ -20,21 +20,25 @@ import java.util.List;
 public abstract class RecipeTagDao {
 
     @Transaction
-    public void insertUpdateRecipeTags(List<RecipeTagEntity> tags, long recipeId) {
+    public void insertUpdateRecipeTagsIntoRecipe(List<RecipeTagEntity> tags, long recipeId) {
         for (RecipeTagEntity tag : tags) {
             long tagId = insertUpdateRecipeTag(tag);
             tag.tagId = tagId;
             // associate the tag with the recipe
             RecipeTagBridge recipeTagBridge = new RecipeTagBridge(recipeId, tagId);
-            long bridgeId = insertRecipeTagBridge(recipeTagBridge);
-            if (bridgeId <= 0) {
-                updateRecipeTagBridge(recipeTagBridge);
-            }
+            insertUpdateRecipeTagBridge(recipeTagBridge);
         }
     }
 
-    @Insert
-    public abstract void updateRecipeTagBridge(RecipeTagBridge recipeTagBridge);
+    @Transaction
+    public long insertUpdateTagIntoRecipe(RecipeTagEntity tagEntity, long recipeId) {
+        long tagId = insertUpdateRecipeTag(tagEntity);
+        RecipeTagBridge recipeTagBridge = new RecipeTagBridge(recipeId, tagId);
+        insertUpdateRecipeTagBridge(recipeTagBridge);
+        return tagId;
+    }
+
+
 
     @Transaction
     public long insertUpdateRecipeTag(RecipeTagEntity tag) {
@@ -60,11 +64,17 @@ public abstract class RecipeTagDao {
     }
 
     @Transaction
-    public long insertRecipeTagBridge(RecipeTagBridge recipeTagBridge) {
+    void insertUpdateRecipeTagBridge(RecipeTagBridge recipeTagBridge) {
         long id = insertRecipeTagBridgeHelper(recipeTagBridge);
+        if (id <= 0) {
+            updateRecipeTagBridge(recipeTagBridge);
+        }
         setDateUpdatedRecipeTagBridge(recipeTagBridge.recipeId, recipeTagBridge.tagId);
-        return id;
     }
+
+    @Update
+    abstract void updateRecipeTagBridge(RecipeTagBridge recipeTagBridge);
+
 
     @Query("UPDATE recipetagbridge SET date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE recipeId = :recipeId AND tagId = :tagId")
     public abstract void setDateUpdatedRecipeTagBridge(long recipeId, long tagId);
@@ -114,4 +124,24 @@ public abstract class RecipeTagDao {
 
     @Query("UPDATE RecipeTagBridge SET date_synchronized = :dateSync WHERE recipeId = :recipeId AND tagId = :tagId")
     public abstract void syncTagUpdateDateSync(long recipeId, long tagId, Timestamp dateSync);
+
+    @Query("UPDATE RecipeTagBridge SET is_deleted = 1 WHERE recipeId=:recipeId AND tagId = :tagId")
+    abstract void deleteRecipeTagBridgeHelper(long recipeId, long tagId);
+
+    @Transaction
+    public void deleteRecipeTagBridge(long recipeId, long tagId) {
+        deleteRecipeTagBridgeHelper(recipeId, tagId);
+        setDateUpdatedRecipeTagBridge(recipeId, tagId);
+    }
+
+    /*@Transaction
+    public void deleteRecipeTagByTitleBridge(long recipeId, String title) {
+        deleteRecipeTagBridgeByTitleHelper(recipeId, title);
+        setDateUpdatedRecipeTagBridge(recipeId, tagId);
+    }
+
+    @Query("UPDATE RecipeTagBridge SET is_deleted = 1" +
+            "   WHERE recipeId = :recipeId AND" +
+            "   tagId IN (SELECT tagId FROM RecipeTagEntity WHERE title = :title)")
+    public abstract void deleteRecipeTagBridgeByTitleHelper(long recipeId, String title);*/
 }

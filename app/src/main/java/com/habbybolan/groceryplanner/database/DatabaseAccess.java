@@ -3,7 +3,9 @@ package com.habbybolan.groceryplanner.database;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
 import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeTagEntity;
@@ -98,10 +100,9 @@ public interface DatabaseAccess {
     void fetchFullMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException;
     void fetchFullLikedRecipe(long recipeId, DbSingleCallback<LikedRecipe> callback) throws ExecutionException, InterruptedException;
 
-    void addRecipeTag(long recipeId, String title);
-    void addRecipeTags(long recipeId, List<String> titles);
+    void insertTagIntoRecipe(long recipeId, RecipeTag recipeTag, DbSingleCallbackWithFail<RecipeTag> callback);
     void fetchRecipeTags(long recipeId, DbCallback<RecipeTag> recipeTags) throws ExecutionException, InterruptedException;
-    void deleteRecipeTagFromBridge(long recipeId, RecipeTag recipeTag);
+    void deleteRecipeTagFromBridge(long recipeId, long recieTagId, DbCallbackDelete callbackDelete);
 
     void deleteRecipeCategory(long categoryId);
     void deleteRecipeCategories(List<Long> categoryIds);
@@ -141,7 +142,19 @@ public interface DatabaseAccess {
     void deleteIngredientsFromRecipe(long recipeId, List<Long> ingredientIds);
     void fetchIngredientsFromRecipe(OfflineRecipe offlineRecipe, SortType sortType, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
 
+    /**
+     * isnert ingredient into database
+     * @param ingredient    Ingredient to insert
+     * @param callback      Callback when ingredient is inserted or fails to insert
+     */
     void addIngredient(Ingredient ingredient, DbSingleCallback<Ingredient> callback);
+
+    /**
+     * Insert a tag into the database
+     * @param tag           Tag to insert
+     * @param callback      Callback when tag inserted or fails to insert
+     */
+    void addTag(RecipeTag tag, DbSingleCallback<RecipeTag> callback);
 
     /**
      * Fetch all ingredients created.

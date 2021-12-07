@@ -222,6 +222,17 @@ public abstract class Recipe extends IngredientHolder implements Parcelable {
         return nutritionList;
     }
 
+    public void deleteTagByTitle(String title) {
+        for (int i = 0; i < recipeTags.size(); i++) {
+            if (recipeTags.get(i).getTitle().equals(title)) {
+                recipeTags.remove(i);
+                return;
+            }
+        }
+        // shouldn't reach here
+        assert(false);
+    }
+
     public void setRecipeTags(List<RecipeTag> recipeTags) {
         this.recipeTags = recipeTags;
     }

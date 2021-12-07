@@ -3,6 +3,8 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -63,9 +65,8 @@ public interface RecipeOverviewContract {
          * Adds the new tag if valid, otherwise send back error message.
          * @param title      Title of the new RecipeTag being added
          * @param myRecipe    Recipe the tag will be added to
-         * @param recipeTags List of RecipeTag to add the new RecipeTag to
          */
-        void checkAddingRecipeTag(String title, List<RecipeTag> recipeTags, OfflineRecipe myRecipe);
+        void addRecipeTag(String title, OfflineRecipe myRecipe);
 
         /** Calls Interactor to update the recipe values changed. */
         void updateRecipe(OfflineRecipe myRecipe, String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category);
@@ -95,19 +96,20 @@ public interface RecipeOverviewContract {
 
         /**
          * Adds a tag to the recipe.
-         * @param recipeTags List of RecipeTag to add the new RecipeTag to
+         * @param callback  callback when the tag is added to the recipe
          * @param title     title of the tag
-         * @param myRecipe    recipe to place the tag into
+         * @param myRecipe  recipe to place the tag into
          * @return          True if the recipe tag addition is valid, otherwise false
          */
-        boolean addTag(List<RecipeTag> recipeTags, OfflineRecipe myRecipe, String title);
+        void addTag(OfflineRecipe myRecipe, String title, DbSingleCallbackWithFail<RecipeTag> callback);
 
         /**
          * Delete the tag from the recipe
          * @param myRecipe    recipe holding the tag
          * @param recipeTag tag to delete from the recipe
+         * @param callbackDelete callback for deleting tag
          */
-        void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag);
+        void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackDelete callbackDelete);
 
         /**
          * Updates the MyRecipe values based on user set values and save the changes to room database.

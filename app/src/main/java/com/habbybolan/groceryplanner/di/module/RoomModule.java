@@ -12,6 +12,7 @@ import com.habbybolan.groceryplanner.database.dao.IngredientDao;
 import com.habbybolan.groceryplanner.database.dao.NutritionDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeDao;
 import com.habbybolan.groceryplanner.database.dao.RecipeTagDao;
+import com.habbybolan.groceryplanner.sync.SyncRecipeFromResponse;
 
 import javax.inject.Singleton;
 
@@ -69,6 +70,11 @@ public class RoomModule {
     @Provides
     DatabaseAccess provideDatabaseAccess(GroceryDao groceryDao, RecipeDao recipeDao, IngredientDao ingredientDao, RecipeTagDao recipeTagDao, NutritionDao nutritionDao) {
         return new DatabaseAccessImpl(groceryDao, recipeDao, ingredientDao, recipeTagDao, nutritionDao);
+    }
+
+    @Provides
+    SyncRecipeFromResponse provideSyncRecipe(DatabaseAccess databaseAccess) {
+        return new SyncRecipeFromResponse(databaseAccess);
     }
 
 }
