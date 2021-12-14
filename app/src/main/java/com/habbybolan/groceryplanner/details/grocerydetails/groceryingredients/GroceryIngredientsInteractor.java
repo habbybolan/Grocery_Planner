@@ -4,6 +4,7 @@ import com.habbybolan.groceryplanner.callbacks.DbCallback;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -16,9 +17,10 @@ public interface GroceryIngredientsInteractor {
     /**
      * Get all Grocery Ingredient objects associated with grocery from the database.
      * @param grocery    The grocery associated with the Ingredients to return
+     * @param sortType   Order to retrieve ingredients
      * @param callback   Callback to update Grocery Ingredients fetched
      */
-    void fetchIngredients(Grocery grocery, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException;
+    void fetchIngredients(Grocery grocery, SortType sortType, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException;
 
     /**
      * Delete an ingredient from the grocery

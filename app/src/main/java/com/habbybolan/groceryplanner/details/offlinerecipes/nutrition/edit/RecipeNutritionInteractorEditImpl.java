@@ -2,13 +2,19 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit;
 
 import androidx.annotation.NonNull;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionInteractorImpl;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 
-public class RecipeNutritionInteractorEditImpl extends RecipeNutritionInteractorImpl implements RecipeNutritionContract.InteractorEdit {
+import java.util.concurrent.ExecutionException;
+
+public class RecipeNutritionInteractorEditImpl
+        extends RecipeNutritionInteractorImpl<MyRecipe>
+        implements RecipeNutritionContract.InteractorEdit {
 
     public RecipeNutritionInteractorEditImpl(DatabaseAccess databaseAccess) {
         super(databaseAccess);
@@ -31,5 +37,14 @@ public class RecipeNutritionInteractorEditImpl extends RecipeNutritionInteractor
         // Can only change measurement type of an existing nutrition
         if (nutrition.getIsAddedToRecipe())
             databaseAccess.addNutrition(recipe.getId(), nutrition);
+    }
+
+    @Override
+    public void fetchFullRecipe(long recipeId, DbSingleCallbackWithFail<MyRecipe> callback) {
+        try {
+            databaseAccess.fetchFullMyRecipe(recipeId, callback);
+        }catch (InterruptedException | ExecutionException e) {
+            callback.onFail("");
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,8 @@ public class GroceryIngredientsInteractorImpl implements GroceryIngredientsInter
     }
 
     @Override
-    public void fetchIngredients(Grocery grocery, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchGroceryIngredients(grocery, callback);
+    public void fetchIngredients(Grocery grocery, SortType sortType, DbCallback<GroceryIngredient> callback) throws ExecutionException, InterruptedException {
+        databaseAccess.fetchGroceryIngredients(grocery, sortType, callback);
     }
 
     @Override

@@ -1,8 +1,12 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.ingredients;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
+import com.habbybolan.groceryplanner.details.offlinerecipes.DetailFragmentView;
 import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
@@ -11,46 +15,48 @@ import java.util.concurrent.ExecutionException;
 
 public interface RecipeIngredientsContract {
 
-    interface Presenter<T extends IngredientsView> {
-        void setView(T view);
+    interface Presenter<U extends Interactor<T2>, T extends IngredientsView, T2 extends OfflineRecipe> {
+        void setupPresenter(T view, long recipeId);
         void destroy();
 
         /**
          * Get all Ingredient objects associated with the recipe from the offline database.
-         * @param recipe   The recipe associated with the Ingredients to display
          */
-        void createIngredientList(OfflineRecipe recipe);
+        void createIngredientList();
 
         /**
          * Search for the recipe ingredients with name ingredientSearch.
-         * @param recipe             recipe to search in for the ingredient
          * @param ingredientSearch   ingredient to search for
          */
-        void searchIngredients(OfflineRecipe recipe, String ingredientSearch);
+        void searchIngredients(String ingredientSearch);
+
+        T2 getRecipe();
+        void loadUpdatedRecipe();
     }
 
-    interface PresenterEdit extends Presenter<IngredientsView> {
+    interface PresenterEdit extends Presenter<InteractorEdit, IngredientsView, MyRecipe> {
         /**
          * Delete an ingredient from the recipe
-         * @param recipe        The recipe to delete the ingredient from
          * @param ingredient    The ingredient to delete
          */
-        void deleteIngredient(OfflineRecipe recipe, Ingredient ingredient);
+        void deleteIngredient(Ingredient ingredient);
 
         /**
          * Delete ingredients from the recipe
-         * @param recipe        The recipe to delete the ingredients from
          * @param ingredients   The ingredients to delete
          */
-        void deleteIngredients(OfflineRecipe recipe, List<Ingredient> ingredients);
+        void deleteIngredients(List<Ingredient> ingredients);
     }
 
     /**
      * Wrapper presenter to allow dagger injection of generic Presenter with a generic interactor.
      */
-    interface PresenterReadOnly extends Presenter<IngredientsView> {}
+    interface PresenterReadOnly<T extends Interactor<U>, U extends OfflineRecipe> extends Presenter<T, IngredientsView, U> {}
 
-    interface Interactor {
+    interface PresenterMyRecipe extends PresenterReadOnly<InteractorMyRecipe, MyRecipe> {}
+    interface PresenterLikedRecipe extends PresenterReadOnly<InteractorLikedRecipe, LikedRecipe> {}
+
+    interface Interactor<T extends OfflineRecipe> {
         /**
          * Get all Ingredient objects associated with Recipe from the database.
          * @param recipe     The ingredient to display
@@ -65,9 +71,11 @@ public interface RecipeIngredientsContract {
          * @param callback           callback to update the list of ingredients showing
          */
         void searchIngredients(OfflineRecipe recipe, String ingredientSearch, DbCallback<Ingredient> callback) throws ExecutionException, InterruptedException;
+
+        void fetchFullRecipe(long recipeId, DbSingleCallbackWithFail<T> callback);
     }
 
-    interface InteractorEdit extends Interactor {
+    interface InteractorEdit extends Interactor<MyRecipe> {
         /**
          * Delete an ingredient from the recipe
          * @param recipe        The recipe to delete the ingredient from
@@ -89,25 +97,27 @@ public interface RecipeIngredientsContract {
         void deleteRecipe(OfflineRecipe recipe);
     }
 
-    interface IngredientsView  {
-        void loadingStarted();
-        void loadingFailed(String message);
+    interface InteractorMyRecipe extends Interactor<MyRecipe> {}
+
+    interface InteractorLikedRecipe extends Interactor<LikedRecipe> {}
+
+    interface IngredientsView extends DetailFragmentView {
 
         SortType getSortType();
 
         void showList(List<Ingredient> ingredients);
+
+        /** setup the recipe views */
+        void setupRecipeViews();
     }
 
     interface IngredientsEditView extends ListViewInterface<Ingredient>, IngredientsView {
     }
 
     interface IngredientsReadOnlyView extends IngredientsView {
-
-        void showList(List<Ingredient> ingredients);
     }
 
     interface RecipeIngredientsListener {
-        OfflineRecipe getRecipe();
     }
 
     interface RecipeIngredientsMyRecipeListener extends RecipeIngredientsListener{

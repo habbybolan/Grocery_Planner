@@ -49,7 +49,12 @@
                 </androidx.core.widget.NestedScrollView>
 
                 <FrameLayout
-                    android:id="@+id/fragment_ingredient_add"
+                    android:id="@+id/ingredient_edit_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <FrameLayout
+                    android:id="@+id/ingredient_add_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

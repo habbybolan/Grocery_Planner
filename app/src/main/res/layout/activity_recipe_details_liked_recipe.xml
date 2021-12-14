@@ -16,8 +16,8 @@
             android:layout_weight="1">
 
             <include
-                android:id="@+id/recipe_details_fragments"
-                layout="@layout/recipe_details_fragments"/>
+                android:id="@+id/recipe_details_read_only_fragments"
+                layout="@layout/recipe_details_read_only_fragments"/>
 
         </FrameLayout>
 

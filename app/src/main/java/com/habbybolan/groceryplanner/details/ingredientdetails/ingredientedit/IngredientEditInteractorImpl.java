@@ -1,6 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
-import com.habbybolan.groceryplanner.callbacks.DbSingleCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
@@ -33,29 +33,18 @@ public class IngredientEditInteractorImpl implements IngredientEditContract.Inte
     }
 
     @Override
-    public boolean updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId) {
+    public void updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId, DbSingleCallbackWithFail<Ingredient> callback) {
         if (Ingredient.isValidName(name)) {
             Ingredient ingredient = setStringsIntoIngredient(name, quantity, quantityType, foodType, ingredientId);
             if (ingredientHolder != null) {
                 if (ingredientHolder.isGrocery())
-                    databaseAccess.insertIngredientsIntoGrocery(ingredientHolder.getId(), new ArrayList<Ingredient>() {{
-                        add(ingredient);
-                    }});
+                    databaseAccess.insertUpdateIngredientsIntoGrocery(ingredientHolder.getId(), ingredient, callback);
                 else
-                    databaseAccess.insertIngredientsIntoRecipe(ingredientHolder.getId(), new ArrayList<Ingredient>() {{
-                        add(ingredient);
-                    }});
+                    databaseAccess.insertUpdateIngredientsIntoRecipe(ingredientHolder.getId(), ingredient, callback);
             } else {
-                databaseAccess.addIngredient(ingredient, new DbSingleCallback<Ingredient>() {
-                    @Override
-                    public void onResponse(Ingredient response) {
-                        // TODO: MOVE THIS CALLBACK TO THE PRESENTER
-                    }
-                });
+                databaseAccess.addIngredient(ingredient, callback);
+            }
         }
-            return true;
-        } else
-            return false;
     }
 
     /**

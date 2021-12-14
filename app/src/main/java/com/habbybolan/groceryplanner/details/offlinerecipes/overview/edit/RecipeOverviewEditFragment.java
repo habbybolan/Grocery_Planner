@@ -9,7 +9,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -21,6 +20,7 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverv
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListFragment;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -38,9 +38,17 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     private RecipeOverviewMyListener recipeOverviewListener;
     private CustomToolbar customToolbar;
     private RecipeCategory selectedRecipeCategory;
-
     private RecipeTagRecyclerView tagRV;
+
     public RecipeOverviewEditFragment() {}
+
+    public static RecipeOverviewEditFragment getInstance(long recipeId) {
+        RecipeOverviewEditFragment fragment = new RecipeOverviewEditFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,18 +68,16 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_overview_edit, container, false);
-        presenter.setView(this);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
-        setRV();
-        setTagClicker();
-        initClickers();
-        setDisplayToCurrentRecipe();
-        setRecipeGroceryFragment();
         return binding.getRoot();
     }
 
     private void setRecipeGroceryFragment() {
-        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance();
+        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance(presenter.getRecipe());
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(binding.recipesGroceryContainer.getId(), RecipeGroceryFragment).commit();
@@ -81,15 +87,9 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
      * Set up RecyclerView for displaying the tags added to the recipe
      */
     private void setRV() {
-        tagRV = new RecipeTagRecyclerView(recipeOverviewListener.getRecipe().getRecipeTags(), this, binding.recipeOverviewRvTags, getContext());
+        tagRV = new RecipeTagRecyclerView(presenter.getRecipe().getRecipeTags(), this, binding.recipeOverviewRvTags, getContext());
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // set up the view for view methods to be accessed from the presenter
-        presenter.loadAllRecipeCategories();
-        presenter.fetchRecipeCategory(recipeOverviewListener.getRecipe().getCategoryId());
-    }
 
     @Override
     public void onResume() {
@@ -127,7 +127,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     private void setTagClicker() {
         binding.recipeOverviewBtnAddTag.setOnClickListener(l -> {
             String tagTitle = binding.recipeOverviewTag.getText().toString();
-            presenter.addRecipeTag(tagTitle, recipeOverviewListener.getRecipe());
+            presenter.addRecipeTag(tagTitle);
         });
     }
 
@@ -142,7 +142,7 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
         String description = binding.recipeOverviewDescription.getText().toString();
 
         // update the offline recipe
-        presenter.updateRecipe(recipeOverviewListener.getRecipe(), name, servingSize, cookTime, prepTime, description, selectedRecipeCategory);
+        presenter.updateRecipe(name, servingSize, cookTime, prepTime, description, selectedRecipeCategory);
     }
 
     private void setToolbar() {
@@ -196,20 +196,20 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
      * Sets the display to the current recipe's values.
      */
     private void setDisplayToCurrentRecipe() {
-        binding.setName(recipeOverviewListener.getRecipe().getName());
+        binding.setName(presenter.getRecipe().getName());
 
         // if the recipe has no category, display it has no category
-        if (recipeOverviewListener.getRecipe().getCategoryId() == null)
+        if (presenter.getRecipe().getCategoryId() == null)
             binding.setCategoryName(Category.NO_CATEGORY);
         else
             // otherwise, fetch the categoryId and display it
-            presenter.fetchRecipeCategory(recipeOverviewListener.getRecipe().getCategoryId());
+            presenter.fetchRecipeCategory();
 
         // set serving size, prep time, cook time, and description
-        binding.setServingSize(String.valueOf(recipeOverviewListener.getRecipe().getServingSize()));
-        binding.setCookTime(String.valueOf(recipeOverviewListener.getRecipe().getCookTime()));
-        binding.setPrepTime(String.valueOf(recipeOverviewListener.getRecipe().getPrepTime()));
-        binding.setDescription(recipeOverviewListener.getRecipe().getDescription());
+        binding.setServingSize(String.valueOf(presenter.getRecipe().getServingSize()));
+        binding.setCookTime(String.valueOf(presenter.getRecipe().getCookTime()));
+        binding.setPrepTime(String.valueOf(presenter.getRecipe().getPrepTime()));
+        binding.setDescription(presenter.getRecipe().getDescription());
     }
 
     @Override
@@ -233,29 +233,36 @@ public class RecipeOverviewEditFragment extends Fragment implements RecipeOvervi
     }
 
     @Override
-    public void displayRecipeTags() {
+    public void displayUpdatedRecipe() {
+        // update tags
         tagRV.updateDisplay();
+        setDisplayToCurrentRecipe();
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        setRV();
+        setTagClicker();
+        initClickers();
+        setDisplayToCurrentRecipe();
+        setRecipeGroceryFragment();
+        presenter.loadAllRecipeCategories();
     }
 
     @Override
     public void updateTagDisplay() {
-        tagRV.itemInserted(recipeOverviewListener.getRecipe().getRecipeTags().size()-1);
+        tagRV.itemInserted(presenter.getRecipe().getRecipeTags().size()-1);
         binding.recipeOverviewTag.setText("");
     }
 
     @Override
     public void onDeleteRecipeTag(RecipeTag recipeTag) {
-        presenter.deleteRecipeTag(recipeOverviewListener.getRecipe(), recipeTag);
+        presenter.deleteRecipeTag(recipeTag);
     }
 
     @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "loading started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
     }
 
     public interface RecipeOverviewMyListener extends RecipeOverviewContract.RecipeOverviewMyRecipeListener {

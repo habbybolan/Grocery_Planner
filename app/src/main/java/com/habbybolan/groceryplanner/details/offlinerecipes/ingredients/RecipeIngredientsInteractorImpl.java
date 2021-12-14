@@ -8,13 +8,10 @@ import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-
-public class RecipeIngredientsInteractorImpl implements RecipeIngredientsContract.Interactor {
+public abstract class RecipeIngredientsInteractorImpl<T extends OfflineRecipe> implements RecipeIngredientsContract.Interactor<T> {
 
     protected DatabaseAccess databaseAccess;
 
-    @Inject
     public RecipeIngredientsInteractorImpl(DatabaseAccess databaseAccess) {
         this.databaseAccess = databaseAccess;
     }

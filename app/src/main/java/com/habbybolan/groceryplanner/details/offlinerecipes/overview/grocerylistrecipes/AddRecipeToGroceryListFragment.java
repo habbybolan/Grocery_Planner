@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentAddRecipeToGroceryListBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.IngredientWithGroceryCheck;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeGroceriesAdapter;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
@@ -34,7 +31,6 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
 
     private FragmentAddRecipeToGroceryListBinding binding;
     private RecipeGroceriesAdapter groceriesAdapter;
-    private RecipeOverviewContract.RecipeOverviewListener recipeOverviewListener;
 
     @Inject
     AddRecipeToGroceryListContract.Presenter presenter;
@@ -43,15 +39,12 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
         // Required empty public constructor
     }
 
-    public static AddRecipeToGroceryListFragment newInstance() {
+    public static AddRecipeToGroceryListFragment newInstance(OfflineRecipe offlineRecipe) {
         AddRecipeToGroceryListFragment fragment = new AddRecipeToGroceryListFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(OfflineRecipe.RECIPE, offlineRecipe);
+        fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        recipeOverviewListener = (RecipeOverviewContract.RecipeOverviewListener) context;
     }
 
     @Override
@@ -66,16 +59,19 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_recipe_to_grocery_list, container, false);
         presenter.setView(this);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE))
+            presenter.setRecipe(bundle.getParcelable(OfflineRecipe.RECIPE));
         initiateClickers();
         setRV();
-        presenter.fetchGroceriesNotHoldingRecipe( recipeOverviewListener.getRecipe());
+        presenter.fetchGroceriesNotHoldingRecipe();
         return binding.getRoot();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(OfflineRecipe.RECIPE,  recipeOverviewListener.getRecipe());
+        outState.putParcelable(OfflineRecipe.RECIPE,  presenter.getRecipe());
     }
 
     private void initiateClickers() {
@@ -103,7 +99,7 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
     @Override
     public void onGroceryHoldingRecipeClicked(Grocery grocery) {
         // get the ingredients from a recipe that was added to the grocery list
-        presenter.fetchRecipeIngredients( recipeOverviewListener.getRecipe(), grocery, false);
+        presenter.fetchRecipeIngredients(grocery, false);
     }
 
     @Override
@@ -133,11 +129,11 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
                     public void onClick(DialogInterface dialog, int id) {
                         try {
                             // update the recipe ingredients inside the grocery
-                            presenter.updateRecipeIngredientsInGrocery( recipeOverviewListener.getRecipe(), grocery, 1, ingredients);
+                            presenter.updateRecipeIngredientsInGrocery(grocery, 1, ingredients);
                         } finally {
                             // update the stored values holding the the groceries holding and not holding the recipe
-                            presenter.fetchGroceriesNotHoldingRecipe( recipeOverviewListener.getRecipe());
-                            presenter.fetchGroceriesHoldingRecipe( recipeOverviewListener.getRecipe());
+                            presenter.fetchGroceriesNotHoldingRecipe();
+                            presenter.fetchGroceriesHoldingRecipe();
                         }
                     }
                 })
@@ -145,11 +141,11 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
-                            presenter.deleteRecipeFromGrocery( recipeOverviewListener.getRecipe(), grocery);
+                            presenter.deleteRecipeFromGrocery(grocery);
                         } finally {
                             // update the stored values holding the the groceries holding and not holding the recipe
-                            presenter.fetchGroceriesNotHoldingRecipe( recipeOverviewListener.getRecipe());
-                            presenter.fetchGroceriesHoldingRecipe( recipeOverviewListener.getRecipe());
+                            presenter.fetchGroceriesNotHoldingRecipe();
+                            presenter.fetchGroceriesHoldingRecipe();
                         }
                     }
                 })
@@ -193,7 +189,7 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // todo: could pre-load recipe ingredients, then directly display them
-                        presenter.fetchRecipeIngredients( recipeOverviewListener.getRecipe(), groceries.get(which), true);
+                        presenter.fetchRecipeIngredients(groceries.get(which), true);
                     }
                 });
         AlertDialog dialog = builder.create();
@@ -210,14 +206,14 @@ public class AddRecipeToGroceryListFragment extends Fragment implements AddRecip
     }
 
     /**
-     * Set up the RecyclerView for displaying Groceries holding the current Recipe
-     * Set up RecyclerView for displaying the tags added to the recipe
+     * Set up the RecyclerView for displaying Groceries holding the current Recipe.
+     * Set up RecyclerView for displaying the tags added to the recipe.
      */
     private void setRV() {
         RecyclerView rvGroceries = binding.rvRecipeOverviewGroceries;
         groceriesAdapter = new RecipeGroceriesAdapter(presenter.getLoadedGroceriesHoldingRecipe(), this);
         rvGroceries.setAdapter(groceriesAdapter);
-        presenter.fetchGroceriesHoldingRecipe( recipeOverviewListener.getRecipe());
+        presenter.fetchGroceriesHoldingRecipe();
     }
 
 

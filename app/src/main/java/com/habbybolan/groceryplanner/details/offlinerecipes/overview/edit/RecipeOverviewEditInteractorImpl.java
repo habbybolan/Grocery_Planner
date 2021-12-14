@@ -1,11 +1,12 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
-import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackEmptyResponse;
 import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewInteractorImpl;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -14,7 +15,7 @@ import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorImpl implements RecipeOverviewContract.InteractorEdit {
+public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorImpl<MyRecipe> implements RecipeOverviewContract.InteractorEdit {
 
     public RecipeOverviewEditInteractorImpl(DatabaseAccess databaseAccess) {
         super(databaseAccess);
@@ -26,8 +27,6 @@ public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorIm
         sortType.setSortType(SortType.SORT_ALPHABETICAL_ASC);
         databaseAccess.fetchRecipeCategories(callback, sortType);
     }
-
-
 
     @Override
     public String[] getNamedOfRecipeCategories(List<RecipeCategory> recipeCategories) {
@@ -50,7 +49,7 @@ public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorIm
     }
 
     @Override
-    public void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackDelete callback) {
+    public void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackEmptyResponse callback) {
         databaseAccess.deleteRecipeTagFromBridge(myRecipe.getId(), recipeTag.getId(), callback);
     }
 
@@ -68,5 +67,14 @@ public class RecipeOverviewEditInteractorImpl extends RecipeOverviewInteractorIm
             myRecipe.setCategoryId(null);
         }
         databaseAccess.updateRecipe(myRecipe);
+    }
+
+    @Override
+    public void fetchFullRecipe(long recipeId, DbSingleCallbackWithFail<MyRecipe> callback) {
+        try {
+            databaseAccess.fetchFullMyRecipe(recipeId, callback);
+        }catch (InterruptedException | ExecutionException e) {
+            callback.onFail("");
+        }
     }
 }

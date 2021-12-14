@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailsLikedRecipeBinding;
-import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsReadOnlyFragmentsBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.RecipeDetailsReadOnlyAbstractActivity;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsLikedRecipeFragment;
@@ -32,8 +32,6 @@ public class RecipeDetailsLikedRecipeActivity extends RecipeDetailsReadOnlyAbstr
                                             RecipeNutritionLikedRecipeFragment.RecipeNutritionLikedRecipeListener,
                                             RecipeDetailsContract.DetailsView<LikedRecipe> {
 
-
-
     @Inject
     RecipeDetailsContract.PresenterLikedRecipe presenter;
     ActivityRecipeDetailsLikedRecipeBinding binding;
@@ -48,47 +46,44 @@ public class RecipeDetailsLikedRecipeActivity extends RecipeDetailsReadOnlyAbstr
         // get the bundled Ingredients to display in the fragment if any exist.
         if (extras != null) {
             if (extras.containsKey(OfflineRecipe.RECIPE)) {
-                presenter.loadFullRecipe(extras.getLong(OfflineRecipe.RECIPE));
+                recipeId = extras.getLong(OfflineRecipe.RECIPE);
             }
         }
-        RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
+        RecipeDetailsReadOnlyFragmentsBinding fragmentsBinding = binding.recipeDetailsReadOnlyFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
     }
 
     @Override
     protected void setReadOnlyFragments() {
-        overviewReadOnlyFragment = new RecipeOverviewLikedRecipeFragment();
+        overviewReadOnlyFragment = RecipeOverviewLikedRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_overview, overviewReadOnlyFragment)
+                .add(R.id.container_read_only_overview, overviewReadOnlyFragment)
                 .commit();
 
         // Ingredients
-        ingredientsReadOnlyFragment = new RecipeIngredientsLikedRecipeFragment();
+        ingredientsReadOnlyFragment = RecipeIngredientsLikedRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_ingredients, ingredientsReadOnlyFragment)
+                .add(R.id.container_read_only_ingredients, ingredientsReadOnlyFragment)
                 .commit();
 
         // Instructions
-        instructionsReadOnlyFragment = new RecipeInstructionsLikedRecipeFragment();
+        instructionsReadOnlyFragment = RecipeInstructionsLikedRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_instructions, instructionsReadOnlyFragment)
+                .add(R.id.container_read_only_instructions, instructionsReadOnlyFragment)
                 .commit();
 
         // Nutrition
-        nutritionReadOnlyFragment = new RecipeNutritionLikedRecipeFragment();
+        nutritionReadOnlyFragment = RecipeNutritionLikedRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_nutrition, nutritionReadOnlyFragment)
+                .add(R.id.container_read_only_nutrition, nutritionReadOnlyFragment)
                 .commit();
     }
 
     @Override
-    public OfflineRecipe getRecipe() {
-        return recipe;
-    }
-
-    @Override
-    public void showRecipe(LikedRecipe recipe) {
-        this.recipe = recipe;
-        setReadOnlyFragments();
+    public void updateFragments() {
+        overviewReadOnlyFragment.updateRecipe();
+        ingredientsReadOnlyFragment.updateRecipe();
+        nutritionReadOnlyFragment.updateRecipe();
+        instructionsReadOnlyFragment.updateRecipe();
     }
 }

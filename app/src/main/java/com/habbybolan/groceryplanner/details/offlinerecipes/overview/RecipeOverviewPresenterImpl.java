@@ -3,13 +3,18 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 import androidx.databinding.Observable;
 import androidx.databinding.ObservableField;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Interactor, T extends RecipeOverviewContract.OverviewView> implements RecipeOverviewContract.Presenter<T> {
+public class RecipeOverviewPresenterImpl
+        <U extends RecipeOverviewContract.Interactor<T2>, T extends RecipeOverviewContract.OverviewView,
+                T2 extends OfflineRecipe>
+        implements RecipeOverviewContract.Presenter<U, T, T2> {
 
     public RecipeOverviewPresenterImpl(U interactor) {
         this.interactor = interactor;
@@ -18,22 +23,17 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
 
     protected U interactor;
     protected T view;
+    protected T2 recipe;
 
     // the current recipe category this recipe is in
     protected ObservableField<RecipeCategory> currRecipeCategory = new ObservableField<>();
 
-    protected boolean loadingRecipeCategories = false;
     // all loaded recipe categories stored offline
     protected List<RecipeCategory> loadedRecipeCategories = new ArrayList<>();
 
     @Override
     public void destroy() {
         view = null;
-    }
-
-    @Override
-    public void setView(T view) {
-        this.view = view;
     }
 
     @Override
@@ -44,10 +44,10 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
     }
 
     @Override
-    public void fetchRecipeCategory(Long categoryId) {
-        if (categoryId != null) {
+    public void fetchRecipeCategory() {
+        if (recipe.getCategoryId() != null) {
             try {
-                interactor.fetchRecipeCategory(currRecipeCategory, categoryId);
+                interactor.fetchRecipeCategory(currRecipeCategory, recipe.getCategoryId());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -65,14 +65,48 @@ public class RecipeOverviewPresenterImpl<U extends RecipeOverviewContract.Intera
         });
     }
 
+    @Override
+    public void setupPresenter(T view, long recipeId) {
+        this.view = view;
+        interactor.fetchFullRecipe(recipeId, new DbSingleCallbackWithFail<T2>() {
+            @Override
+            public void onFail(String message) {
+                // TODO:
+            }
+
+            @Override
+            public void onResponse(T2 response) {
+                recipe = response;
+                view.setupRecipeViews();
+            }
+        });
+    }
+
+    @Override
+    public void loadUpdatedRecipe() {
+        interactor.fetchFullRecipe(recipe.getId(), new DbSingleCallbackWithFail<T2>() {
+            @Override
+            public void onFail(String message) {
+                // TODO:
+            }
+
+            @Override
+            public void onResponse(T2 response) {
+                recipe = response;
+                view.displayUpdatedRecipe();
+            }
+        });
+    }
+
+    @Override
+    public T2 getRecipe() {
+        return recipe;
+    }
+
     /**
      * Displays the current recipe category.
      */
     private void displayCurrRecipeCategory() {
         view.displayRecipeCategory(currRecipeCategory.get());
-    }
-
-    private void displayRecipeTags() {
-        view.displayRecipeTags();
     }
 }

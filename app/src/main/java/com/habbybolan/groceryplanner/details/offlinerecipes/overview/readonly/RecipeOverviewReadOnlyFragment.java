@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -13,6 +12,7 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeOverviewReadOnlyBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListFragment;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.Category;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
@@ -24,15 +24,18 @@ import javax.inject.Inject;
  * Fragment for only displaying the recipe overview information.
  * Uses the basic forms of the Presenter and Interface for only retrieving recipe data.
  */
-public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewContract.RecipeOverviewListener> extends Fragment implements RecipeOverviewContract.OverviewView {
+public abstract class RecipeOverviewReadOnlyFragment
+        <T extends RecipeOverviewContract.RecipeOverviewListener, U extends RecipeOverviewContract.PresenterReadOnly<T3, T2>,
+                T2 extends OfflineRecipe, T3 extends RecipeOverviewContract.Interactor<T2>>
+        extends Fragment implements RecipeOverviewContract.OverviewView {
 
     @Inject
-    RecipeOverviewContract.PresenterReadOnly presenter;
+    U presenter;
 
     protected T recipeOverviewListener;
 
     protected CustomToolbar customToolbar;
-    private RecipeTagRecyclerView tagRV;
+    protected RecipeTagRecyclerView tagRV;
     protected FragmentRecipeOverviewReadOnlyBinding binding;
 
     @Override
@@ -40,23 +43,23 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_overview_read_only, container, false);
-        presenter.setView(this);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
-        setRV();
-        setDisplayToCurrentRecipe();
-        setRecipeGroceryFragment();
         return binding.getRoot();
     }
 
     /**
      * Set up RecyclerView for displaying the tags added to the recipe
      */
-    private void setRV() {
-        tagRV = new RecipeTagRecyclerView(recipeOverviewListener.getRecipe().getRecipeTags(), binding.recipeOverviewRvTags, getContext());
+    protected void setRV() {
+        tagRV = new RecipeTagRecyclerView(presenter.getRecipe().getRecipeTags(), binding.recipeOverviewRvTags, getContext());
     }
 
-    private void setRecipeGroceryFragment() {
-        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance();
+    protected void setRecipeGroceryFragment() {
+        Fragment RecipeGroceryFragment = AddRecipeToGroceryListFragment.newInstance(presenter.getRecipe());
         getChildFragmentManager()
                 .beginTransaction()
                 .replace(binding.recipesGroceryContainer.getId(), RecipeGroceryFragment).commit();
@@ -65,31 +68,21 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
     /**
      * Sets the display to the current recipe's values.
      */
-    private void setDisplayToCurrentRecipe() {
-        binding.setName(recipeOverviewListener.getRecipe().getName());
+    protected void setDisplayToCurrentRecipe() {
+        binding.setName(presenter.getRecipe().getName());
 
         // if the recipe has no category, display it has no category
-        if (recipeOverviewListener.getRecipe().getCategoryId() == null)
+        if (presenter.getRecipe().getCategoryId() == null)
             binding.setCategoryName(Category.NO_CATEGORY);
         else
             // otherwise, fetch the categoryId and display it
-            presenter.fetchRecipeCategory(recipeOverviewListener.getRecipe().getCategoryId());
+            presenter.fetchRecipeCategory();
 
         // set serving size, prep time, cook time, and description
-        binding.setServingSize(String.valueOf(recipeOverviewListener.getRecipe().getServingSize()));
-        binding.setCookTime(String.valueOf(recipeOverviewListener.getRecipe().getCookTime()));
-        binding.setPrepTime(String.valueOf(recipeOverviewListener.getRecipe().getPrepTime()));
-        binding.setDescription(recipeOverviewListener.getRecipe().getDescription());
-    }
-
-    @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "loading started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        binding.setServingSize(String.valueOf(presenter.getRecipe().getServingSize()));
+        binding.setCookTime(String.valueOf(presenter.getRecipe().getCookTime()));
+        binding.setPrepTime(String.valueOf(presenter.getRecipe().getPrepTime()));
+        binding.setDescription(presenter.getRecipe().getDescription());
     }
 
 
@@ -99,8 +92,8 @@ public abstract class RecipeOverviewReadOnlyFragment<T extends RecipeOverviewCon
     }
 
     @Override
-    public void displayRecipeTags() {
-        tagRV.updateDisplay();
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
     }
 
     protected abstract void setToolbar();

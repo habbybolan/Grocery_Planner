@@ -5,11 +5,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
-import androidx.room.Update;
 
 import com.habbybolan.groceryplanner.database.entities.IngredientEntity;
 import com.habbybolan.groceryplanner.database.entities.RecipeIngredientBridge;
 import com.habbybolan.groceryplanner.models.databasetuples.CountTuple;
+import com.habbybolan.groceryplanner.models.databasetuples.RecipeIngredientsTuple;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 
 import java.sql.Timestamp;
@@ -24,31 +24,40 @@ public abstract class IngredientDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract long insertIngredient(IngredientEntity ingredientEntity);
 
-    @Update
-    public abstract void updateIngredient(IngredientEntity ingredientEntity);
+    @Query("UPDATE IngredientEntity SET food_type_id = :foodTypeId WHERE ingredientId = :ingredientId")
+    public abstract void updateIngredient(long foodTypeId, long ingredientId);
 
     /**
-     * Updates the ingredient if the id != 0 or the name already exists as an ingredient. Nothing to update.
-     * Otherwise, it's a new Ingredient, so insert it.
-     * @param ingredientEntity  Ingredient to insert or update
+     * If the id exists inside ingredientEntity param, the update the existing ingredient
+     * If the id doesn't exist
+     *      if the name exists in database, only get the id of the existing ingredient
+     *          and set IngredientEntity id to 0 as signal
+     *      otherwise, insert the new ingredient into database
+     * @param ingredientEntity  Ingredient to update/insert if applicable
      */
     @Transaction
     public long insertUpdateIngredient(IngredientEntity ingredientEntity) {
         // if no explicit id set, check if that ingredient already exists
         long id;
         if (ingredientEntity.getIngredientId() == 0) {
-            id = hasIngredientName(ingredientEntity.getIngredientName()).count;
-            // if 0, then ingredient doesn't exist
-            if (id <= 0) {
-                id = insertIngredient(ingredientEntity);
+            // check if the name already exists in the database
+            String name = ingredientEntity.getIngredientName();
+            if (hasIngredientName(name).count > 0) {
+                // get existing ingredient id and don't update
+                id = getIngredientByName(name).getIngredientId();
+                // set id to 0 to signal that tried to insert an ingredient that already exists
+                ingredientEntity.setIngredientId(0);
             } else {
+                // otherwise store a new ingredient
+                id = insertIngredient(ingredientEntity);
                 ingredientEntity.setIngredientId(id);
-                updateIngredient(ingredientEntity);
             }
         } else {
+            // ingredientEntity already contains the database id, update with new values
             id = ingredientEntity.getIngredientId();
-            updateIngredient(ingredientEntity);
+            updateIngredient(ingredientEntity.getFoodTypeId(), id);
         }
+        // return the id of the ingredient
         return id;
     }
 
@@ -61,35 +70,46 @@ public abstract class IngredientDao {
     @Transaction
     public void insertUpdateIngredientsIntoRecipe(List<Ingredient> ingredients, long recipeId) {
         for (Ingredient ingredient : ingredients) {
-            IngredientEntity ingredientEntity = new IngredientEntity(ingredient);
-            // if id = 0 then ingredient doesn't exist, so look if an ingredient of that name exists, otherwise create a new Ingredient
-            long ingredientId = insertUpdateIngredient(ingredientEntity);
-            // set in case the ingredient was just inserted
-            ingredientEntity.setIngredientId(ingredientId);
-            long id = insertIngredientBridge(new RecipeIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId()));
-            // if ingredient recipe relationship exists, update it
-            if (id <= 0) {
-                updateIngredientBridge(recipeId, ingredientEntity.getIngredientId(), ingredient.getQuantity(), ingredient.getQuantityMeasId());
-            }
+            insertUpdateIngredientIntoRecipe(ingredient, recipeId);
         }
     }
 
     @Transaction
-    public long insertIngredientBridge(RecipeIngredientBridge recipeIngredientBridge) {
-        long id = insertIngredientBridgeHelper(recipeIngredientBridge);
-        setDateUpdatedRecipeIngredientBridge(recipeIngredientBridge.recipeId, recipeIngredientBridge.ingredientId);
+    public long insertUpdateIngredientIntoRecipe(Ingredient ingredient, long recipeId) {
+        IngredientEntity ingredientEntity = new IngredientEntity(ingredient);
+        long id = insertUpdateIngredient(ingredientEntity);
+        RecipeIngredientsTuple tuple = getFullRecipeIngredientById(id, recipeId);
+        if (tuple != null) {
+            // then relationship already exists
+            if (ingredientEntity.getIngredientId() == 0) {
+                // then tried to insert an ingredient that exists and relationship already exists, do nothing
+            } else {
+                // otherwise, update relationship
+                updateIngredientBridge(recipeId, id, ingredient.getQuantity(), ingredient.getQuantityMeasId());
+            }
+        } else {
+            // otherwise insert relationship
+            insertRecipeIngredientBridge(new RecipeIngredientBridge(recipeId, id, ingredient.getQuantity(), ingredient.getQuantityMeasId()));
+        }
         return id;
     }
 
+    @Transaction
+    public void insertRecipeIngredientBridge(RecipeIngredientBridge recipeIngredientBridge) {
+        insertRecipeIngredientBridgeHelper(recipeIngredientBridge);
+        setDateUpdatedRecipeIngredientBridge(recipeIngredientBridge.recipeId, recipeIngredientBridge.ingredientId);
+    }
+
     @Query("UPDATE recipeingredientbridge SET date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE recipeId = :recipeId AND ingredientId = :ingredientId")
-    public abstract void setDateUpdatedRecipeIngredientBridge(long recipeId, long ingredientId);
+    abstract void setDateUpdatedRecipeIngredientBridge(long recipeId, long ingredientId);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract long insertIngredientBridgeHelper(RecipeIngredientBridge recipeIngredientBridge);
+    abstract long insertRecipeIngredientBridgeHelper(RecipeIngredientBridge recipeIngredientBridge);
 
     @Query("Update RecipeIngredientBridge SET" +
             "   quantity = :quantity," +
             "   quantity_meas_id = :quantityMeasId," +
+            "   is_deleted = 0," +
             "   date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
             "   WHERE recipeId = :recipeId AND ingredientId = :ingredientId")
     public abstract void updateIngredientBridge(long recipeId, long ingredientId, float quantity, Long quantityMeasId);
@@ -98,7 +118,7 @@ public abstract class IngredientDao {
     public abstract CountTuple hasIngredientName(String name);
 
     @Query("SELECT * FROM IngredientEntity WHERE ingredientName=:name")
-    public abstract IngredientEntity getIngredient(String name);
+    public abstract IngredientEntity getIngredientByName(String name);
 
     @Query("DELETE FROM IngredientEntity WHERE ingredientId IN (:ingredientIds)")
     public abstract void deleteIngredient(List<Long> ingredientIds);
@@ -128,7 +148,7 @@ public abstract class IngredientDao {
 
     @Transaction
     public void syncIngredientUpdate(IngredientEntity ingredientEntity, long recipeId, long ingredientId, float quantity, Long measurementId, Timestamp dateSynchronized, boolean isDeleted) {
-        updateIngredient(ingredientEntity);
+        updateIngredient(ingredientEntity.getFoodTypeId(), ingredientId);
         syncIngredientBridgeUpdate(recipeId, ingredientId, quantity, measurementId, dateSynchronized, isDeleted);
     }
 
@@ -147,4 +167,11 @@ public abstract class IngredientDao {
 
     @Query("UPDATE recipeingredientbridge SET date_synchronized = :dateSync WHERE recipeId = :recipeId AND ingredientId = :ingredientId")
     public abstract void syncIngredientUpdateDateSync(long recipeId, long ingredientId, Timestamp dateSync);
+
+    @Query("SELECT * FROM " +
+            "(SELECT * FROM IngredientEntity) AS I " +
+            "INNER JOIN " +
+            "(SELECT * FROM RecipeIngredientBridge WHERE ingredientId = :ingredient AND recipeId = :recipeId) AS RIB " +
+            "USING (ingredientId)")
+    public abstract RecipeIngredientsTuple getFullRecipeIngredientById(long ingredient, long recipeId);
 }

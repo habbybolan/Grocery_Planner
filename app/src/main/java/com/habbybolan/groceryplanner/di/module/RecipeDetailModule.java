@@ -1,34 +1,42 @@
 package com.habbybolan.groceryplanner.di.module;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.DetailsLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.likedrecipe.RecipeDetailsLikedRecipeInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.DetailsMyRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myrecipe.RecipeDetailsMyRecipeInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit.RecipeIngredientsEditPresenterImpl;
-import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsLikedRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsMyRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsMyRecipePresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.edit.RecipeInstructionsEditInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.edit.RecipeInstructionsEditPresenterImpl;
-import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsLikedRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsMyRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsMyRecipePresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit.RecipeNutritionInteractorEditImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.edit.RecipeNutritionPresenterEditImpl;
-import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionPresenterReadOnlyImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionLikedRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionMyRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionMyRecipePresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.edit.RecipeOverviewEditPresenterImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListInteractorImpl;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListPresenterImpl;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewReadOnlyPresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewLikedRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewLikedRecipePresenterImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewMyRecipeInteractorImpl;
+import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewMyRecipePresenterImpl;
 import com.habbybolan.groceryplanner.http.RestWebService;
 import com.habbybolan.groceryplanner.sync.SyncRecipeFromResponse;
 
@@ -41,8 +49,12 @@ public class RecipeDetailModule {
     // Nutrition
 
     @Provides
-    RecipeNutritionContract.Interactor provideRecipeNutritionReadOnlyInteractor(DatabaseAccess databaseAccess) {
-        return new RecipeNutritionInteractorImpl(databaseAccess);
+    RecipeNutritionContract.InteractorMyRecipeReadOnly provideRecipeNutritionMyRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeNutritionMyRecipeInteractorImpl(databaseAccess);
+    }
+    @Provides
+    RecipeNutritionContract.InteractorLikedRecipeReadOnly provideRecipeNutritionLikedRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeNutritionLikedRecipeInteractorImpl(databaseAccess);
     }
     @Provides
     RecipeNutritionContract.InteractorEdit provideRecipeNutritionEditInteractor(DatabaseAccess databaseAccess) {
@@ -53,8 +65,12 @@ public class RecipeDetailModule {
         return new RecipeNutritionPresenterEditImpl(interactor);
     }
     @Provides
-    RecipeNutritionContract.PresenterReadOnly provideRecipeNutritionReadOnlyPresenter(RecipeNutritionContract.Interactor interactor) {
-        return new RecipeNutritionPresenterReadOnlyImpl(interactor);
+    RecipeNutritionContract.PresenterMyRecipe provideRecipeNutritionMyRecipePresenter(RecipeNutritionContract.InteractorMyRecipeReadOnly interactor) {
+        return new RecipeNutritionMyRecipePresenterImpl(interactor);
+    }
+    @Provides
+    RecipeNutritionContract.PresenterLikedRecipe provideRecipeNutritionLikedRecipePresenter(RecipeNutritionContract.InteractorLikedRecipeReadOnly interactor) {
+        return new RecipeNutritionLikedRecipePresenterImpl(interactor);
     }
 
     // Overview
@@ -64,23 +80,35 @@ public class RecipeDetailModule {
         return new RecipeOverviewEditInteractorImpl(databaseAccess);
     }
     @Provides
-    RecipeOverviewContract.Interactor provideRecipeOverviewReadOnlyInteractor(DatabaseAccess databaseAccess) {
-        return new RecipeOverviewInteractorImpl(databaseAccess);
+    RecipeOverviewContract.InteractorMyRecipeReadOnly provideRecipeOverviewMyRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeOverviewMyRecipeInteractorImpl(databaseAccess);
+    }
+    @Provides
+    RecipeOverviewContract.InteractorLikedRecipeReadOnly provideRecipeOverviewLikedRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeOverviewLikedRecipeInteractorImpl(databaseAccess);
     }
     @Provides
     RecipeOverviewContract.PresenterEdit provideRecipeOverviewEditPresenter(RecipeOverviewContract.InteractorEdit recipeOverviewInteractor) {
         return new RecipeOverviewEditPresenterImpl(recipeOverviewInteractor);
     }
     @Provides
-    RecipeOverviewContract.PresenterReadOnly provideRecipeOverviewReadOnlyPresenter(RecipeOverviewContract.Interactor recipeOverviewInteractor) {
-        return new RecipeOverviewReadOnlyPresenterImpl(recipeOverviewInteractor);
+    RecipeOverviewContract.PresenterMyRecipe provideRecipeOverviewMyRecipePresenter(RecipeOverviewContract.InteractorMyRecipeReadOnly interactor) {
+        return new RecipeOverviewMyRecipePresenterImpl(interactor);
+    }
+    @Provides
+    RecipeOverviewContract.PresenterLikedRecipe provideRecipeOverviewLikedRecipePresenter(RecipeOverviewContract.InteractorLikedRecipeReadOnly interactor) {
+        return new RecipeOverviewLikedRecipePresenterImpl(interactor);
     }
 
     // Ingredients
 
     @Provides
-    RecipeIngredientsContract.Interactor provideRecipeIngredientsInteractor(DatabaseAccess DatabaseAccess) {
-        return new RecipeIngredientsInteractorImpl(DatabaseAccess);
+    RecipeIngredientsContract.InteractorMyRecipe provideRecipeIngredientsMyRecipeInteractor(DatabaseAccess DatabaseAccess) {
+        return new RecipeIngredientsMyRecipeInteractorImpl(DatabaseAccess);
+    }
+    @Provides
+    RecipeIngredientsContract.InteractorLikedRecipe provideRecipeIngredientsLikedRecipeInteractor(DatabaseAccess DatabaseAccess) {
+        return new RecipeIngredientsLikedRecipeInteractorImpl(DatabaseAccess);
     }
     @Provides
     RecipeIngredientsContract.InteractorEdit provideRecipeIngredientsEditInteractor(DatabaseAccess DatabaseAccess) {
@@ -91,8 +119,12 @@ public class RecipeDetailModule {
         return new RecipeIngredientsEditPresenterImpl(interactor);
     }
     @Provides
-    RecipeIngredientsContract.PresenterReadOnly provideRecipeIngredientsPresenter(RecipeIngredientsContract.Interactor interactor) {
-        return new RecipeIngredientsReadOnlyPresenterImpl(interactor);
+    RecipeIngredientsContract.PresenterMyRecipe provideRecipeIngredientsMyRecipePresenter(RecipeIngredientsContract.InteractorMyRecipe interactor) {
+        return new RecipeIngredientsMyRecipePresenterImpl(interactor);
+    }
+    @Provides
+    RecipeIngredientsContract.PresenterLikedRecipe provideRecipeIngredientsLikedRecipePresenter(RecipeIngredientsContract.InteractorLikedRecipe interactor) {
+        return new RecipeIngredientsLikedRecipePresenterImpl(interactor);
     }
 
     // Instructions
@@ -102,16 +134,24 @@ public class RecipeDetailModule {
         return new RecipeInstructionsEditInteractorImpl(databaseAccess);
     }
     @Provides
-    RecipeInstructionsContract.Interactor provideRecipeInstructionsInteractor(DatabaseAccess databaseAccess) {
-        return new RecipeInstructionsInteractorImpl(databaseAccess);
+    RecipeInstructionsContract.InteractorMyRecipe provideRecipeInstructionsMyRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeInstructionsMyRecipeInteractorImpl(databaseAccess);
+    }
+    @Provides
+    RecipeInstructionsContract.InteractorLikedRecipe provideRecipeInstructionsLikedRecipeInteractor(DatabaseAccess databaseAccess) {
+        return new RecipeInstructionsLikedRecipeInteractorImpl(databaseAccess);
     }
     @Provides
     RecipeInstructionsContract.PresenterEdit provideRecipeInstructionsEditPresenter( RecipeInstructionsContract.InteractorEdit interactor) {
         return new RecipeInstructionsEditPresenterImpl(interactor);
     }
     @Provides
-    RecipeInstructionsContract.PresenterReadOnly provideRecipeInstructionsReadOnlyPresenter( RecipeInstructionsContract.Interactor interactor) {
-        return new RecipeInstructionsReadOnlyPresenterImpl(interactor);
+    RecipeInstructionsContract.PresenterMyRecipe provideRecipeInstructionsMyRecipePresenter( RecipeInstructionsContract.InteractorMyRecipe interactor) {
+        return new RecipeInstructionsMyRecipePresenterImpl(interactor);
+    }
+    @Provides
+    RecipeInstructionsContract.PresenterLikedRecipe provideRecipeInstructionsLikedRecipePresenter( RecipeInstructionsContract.InteractorLikedRecipe interactor) {
+        return new RecipeInstructionsLikedRecipePresenterImpl(interactor);
     }
 
 

@@ -1,11 +1,11 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -16,16 +16,13 @@ public class IngredientAddPresenterImpl implements IngredientAddPresenter {
     private List<Ingredient> loadedIngredients =  new ArrayList<>();
     private IngredientAddView view;
     private IngredientAddInteractor interactor;
-    private boolean loadingIngredients = false;
-    private HashSet<Ingredient> selectedIngredients = new HashSet<>();
 
     private DbCallback<Ingredient> ingredientDbCallback = new DbCallback<Ingredient>() {
         @Override
         public void onResponse(List<Ingredient> response) {
             loadedIngredients.clear();
             loadedIngredients.addAll(response);
-            loadingIngredients = false;
-            displayIngredientsToAdd();
+            displayExistingIngredients();
         }
     };
 
@@ -45,41 +42,46 @@ public class IngredientAddPresenterImpl implements IngredientAddPresenter {
     }
 
     @Override
-    public void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder) {
+    public void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder, String search) {
         try {
-            loadingIngredients = true;
-            view.loadingStarted();
-            interactor.fetchIngredientsNotInIngredientHolder(ingredientDbCallback, ingredientHolder);
+            interactor.fetchIngredientsNotInIngredientHolder(ingredientDbCallback, ingredientHolder, search);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            loadingIngredients = false;
-            view.loadingFailed("Failed to retrieve Ingredients");
         }
     }
 
     @Override
-    public void displayIngredientsToAdd() {
-        if (isIngredientsReady())
-            view.showListOfIngredients(loadedIngredients);
+    public void displayExistingIngredients() {
+        view.showListOfIngredients(loadedIngredients);
     }
 
     @Override
-    public void addCheckedToIngredientHolder(OfflineIngredientHolder ingredientHolder) {
-        interactor.addCheckedToIngredientHolder(selectedIngredients, ingredientHolder);
+    public void addIngredientToIngredientHolder(Ingredient ingredient, OfflineIngredientHolder ingredientHolder) {
+        interactor.addIngredientToIngredientHolder(ingredient, ingredientHolder, new DbSingleCallbackWithFail<Ingredient>() {
+            @Override
+            public void onFail(String message) {
+               // TODO:
+            }
+
+            @Override
+            public void onResponse(Ingredient response) {
+                view.leaveFragment(response);
+            }
+        });
     }
 
     @Override
-    public void selectIngredient(Ingredient ingredient) {
-        selectedIngredients.add(ingredient);
-    }
+    public void addIngredientToIngredientHolder(String ingredientName, OfflineIngredientHolder ingredientHolder) {
+        interactor.addIngredientToIngredientHolder(ingredientName, ingredientHolder, new DbSingleCallbackWithFail<Ingredient>() {
+            @Override
+            public void onFail(String message) {
+                // TODO:
+            }
 
-    @Override
-    public void unSelectIngredient(Ingredient ingredient) {
-        selectedIngredients.remove(ingredient);
-    }
-
-
-    private boolean isIngredientsReady() {
-        return !loadingIngredients;
+            @Override
+            public void onResponse(Ingredient response) {
+                view.leaveFragment(response);
+            }
+        });
     }
 }

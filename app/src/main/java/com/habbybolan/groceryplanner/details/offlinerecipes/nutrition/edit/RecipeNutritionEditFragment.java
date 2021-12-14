@@ -20,13 +20,15 @@ import com.habbybolan.groceryplanner.databinding.FragmentRecipeNutritionBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.MeasurementType;
 import com.habbybolan.groceryplanner.models.secondarymodels.Nutrition;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeNutritionEditFragment extends Fragment implements RecipeNutritionContract.NutritionEditView {
+public class RecipeNutritionEditFragment
+        extends Fragment implements RecipeNutritionContract.NutritionEditView {
 
     @Inject
     RecipeNutritionContract.PresenterEdit presenter;
@@ -37,8 +39,11 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
 
     public RecipeNutritionEditFragment() {}
 
-    public static RecipeNutritionEditFragment newInstance() {
+    public static RecipeNutritionEditFragment getInstance(long recipeId) {
         RecipeNutritionEditFragment fragment = new RecipeNutritionEditFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -53,18 +58,20 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_nutrition, container, false);
-        presenter.setView(this);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
-        setList();
         return binding.getRoot();
     }
 
     private void setList() {
-        adapter = new RecipeNutritionEditAdapter(recipeNutritionListener.getRecipe().getAllNutritionList(), new RecipeNutritionContract.NutritionChangedListener() {
+        adapter = new RecipeNutritionEditAdapter(presenter.getRecipe().getAllNutritionList(), new RecipeNutritionContract.NutritionChangedListener() {
 
             @Override
             public void nutritionAmountChanged(Nutrition nutrition) {
-                presenter.nutritionAmountChanged(recipeNutritionListener.getRecipe(), nutrition);
+                presenter.nutritionAmountChanged(nutrition);
             }
 
             @Override
@@ -75,7 +82,7 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
                     String type = item.getTitle().toString();
                     nutrition.setMeasurement(MeasurementType.getMeasurementId(type));
                     v.setText(type);
-                    presenter.nutritionMeasurementChanged(recipeNutritionListener.getRecipe(), nutrition);
+                    presenter.nutritionMeasurementChanged(nutrition);
                     return true;
                 });
                 popupMenu.show();
@@ -131,6 +138,21 @@ public class RecipeNutritionEditFragment extends Fragment implements RecipeNutri
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         recipeNutritionListener = (RecipeNutritionMyListener) context;
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
+    }
+
+    @Override
+    public void displayUpdatedRecipe() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        setList();
     }
 
     public interface RecipeNutritionMyListener extends RecipeNutritionContract.RecipeNutritionMyRecipeListener {

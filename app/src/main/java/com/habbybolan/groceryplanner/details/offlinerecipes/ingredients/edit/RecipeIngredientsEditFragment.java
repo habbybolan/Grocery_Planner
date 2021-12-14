@@ -19,12 +19,14 @@ import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
 import com.habbybolan.groceryplanner.listfragments.NonCategoryListFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingredient> implements RecipeIngredientsContract.IngredientsEditView {
+public class RecipeIngredientsEditFragment
+        extends NonCategoryListFragment<Ingredient> implements RecipeIngredientsContract.IngredientsEditView {
 
     private RecipeIngredientsListener recipeIngredientsListener;
     private FragmentRecipeIngredientsEditBinding binding;
@@ -36,8 +38,11 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
 
     public RecipeIngredientsEditFragment() {}
 
-    public static RecipeIngredientsEditFragment getInstance() {
+    public static RecipeIngredientsEditFragment getInstance(long recipeId) {
         RecipeIngredientsEditFragment fragment = new RecipeIngredientsEditFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -60,7 +65,10 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_ingredients_edit, container, false);
-        initLayout();
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
         return binding.getRoot();
     }
@@ -70,28 +78,28 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
-                        presenter.searchIngredients(recipeIngredientsListener.getRecipe(), search);
+                        presenter.searchIngredients(search);
                     }
                 })
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
-                        presenter.createIngredientList(recipeIngredientsListener.getRecipe());
+                        presenter.createIngredientList();
                     }
                 }, SortType.SORT_LIST_ALPHABETICAL)
-                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
-                    @Override
-                    public void deleteClicked() {
-                        deleteRecipe();
-                    }
-                }, "Recipe")
                 .addSwapIcon(new CustomToolbar.SwapCallback() {
                     @Override
                     public void swapClicked() {
                         recipeIngredientsListener.onSwapViewIngredients();
                     }
                 })
+                .addDeleteIcon(new CustomToolbar.DeleteCallback() {
+                    @Override
+                    public void deleteClicked() {
+                        deleteRecipe();
+                    }
+                }, "Recipe")
                 .addSyncIcon(new CustomToolbar.SyncCallback() {
                     @Override
                     public void syncClicked() {
@@ -107,14 +115,6 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
         });
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // set up the view for view methods to be accessed from the presenter
-        presenter.setView(this);
-        listItems = recipeIngredientsListener.getRecipe().getIngredients();
-        presenter.createIngredientList(recipeIngredientsListener.getRecipe());
-    }
-
     /**
      * Initiates the Recycler View to display list of Ingredients and button clickers.
      */
@@ -124,12 +124,8 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setAdapter(adapter);
 
-        binding.btnAddNewIngredient.setOnClickListener(l -> {
-            recipeIngredientsListener.createNewItem();
-        });
-
-        binding.btnAddExistingIngredient.setOnClickListener(l -> {
-            recipeIngredientsListener.gotoAddIngredients();
+        binding.btnAddIngredient.setOnClickListener(l -> {
+            recipeIngredientsListener.addIngredientToRecipe();
         });
     }
 
@@ -145,7 +141,7 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
 
     @Override
     public void deleteSelectedItems() {
-        presenter.deleteIngredients(recipeIngredientsListener.getRecipe(), listItemsChecked);
+        presenter.deleteIngredients(listItemsChecked);
     }
 
     @Override
@@ -153,8 +149,20 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
         return sortType;
     }
 
+    @Override
+    public void setupRecipeViews() {
+        listItems = presenter.getRecipe().getIngredients();
+        initLayout();
+        presenter.createIngredientList();
+    }
+
     public void reloadList() {
-        presenter.createIngredientList(recipeIngredientsListener.getRecipe());
+        presenter.createIngredientList();
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
     }
 
     /**
@@ -162,8 +170,7 @@ public class RecipeIngredientsEditFragment extends NonCategoryListFragment<Ingre
      */
     public interface RecipeIngredientsListener extends RecipeIngredientsContract.RecipeIngredientsMyRecipeListener, ItemListener<Ingredient> {
 
-        void createNewItem();
+        void addIngredientToRecipe();
         void onRecipeDeleted();
-        void gotoAddIngredients();
     }
 }

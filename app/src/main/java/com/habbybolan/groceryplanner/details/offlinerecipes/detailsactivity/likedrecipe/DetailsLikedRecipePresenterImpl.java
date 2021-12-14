@@ -4,8 +4,6 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.Reci
 import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.RecipeDetailsPresenterImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.inject.Inject;
 
 public class DetailsLikedRecipePresenterImpl extends RecipeDetailsPresenterImpl<RecipeDetailsContract.InteractorLikedRecipe, LikedRecipe> implements RecipeDetailsContract.PresenterLikedRecipe{
@@ -13,14 +11,5 @@ public class DetailsLikedRecipePresenterImpl extends RecipeDetailsPresenterImpl<
     @Inject
     public DetailsLikedRecipePresenterImpl(RecipeDetailsContract.InteractorLikedRecipe interactor) {
         super(interactor);
-    }
-
-    @Override
-    public void loadFullRecipe(long recipeId) {
-        try {
-            interactor.fetchLikedRecipe(recipeId, callback);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
     }
 }

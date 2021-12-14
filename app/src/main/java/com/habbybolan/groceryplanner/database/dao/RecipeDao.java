@@ -202,9 +202,9 @@ public abstract class RecipeDao {
     public abstract List<RecipeNutritionTuple> getRecipeNutrition(long recipeId);
 
     @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineingredientId, ingredientName, " +
-            "   quantity, quantityMeasId, food_type_id, date_updated, date_synchronized " +
+            "   quantity, quantity_meas_id, food_type_id, date_updated, date_synchronized " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id, date_updated, date_synchronized " +
             "           FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id " +
@@ -216,9 +216,9 @@ public abstract class RecipeDao {
     public abstract List<RecipeIngredientsTuple> getRecipeIngredients(long recipeId);
 
     @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
-            "   quantity, quantityMeasId, food_type_id, date_updated, date_synchronized " +
+            "   quantity, quantity_meas_id, food_type_id, date_updated, date_synchronized " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id, date_updated, date_synchronized " +
             "           FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id " +
@@ -231,9 +231,9 @@ public abstract class RecipeDao {
     public abstract List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalAsc(long recipeId);
 
     @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
-            "   quantity, quantityMeasId, food_type_id, date_updated, date_synchronized " +
+            "   quantity, quantity_meas_id, food_type_id, date_updated, date_synchronized " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id, date_updated, date_synchronized " +
             "           FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) " +
             "       JOIN " +
             "       (SELECT ingredientId, onlineIngredientId, ingredientName,  food_type_id " +
@@ -246,12 +246,12 @@ public abstract class RecipeDao {
     public abstract List<RecipeIngredientsTuple> getRecipeIngredientsSortAlphabeticalDesc(long recipeId);
 
     @Query("SELECT groceryId, ingredientId, ingredientName, " +
-            "quantity, quantityMeasId, date_updated, date_synchronized food_type_id" +
+            "quantity, quantity_meas_id, date_updated, date_synchronized food_type_id" +
             "   FROM " +
             "   (SELECT ingredientId, ingredientName, " +
-            "       quantity, quantityMeasId, date_updated, date_synchronized, food_type_id " +
+            "       quantity, quantity_meas_id, date_updated, date_synchronized, food_type_id " +
             "       FROM " +
-            "           (SELECT ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
+            "           (SELECT ingredientId, quantity, quantity_meas_id, date_updated, date_synchronized " +
             "               FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) " +
             "           JOIN " +
             "           (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id " +
@@ -265,10 +265,17 @@ public abstract class RecipeDao {
     public abstract List<RecipeIngredientsWithGroceryCheckTuple> getRecipeIngredientsInGrocery(long recipeId, long groceryId);
 
     @Query("SELECT * FROM IngredientEntity " +
-            "WHERE ingredientId NOT IN " +
-            "(SELECT RIB.ingredientId FROM RecipeIngredientBridge RIB " +
-            "WHERE is_deleted = 0 AND RIB.recipeId == :recipeId)")
-    public abstract List<IngredientEntity> getIngredientsNotInRecipe(long recipeId);
+            "   WHERE ingredientId NOT IN " +
+            "       (SELECT ingredientId FROM RecipeIngredientBridge RIB " +
+            "   WHERE recipeId == :recipeId)" +
+            "   AND ingredientName LIKE :search " +
+            // UNION with ingredients associated with Recipe but deleted
+            "UNION " +
+            "   SELECT * FROM IngredientEntity " +
+            "   INNER JOIN" +
+            "   (SELECT ingredientId FROM RecipeIngredientBridge WHERE recipeId = :recipeId AND is_deleted = 1)" +
+            "   USING (ingredientId)")
+    public abstract List<IngredientEntity> getIngredientsNotInRecipe(long recipeId, String search);
 
     @Query("SELECT * FROM GroceryEntity " +
             "WHERE groceryId NOT IN " +
@@ -315,9 +322,9 @@ public abstract class RecipeDao {
     public abstract List<RecipeCategoryEntity> searchRecipeCategories(String categorySearch);
 
     @Query("SELECT recipeId, onlineRecipeId, ingredientId, onlineIngredientId, ingredientName, " +
-            "   quantity, quantityMeasId, food_type_id, RIB.date_updated, RIB.date_synchronized " +
+            "   quantity, quantity_meas_id, food_type_id, RIB.date_updated, RIB.date_synchronized " +
             "   FROM " +
-            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId, date_updated, date_synchronized " +
+            "       (SELECT recipeId, ingredientId, quantity, quantity_meas_id, date_updated, date_synchronized " +
             "           FROM RecipeIngredientBridge WHERE is_deleted = 0 AND recipeId = :recipeId) AS RIB " +
             "       JOIN " +
             "       (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id " +

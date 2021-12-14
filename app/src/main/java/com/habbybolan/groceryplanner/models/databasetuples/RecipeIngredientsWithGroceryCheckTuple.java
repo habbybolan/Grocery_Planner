@@ -21,7 +21,7 @@ public class RecipeIngredientsWithGroceryCheckTuple {
     public long foodTypeId;
     @ColumnInfo(name = "quantity")
     public float quantity;
-    @ColumnInfo(name = "quantityMeasId")
+    @ColumnInfo(name = "quantity_meas_id")
     public Long quantityMeasId;
     @ColumnInfo(name = "date_updated")
     public Timestamp dateUpdated;

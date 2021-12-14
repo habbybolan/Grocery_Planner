@@ -1,15 +1,19 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.edit;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsInteractorImpl;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class RecipeIngredientsEditInteractorImpl extends RecipeIngredientsInteractorImpl implements RecipeIngredientsContract.InteractorEdit {
+public class RecipeIngredientsEditInteractorImpl
+        extends RecipeIngredientsInteractorImpl<MyRecipe> implements RecipeIngredientsContract.InteractorEdit {
 
     public RecipeIngredientsEditInteractorImpl(DatabaseAccess databaseAccess) {
         super(databaseAccess);
@@ -30,5 +34,14 @@ public class RecipeIngredientsEditInteractorImpl extends RecipeIngredientsIntera
         List<Long> ingredientIds = new ArrayList<>();
         for (Ingredient ingredient : ingredients) ingredientIds.add(ingredient.getId());
         databaseAccess.deleteIngredientsFromRecipe(recipe.getId(), ingredientIds);
+    }
+
+    @Override
+    public void fetchFullRecipe(long recipeId, DbSingleCallbackWithFail<MyRecipe> callback) {
+        try {
+            databaseAccess.fetchFullMyRecipe(recipeId, callback);
+        } catch (InterruptedException | ExecutionException e) {
+            callback.onFail("");
+        }
     }
 }

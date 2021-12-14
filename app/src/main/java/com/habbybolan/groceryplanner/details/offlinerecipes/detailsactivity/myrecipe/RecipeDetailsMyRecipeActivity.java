@@ -12,7 +12,8 @@ import androidx.databinding.DataBindingUtil;
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.callbacks.SyncCompleteCallback;
 import com.habbybolan.groceryplanner.databinding.ActivityRecipeDetailBinding;
-import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsEditFragmentsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsReadOnlyFragmentsBinding;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd.IngredientAddFragment;
 import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.IngredientEditFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.RecipeDetailsEditAbstractActivity;
@@ -63,14 +64,11 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
         presenter.setView(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_recipe_detail);
         Bundle extras = getIntent().getExtras();
-        // get the bundled Ingredients to display in the fragment if any exist.
-        if (extras != null) {
-            if (extras.containsKey(OfflineRecipe.RECIPE)) {
-                presenter.loadFullRecipe(extras.getLong(OfflineRecipe.RECIPE));
-            }
-        }
-        RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
-        setViews(binding.bottomNavigation, fragmentsBinding);
+        assert(extras != null && extras.containsKey(OfflineRecipe.RECIPE));
+        recipeId = extras.getLong(OfflineRecipe.RECIPE);
+        RecipeDetailsReadOnlyFragmentsBinding fragmentsReadOnlyBinding = binding.recipeDetailsReadOnlyFragments;
+        RecipeDetailsEditFragmentsBinding fragmentsEditBinding = binding.recipeDetailsEditFragments;
+        setViews(binding.bottomNavigation, fragmentsReadOnlyBinding, fragmentsEditBinding);
     }
 
     @Nullable
@@ -79,21 +77,18 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
         return super.onCreateView(name, context, attrs);
     }
 
+
     @Override
     public void onItemClicked(Ingredient ingredient) {
         startEditFragment(ingredient);
-    }
-
-    @Override
-    public void createNewItem() {
-        startEditFragment(new Ingredient());
     }
 
     /**
      * set visibility of the recipe details fragments.
      */
     private void detailsVisibility(int visibility) {
-        fragmentsBinding.containerNavigation.setVisibility(visibility);
+        readOnlyBinding.containerNavigation.setVisibility(visibility);
+        editBinding.containerNavigation.setVisibility(visibility);
     }
 
     @Override
@@ -130,10 +125,10 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
 
     @Override
     public void onSync() {
-        presenter.onSyncMyRecipe(recipe, new SyncCompleteCallback() {
+        presenter.onSyncMyRecipe(recipeId, new SyncCompleteCallback() {
             @Override
             public void onSyncComplete() {
-                presenter.loadFullRecipe(recipe.getId());
+                updateFragments();
             }
 
             @Override
@@ -148,7 +143,7 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
      * @param ingredient    The Ingredient to edit
      */
     private void startEditFragment(Ingredient ingredient) {
-        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(recipe, ingredient);
+        IngredientEditFragment ingredientEditFragment = IngredientEditFragment.getInstance(new OfflineRecipe.RecipeBuilder("").setId(recipeId).build(), ingredient);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.ingredient_edit_container, ingredientEditFragment, EDIT_TAG)
@@ -156,9 +151,8 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
         detailsVisibility(View.GONE);
     }
 
-    @Override
-    public void gotoAddIngredients() {
-        IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(recipe);
+    public void addIngredientToRecipe() {
+        IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(new OfflineRecipe.RecipeBuilder("").setId(recipeId).build());
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.ingredient_add_container, ingredientAddFragment, ADD_TAG)
@@ -168,18 +162,31 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
 
     @Override
     public void leaveIngredientEdit() {
-        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
-        // destroy the ingredient edit Fragment
-        if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
+        destroyIngredientEdit();
         reloadRecipeIngredientList();
     }
 
     @Override
-    public void leaveIngredientAdd() {
+    public void leaveIngredientAdd(Ingredient ingredient) {
+        IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
+        // destroy the ingredient add Fragment
+        if (ingredientAddFragment != null) getSupportFragmentManager()
+                .beginTransaction()
+                .remove(ingredientAddFragment)
+                .add(R.id.ingredient_edit_container, IngredientEditFragment.getInstance(new OfflineRecipe.RecipeBuilder("").setId(recipeId).build(), ingredient), EDIT_TAG)
+                .commitAllowingStateLoss();
+    }
+
+    private void destroyIngredientEdit() {
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
+        // destroy the ingredient edit Fragment
+        if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
+    }
+
+    private void destroyIngredientAdd() {
         IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
         // destroy the ingredient add Fragment
         if (ingredientAddFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientAddFragment).commitAllowingStateLoss();
-        reloadRecipeIngredientList();
     }
 
     private void reloadRecipeIngredientList() {
@@ -192,12 +199,12 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putParcelable(OfflineRecipe.RECIPE, recipe);
+        savedInstanceState.putLong(OfflineRecipe.RECIPE, recipeId);
     }
 
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        recipe = savedInstanceState.getParcelable(OfflineRecipe.RECIPE);
+        recipeId = savedInstanceState.getLong(OfflineRecipe.RECIPE);
     }
 
     @Override
@@ -207,51 +214,53 @@ public class RecipeDetailsMyRecipeActivity extends RecipeDetailsEditAbstractActi
         // if one of the IngredientEdit or AddIngredient fragments are open, close them and reload the Ingredient list
         // otherwise, destroy and leave this activity.
         if (ingredientEditFragment != null) {
-            // if in Ingredient edit fragment, then go back to viewPagers
-            leaveIngredientEdit();
+            // destroy ingredient edit fragment and reload ingredient list
+            destroyIngredientEdit();
+            reloadRecipeIngredientList();
         } else if (ingredientAddFragment != null) {
-            // if in Ingredient Add Fragment, then go back to viewPager
-            leaveIngredientAdd();
+            // destroy ingredient add fragment and go back to ingredient list
+            destroyIngredientAdd();
+            reloadRecipeIngredientList();
         } else {
             super.onBackPressed();
         }
     }
 
     @Override
-    public void showRecipe(MyRecipe myRecipe) {
-        this.recipe = myRecipe;
-        setReadOnlyFragments();
-        setEditFragments();
-    }
-
-    @Override
-    public OfflineRecipe getRecipe() {
-        return recipe;
+    public void updateFragments() {
+        overviewReadOnlyFragment.updateRecipe();
+        overviewEditFragment.updateRecipe();
+        ingredientsReadOnlyFragment.updateRecipe();
+        ingredientsEditFragment.updateRecipe();
+        nutritionReadOnlyFragment.updateRecipe();
+        nutritionEditFragment.updateRecipe();
+        instructionsReadOnlyFragment.updateRecipe();
+        instructionsEditFragment.updateRecipe();
     }
 
     @Override
     protected void setReadOnlyFragments() {
-        overviewReadOnlyFragment = new RecipeOverviewMyRecipeFragment();
+        overviewReadOnlyFragment = RecipeOverviewMyRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_overview, overviewReadOnlyFragment)
+                .add(R.id.container_read_only_overview, overviewReadOnlyFragment)
                 .commit();
 
         // Ingredients
-        ingredientsReadOnlyFragment = new RecipeIngredientsMyRecipeFragment();
+        ingredientsReadOnlyFragment = RecipeIngredientsMyRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_ingredients, ingredientsReadOnlyFragment)
+                .add(R.id.container_read_only_ingredients, ingredientsReadOnlyFragment)
                 .commit();
 
         // Instructions
-        instructionsReadOnlyFragment = new RecipeInstructionsMyRecipeFragment();
+        instructionsReadOnlyFragment = RecipeInstructionsMyRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_instructions, instructionsReadOnlyFragment)
+                .add(R.id.container_read_only_instructions, instructionsReadOnlyFragment)
                 .commit();
 
         // Nutrition
-        nutritionReadOnlyFragment = new RecipeNutritionMyRecipeFragment();
+        nutritionReadOnlyFragment = RecipeNutritionMyRecipeFragment.getInstance(recipeId);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container_nutrition, nutritionReadOnlyFragment)
+                .add(R.id.container_read_only_nutrition, nutritionReadOnlyFragment)
                 .commit();
     }
 }

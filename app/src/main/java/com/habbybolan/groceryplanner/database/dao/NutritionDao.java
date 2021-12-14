@@ -22,12 +22,13 @@ public abstract class NutritionDao {
         updateNutritionBridge(bridge.recipeId, bridge.nutritionId, bridge.amount, bridge.unitOfMeasurementId);
     }
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertNutritionBridge(RecipeNutritionBridge bridge);
 
     @Query("UPDATE RecipeNutritionBridge SET" +
             "   amount = :amount," +
             "   unit_of_measurement_id = :unitOfMeasurementId," +
+            "   is_deleted = 0," +
             "   date_updated = STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')" +
             "   WHERE recipe_id = :recipeId AND nutrition_id = :nutritionId")
     public abstract void updateNutritionBridge(long recipeId, long nutritionId, int amount, Long unitOfMeasurementId);

@@ -17,30 +17,29 @@ public interface AddRecipeToGroceryListContract {
 
         void setView(View view);
 
-        void updateRecipeIngredientsInGrocery(OfflineRecipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
+        void setRecipe(OfflineRecipe recipe);
+
+        void updateRecipeIngredientsInGrocery(Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients);
 
 
             /**
              * Fetches the recipe ingredients where the recipe is not part of the selected grocery list.
-             * @param myRecipe            The recipe to add/change inside the grocery list
              * @param grocery           The grocery list to hold/is holding the recipe ingredients
              * @param isNotInGrocery    True if the recipe is not yet added to the grocery list
              */
-        void fetchRecipeIngredients(OfflineRecipe myRecipe, Grocery grocery, boolean isNotInGrocery);
+        void fetchRecipeIngredients(Grocery grocery, boolean isNotInGrocery);
 
         /**
          * Fetch the Groceries that are holding the recipe.
-         * @param recipe    The recipe begin contained by the Grocery object
          */
-        void fetchGroceriesHoldingRecipe(OfflineRecipe recipe);
+        void fetchGroceriesHoldingRecipe();
 
         List<GroceryRecipe> getLoadedGroceriesHoldingRecipe();
 
         /**
          * Fetch the Groceries that are not holding the recipe.
-         * @param myRecipe    The recipe not contained by the Grocery object
          */
-        void fetchGroceriesNotHoldingRecipe(OfflineRecipe myRecipe);
+        void fetchGroceriesNotHoldingRecipe();
 
         /**
          * Called to display the Groceries not holding the Recipe
@@ -56,10 +55,11 @@ public interface AddRecipeToGroceryListContract {
 
         /**
          * Delete All the recipe ingredients from the grocery
-         * @param myRecipe    Recipe to delete from grocery
          * @param grocery   Grocery holding recipe and its ingredients to delete
          */
-        void deleteRecipeFromGrocery(OfflineRecipe myRecipe, Grocery grocery);
+        void deleteRecipeFromGrocery(Grocery grocery);
+
+        OfflineRecipe getRecipe();
 
     }
 

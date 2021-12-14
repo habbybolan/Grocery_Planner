@@ -15,11 +15,26 @@
             layout="@layout/toolbar"
             android:id="@+id/toolbar_ingredient_add"/>
 
-        <Button
-            android:id="@+id/btn_add_ingredients"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edit_txt_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Ingredient Name"
+                android:layout_weight="10"/>
+
+            <Button
+                android:id="@+id/btn_add_ingredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ingredient_add_list"

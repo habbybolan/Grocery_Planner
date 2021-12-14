@@ -171,8 +171,7 @@ public class Nutrition extends OnlineModel implements SyncJSON {
         return measurementType;
     }
     public void setMeasurement(Long measurementId) {
-        if (measurementId == null) measurementType = null;
-        else measurementType = new MeasurementType(measurementId);
+        measurementType = new MeasurementType(measurementId);
     }
     public void setAmount(int amount) {
         this.amount = amount;

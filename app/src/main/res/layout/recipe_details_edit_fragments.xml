@@ -6,30 +6,27 @@
         android:layout_width="match_parent" android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/container_overview"
+            android:id="@+id/container_edit_overview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/container_ingredients"
+            android:id="@+id/container_edit_ingredients"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/container_instructions"
+            android:id="@+id/container_edit_instructions"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/container_nutrition"
+            android:id="@+id/container_edit_nutrition"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="match_parent">
         </FrameLayout>
 
     </FrameLayout>

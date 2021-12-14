@@ -11,14 +11,21 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.RecipeOverviewContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-public class RecipeOverviewLikedRecipeFragment extends RecipeOverviewReadOnlyFragment<RecipeOverviewContract.RecipeOverviewLikedRecipeListener> {
+public class RecipeOverviewLikedRecipeFragment
+        extends RecipeOverviewReadOnlyFragment<RecipeOverviewContract.RecipeOverviewLikedRecipeListener,
+        RecipeOverviewContract.PresenterLikedRecipe, LikedRecipe, RecipeOverviewContract.InteractorLikedRecipeReadOnly> {
 
-    public RecipeOverviewLikedRecipeFragment() {}
+    private RecipeOverviewLikedRecipeFragment() {}
 
-    public static RecipeOverviewLikedRecipeFragment getInstance() {
+    public static RecipeOverviewLikedRecipeFragment getInstance(long recipeId) {
         RecipeOverviewLikedRecipeFragment fragment = new RecipeOverviewLikedRecipeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -44,6 +51,19 @@ public class RecipeOverviewLikedRecipeFragment extends RecipeOverviewReadOnlyFra
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void displayUpdatedRecipe() {
+        tagRV.updateDisplay();
+        setDisplayToCurrentRecipe();
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        setRV();
+        setDisplayToCurrentRecipe();
+        setRecipeGroceryFragment();
     }
 
     public interface RecipeOverviewListener extends RecipeOverviewContract.RecipeOverviewLikedRecipeListener {}

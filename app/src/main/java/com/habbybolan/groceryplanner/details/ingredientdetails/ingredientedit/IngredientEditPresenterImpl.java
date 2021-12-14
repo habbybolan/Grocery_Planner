@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
@@ -32,9 +33,16 @@ public class IngredientEditPresenterImpl implements IngredientEditContract.Prese
 
     @Override
     public void updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId) {
-        if (interactor.updateIngredient(ingredientHolder, name, quantity, quantityType, foodType, ingredientId))
-            view.saveSuccessful();
-         else
-             view.saveFailed("Invalid Ingredient");
+        interactor.updateIngredient(ingredientHolder, name, quantity, quantityType, foodType, ingredientId, new DbSingleCallbackWithFail<Ingredient>() {
+            @Override
+            public void onFail(String message) {
+                view.saveFailed("Invalid Ingredient");
+            }
+
+            @Override
+            public void onResponse(Ingredient response) {
+                view.saveSuccessful();
+            }
+        });
     }
 }

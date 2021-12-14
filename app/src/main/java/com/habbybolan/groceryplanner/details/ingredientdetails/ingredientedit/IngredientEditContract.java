@@ -1,5 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit;
 
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineIngredientHolder;
 
@@ -23,8 +24,9 @@ public interface IngredientEditContract {
          * @param name                  Name of Ingredient
          * @param quantity              String quantity of Ingredient
          * @param quantityType          String QuantityType of Ingredient
+         * @param callback              Callback for when ingredient is edited/inserted
          */
-        boolean updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId);
+        void updateIngredient(OfflineIngredientHolder ingredientHolder, String name, String quantity, String quantityType, String foodType, long ingredientId, DbSingleCallbackWithFail<Ingredient> callback);
     }
 
     interface IngredientEditView {

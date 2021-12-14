@@ -18,11 +18,13 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.detailsactivity.myre
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
-public class RecipeInstructionsEditFragment extends Fragment implements RecipeInstructionsContract.RecipeInstructionsEditView {
+public class RecipeInstructionsEditFragment extends Fragment
+        implements RecipeInstructionsContract.RecipeInstructionsEditView {
 
     @Inject
     RecipeInstructionsContract.PresenterEdit presenter;
@@ -34,8 +36,11 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
 
     public RecipeInstructionsEditFragment() {}
 
-    public static RecipeInstructionsEditFragment getInstance() {
+    public static RecipeInstructionsEditFragment getInstance(long recipeId) {
         RecipeInstructionsEditFragment fragment = new RecipeInstructionsEditFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -57,9 +62,11 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_instructions_edit, container, false);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
-        onTextChange();
-        binding.editTxtInstructions.setText(recipeStepListener.getRecipe().getInstructions());
         return binding.getRoot();
     }
 
@@ -85,8 +92,8 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
      */
     private void saveInstructions() {
         String instructions = binding.editTxtInstructions.getText().toString();
-        recipeStepListener.getRecipe().setInstructions(instructions);
-        presenter.updateRecipe(recipeStepListener.getRecipe());
+        presenter.getRecipe().setInstructions(instructions);
+        presenter.updateRecipe();
     }
 
     private void setToolbar() {
@@ -118,17 +125,27 @@ public class RecipeInstructionsEditFragment extends Fragment implements RecipeIn
         });
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // set up the view for view methods to be accessed from the presenter
-        presenter.setView(this);
-    }
-
     /**
      * Delete the Recipe and leave the Fragment.
      */
     private void deleteRecipe() {
         recipeStepListener.onRecipeDeleted();
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
+    }
+
+    @Override
+    public void displayUpdatedRecipe() {
+        binding.editTxtInstructions.setText(presenter.getRecipe().getInstructions());
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        onTextChange();
+        binding.editTxtInstructions.setText(presenter.getRecipe().getInstructions());
     }
 
     /**

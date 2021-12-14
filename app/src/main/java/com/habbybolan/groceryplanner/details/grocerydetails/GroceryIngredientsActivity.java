@@ -17,6 +17,7 @@ import com.habbybolan.groceryplanner.details.ingredientdetails.ingredientedit.In
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
 public class GroceryIngredientsActivity extends AppCompatActivity
                                         implements GroceryIngredientsFragment.GroceryIngredientsListener,
@@ -67,7 +68,7 @@ public class GroceryIngredientsActivity extends AppCompatActivity
 
     @Override
     public void createNewItem() {
-        startEditFragment(null);
+        gotoAddIngredients();
     }
 
     @Override
@@ -97,7 +98,7 @@ public class GroceryIngredientsActivity extends AppCompatActivity
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_ingredient_edit, ingredientEditFragment, EDIT_TAG)
+                .add(R.id.ingredient_edit_container, ingredientEditFragment, EDIT_TAG)
                 .commit();
 
         Fade fade = new Fade();
@@ -113,7 +114,7 @@ public class GroceryIngredientsActivity extends AppCompatActivity
         IngredientAddFragment ingredientAddFragment = IngredientAddFragment.newInstance(grocery);
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_ingredient_add, ingredientAddFragment, ADD_TAG)
+                .add(R.id.ingredient_add_container, ingredientAddFragment, ADD_TAG)
                 .commit();
         GroceryIngredientVisibility(View.GONE);
     }
@@ -131,24 +132,33 @@ public class GroceryIngredientsActivity extends AppCompatActivity
 
     @Override
     public void leaveIngredientEdit() {
-        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
-        // destroy the ingredient edit Fragment
-        if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
-
-        IngredientLocationFragment ingredientLocationFragment = (IngredientLocationFragment) getSupportFragmentManager().findFragmentByTag(LOCATION_TAG);
-        // destroy the ingredient location Fragment
-        if (ingredientLocationFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientLocationFragment).commitAllowingStateLoss();
-
-        binding.containerEditIngredient.setVisibility(View.GONE);
+        destroyIngredientEdit();
         reloadGroceryIngredientFragment();
     }
 
     @Override
-    public void leaveIngredientAdd() {
+    public void leaveIngredientAdd(Ingredient ingredient) {
+        IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
+        // destroy the ingredient add Fragment
+        if (ingredientAddFragment != null) getSupportFragmentManager()
+                .beginTransaction()
+                .remove(ingredientAddFragment)
+                .add(R.id.ingredient_edit_container, IngredientEditFragment.getInstance(new OfflineRecipe.RecipeBuilder("").setId(grocery.getId()).build(), ingredient), EDIT_TAG)
+                .commitAllowingStateLoss();
+    }
+
+    private void destroyIngredientEdit() {
+        IngredientEditFragment ingredientEditFragment = (IngredientEditFragment) getSupportFragmentManager().findFragmentByTag(EDIT_TAG);
+        // destroy the ingredient edit Fragment
+        if (ingredientEditFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientEditFragment).commitAllowingStateLoss();
+        IngredientLocationFragment locationFragment = (IngredientLocationFragment) getSupportFragmentManager().findFragmentByTag(LOCATION_TAG);
+        if (locationFragment != null) getSupportFragmentManager().beginTransaction().remove(locationFragment).commitAllowingStateLoss();
+    }
+
+    private void destroyIngredientAdd() {
         IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
         // destroy the ingredient add Fragment
         if (ingredientAddFragment != null) getSupportFragmentManager().beginTransaction().remove(ingredientAddFragment).commitAllowingStateLoss();
-        reloadGroceryIngredientFragment();
     }
 
     /**
@@ -166,12 +176,13 @@ public class GroceryIngredientsActivity extends AppCompatActivity
         IngredientAddFragment ingredientAddFragment = (IngredientAddFragment) getSupportFragmentManager().findFragmentByTag(ADD_TAG);
         // if one of the IngredientEdit or AddIngredient fragments are open, close them and reload the Ingredient list
         // otherwise, destroy and leave this activity.
-       if (ingredientEditFragment != null)
-            leaveIngredientEdit();
-        else if (ingredientAddFragment != null)
-            leaveIngredientAdd();
-        else
-            finish();
+       if (ingredientEditFragment != null) {
+           destroyIngredientEdit();
+           reloadGroceryIngredientFragment();
+       } else if (ingredientAddFragment != null) {
+           destroyIngredientAdd();
+           reloadGroceryIngredientFragment();
+       } else finish();
     }
 
     private void GroceryIngredientVisibility(int visibility) {

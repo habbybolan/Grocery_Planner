@@ -14,7 +14,7 @@ public class GroceryIngredientsTuple {
     public String ingredientName;
     @ColumnInfo(name = "quantity")
     public float quantity;
-    @ColumnInfo(name = "quantityMeasId")
+    @ColumnInfo(name = "quantity_meas_id")
     public Long quantityMeasId;
     @ColumnInfo(name = "food_type_id")
     public long foodTypeId;

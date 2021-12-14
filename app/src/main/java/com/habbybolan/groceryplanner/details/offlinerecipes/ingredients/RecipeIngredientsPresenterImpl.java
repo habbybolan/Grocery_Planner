@@ -1,6 +1,7 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.ingredients;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
+import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
@@ -10,13 +11,15 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class RecipeIngredientsPresenterImpl<U extends RecipeIngredientsContract.Interactor, T extends RecipeIngredientsContract.IngredientsView> implements RecipeIngredientsContract.Presenter<T> {
+public class RecipeIngredientsPresenterImpl
+        <U extends RecipeIngredientsContract.Interactor<T2>, T extends RecipeIngredientsContract.IngredientsView,
+                T2 extends OfflineRecipe>
+        implements RecipeIngredientsContract.Presenter<U, T, T2> {
 
     protected U interactor;
     protected T view;
+    protected T2 recipe;
 
-    // true if the ingredients are being loaded
-    private boolean loadingIngredients = false;
     private List<Ingredient> loadedIngredients = new ArrayList<>();
 
     private DbCallback<Ingredient> ingredientDbCallback = new DbCallback<Ingredient>() {
@@ -25,7 +28,6 @@ public class RecipeIngredientsPresenterImpl<U extends RecipeIngredientsContract.
             // set the loaded ingredients as loaded in
             loadedIngredients.clear();
             loadedIngredients.addAll(response);
-            loadingIngredients = false;
             displayIngredientList();
         }
     };
@@ -36,8 +38,20 @@ public class RecipeIngredientsPresenterImpl<U extends RecipeIngredientsContract.
     }
 
     @Override
-    public void setView(T view) {
+    public void setupPresenter(T view, long recipeId) {
         this.view = view;
+        interactor.fetchFullRecipe(recipeId, new DbSingleCallbackWithFail<T2>() {
+            @Override
+            public void onFail(String message) {
+                // TODO:
+            }
+
+            @Override
+            public void onResponse(T2 response) {
+                recipe = response;
+                view.setupRecipeViews();
+            }
+        });
     }
 
     @Override
@@ -45,16 +59,8 @@ public class RecipeIngredientsPresenterImpl<U extends RecipeIngredientsContract.
         view = null;
     }
 
-    /**
-     * Signals if the ingredients are being loaded in.
-     * @return  True if the ingredients are loaded in
-     */
-    private boolean isIngredientsReady() {
-        return !loadingIngredients;
-    }
-
     private void displayIngredientList() {
-        if (isViewAttached() && isIngredientsReady())
+        if (isViewAttached())
             view.showList(loadedIngredients);
     }
 
@@ -63,28 +69,41 @@ public class RecipeIngredientsPresenterImpl<U extends RecipeIngredientsContract.
     }
 
     @Override
-    public void createIngredientList(OfflineRecipe recipe) {
+    public void createIngredientList() {
         try {
-            loadingIngredients = true;
-            view.loadingStarted();
             interactor.fetchIngredients(recipe, view.getSortType(), ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            view.loadingFailed("failed to delete Ingredients");
-            loadingIngredients = false;
         }
     }
 
     @Override
-    public void searchIngredients(OfflineRecipe recipe, String ingredientSearch)  {
+    public void searchIngredients(String ingredientSearch)  {
         try {
-            loadingIngredients = true;
-            view.loadingStarted();
             interactor.searchIngredients(recipe, ingredientSearch, ingredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            loadingIngredients = false;
-            view.loadingFailed("Failed to retrieve data");
         }
+    }
+
+    @Override
+    public T2 getRecipe() {
+        return recipe;
+    }
+
+    @Override
+    public void loadUpdatedRecipe() {
+        interactor.fetchFullRecipe(recipe.getId(), new DbSingleCallbackWithFail<T2>() {
+            @Override
+            public void onFail(String message) {
+                // TODO:
+            }
+
+            @Override
+            public void onResponse(T2 response) {
+                recipe = response;
+                view.showList(recipe.getIngredients());
+            }
+        });
     }
 }

@@ -5,22 +5,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.FragmentRecipeInstructionsReadOnlyBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
 import javax.inject.Inject;
 
 
-public abstract class RecipeInstructionsReadOnlyFragment<T extends RecipeInstructionsContract.RecipeInstructionsListener> extends Fragment implements RecipeInstructionsContract.RecipeInstructionsView {
+public abstract class RecipeInstructionsReadOnlyFragment
+        <T extends RecipeInstructionsContract.RecipeInstructionsListener, U extends RecipeInstructionsContract.PresenterReadOnly<T3, T2>,
+                T2 extends OfflineRecipe, T3 extends RecipeInstructionsContract.Interactor<T2>>
+        extends Fragment implements RecipeInstructionsContract.RecipeInstructionsView {
 
     @Inject
-    RecipeInstructionsContract.PresenterReadOnly presenter;
+    U presenter;
 
     protected FragmentRecipeInstructionsReadOnlyBinding binding;
     protected T recipeInstructionsListener;
@@ -31,17 +34,13 @@ public abstract class RecipeInstructionsReadOnlyFragment<T extends RecipeInstruc
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_instructions_read_only, container, false);
-        presenter.setView(this);
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(OfflineRecipe.RECIPE)) {
+            presenter.setupPresenter(this, bundle.getLong(OfflineRecipe.RECIPE));
+        }
         setToolbar();
-        binding.textInstructions.setText(recipeInstructionsListener.getRecipe().getInstructions());
         return binding.getRoot();
     }
 
     protected abstract void setToolbar();
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        // set up the view for view methods to be accessed from the presenter
-        presenter.setView(this);
-    }
 }

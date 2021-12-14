@@ -8,30 +8,25 @@ public interface IngredientAddPresenter {
     void setView(IngredientAddView view);
     void destroy();
     /**
-     * Fetch the Ingredients not inside the current IngredientHolder.
+     * Fetch the Ingredients not inside the current IngredientHolder. Filter using search string.
      * @param ingredientHolder      Holds the Ingredients to not display
+     * @param search                Ingredient name search to find similar ingredients stored in database.
+     *                              If String is empty, then find all ingredients not in the ingredientHolder
      */
-    void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder);
+    void fetchIngredientsNotInIngredientHolder(OfflineIngredientHolder ingredientHolder, String search);
 
     /**
      * Called to display the loaded Ingredients that are not inside the IngredientHolder.
      */
-    void displayIngredientsToAdd();
+    void displayExistingIngredients();
 
     /**
-     * Add the checked Ingredients to the IngredientHolder
+     * Add the ingredient to the IngredientHolder by Ingredient
      */
-    void addCheckedToIngredientHolder(OfflineIngredientHolder ingredientHolder);
+    void addIngredientToIngredientHolder(Ingredient ingredient, OfflineIngredientHolder ingredientHolder);
 
     /**
-     * Called when an Ingredient is selected.
-     * @param ingredient    Selected Ingredient
+     * Add the ingredient to the IngredientHolder by name
      */
-    void selectIngredient(Ingredient ingredient);
-
-    /**
-     * Called when an Ingredient is un-selected
-     * @param ingredient    The unselected Ingredient
-     */
-    void unSelectIngredient(Ingredient ingredient);
+    void addIngredientToIngredientHolder(String ingredientName, OfflineIngredientHolder ingredientHolder);
 }

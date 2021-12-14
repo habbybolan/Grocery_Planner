@@ -6,14 +6,23 @@ import androidx.databinding.DataBindingUtil;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.ActivityOnlineRecipeDetailBinding;
-import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsReadOnlyFragmentsBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.RecipeDetailsEditAbstractActivity;
-import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OnlineRecipe;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.ingredients.OnlineRecipeIngredientsFragment;
 import com.habbybolan.groceryplanner.online.displayonlinerecipe.nutrition.OnlineRecipeNutritionFragment;
 
-// TODO: merge this and corresponding classes RecipeDetailsReadOnlyAbstractActivity
+// TODO:
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  merge this and corresponding classes RecipeDetailsReadOnlyAbstractActivity
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 public class OnlineRecipeDetailActivityEdit extends RecipeDetailsEditAbstractActivity implements OnlineRecipeContract.OnlineRecipeListener {
 
     private OnlineRecipe onlineRecipe;
@@ -32,7 +41,7 @@ public class OnlineRecipeDetailActivityEdit extends RecipeDetailsEditAbstractAct
         if (extras != null) {
             onlineRecipe = extras.getParcelable(OfflineRecipe.RECIPE);
         }
-        RecipeDetailsFragmentsBinding fragmentsBinding = binding.recipeDetailsFragments;
+        RecipeDetailsReadOnlyFragmentsBinding fragmentsBinding = binding.recipeDetailsReadOnlyFragments;
         setViews(binding.bottomNavigation, fragmentsBinding);
         //setFragments();
     }

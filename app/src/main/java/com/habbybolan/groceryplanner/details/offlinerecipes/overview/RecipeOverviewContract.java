@@ -3,8 +3,11 @@ package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
 import androidx.databinding.ObservableField;
 
 import com.habbybolan.groceryplanner.callbacks.DbCallback;
-import com.habbybolan.groceryplanner.callbacks.DbCallbackDelete;
+import com.habbybolan.groceryplanner.callbacks.DbCallbackEmptyResponse;
 import com.habbybolan.groceryplanner.callbacks.DbSingleCallbackWithFail;
+import com.habbybolan.groceryplanner.details.offlinerecipes.DetailFragmentView;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeCategory;
 import com.habbybolan.groceryplanner.models.secondarymodels.RecipeTag;
@@ -15,11 +18,11 @@ import java.util.concurrent.ExecutionException;
 
 public interface RecipeOverviewContract {
 
-    interface Presenter<T extends OverviewView> {
+    interface Presenter<U extends Interactor<T2>, T extends OverviewView, T2 extends OfflineRecipe> {
 
         void destroy();
 
-        void setView(T view);
+        void setupPresenter(T view, long recipeId);
 
         /**
          * Get the RecipeCategory at index position of the loaded RecipeCategories.
@@ -30,12 +33,15 @@ public interface RecipeOverviewContract {
 
         /**
          * Fetch the category from the database to display.
-         * @param categoryId    The Id of the category to display
          */
-        void fetchRecipeCategory(Long categoryId);
+        void fetchRecipeCategory();
+
+        T2 getRecipe();
+
+        void loadUpdatedRecipe();
     }
 
-    interface PresenterEdit extends Presenter<OverviewEditView> {
+    interface PresenterEdit extends Presenter<InteractorEdit, OverviewEditView, MyRecipe> {
 
         /**
          * Loads all recipe categories
@@ -55,34 +61,42 @@ public interface RecipeOverviewContract {
 
         /**
          * Delete the tag from the recipe
-         * @param myRecipe    recipe holding the tag
          * @param recipeTag tag to delete from the recipe
          */
-        void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag);
+        void deleteRecipeTag(RecipeTag recipeTag);
 
         /**
          * Checks if the the name for the new RecipeTag is valid.
          * Adds the new tag if valid, otherwise send back error message.
          * @param title      Title of the new RecipeTag being added
-         * @param myRecipe    Recipe the tag will be added to
          */
-        void addRecipeTag(String title, OfflineRecipe myRecipe);
+        void addRecipeTag(String title);
 
         /** Calls Interactor to update the recipe values changed. */
-        void updateRecipe(OfflineRecipe myRecipe, String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category);
+        void updateRecipe(String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category);
     }
 
     /**
-     * Wrapper presenter to allow dagger injection of generic Presenter with a generic interactor.
+     * Wrapper presenters for generic read-only presenters.
      */
-    interface PresenterReadOnly extends Presenter<OverviewView> {}
+    interface PresenterReadOnly<T extends Interactor<U>, U extends OfflineRecipe> extends Presenter<T, OverviewView, U> {}
 
-    interface Interactor {
+
+    interface PresenterMyRecipe extends PresenterReadOnly<InteractorMyRecipeReadOnly, MyRecipe> {}
+
+    interface PresenterLikedRecipe extends PresenterReadOnly<InteractorLikedRecipeReadOnly, LikedRecipe> {}
+
+    interface Interactor<T extends OfflineRecipe> {
 
         void fetchRecipeCategory(ObservableField<RecipeCategory> recipeCategoryObserver, long categoryId) throws ExecutionException, InterruptedException;
+        void fetchFullRecipe(long recipeId, DbSingleCallbackWithFail<T> callback);
     }
 
-    interface InteractorEdit extends Interactor {
+    interface InteractorMyRecipeReadOnly extends Interactor<MyRecipe>{}
+
+    interface InteractorLikedRecipeReadOnly extends Interactor<LikedRecipe> {}
+
+    interface InteractorEdit extends Interactor<MyRecipe> {
 
         void loadAllRecipeCategories(DbCallback<RecipeCategory> callback) throws ExecutionException, InterruptedException;
 
@@ -109,7 +123,7 @@ public interface RecipeOverviewContract {
          * @param recipeTag tag to delete from the recipe
          * @param callbackDelete callback for deleting tag
          */
-        void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackDelete callbackDelete);
+        void deleteRecipeTag(OfflineRecipe myRecipe, RecipeTag recipeTag, DbCallbackEmptyResponse callbackDelete);
 
         /**
          * Updates the MyRecipe values based on user set values and save the changes to room database.
@@ -124,10 +138,7 @@ public interface RecipeOverviewContract {
         void updateRecipe(OfflineRecipe myRecipe, String name, String servingSize, String cookTime, String prepTime, String description, RecipeCategory category);
     }
 
-    interface OverviewView {
-
-        void loadingStarted();
-        void loadingFailed(String message);
+    interface OverviewView extends DetailFragmentView {
 
         /**
          * Displays the current RecipeCategory in the fragment
@@ -135,10 +146,11 @@ public interface RecipeOverviewContract {
          */
         void displayRecipeCategory(RecipeCategory recipeCategory);
 
-        /**
-         * Display the recipe tags.
-         */
-        void displayRecipeTags();
+        /** Display the updated recipe specific values. */
+        void displayUpdatedRecipe();
+
+        /** setup the recipe views */
+        void setupRecipeViews();
     }
 
     interface OverviewEditView extends OverviewView, RecipeTagsView {
@@ -156,7 +168,6 @@ public interface RecipeOverviewContract {
     }
 
     interface RecipeOverviewListener {
-        OfflineRecipe getRecipe();
     }
 
     interface RecipeOverviewMyRecipeListener extends RecipeOverviewListener{

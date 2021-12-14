@@ -1,13 +1,11 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes;
 
-import android.view.View;
-import android.view.ViewGroup;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.habbybolan.groceryplanner.R;
-import com.habbybolan.groceryplanner.databinding.RecipeDetailsFragmentsBinding;
+import com.habbybolan.groceryplanner.databinding.RecipeDetailsReadOnlyFragmentsBinding;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.readonly.RecipeIngredientsReadOnlyFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.readonly.RecipeInstructionsReadOnlyFragment;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.RecipeNutritionReadOnlyFragment;
@@ -22,68 +20,83 @@ public abstract class RecipeDetailsReadOnlyAbstractActivity
                 U extends OfflineRecipe>
         extends AppCompatActivity {
 
-    protected RecipeDetailsFragmentsBinding fragmentsBinding;
+    protected RecipeDetailsReadOnlyFragmentsBinding readOnlyBinding;
 
     protected T1 overviewReadOnlyFragment;
     protected T4 ingredientsReadOnlyFragment;
     protected T3 instructionsReadOnlyFragment;
     protected T2 nutritionReadOnlyFragment;
 
-    protected U recipe;
+    protected long recipeId;
 
     private void setBottomNavigation(BottomNavigationView view) {
         view.setOnNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.item_overview) {
-                showOverviewFragment(fragmentsBinding.containerOverview, fragmentsBinding.containerIngredients,
-                        fragmentsBinding.containerInstructions, fragmentsBinding.containerNutrition);
+                showOverviewFragment();
             } else if (id == R.id.item_ingredients) {
-                showIngredientsFragment(fragmentsBinding.containerOverview, fragmentsBinding.containerIngredients,
-                        fragmentsBinding.containerInstructions, fragmentsBinding.containerNutrition);
+                showIngredientsFragment();
             } else if (id == R.id.item_instructions) {
-                showInstructionsFragment(fragmentsBinding.containerOverview, fragmentsBinding.containerIngredients,
-                        fragmentsBinding.containerInstructions, fragmentsBinding.containerNutrition);
+                showInstructionsFragment();
             } else {
-                showNutritionFragment(fragmentsBinding.containerOverview, fragmentsBinding.containerIngredients,
-                        fragmentsBinding.containerInstructions, fragmentsBinding.containerNutrition);
+                showNutritionFragment();
             }
             return true;
         });
     }
 
-    private void showOverviewFragment(ViewGroup overview, ViewGroup ingredients, ViewGroup instructions, ViewGroup nutrition) {
-        nutrition.setVisibility(View.GONE);
-        instructions.setVisibility(View.GONE);
-        ingredients.setVisibility(View.GONE);
-        overview.setVisibility(View.VISIBLE);
+    /** Shows the Overview Fragments and hides the other 4 details Fragments */
+    protected void showOverviewFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .show(overviewReadOnlyFragment)
+                .hide(instructionsReadOnlyFragment)
+                .hide(ingredientsReadOnlyFragment)
+                .hide(nutritionReadOnlyFragment)
+                .commit();
     }
-    private void showIngredientsFragment(ViewGroup overview, ViewGroup ingredients, ViewGroup instructions, ViewGroup nutrition) {
-        nutrition.setVisibility(View.GONE);
-        instructions.setVisibility(View.GONE);
-        ingredients.setVisibility(View.VISIBLE);
-        overview.setVisibility(View.GONE);
+    /** Shows the Ingredients Fragments and hides the other 4 details Fragments */
+    protected void showIngredientsFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .hide(overviewReadOnlyFragment)
+                .hide(instructionsReadOnlyFragment)
+                .show(ingredientsReadOnlyFragment)
+                .hide(nutritionReadOnlyFragment)
+                .commit();
     }
-    private void showInstructionsFragment(ViewGroup overview, ViewGroup ingredients, ViewGroup instructions, ViewGroup nutrition) {
-        nutrition.setVisibility(View.GONE);
-        instructions.setVisibility(View.VISIBLE);
-        ingredients.setVisibility(View.GONE);
-        overview.setVisibility(View.GONE);
+    /** Shows the Instructions Fragments and hides the other 4 details Fragments */
+    protected void showInstructionsFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .hide(overviewReadOnlyFragment)
+                .show(instructionsReadOnlyFragment)
+                .hide(ingredientsReadOnlyFragment)
+                .hide(nutritionReadOnlyFragment)
+                .commit();
     }
-    private void showNutritionFragment(ViewGroup overview, ViewGroup ingredients, ViewGroup instructions, ViewGroup nutrition) {
-        nutrition.setVisibility(View.VISIBLE);
-        instructions.setVisibility(View.GONE);
-        ingredients.setVisibility(View.GONE);
-        overview.setVisibility(View.GONE);
+    /** Shows the Nutrition Fragments and hides the other 4 details Fragments */
+    protected void showNutritionFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .hide(overviewReadOnlyFragment)
+                .hide(instructionsReadOnlyFragment)
+                .hide(ingredientsReadOnlyFragment)
+                .show(nutritionReadOnlyFragment)
+                .commit();
     }
 
     /**
-     * Sets the bottom navigation and calls the method to set the Fragments implemented in the child class
+     * Sets the bottom navigation and calls the method to set the Fragments implemented in the child class.
+     * Should only be called if the Activity is purely a read-only activity. Call {@link RecipeDetailsEditAbstractActivity} setViews instead if it's an edit activity.
      * @param view             Bottom navigation view
      * @param fragmentsBinding Included binding layout that holds the fragments to navigate to through bottom navigation
      */
-    protected void setViews(BottomNavigationView view, RecipeDetailsFragmentsBinding fragmentsBinding) {
-        this.fragmentsBinding = fragmentsBinding;
+    protected void setViews(BottomNavigationView view, RecipeDetailsReadOnlyFragmentsBinding fragmentsBinding) {
+        this.readOnlyBinding = fragmentsBinding;
+        setReadOnlyFragments();
         setBottomNavigation(view);
+        showOverviewFragment();
     }
 
     /**

@@ -5,6 +5,7 @@ import com.habbybolan.groceryplanner.listfragments.ListViewInterface;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryIngredient;
 import com.habbybolan.groceryplanner.models.primarymodels.Grocery;
 import com.habbybolan.groceryplanner.models.primarymodels.Ingredient;
+import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,8 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     private GroceryIngredientsInteractor groceryIngredientsInteractor;
     private ListViewInterface view;
 
-    // true if the ingredients are being loaded
-    private boolean loadingIngredients = false;
-
     private List<GroceryIngredient> loadedIngredients = new ArrayList<>();
+    private SortType sortType = new SortType(SortType.SORT_ALPHABETICAL_ASC);
 
     private DbCallback<GroceryIngredient> groceryIngredientDbCallback = new DbCallback<GroceryIngredient>() {
         @Override
@@ -28,7 +27,6 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
             // set the loaded ingredients as loaded in
             loadedIngredients.clear();
             loadedIngredients.addAll(response);
-            loadingIngredients = false;
             displayIngredients();
         }
     };
@@ -82,30 +80,20 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     }
 
     /**
-     * Check if the ingredients are being loaded.
-     * @return  true if the ingredients have already loaded
-     */
-    private boolean isIngredientsReady() {
-        return !loadingIngredients;
-    }
-
-    /**
      * Display the grocery ingredients.
      */
     private void displayIngredients() {
-        if (isViewAttached() && isIngredientsReady())
+        if (isViewAttached())
             view.showList(loadedIngredients);
     }
 
     @Override
     public void createIngredientList(Grocery grocery) {
         try {
-            loadingIngredients = true;
             view.loadingStarted();
-            groceryIngredientsInteractor.fetchIngredients(grocery, groceryIngredientDbCallback);
+            groceryIngredientsInteractor.fetchIngredients(grocery, sortType, groceryIngredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            loadingIngredients = false;
         }
     }
 
@@ -122,13 +110,16 @@ public class GroceryIngredientsPresenterImpl implements GroceryIngredientsPresen
     @Override
     public void searchIngredients(Grocery grocery, String ingredientSearch) {
         try {
-            loadingIngredients = true;
             view.loadingStarted();
             groceryIngredientsInteractor.searchIngredients(grocery, ingredientSearch, groceryIngredientDbCallback);
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             view.loadingFailed("Failed to retrieve data");
-            loadingIngredients = false;
         }
+    }
+
+    @Override
+    public void setSortType(int sortTypeId) {
+        this.sortType = new SortType(sortTypeId);
     }
 }

@@ -11,6 +11,9 @@ public interface IngredientAddView {
      */
     void showListOfIngredients(List<Ingredient> ingredients);
 
-    void loadingStarted();
-    void loadingFailed(String message);
+    /**
+     * Leave the Ingredient Add fragment and send back the recently inserted ingredient.
+     * @param ingredient    Ingredient recently inserted into IngredientHolder
+     */
+    void leaveFragment(Ingredient ingredient);
 }

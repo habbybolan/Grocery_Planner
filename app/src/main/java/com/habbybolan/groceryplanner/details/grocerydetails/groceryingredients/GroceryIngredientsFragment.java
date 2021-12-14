@@ -89,7 +89,8 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
-                        // todo:
+                        groceryIngredientsPresenter.setSortType(SortType.getSortTypeFromTitle(sortMethod));
+                        groceryIngredientsPresenter.createIngredientList(grocery);
                     }
                 }, SortType.SORT_LIST_ALPHABETICAL)
                 .addDeleteIcon(new CustomToolbar.DeleteCallback() {
@@ -112,7 +113,7 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
                 showList(listItems);
             } else
                 // only the grocery is saved, retrieve its associated Ingredients
-                groceryIngredientsPresenter.createIngredientList((Grocery) getArguments().getParcelable(Grocery.GROCERY));
+                groceryIngredientsPresenter.createIngredientList(getArguments().getParcelable(Grocery.GROCERY));
         }
     }
 
@@ -134,9 +135,6 @@ public class GroceryIngredientsFragment extends NonCategoryListFragment<GroceryI
         View view = binding.groceryDetailBottomAction;
         FloatingActionButton floatingActionButton = view.findViewById(R.id.btn_bottom_bar_add);
         floatingActionButton.setOnClickListener(v -> groceryIngredientsListener.createNewItem());
-
-        ImageButton imgBtnAddIngredients = view.findViewById(R.id.btn_add_multiple);
-        imgBtnAddIngredients.setOnClickListener(l -> groceryIngredientsListener.gotoAddIngredients());
 
         ImageButton imgBtnInfoLevel = view.findViewById(R.id.btn_info_level);
         imgBtnInfoLevel.setOnClickListener(l -> alertDialogInfoLevel());

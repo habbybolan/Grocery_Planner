@@ -18,11 +18,12 @@ public class AddRecipeToGroceryListPresenterImpl implements AddRecipeToGroceryLi
 
     private AddRecipeToGroceryListContract.View view;
 
+    private OfflineRecipe recipe;
+
     private boolean loadingGroceriesRecipeNotIn = false;
     // all grocery lists the recipe is not added to
     private List<Grocery> loadedGroceriesNotHoldingRecipe = new ArrayList<>();
 
-    private boolean loadingIngredientsWithCheck = false;
     private List<IngredientWithGroceryCheck> loadedIngredientsWithCheck = new ArrayList<>();
 
     // user selected grocery list that also holds this recipe
@@ -47,7 +48,6 @@ public class AddRecipeToGroceryListPresenterImpl implements AddRecipeToGroceryLi
         public void onResponse(List<IngredientWithGroceryCheck> response) {
             loadedIngredientsWithCheck.clear();
             loadedIngredientsWithCheck.addAll(response);
-            loadingIngredientsWithCheck = false;
             displayIngredientsWithCheck();
         }
     };
@@ -86,26 +86,29 @@ public class AddRecipeToGroceryListPresenterImpl implements AddRecipeToGroceryLi
     }
 
     @Override
-    public void fetchRecipeIngredients(OfflineRecipe recipe, Grocery grocery, boolean isNotInGrocery) {
+    public void setRecipe(OfflineRecipe recipe) {
+        this.recipe = recipe;
+    }
+
+    @Override
+    public void fetchRecipeIngredients(Grocery grocery, boolean isNotInGrocery) {
         try {
-            loadingIngredientsWithCheck = true;
             view.loadingStarted();
             selectedGrocery = grocery;
             interactor.fetchRecipeIngredients(recipe, grocery, isNotInGrocery, ingredientWithGroceryCheckDbCallback);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            loadingIngredientsWithCheck = false;
         }
     }
 
     @Override
-    public void updateRecipeIngredientsInGrocery(OfflineRecipe recipe, Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
+    public void updateRecipeIngredientsInGrocery(Grocery grocery, int amount, List<IngredientWithGroceryCheck> ingredients) {
         interactor.updateRecipeIngredientsInGrocery(recipe, grocery, amount, ingredients);
-        fetchGroceriesHoldingRecipe(recipe);
+        fetchGroceriesHoldingRecipe();
     }
 
     @Override
-    public void fetchGroceriesHoldingRecipe(OfflineRecipe recipe) {
+    public void fetchGroceriesHoldingRecipe() {
         try {
             loadingGroceriesRecipeIn = true;
             view.loadingStarted();
@@ -122,7 +125,7 @@ public class AddRecipeToGroceryListPresenterImpl implements AddRecipeToGroceryLi
     }
 
     @Override
-    public void fetchGroceriesNotHoldingRecipe(OfflineRecipe recipe) {
+    public void fetchGroceriesNotHoldingRecipe() {
         try {
             loadingGroceriesRecipeNotIn = true;
             view.loadingStarted();
@@ -154,7 +157,12 @@ public class AddRecipeToGroceryListPresenterImpl implements AddRecipeToGroceryLi
     }
 
     @Override
-    public void deleteRecipeFromGrocery(OfflineRecipe recipe, Grocery grocery) {
+    public void deleteRecipeFromGrocery(Grocery grocery) {
         interactor.deleteRecipeFromGrocery(recipe , grocery);
+    }
+
+    @Override
+    public OfflineRecipe getRecipe() {
+        return recipe;
     }
 }

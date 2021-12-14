@@ -22,20 +22,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_add_new_ingredient"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="2dp"
-                android:text="Create New"/>
-
-            <Button
-                android:id="@+id/btn_add_existing_ingredient"
+                android:id="@+id/btn_add_ingredient"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="2dp"
-                android:text="Add Existing"/>
+                android:text="Add Ingredient"/>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

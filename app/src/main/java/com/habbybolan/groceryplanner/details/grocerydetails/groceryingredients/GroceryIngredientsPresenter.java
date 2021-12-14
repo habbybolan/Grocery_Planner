@@ -64,4 +64,6 @@ public interface GroceryIngredientsPresenter {
      * @param ingredientSearch   ingredient to search for
      */
     void searchIngredients(Grocery grocery, String ingredientSearch);
+
+    void setSortType(int sortTypeId);
 }

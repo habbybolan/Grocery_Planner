@@ -13,8 +13,6 @@ public interface RecipeDetailsContract {
     interface Presenter<U extends OfflineRecipe> {
         void setView(DetailsView<U> view);
         void destroy();
-
-        void loadFullRecipe(long recipeId);
     }
 
     interface PresenterLikedRecipe extends Presenter<LikedRecipe> {}
@@ -23,22 +21,15 @@ public interface RecipeDetailsContract {
 
         /**
          * Send to Interactor to sync myRecipe.
-         * @param myRecipe  Recipe to sync with online database.
+         * @param recipeId  id of Recipe to sync with online database.
          */
-        void onSyncMyRecipe(MyRecipe myRecipe, SyncCompleteCallback callback);
+        void onSyncMyRecipe(long recipeId, SyncCompleteCallback callback);
     }
 
     interface Interactor {
     }
 
     interface InteractorMyRecipe extends Interactor{
-
-        /**
-         * Retrieve the full MyRecipe from the room database.
-         * @param recipeId  Id of recipe to retrieve in full
-         * @param callback  Callback to signal the MyRecipe is loaded
-         */
-        void fetchMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException;
 
         /**
          * Deserialize myRecipe to JSON for sending to online database and syncing.
@@ -60,6 +51,9 @@ public interface RecipeDetailsContract {
 
     interface DetailsView<U extends OfflineRecipe> {
 
-        void showRecipe(U recipe);
+        /**
+         * When recipe updates from a sync, notify the fragments to update the recipe values
+         */
+        void updateFragments();
     }
 }

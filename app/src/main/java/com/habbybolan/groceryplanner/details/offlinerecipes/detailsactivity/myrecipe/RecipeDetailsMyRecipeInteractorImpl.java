@@ -32,11 +32,6 @@ public class RecipeDetailsMyRecipeInteractorImpl implements RecipeDetailsContrac
     }
 
     @Override
-    public void fetchMyRecipe(long recipeId, DbSingleCallback<MyRecipe> callback) throws ExecutionException, InterruptedException {
-        databaseAccess.fetchFullMyRecipe(recipeId, callback);
-    }
-
-    @Override
     public void onSyncMyRecipe(long recipeId, SyncCompleteCallback callback) {
         try {
             databaseAccess.fetchFullMyRecipe(recipeId, new DbSingleCallback<MyRecipe>() {

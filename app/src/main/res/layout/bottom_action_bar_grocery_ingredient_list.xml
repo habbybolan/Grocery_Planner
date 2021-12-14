@@ -14,13 +14,6 @@
         style="@style/ActionBarTheme">
 
         <ImageButton
-            android:id="@+id/btn_add_multiple"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:src="@android:drawable/ic_input_add" />
-
-        <ImageButton
             android:id="@+id/btn_info_level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

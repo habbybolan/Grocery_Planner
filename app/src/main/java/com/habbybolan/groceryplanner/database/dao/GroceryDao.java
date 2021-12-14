@@ -56,10 +56,12 @@ public interface GroceryDao {
     @Query("SELECT * FROM IngredientEntity " +
             "WHERE ingredientId NOT IN " +
             "(SELECT GIE.ingredientId FROM GroceryIngredientEntity GIE " +
-            "WHERE GIE.groceryId == :groceryId) ")
-    List<IngredientEntity> getIngredientsNotInGrocery(long groceryId);
+            "WHERE GIE.groceryId == :groceryId) " +
+            "AND ingredientName LIKE :search ")
+            // TODO: need to add is_deleted and filter in ingredients deleted from grocery list
+    List<IngredientEntity> getIngredientsNotInGrocery(long groceryId, String search);
 
-    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantity_meas_id AS quantityMeasId" +
+    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantity_meas_id" +
             "       FROM " +
             "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type_id, " +
             "           GIE.quantity, GIE.quantity_meas_id" +
@@ -72,22 +74,22 @@ public interface GroceryDao {
             "       USING (groceryId, ingredientId) ") List<GroceryIngredientsTuple> getGroceryIngredients(long groceryId);
 
     @Query("SELECT recipeId, onlineRecipeId, groceryId, onlineGroceryId, recipeName, ingredientId, onlineIngredientId, ingredientName, amount," +
-            " food_type_id, quantity, quantityMeasId, is_checked, amount " +
+            " food_type_id, quantity, quantity_meas_id, is_checked, amount " +
             "       FROM " +
                         /* Get ingredient values */
             "           (SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id FROM IngredientEntity) " +
             "           JOIN" +
                         /* Get is_checked */
-            "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantityMeasId, is_checked " +
+            "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantity_meas_id, is_checked " +
             "               FROM " +
             "               (SELECT groceryId, ingredientId, is_checked FROM GroceryIngredientBridge)" +
             "               JOIN " +
                             /* Get recipe name */
-            "               (SELECT groceryId, recipeId, onlineRecipeId, name AS recipeName, amount, ingredientId, quantity, quantityMeasId " +
+            "               (SELECT groceryId, recipeId, onlineRecipeId, name AS recipeName, amount, ingredientId, quantity, quantity_meas_id " +
             "                   FROM " +
                                 /* get amount and quantities of recipe ingredients */
-            "                   (SELECT groceryId, recipeId, amount, ingredientId, quantity, quantityMeasId " +
-            "                       FROM (SELECT groceryId, recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId " +
+            "                   (SELECT groceryId, recipeId, amount, ingredientId, quantity, quantity_meas_id " +
+            "                       FROM (SELECT groceryId, recipeId, ingredientId, quantity, quantity_meas_id " +
             "                           FROM GroceryRecipeIngredientEntity WHERE groceryId=:groceryId)" +
             "                       JOIN (SELECT amount, recipeId FROM GroceryRecipeBridge WHERE groceryId=:groceryId)" +
             "                       USING (recipeId)) " +
@@ -143,10 +145,10 @@ public interface GroceryDao {
     @Query("SELECT * FROM GroceryEntity WHERE name like :grocerySearch")
     List<GroceryEntity> searchGroceries(String grocerySearch);
 
-    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantityMeasId " +
+    @Query("SELECT ingredientId, onlineIngredientId, ingredientName, food_type_id, is_checked, quantity, quantity_meas_id " +
             "       FROM " +
             "       (SELECT groceryId, i.ingredientId, i.onlineIngredientId, i.ingredientName, i.food_type_id, " +
-            "           GIE.quantity, GIE.quantity_meas_id AS quantityMeasId" +
+            "           GIE.quantity, GIE.quantity_meas_id" +
             "           FROM IngredientEntity i " +
             "           JOIN GroceryIngredientEntity GIE " +
             "           USING (ingredientId) " +
@@ -157,22 +159,22 @@ public interface GroceryDao {
     List<GroceryIngredientsTuple> searchGroceryIngredients(long groceryId, String ingredientSearch);
 
     @Query("SELECT recipeId, onlineRecipeId, groceryId, onlineGroceryId, recipeName, ingredientId, ingredientName, amount, " +
-            " food_type_id, quantity, quantityMeasId, is_checked, amount " +
+            " food_type_id, quantity, quantity_meas_id, is_checked, amount " +
             "       FROM " +
             /* Get ingredient values */
             "           (SELECT ingredientId, ingredientName, food_type_id FROM IngredientEntity WHERE ingredientName LIKE :ingredientSearch) " +
             "           JOIN" +
             /* Get is_checked */
-            "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantityMeasId, is_checked " +
+            "           (SELECT groceryId, ingredientId, recipeId, onlineRecipeId, recipeName, amount, ingredientId, quantity, quantity_meas_id, is_checked " +
             "               FROM " +
             "               (SELECT groceryId, ingredientId, is_checked FROM GroceryIngredientBridge)" +
             "               JOIN " +
             /* Get recipe name */
-            "               (SELECT groceryId, recipeId, onlineRecipeId, name AS recipeName, amount, ingredientId, quantity, quantityMeasId " +
+            "               (SELECT groceryId, recipeId, onlineRecipeId, name AS recipeName, amount, ingredientId, quantity, quantity_meas_id " +
             "                   FROM " +
             /* get amount and quantities of recipe ingredients */
-            "                   (SELECT groceryId, recipeId, amount, ingredientId, quantity, quantityMeasId " +
-            "                       FROM (SELECT groceryId, recipeId, ingredientId, quantity, quantity_meas_id AS quantityMeasId FROM GroceryRecipeIngredientEntity WHERE groceryId=:groceryId)" +
+            "                   (SELECT groceryId, recipeId, amount, ingredientId, quantity, quantity_meas_id " +
+            "                       FROM (SELECT groceryId, recipeId, ingredientId, quantity, quantity_meas_id FROM GroceryRecipeIngredientEntity WHERE groceryId=:groceryId)" +
             "                       JOIN (SELECT amount, recipeId FROM GroceryRecipeBridge WHERE groceryId=:groceryId)" +
             "                       USING (recipeId)) " +
             "                   JOIN recipeEntity USING (recipeId))" +

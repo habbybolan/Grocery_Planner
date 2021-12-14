@@ -11,13 +11,24 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.details.offlinerecipes.ingredients.RecipeIngredientsContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.MyRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.models.secondarymodels.SortType;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-public class RecipeIngredientsMyRecipeFragment extends RecipeIngredientsReadOnlyFragment<RecipeIngredientsContract.RecipeIngredientsMyRecipeListener>{
+public class RecipeIngredientsMyRecipeFragment
+        extends RecipeIngredientsReadOnlyFragment<RecipeIngredientsContract.RecipeIngredientsMyRecipeListener,
+        RecipeIngredientsContract.PresenterMyRecipe, MyRecipe, RecipeIngredientsContract.InteractorMyRecipe>{
 
+    private RecipeIngredientsMyRecipeFragment() {}
 
-    public RecipeIngredientsMyRecipeFragment() {}
+    public static RecipeIngredientsMyRecipeFragment getInstance(long recipeId) {
+        RecipeIngredientsMyRecipeFragment fragment = new RecipeIngredientsMyRecipeFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -36,14 +47,14 @@ public class RecipeIngredientsMyRecipeFragment extends RecipeIngredientsReadOnly
                 .addSearch(new CustomToolbar.SearchCallback() {
                     @Override
                     public void search(String search) {
-                        presenter.searchIngredients(recipeIngredientsListener.getRecipe(), search);
+                        presenter.searchIngredients(search);
                     }
                 })
                 .addSortIcon(new CustomToolbar.SortCallback() {
                     @Override
                     public void sortMethodClicked(String sortMethod) {
                         sortType.setSortType(SortType.getSortTypeFromTitle(sortMethod));
-                        presenter.createIngredientList(recipeIngredientsListener.getRecipe());
+                        presenter.createIngredientList();
                     }
                 }, SortType.SORT_LIST_ALPHABETICAL)
                 .addSwapIcon(new CustomToolbar.SwapCallback() {
@@ -65,6 +76,17 @@ public class RecipeIngredientsMyRecipeFragment extends RecipeIngredientsReadOnly
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        ingredients = presenter.getRecipe().getIngredients();
+        initLayout();
     }
 
     public interface RecipeIngredientsListener extends RecipeIngredientsContract.RecipeIngredientsMyRecipeListener{}

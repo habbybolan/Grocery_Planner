@@ -23,7 +23,7 @@ public class RecipeIngredientsTuple {
     public long foodTypeId;
     @ColumnInfo(name = "quantity")
     public float quantity;
-    @ColumnInfo(name = "quantityMeasId")
+    @ColumnInfo(name = "quantity_meas_id")
     public Long quantityMeasId;
     @ColumnInfo(name = "date_synchronized", index = true)
     public Timestamp dateSynchronized;

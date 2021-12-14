@@ -10,9 +10,23 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.details.offlinerecipes.instructions.RecipeInstructionsContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-public class RecipeInstructionsLikedRecipeFragment extends RecipeInstructionsReadOnlyFragment<RecipeInstructionsContract.RecipeInstructionsLikedRecipeListener> {
+public class RecipeInstructionsLikedRecipeFragment
+        extends RecipeInstructionsReadOnlyFragment<RecipeInstructionsContract.RecipeInstructionsLikedRecipeListener,
+        RecipeInstructionsContract.PresenterLikedRecipe, LikedRecipe, RecipeInstructionsContract.InteractorLikedRecipe> {
+
+    private RecipeInstructionsLikedRecipeFragment() {}
+
+    public static RecipeInstructionsLikedRecipeFragment getInstance(long recipeId) {
+        RecipeInstructionsLikedRecipeFragment fragment = new RecipeInstructionsLikedRecipeFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +51,21 @@ public class RecipeInstructionsLikedRecipeFragment extends RecipeInstructionsRea
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
+    }
+
+    @Override
+    public void displayUpdatedRecipe() {
+        binding.textInstructions.setText(presenter.getRecipe().getInstructions());
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        binding.textInstructions.setText(presenter.getRecipe().getInstructions());
     }
 
     public interface RecipeInstructionsListener extends RecipeInstructionsContract.RecipeInstructionsLikedRecipeListener{}

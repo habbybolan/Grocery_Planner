@@ -2,10 +2,11 @@ package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -38,7 +39,7 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
     private Toolbar toolbar;
 
     @Inject
-    IngredientAddPresenter ingredientAddPresenter;
+    IngredientAddPresenter presenter;
 
     public IngredientAddFragment() {}
 
@@ -73,8 +74,8 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
         setToolbar();
         setList();
         setOnClick();
-        ingredientAddPresenter.setView(this);
-        ingredientAddPresenter.fetchIngredientsNotInIngredientHolder(ingredientHolder);
+        presenter.setView(this);
+        presenter.fetchIngredientsNotInIngredientHolder(ingredientHolder, "");
         return binding.getRoot();
     }
 
@@ -83,8 +84,18 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
      */
     private void setOnClick() {
         binding.btnAddIngredients.setOnClickListener(l -> {
-            ingredientAddPresenter.addCheckedToIngredientHolder(ingredientHolder);
-            ingredientAddListener.leaveIngredientAdd();
+            presenter.addIngredientToIngredientHolder(binding.editTxtName.getText().toString(), ingredientHolder);
+        });
+
+        binding.editTxtName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                presenter.fetchIngredientsNotInIngredientHolder(ingredientHolder, s.toString());
+            }
         });
     }
 
@@ -94,13 +105,8 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
     private void setList() {
        adapter = new IngredientAddAdapter(ingredients, new IngredientAddItemClickedListener() {
            @Override
-           public void onIngredientSelected(Ingredient ingredient) {
-                ingredientAddPresenter.selectIngredient(ingredient);
-           }
-
-           @Override
-           public void onIngredientUnSelected(Ingredient ingredient) {
-               ingredientAddPresenter.unSelectIngredient(ingredient);
+           public void onIngredientClicked(Ingredient ingredient) {
+                presenter.addIngredientToIngredientHolder(ingredient, ingredientHolder);
            }
        });
         RecyclerView rv = binding.ingredientAddList;
@@ -124,13 +130,8 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
     }
 
     @Override
-    public void loadingStarted() {
-        Toast.makeText(getContext(), "Loading Started", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loadingFailed(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    public void leaveFragment(Ingredient ingredient) {
+        ingredientAddListener.leaveIngredientAdd(ingredient);
     }
 
     @Override
@@ -143,20 +144,16 @@ public class IngredientAddFragment extends Fragment implements IngredientAddView
     public interface IngredientAddItemClickedListener {
 
         /**
-         * Called when an Ingredient is selected
+         * Called when an Ingredient is selected. Signals to add ingredient with ingredientName to ingredientHolder
          */
-        void onIngredientSelected(Ingredient ingredient);
-        /**
-         * Called when an Ingredient is un-selected
-         */
-        void onIngredientUnSelected(Ingredient ingredient);
+        void onIngredientClicked(Ingredient ingredient);
     }
 
     public interface IngredientAddListener {
 
         /**
-         * Called when fragment is done
+         * Called when leaving the IngredientAdd fragment without adding any ingredients
          */
-        void leaveIngredientAdd();
+        void leaveIngredientAdd(Ingredient ingredient);
     }
 }

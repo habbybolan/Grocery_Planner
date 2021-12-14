@@ -1,7 +1,6 @@
 package com.habbybolan.groceryplanner.details.ingredientdetails.ingredientadd;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -43,22 +42,14 @@ public class IngredientAddAdapter extends RecyclerView.Adapter<IngredientAddAdap
         return ingredients.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         IngredientListDetailsBinding binding;
         public ViewHolder(IngredientListDetailsBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 
-            // always display the checkbox
-            binding.ingredientCheckBox.setVisibility(View.VISIBLE);
-
-            binding.ingredientCheckBox.setOnClickListener(l -> {
-                if (binding.ingredientCheckBox.isChecked())
-                    listener.onIngredientSelected(ingredients.get(getAdapterPosition()));
-                else
-                    listener.onIngredientUnSelected(ingredients.get(getAdapterPosition()));
-            });
+            binding.txtIngredientName.setOnClickListener(v -> listener.onIngredientClicked(ingredients.get(getAdapterPosition())));
         }
 
         public void bind(Ingredient ingredient) {

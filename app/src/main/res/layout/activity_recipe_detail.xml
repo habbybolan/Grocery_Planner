@@ -16,8 +16,12 @@
             android:layout_weight="1">
 
             <include
-                android:id="@+id/recipe_details_fragments"
-                layout="@layout/recipe_details_fragments"/>
+                android:id="@+id/recipe_details_read_only_fragments"
+                layout="@layout/recipe_details_read_only_fragments"/>
+
+            <include
+                android:id="@+id/recipe_details_Edit_fragments"
+                layout="@layout/recipe_details_edit_fragments"/>
 
             <FrameLayout
                 android:id="@+id/ingredient_edit_container"

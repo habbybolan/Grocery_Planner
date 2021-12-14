@@ -11,11 +11,23 @@ import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.RecipeNutritionContract;
 import com.habbybolan.groceryplanner.di.GroceryApp;
 import com.habbybolan.groceryplanner.di.module.RecipeDetailModule;
+import com.habbybolan.groceryplanner.models.primarymodels.LikedRecipe;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 import com.habbybolan.groceryplanner.ui.CustomToolbar;
 
-public class RecipeNutritionLikedRecipeFragment extends RecipeNutritionReadOnlyFragment<RecipeNutritionContract.RecipeNutritionLikedRecipeListener> {
+public class RecipeNutritionLikedRecipeFragment
+        extends RecipeNutritionReadOnlyFragment<RecipeNutritionContract.RecipeNutritionLikedRecipeListener, RecipeNutritionContract.PresenterLikedRecipe,
+        LikedRecipe, RecipeNutritionContract.InteractorLikedRecipeReadOnly> {
 
-    public RecipeNutritionLikedRecipeFragment() {}
+    private RecipeNutritionLikedRecipeFragment() {}
+
+    public static RecipeNutritionLikedRecipeFragment getInstance(long recipeId) {
+        RecipeNutritionLikedRecipeFragment fragment = new RecipeNutritionLikedRecipeFragment();
+        Bundle args = new Bundle();
+        args.putLong(OfflineRecipe.RECIPE, recipeId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +50,21 @@ public class RecipeNutritionLikedRecipeFragment extends RecipeNutritionReadOnlyF
                 getActivity().onBackPressed();
             }
         });
+    }
+
+    @Override
+    public void updateRecipe() {
+        presenter.loadUpdatedRecipe();
+    }
+
+    @Override
+    public void displayUpdatedRecipe() {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setupRecipeViews() {
+        setList();
     }
 
     public interface RecipeNutritionLikedRecipeListener extends RecipeNutritionContract.RecipeNutritionLikedRecipeListener {

@@ -1,4 +1,4 @@
-package com.habbybolan.groceryplanner.details.offlinerecipes.overview;
+package com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.habbybolan.groceryplanner.R;
 import com.habbybolan.groceryplanner.databinding.RecipeGroceriesDetailsBinding;
-import com.habbybolan.groceryplanner.details.offlinerecipes.overview.grocerylistrecipes.AddRecipeToGroceryListContract;
 import com.habbybolan.groceryplanner.models.combinedmodels.GroceryRecipe;
 
 import java.util.List;

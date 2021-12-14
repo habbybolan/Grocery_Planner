@@ -1,14 +1,12 @@
 package com.habbybolan.groceryplanner.details.offlinerecipes.instructions;
 
 import com.habbybolan.groceryplanner.database.DatabaseAccess;
+import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
-import javax.inject.Inject;
-
-public class RecipeInstructionsInteractorImpl implements RecipeInstructionsContract.Interactor {
+public abstract class RecipeInstructionsInteractorImpl<T extends OfflineRecipe> implements RecipeInstructionsContract.Interactor<T> {
 
     protected DatabaseAccess databaseAccess;
 
-    @Inject
     public RecipeInstructionsInteractorImpl(DatabaseAccess databaseAccess) {
         this.databaseAccess = databaseAccess;
     }
