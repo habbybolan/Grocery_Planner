@@ -24,6 +24,11 @@ public class SyncRecipeFromResponse {
         this.databaseAccess = databaseAccess;
     }
 
+    /**
+     * Takes online response with recipe and updates offline database
+     * @param recipeArray   Serialized MyRecipes to send to online
+     * @param callback      Callback once received response from web service
+     */
     public synchronized void syncMyRecipes(JsonArray recipeArray, SyncCompleteCallback callback) {
         new Thread(() -> {
             for (JsonElement element : recipeArray) {

@@ -74,14 +74,17 @@ public class LocalDatabaseTest {
             // offline recipe without ingredients, nutrition, or tags not yet synced with online
             MyRecipe offlineMyRecipe = createEmptyOfflineMyRecipe(0, null);
             try {
+                // Create a new MyRecipe offline
                 databaseAccess.insertMyRecipe(offlineMyRecipe, insertedRecipe -> {
                     MyRecipe createdRecipe = new MyRecipe(offlineMyRecipe, offlineMyRecipe.getAccessLevel());
                     createdRecipe.setId(insertedRecipe.getId());
                     JsonArray jsonArray = FakeSyncResponses.onlyMyRecipeInsertOnlineArray(new MyRecipe(createdRecipe, new AccessLevel(3)));
+                    // Sync MyRecipe with online
                     syncRecipeFromResponse.syncMyRecipes(jsonArray, new SyncCompleteCallback() {
                         @Override
                         public void onSyncComplete() {
                             try {
+                                // fetch the entire recipe from fake online response
                                 databaseAccess.fetchFullMyRecipe(insertedRecipe.getId(), recipeAfterSync -> {
                                     assertNotNull(recipeAfterSync.getDateSynchronized());
                                     assertNotNull(recipeAfterSync.getDateUpdated());
@@ -626,16 +629,19 @@ public class LocalDatabaseTest {
 
     @Test
     public synchronized void insertIngredientInOfflineWithExistingNameInDb() throws Exception {
-        Executors.newSingleThreadExecutor().submit(() -> databaseAccess.addIngredient(defaultOnlineIngredient(0, 1L), new DbSingleCallback<Ingredient>() {
+        // insert an fake online ingredient offline
+        Executors.newSingleThreadExecutor().submit(() -> databaseAccess.addIngredient(defaultOnlineIngredient(0, FakeSyncResponses.onlineId), new DbSingleCallback<Ingredient>() {
             @Override
             public void onResponse(Ingredient response)  {
+                // Applies fake web service response to sync to offline
                 syncRecipeFromResponse.syncMyRecipes(FakeSyncResponses.AllMyRecipeInsertOfflineArray(), new SyncCompleteCallback() {
                     @Override
                     public void onSyncComplete() {
                         try {
+                            // Fetch the synced online ingredient
                             databaseAccess.fetchFullMyRecipe(1, new DbSingleCallback<MyRecipe>() {
                                 @Override
-                                public void onResponse(MyRecipe recipeAfterSync)  {
+                                public void onResponse(MyRecipe recipeAfterSync) {
                                     Ingredient ingredient = recipeAfterSync.getIngredients().get(0);
                                     // assert ingredient used the existing ingredient in db
                                     assertEquals(1, ingredient.getId());

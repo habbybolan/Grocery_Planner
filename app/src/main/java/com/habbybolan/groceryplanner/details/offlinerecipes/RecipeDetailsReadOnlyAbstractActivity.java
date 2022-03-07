@@ -12,6 +12,9 @@ import com.habbybolan.groceryplanner.details.offlinerecipes.nutrition.readonly.R
 import com.habbybolan.groceryplanner.details.offlinerecipes.overview.readonly.RecipeOverviewReadOnlyFragment;
 import com.habbybolan.groceryplanner.models.primarymodels.OfflineRecipe;
 
+/**
+ * Holds functionality to swap between different Recipe views
+ */
 public abstract class RecipeDetailsReadOnlyAbstractActivity
         <T1 extends RecipeOverviewReadOnlyFragment,
                 T2 extends RecipeNutritionReadOnlyFragment,
@@ -45,7 +48,7 @@ public abstract class RecipeDetailsReadOnlyAbstractActivity
         });
     }
 
-    /** Shows the Overview Fragments and hides the other 4 details Fragments */
+    /** Shows the Overview Fragments and hides the other 3 details Fragments */
     protected void showOverviewFragment() {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -55,7 +58,7 @@ public abstract class RecipeDetailsReadOnlyAbstractActivity
                 .hide(nutritionReadOnlyFragment)
                 .commit();
     }
-    /** Shows the Ingredients Fragments and hides the other 4 details Fragments */
+    /** Shows the Ingredients Fragments and hides the other 3 details Fragments */
     protected void showIngredientsFragment() {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -65,7 +68,7 @@ public abstract class RecipeDetailsReadOnlyAbstractActivity
                 .hide(nutritionReadOnlyFragment)
                 .commit();
     }
-    /** Shows the Instructions Fragments and hides the other 4 details Fragments */
+    /** Shows the Instructions Fragments and hides the other 3 details Fragments */
     protected void showInstructionsFragment() {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
@@ -75,7 +78,7 @@ public abstract class RecipeDetailsReadOnlyAbstractActivity
                 .hide(nutritionReadOnlyFragment)
                 .commit();
     }
-    /** Shows the Nutrition Fragments and hides the other 4 details Fragments */
+    /** Shows the Nutrition Fragments and hides the other 3 details Fragments */
     protected void showNutritionFragment() {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction()
